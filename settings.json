@@ -1,0 +1,54 @@
+{
+  "env": {
+    "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "2"
+  },
+  "model": "sonnet",
+  "enabledPlugins": {
+    "pm-toolkit@pm-skills": false,
+    "pm-product-strategy@pm-skills": false,
+    "pm-product-discovery@pm-skills": false,
+    "pm-market-research@pm-skills": false,
+    "pm-data-analytics@pm-skills": false,
+    "pm-marketing-growth@pm-skills": false,
+    "pm-go-to-market@pm-skills": false,
+    "pm-execution@pm-skills": false,
+    "pm-ai-shipping@pm-skills": false,
+    "brightdata-plugin@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {
+    "pm-skills": {
+      "source": {
+        "source": "github",
+        "repo": "phuryn/pm-skills"
+      }
+    },
+    "addy-agent-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/addyosmani/agent-skills.git"
+      }
+    }
+  },
+  "agent": "architect",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "agentPushNotifEnabled": true,
+  "cleanupPeriodDays": 36500,
+  "fileCheckpointingEnabled": true,
+  "autoCompactEnabled": true,
+  "autoUploadSessions": true,
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/precompact-memory.sh",
+            "timeout": 90
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,65 +1,45 @@
-# claude-config
+# agents-config
 
-Configuración personal de Claude Code (agentes, settings, hooks, skills),
-sincronizada entre mis máquinas vía este repo privado.
+Configuración multi-proveedor de agentes (Claude Code, Antigravity, OpenAI Codex), sincronizada en mis máquinas vía este repo privado.
 
 ## Qué incluye
 
-- `agents/` — jerarquía de agentes personalizada (architect, orchestrator,
-  supervisor, worker, auditor) que reemplaza el flujo por defecto.
-- `settings.json` — configuración global de `~/.claude/settings.json`
-  (modelo, hooks, persistencia de sesiones, etc.).
-- `settings.local.json` — overrides menores de permisos.
-- `hooks/precompact-memory.sh` — hook `PreCompact` que, antes de que el
-  contexto se compacte, usa un `claude -p` headless con Haiku para
-  actualizar la memoria del proyecto con lo imprescindible para retomar
-  el trabajo sin fricción.
-- `skills/supabase-postgres-best-practices/` — skill personal.
+- `agents/` — jerarquía de agentes personalizada (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`) compartida y adaptable a Claude, Antigravity y Codex.
+- `skills/` — habilidades personalizadas como `architect-orchestrator` y `supabase-postgres-best-practices`.
+- `AGENTS.md`, `CLAUDE.md`, `CODEX.md` — directrices globales del proyecto y definición del flujo operativo de 3 niveles para cada cliente CLI.
+- `settings.json`, `settings.local.json` — configuración global de `~/.claude/` (modelos, hooks, persistencia de sesiones, etc.).
+- `hooks/precompact-memory.sh` — hook `PreCompact` para preservar memoria clave de proyecto.
+- `install.sh` y `update.sh` — scripts para desplegar y actualizar la configuración en cualquier máquina.
 
-## Qué NO incluye (deliberado)
+## Jerarquía Multi-Agente (3 Niveles)
 
-Nunca se sincroniza nada de esto — vive solo en cada máquina:
-
-- `.credentials.json`, tokens, `daemon*` — credenciales/estado de sesión.
-- `history.jsonl`, `projects/`, `sessions/` — transcripciones y memoria
-  auto-generada por proyecto (contienen conversaciones reales).
-- `cache/`, `plugins/`, `telemetry/`, `stats-cache.json`, etc. — cachés
-  regenerables, no configuración.
+```
+[Usuario] ──► [Architect] (CTO / Principal Architect)
+                   │
+                   ├── NIVEL 1: Resuelve directo el Architect (tarea pequeña/trivial)
+                   │
+                   ├── NIVEL 2: [Supervisor] ──► [Worker(s)] (Un solo dominio)
+                   │
+                   └── NIVEL 3: [Orchestrator] ──► [Supervisors por dominio] ──► [Workers]
+                                     │ (Si es crítico)
+                                     └──► [Auditor] (Segunda opinión independiente)
+```
 
 ## Instalar en una máquina nueva
 
 ```bash
-git clone https://github.com/<tu-usuario>/claude-config.git ~/claude-config
-cd ~/claude-config
+git clone https://github.com/marcmarti9/agents-config.git ~/agents-config
+cd ~/agents-config
 bash install.sh
 ```
 
-Esto copia todo a `~/.claude/`, haciendo antes una copia de seguridad de lo
-que hubiera en `~/.claude/backups/pre-install-<fecha>/`. **Sobrescribe
-`settings.json` entero** — si esa máquina tenía algo específico ahí (una
-env var local, un plugin propio de esa máquina), revísalo después con
-`git diff` antes de confiar ciegamente.
+Esto copia las configuraciones correspondientes a `~/.claude/`, `~/.codex/`, `~/.agents/` y `~/`.
 
 ## Actualizar el repo tras cambiar algo localmente
 
-Cuando edites un agente, `settings.json`, etc. directamente en
-`~/.claude/` de cualquier máquina:
-
 ```bash
-cd ~/claude-config
-bash update.sh      # copia ~/.claude/ -> este repo
-git diff             # revisa qué cambió
-git add -A && git commit -m "..." && git push
+cd ~/agents-config
+bash update.sh
+git diff
+git add -A && git commit -m "update agent configs" && git push
 ```
-
-Y en la otra máquina, para traer esos cambios:
-
-```bash
-cd ~/claude-config
-git pull
-bash install.sh
-```
-
-No hay sincronización automática — es intencionadamente manual (pull +
-install), para no arriesgarte a que un cambio a medias en una máquina se
-propague solo a la otra.

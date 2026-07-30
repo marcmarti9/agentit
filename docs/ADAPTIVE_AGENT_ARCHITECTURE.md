@@ -6,6 +6,14 @@ La configuración deja de modelar el trabajo como una jerarquía fija de tres ni
 
 Los nombres `architect`, `orchestrator`, `supervisor`, `worker` y `auditor` se mantienen por compatibilidad, pero representan capacidades temporales, no puestos por los que toda tarea deba circular.
 
+La arquitectura combina tres capas complementarias:
+
+1. **Harness/context engineering:** herramientas, permisos, worktrees y contexto disponible para cada ejecución.
+2. **Loop engineering:** cómo cada nodo actúa, observa evidencia, verifica y converge o se detiene.
+3. **Graph engineering:** cómo se conectan varios nodos, qué dependencias existen y quién gobierna routing, joins y recuperación.
+
+Loop y graph engineering no sustituyen al router adaptativo. El router decide si hace falta un solo loop o un grafo de varios loops.
+
 ## Por qué cambia
 
 Una jerarquía fija introduce tres problemas:
@@ -15,6 +23,48 @@ Una jerarquía fija introduce tres problemas:
 3. confunde complejidad o número de archivos con divisibilidad real.
 
 Los sistemas modernos obtienen ventaja de múltiples agentes principalmente cuando pueden explorar direcciones independientes, aislar contextos largos, trabajar con herramientas o permisos distintos, o aportar una verificación realmente independiente. En tareas acopladas, un agente fuerte con un plan suele ser más eficiente.
+
+## Loop engineering
+
+Cada unidad de trabajo usa un bucle local y acotado:
+
+`objetivo verificable → actuar → observar evidencia real → verificar → corregir o terminar`
+
+Un loop válido declara antes de empezar:
+
+- condición observable de éxito;
+- verificador real — test, lint, consulta, reproducción, diff o evaluator;
+- estado persistente mínimo;
+- estrategia de recuperación;
+- límite de iteraciones;
+- condición de escalado humano o al Architect.
+
+Reglas:
+
+- máximo normal de una corrección automática después de un fallo;
+- una segunda vuelta exige nueva evidencia o una estrategia distinta;
+- nunca usar objetivos abiertos como “seguir hasta que esté perfecto”;
+- writer y reviewer deben estar separados cuando la independencia compense el coste;
+- si el verificador no mide progreso, se corrige el verificador antes de continuar.
+
+Esto ya estaba parcialmente presente mediante verificaciones, receipts y stop conditions. Ahora queda explícito como contrato de ejecución, no como comportamiento implícito del modelo.
+
+## Graph engineering
+
+Cuando una tarea contiene varios paquetes, el flujo se representa como un grafo pequeño. Cada nodo es un loop con:
+
+- objetivo;
+- entradas tipadas o artefactos concretos;
+- salida esperada;
+- owner y permisos;
+- verificador;
+- stop condition.
+
+Cada arista representa una dependencia de artefacto o una condición verificable. Se prefiere un DAG determinista: fan-out para trabajo independiente, joins para integración y pipelines para dependencias ordenadas.
+
+Los ciclos solo se permiten como bucles locales de reparación alrededor de un verificador y siempre tienen límite. El LLM puede proponer routing, pero el runtime o el Orchestrator conserva el control de dependencias, ownership, permisos y número máximo de iteraciones.
+
+No se usa un grafo por moda. Para un trabajo acoplado, un plan secuencial de un solo agente sigue siendo superior. Graph engineering aporta valor cuando hace explícitos paralelismo, bloqueos, joins, revisiones independientes, checkpoints o recuperación.
 
 ## Topologías admitidas
 
@@ -80,6 +130,7 @@ Registrar por tarea:
 - topología elegida;
 - agentes creados;
 - tokens y tiempo aproximados;
+- número de iteraciones por loop;
 - retrabajo o conflictos de integración;
 - verificaciones fallidas;
 - valoración final del resultado.
@@ -90,8 +141,11 @@ Una topología o agente especializado solo se convierte en patrón permanente cu
 
 - Anthropic, *How we built our multi-agent research system*.
 - Anthropic, *Effective context engineering for AI agents*.
-- OpenAI, *How OpenAI uses Codex*.
+- OpenAI, *How OpenAI uses Codex* y *Symphony*.
 - Google, *Subagents have arrived in Gemini CLI*.
 - Microsoft, *Multi-agent patterns* y *Orchestrator and subagent pattern*.
+- Ruan et al., *AOrchestra: Automating Sub-Agent Creation for Agentic Orchestration*, 2026.
+- Sarker et al., *GraphBit: A Graph-based Agentic Framework for Non-Linear Agent Orchestration*, 2026.
+- Qi et al., *LLM-as-Code Agentic Programming for Agent Harness*, 2026.
 - Xu et al., *Discovering Hierarchical Software Engineering Agents via Bandit Optimization*, ICLR 2026.
 - Park et al., *Capable language models can outgrow the benefits of collaboration*, Nature Machine Intelligence, 2026.

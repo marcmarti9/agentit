@@ -1,68 +1,60 @@
 #!/usr/bin/env bash
-# Instala esta configuración unificada de agentes (Claude Code, Antigravity, Codex) en esta máquina.
+# Instala esta configuración de agentes separando Claude Code y Codex.
 # Uso: bash install.sh
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-install_to_target() {
-  local target_dir="$1"
-  local backup_dir="$target_dir/backups/pre-install-$(date +%Y%m%d-%H%M%S)"
-  mkdir -p "$target_dir" "$backup_dir"
+backup_and_copy() {
+  local src="$1"
+  local dst="$2"
+  [ -e "$src" ] || return 0
 
-  copy_sub() {
-    local rel="$1"
-    local src="$REPO_DIR/$rel"
-    local dst="$target_dir/$rel"
-    [ -e "$src" ] || return 0
-    if [ -e "$dst" ]; then
-      mkdir -p "$backup_dir/$(dirname "$rel")"
-      cp -r "$dst" "$backup_dir/$rel"
-    fi
-    mkdir -p "$(dirname "$dst")"
-    rm -rf "$dst"
-    cp -r "$src" "$dst"
-    echo "instalado en $target_dir: $rel"
-  }
+  if [ -e "$dst" ]; then
+    local backup_root
+    backup_root="$(dirname "$dst")/backups/pre-install-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$backup_root"
+    cp -r "$dst" "$backup_root/$(basename "$dst")"
+  fi
 
-  copy_sub "agents"
-  copy_sub "skills/architect-orchestrator"
-  copy_sub "skills/supabase-postgres-best-practices"
+  mkdir -p "$(dirname "$dst")"
+  rm -rf "$dst"
+  cp -r "$src" "$dst"
+  echo "instalado: $dst"
 }
 
-# 1. Claude Code (~/.claude)
-install_to_target "$HOME/.claude"
-if [ -f "$REPO_DIR/settings.json" ]; then
-  cp "$REPO_DIR/settings.json" "$HOME/.claude/settings.json"
-fi
-if [ -f "$REPO_DIR/settings.local.json" ]; then
-  cp "$REPO_DIR/settings.local.json" "$HOME/.claude/settings.local.json"
-fi
+# Claude Code conserva la jerarquía multiagente y las skills.
+mkdir -p "$HOME/.claude"
+backup_and_copy "$REPO_DIR/agents" "$HOME/.claude/agents"
+backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.claude/skills/architect-orchestrator"
+backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.claude/skills/supabase-postgres-best-practices"
+
+[ ! -f "$REPO_DIR/settings.json" ] || backup_and_copy "$REPO_DIR/settings.json" "$HOME/.claude/settings.json"
+[ ! -f "$REPO_DIR/settings.local.json" ] || backup_and_copy "$REPO_DIR/settings.local.json" "$HOME/.claude/settings.local.json"
+
 if [ -d "$REPO_DIR/hooks" ]; then
-  mkdir -p "$HOME/.claude/hooks"
-  cp -r "$REPO_DIR/hooks/"* "$HOME/.claude/hooks/"
+  backup_and_copy "$REPO_DIR/hooks" "$HOME/.claude/hooks"
   chmod +x "$HOME/.claude/hooks/"*.sh 2>/dev/null || true
 fi
 
-# 2. Codex (~/.codex)
-install_to_target "$HOME/.codex"
+# Codex recibe solo instrucciones y skills compartidas. No se instala la
+# jerarquía de agentes de Claude en ~/.codex/agents por defecto.
+mkdir -p "$HOME/.codex/skills"
+backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.codex/skills/supabase-postgres-best-practices"
 
-# 3. Antigravity / Open Skills (~/.agents)
+# Open Skills / Antigravity.
 mkdir -p "$HOME/.agents/skills"
-if [ -d "$REPO_DIR/skills/architect-orchestrator" ]; then
-  cp -r "$REPO_DIR/skills/architect-orchestrator" "$HOME/.agents/skills/"
-fi
-if [ -d "$REPO_DIR/skills/supabase-postgres-best-practices" ]; then
-  cp -r "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.agents/skills/"
-fi
+backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.agents/skills/architect-orchestrator"
+backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.agents/skills/supabase-postgres-best-practices"
 
-# 4. Archivos de guías globales en $HOME
+# Guías globales. AGENTS.md es la fuente común; las otras son adaptadores.
 for f in AGENTS.md CLAUDE.md CODEX.md; do
-  if [ -f "$REPO_DIR/$f" ]; then
-    cp "$REPO_DIR/$f" "$HOME/$f"
-    echo "instalado: ~/$f"
-  fi
+  [ ! -f "$REPO_DIR/$f" ] || backup_and_copy "$REPO_DIR/$f" "$HOME/$f"
 done
 
-echo
-echo "Instalación completada correctamente para todos los proveedores de IA."
+cat <<'EOF'
+
+Instalación completada.
+- Claude Code: jerarquía multiagente + skills.
+- Codex: guía global compacta + skills compartidas, sin jerarquía obligatoria.
+EOF

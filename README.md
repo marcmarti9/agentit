@@ -1,31 +1,29 @@
 # agents-config
 
-Configuración multi-proveedor de agentes (Claude Code, Antigravity, OpenAI Codex), sincronizada en mis máquinas vía este repo privado.
+Configuración multi-proveedor sincronizada entre máquinas.
 
-## Qué incluye
+## Principio principal
 
-- `agents/` — jerarquía de agentes personalizada (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`) compartida y adaptable a Claude, Antigravity y Codex.
-- `skills/` — habilidades personalizadas como `architect-orchestrator` y `supabase-postgres-best-practices`.
-- `AGENTS.md`, `CLAUDE.md`, `CODEX.md` — directrices globales del proyecto y definición del flujo operativo de 3 niveles para cada cliente CLI.
-- `settings.json`, `settings.local.json` — configuración global de `~/.claude/` (modelos, hooks, persistencia de sesiones, etc.).
-- `hooks/precompact-memory.sh` — hook `PreCompact` para preservar memoria clave de proyecto.
-- `install.sh` y `update.sh` — scripts para desplegar y actualizar la configuración en cualquier máquina.
+Cada proveedor recibe solo lo que necesita:
 
-## Jerarquía Multi-Agente (3 Niveles)
+- **Claude Code:** jerarquía completa de agentes (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks y skills.
+- **OpenAI Codex:** `AGENTS.md` global compacto y skills compartidas. La jerarquía multiagente no se instala en `~/.codex/agents` por defecto.
+- **Antigravity / Open Skills:** skills compartidas en `~/.agents/skills`.
 
-```
-[Usuario] ──► [Architect] (CTO / Principal Architect)
-                   │
-                   ├── NIVEL 1: Resuelve directo el Architect (tarea pequeña/trivial)
-                   │
-                   ├── NIVEL 2: [Supervisor] ──► [Worker(s)] (Un solo dominio)
-                   │
-                   └── NIVEL 3: [Orchestrator] ──► [Supervisors por dominio] ──► [Workers]
-                                     │ (Si es crítico)
-                                     └──► [Auditor] (Segunda opinión independiente)
-```
+Esto evita que una sesión normal de Codex cargue instrucciones ceremoniales o replique contexto entre subagentes sin necesidad.
 
-## Instalar en una máquina nueva
+## Archivos
+
+- `AGENTS.md`: reglas globales comunes y compactas; fuente canónica para Codex.
+- `CLAUDE.md`: adaptación para Claude Code.
+- `CODEX.md`: adaptación mínima para Codex.
+- `agents/`: jerarquía multiagente orientada a Claude Code.
+- `skills/`: habilidades reutilizables y documentación bajo demanda.
+- `settings*.json` y `hooks/`: configuración de Claude Code.
+- `install.sh`: instala cada proveedor de forma aislada.
+- `update.sh`: sincroniza cambios locales sin mezclar configuraciones.
+
+## Instalar
 
 ```bash
 git clone https://github.com/marcmarti9/agents-config.git ~/agents-config
@@ -33,9 +31,9 @@ cd ~/agents-config
 bash install.sh
 ```
 
-Esto copia las configuraciones correspondientes a `~/.claude/`, `~/.codex/`, `~/.agents/` y `~/`.
+El instalador realiza copias de seguridad antes de sustituir archivos existentes.
 
-## Actualizar el repo tras cambiar algo localmente
+## Actualizar el repositorio
 
 ```bash
 cd ~/agents-config
@@ -43,3 +41,7 @@ bash update.sh
 git diff
 git add -A && git commit -m "update agent configs" && git push
 ```
+
+## Uso recomendado
+
+Las tareas pequeñas y medianas se resuelven directamente. La delegación se reserva para trabajo grande con frentes independientes y paralelizables. La documentación de cada proyecto debe actuar como índice y cargarse bajo demanda, no como lectura inicial completa.

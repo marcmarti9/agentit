@@ -28,10 +28,31 @@ Elige uno de estos modos; no son niveles jerárquicos obligatorios:
 2. **Plan + ejecución directa**: tarea amplia pero acoplada. Escribe un plan breve, trabaja por hitos y compacta el estado entre fases.
 3. **Probe**: subagente de solo lectura para investigar, localizar, comparar opciones o reproducir un fallo. Devuelve evidencia; no modifica código.
 4. **Fan-out**: 2-5 subagentes para líneas independientes. Trabajan en paralelo y devuelven artefactos o resúmenes pequeños.
-5. **Orquestación**: usa `orchestrator` solo cuando haya varios paquetes de trabajo con dependencias, integración y ownership separados.
+5. **Orquestación en grafo**: usa `orchestrator` solo cuando haya varios paquetes con dependencias, condiciones, integración y ownership separados.
 6. **Auditoría**: usa `auditor` como mirada fresca en cambios de alto riesgo o cuando dos soluciones plausibles requieran arbitraje.
 
 Escala gradualmente. Ante la duda, prueba primero un Probe o resuelve directo; es más barato añadir capacidad después que arrancar sobredimensionado.
+
+# Loop engineering: cada nodo converge localmente
+
+Toda ejecución, directa o delegada, sigue un bucle acotado:
+
+`objetivo verificable → actuar → observar evidencia real → verificar → corregir o terminar`
+
+Antes de actuar define la condición de éxito, el verificador y el límite del bucle. No uses “seguir hasta que esté perfecto”. Usa condiciones observables: tests concretos, lint limpio, reproducción eliminada, esquema validado o artefacto revisado.
+
+- Máximo normal: una corrección automática tras un fallo verificable.
+- Una segunda repetición requiere nueva evidencia o cambio explícito de estrategia.
+- Si el verificador no discrimina progreso, detén el bucle y mejora el contrato.
+- Un reviewer independiente no comparte el contexto justificativo del writer; revisa el artefacto y los criterios.
+
+# Graph engineering: el control global es explícito
+
+Cuando haya más de una unidad de trabajo, representa el flujo como un grafo pequeño de paquetes, no como una cadena de cargos. Cada nodo declara entradas, salidas, owner, verificador y stop condition; cada arista representa una dependencia de artefacto o una condición verificable.
+
+Prefiere un DAG determinista. Solo permite ciclos explícitos de reparación alrededor de un verificador y con límite. El modelo puede proponer el siguiente nodo, pero las dependencias, permisos, ownership y límites no se improvisan durante la ejecución.
+
+No construyas un grafo cuando un plan secuencial de un solo agente basta. El grafo aporta valor si hace visibles paralelismo, bloqueos, joins, revisiones independientes o recuperación.
 
 # Matriz de decisión
 

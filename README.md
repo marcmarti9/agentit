@@ -7,7 +7,7 @@ Configuración multi-proveedor sincronizada entre máquinas.
 Cada proveedor recibe solo lo que necesita:
 
 - **Claude Code:** agentes adaptativos (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks y skills.
-- **OpenAI Codex:** `AGENTS.md` global compacto y skills compartidas. La jerarquía de Claude no se instala en `~/.codex/agents` por defecto.
+- **OpenAI Codex:** `AGENTS.md` global, workers acotados en `~/.codex/agents` y skills compartidas. La jerarquía de Claude no se instala en Codex.
 - **Antigravity / Open Skills:** skills compartidas en `~/.agents/skills`.
 
 La arquitectura multiagente no es una pirámide fija. Un agente fuerte resuelve directamente por defecto y selecciona probes, fan-out, pipelines, writer+reviewers, DAG orquestado o auditoría solo cuando la topología aporta valor real.
@@ -32,10 +32,17 @@ La decisión completa está en [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAP
 - `CLAUDE.md`: adaptación para Claude Code.
 - `CODEX.md`: adaptación mínima para Codex.
 - `agents/`: capacidades multiagente para Claude Code.
+- `.codex/agents/`: perfiles portables `terra_worker` y `luna_worker` para delegaciones acotadas de Codex.
 - `skills/`: habilidades reutilizables y documentación bajo demanda.
+- `docs/CODEX_SETUP.md`: ajustes locales recomendados para Sol y el enrutamiento de workers.
 - `settings*.json` y `hooks/`: configuración de Claude Code.
 - `install.sh`: instala cada proveedor de forma aislada.
 - `update.sh`: sincroniza cambios locales sin mezclar configuraciones.
+
+El instalador copia `AGENTS.md` a `~/.codex/AGENTS.md`, instala los workers en
+`~/.codex/agents/` y deja intacto el `~/.codex/config.toml` local. El modelo
+principal y los flags del backend pueden variar entre máquinas y no deben
+compartirse junto con credenciales, rutas o servidores MCP.
 
 ## Instalar
 
@@ -59,3 +66,8 @@ git add -A && git commit -m "update agent configs" && git push
 ## Uso recomendado
 
 Las tareas focalizadas o fuertemente acopladas se resuelven directamente. Los subagentes se usan para aislamiento de contexto, exploración independiente, paralelismo seguro, especialización o revisión de riesgo. La documentación de cada proyecto actúa como índice y se carga bajo demanda.
+
+En Codex, el agente principal conserva los requisitos, las decisiones y la
+revisión final. Cuando delegar aporta una ventaja real, usa `terra_worker` como
+worker predeterminado; reserva `luna_worker` para sesiones que confirmen que
+Luna está disponible. No se fuerza una cadena de agentes en todas las tareas.

@@ -22,13 +22,13 @@ Agentit is an **early-stage, opinionated, and safety-first agent harness (v0.1.0
 
 - **🎯 Single-Agent-First Architecture**: Avoids unnecessary agent hierarchies. Simple tasks execute directly; multi-agent topologies (Probe, Fan-Out, Pipeline, Writer-Reviewer, Audit) spawn strictly when context isolation, parallel execution, or independent verification is required.
 - **🔌 Provider-Isolated Deployment**: Cleanly separates configurations across runtimes:
-  - **Claude Code**: Adaptive agents (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks, and skills.
-  - **OpenAI Codex**: Global `AGENTS.md`, isolated worker profiles (`terra_worker`, `luna_worker`), and shared skills.
-  - **Antigravity & Open Skills**: Native `~/.agents/skills` repository discovery.
-  - **Grok Build & Others**: Standardized Open Skills discovery.
+  - **Claude Code**: Adaptive agents (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks, and skills. (Fully Supported)
+  - **OpenAI Codex**: Global `AGENTS.md`, isolated worker profiles (`terra_worker`, `luna_worker`), and shared skills. (Fully Supported)
+  - **Antigravity & Open Skills**: Native `~/.agents/skills` repository discovery. (Compatible via Open Skills)
+  - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
 - **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
-- **📦 28 Production-Grade Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, performance optimization, and product/marketing strategy.
-- **🛡️ Reversible & Safe Automation**: All deployment scripts (`install.sh`, `update.sh`, `harden-local.sh`) run in **dry-run plan mode by default**, requiring explicit `--apply` flags. Automatic SHA-256 backup manifests ensure 100% loss-free rollback.
+- **📦 28 Curated Modular Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, performance optimization, and product/marketing strategy.
+- **🛡️ Reversible & Safe Automation**: All deployment scripts (`install.sh`, `update.sh`, `harden-local.sh`) run in **dry-run plan mode by default**, requiring explicit `--apply` flags. Automatic SHA-256 backup manifests support verifiable rollback.
 
 ---
 
@@ -72,7 +72,7 @@ For full design specifications, see [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs
 
 ## 🧰 Shared Skills Catalog
 
-The repository includes 28 modular, production-tested skills:
+The repository includes 28 modular skills:
 
 ```
 skills/
@@ -164,22 +164,19 @@ python3 router/route.py "Implement user authentication with JWT"
 python3 router/route.py --risk RISK_3 "Migrate database schema"
 ```
 
-### JSON Output Contract
+### Actual JSON Output Contract
 
 ```json
 {
-  "risk_level": "RISK_2",
-  "recommended_topology": "direct",
-  "context_budget": "STANDARD",
+  "risk": "RISK_3",
+  "topology": "audit",
+  "output_profile": "VERBOSE_ALLOWED",
   "skills_available": [
-    "security-and-hardening",
-    "api-and-interface-design"
+    "security-hardening",
+    "architect-orchestrator"
   ],
   "skills_recommended_missing": [],
-  "routing_advice": [
-    "Ensure authentication tokens are stored securely",
-    "Add integration tests for failure cases"
-  ]
+  "routing_advice": []
 }
 ```
 
@@ -197,12 +194,12 @@ Outputs `reports/local/inventory.yaml` with strict `0600` file permissions.
 
 ## ⚙️ Runtimes & Provider Integration
 
-| Provider | Global Instructions | Agent / Worker Profiles | Skills Path |
-|---|---|---|---|
-| **Claude Code** | `~/CLAUDE.md`, `~/AGENTS.md` | `~/.claude/agents/` (`architect`, `auditor`, etc.) | `~/.claude/skills/` |
-| **OpenAI Codex** | `~/CODEX.md`, `~/.codex/AGENTS.md` | `~/.codex/agents/` (`terra_worker`, `luna_worker`) | `~/.codex/skills/` |
-| **Antigravity (AGY)** | `~/AGENTS.md` | Built-in Subagent Engine | `~/.agents/skills/` |
-| **Grok Build** | `~/.grok/AGENTS.md`, `~/AGENTS.md` | Built-in Subagent Engine | `~/.grok/skills/` |
+| Provider | Support Level | Global Instructions | Agent / Worker Profiles | Skills Path |
+|---|---|---|---|---|
+| **Claude Code** | Primary | `~/CLAUDE.md`, `~/AGENTS.md` | `~/.claude/agents/` (`architect`, `auditor`, etc.) | `~/.claude/skills/` |
+| **OpenAI Codex** | Primary | `~/CODEX.md`, `~/.codex/AGENTS.md` | `~/.codex/agents/` (`terra_worker`, `luna_worker`) | `~/.codex/skills/` |
+| **Antigravity (AGY)** | Open Skills | `~/AGENTS.md` | Built-in Subagent Engine | `~/.agents/skills/` |
+| **Grok Build** | Open Skills | `~/.grok/AGENTS.md`, `~/AGENTS.md` | Built-in Subagent Engine | `~/.grok/skills/` |
 
 ---
 

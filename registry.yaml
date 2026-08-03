@@ -542,3 +542,70 @@ entries:
     reversibility: unknown
     state: UNKNOWN
     priority: reference
+
+  - id: marketing-and-growth
+    name: "Marketing and Growth Engineering"
+    kind: skill
+    category: marketing
+    provenance: repo-curated
+    paths:
+      - "${REPO_ROOT}/skills/marketing-and-growth/SKILL.md"
+    trigger: "marketing, CRO, SEO, copywriting, landing page, conversion, or analytics"
+    avoid_when: "ordinary backend/frontend implementation without product marketing goals"
+    context_cost: medium
+    execution_cost: low
+    depth: medium
+    risk: low
+    conflicts: []
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: on_demand
+
+  - id: anti-ai-slop-writing
+    name: "Anti-AI-Slop Writing"
+    kind: skill
+    category: writing
+    provenance: repo-curated
+    paths:
+      - "${REPO_ROOT}/skills/anti-ai-slop-writing/SKILL.md"
+    trigger: "writing or editing technical documentation, READMEs, PRs, or articles to remove AI clichés"
+    avoid_when: "ordinary code implementation or machine-generated JSON/YAML payloads"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: low
+    conflicts: []
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: on_demand
+
+  - id: anti-ai-slop-design
+    name: "Anti-AI-Slop Design System"
+    kind: skill
+    category: design
+    provenance: repo-curated
+    paths:
+      - "${REPO_ROOT}/skills/anti-ai-slop-design/SKILL.md"
+    trigger: "UI design, theme creation, CSS styling, or visual components to prevent generic AI slop"
+    avoid_when: "backend APIs or non-visual tasks"
+    context_cost: low
+    execution_cost: low
+    depth: medium
+    risk: low
+    conflicts: []
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: on_demand
+

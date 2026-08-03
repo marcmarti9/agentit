@@ -24,6 +24,7 @@ profiles:
       - browser-testing-with-devtools
       - performance-optimization
       - code-simplification
+      - anti-ai-slop-design
   backend:
     description: "Core plus API boundaries, observability, and service maintenance."
     extends:
@@ -40,7 +41,7 @@ profiles:
     skills:
       - supabase-postgres-best-practices
   product:
-    description: "Core plus discovery, writing, and product decision support."
+    description: "Core plus discovery, marketing, CRO, and product decision support."
     extends:
       - core
     skills:
@@ -48,6 +49,20 @@ profiles:
       - interview-me
       - documentation-and-adrs
       - spec-driven-development
+      - marketing-and-growth
+  writing:
+    description: "Technical writing, documentation, and anti-AI-slop editing."
+    extends:
+      - core
+    skills:
+      - documentation-and-adrs
+      - anti-ai-slop-writing
+  design:
+    description: "Frontend engineering plus anti-AI-slop visual design system."
+    extends:
+      - frontend
+    skills:
+      - anti-ai-slop-design
   release:
     description: "Core plus CI, migration, launch, and operational readiness."
     extends:
@@ -68,6 +83,8 @@ profiles:
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:
+      - anti-ai-slop-design
+      - anti-ai-slop-writing
       - api-and-interface-design
       - architect-orchestrator
       - browser-testing-with-devtools
@@ -85,6 +102,7 @@ profiles:
       - idea-refine
       - incremental-implementation
       - interview-me
+      - marketing-and-growth
       - observability-and-instrumentation
       - performance-optimization
       - planning-and-task-breakdown

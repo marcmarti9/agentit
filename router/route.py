@@ -839,6 +839,18 @@ def route_task(
         "topology": topology,
         "subagents": _subagent_budget(text.lower(), risk, topology),
         "verification": verification,
+        "auto_plan_mode_recommended": risk in {"RISK_2", "RISK_3", "RISK_4"} or topology != "direct",
+        "jit_profile_recommendations": sorted({
+            "supabase" if "supabase-postgres-best-practices" in skills_recommended_missing else
+            "frontend" if any(s in skills_recommended_missing for s in ["browser-testing-with-devtools", "anti-ai-slop-design"]) else
+            "backend" if "api-and-interface-design" in skills_recommended_missing else
+            "product" if "marketing-and-growth" in skills_recommended_missing else
+            "writing" if "anti-ai-slop-writing" in skills_recommended_missing else
+            "release" if "shipping-and-launch" in skills_recommended_missing else
+            "research" if "doubt-driven-development" in skills_recommended_missing else
+            "all"
+            for s in skills_recommended_missing
+        }),
         "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
         "recovery": (
             "not proven; retrieve originals before RISK_3/RISK_4 actions"

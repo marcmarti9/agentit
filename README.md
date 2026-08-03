@@ -28,6 +28,7 @@ Agentit is an **early-stage, opinionated, and safety-first agent harness (v0.1.0
   - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
 - **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
 - **📦 28 Curated Modular Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, performance optimization, and product/marketing strategy.
+- **📉 Bounded Skill Discovery**: Only the 10-skill `core` profile is installed globally by default. The remaining skills stay available in the repository and can be enabled by project profile when needed.
 - **🛡️ Reversible & Safe Automation**: All deployment scripts (`install.sh`, `update.sh`, `harden-local.sh`) run in **dry-run plan mode by default**, requiring explicit `--apply` flags. Automatic SHA-256 backup manifests support verifiable rollback.
 
 ---
@@ -72,7 +73,15 @@ For full design specifications, see [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs
 
 ## 🧰 Shared Skills Catalog
 
-The repository includes 28 modular skills:
+The repository includes 28 modular skills, but they are not all global discovery entries. `profiles.yaml` defines the visibility policy:
+
+- `core`: 10 general skills installed globally by `install.sh`.
+- `frontend`, `backend`, `supabase`, `product`, `release`, and `research`: opt-in project profiles.
+- `all`: explicit escape hatch for experiments; it is never the default.
+
+This separation matters because progressive disclosure avoids loading full `SKILL.md` bodies, but provider discovery still has to keep skill names and descriptions visible. A large global catalog can therefore still consume discovery budget and shorten descriptions.
+
+The repository retains all 28 bodies:
 
 ```
 skills/
@@ -131,6 +140,24 @@ bash install.sh
 bash install.sh --apply --with-guides
 ```
 
+The installer copies only the bounded `core` profile to provider-global skill directories. To activate a larger profile for a project, use the plan-first helper:
+
+```bash
+# Preview; no files are written
+./agentit enable supabase --project .
+
+# Apply to the project-local Open Skills directory
+./agentit enable supabase --project . --apply
+./agentit status --project .
+./agentit disable supabase --project . --apply
+```
+
+Project activation records hashes in `.agentit/skills-manifest.json`. It refuses to overwrite a conflicting file or remove a managed file that was modified; it never removes unmanaged files.
+
+`--prune-on-demand` is the explicit migration switch for an older global install.
+It refuses modified skills and files with extra contents, so a user-managed skill
+is left in place for manual review rather than guessed at.
+
 To target a specific provider:
 
 ```bash
@@ -139,6 +166,10 @@ bash install.sh --provider claude --apply
 
 # Target only OpenAI Codex
 bash install.sh --provider codex --apply
+
+# Migrate an older install that exposed every repository skill
+# (exact, unmodified non-core copies only; creates a backup)
+bash install.sh --provider codex --apply --prune-on-demand
 
 # Target only Antigravity / Open Skills
 bash install.sh --provider antigravity --apply
@@ -169,15 +200,42 @@ python3 router/route.py --risk RISK_3 "Migrate database schema"
 ```json
 {
   "risk": "RISK_3",
-  "topology": "audit",
-  "output_profile": "VERBOSE_ALLOWED",
-  "skills_available": [
-    "security-hardening",
-    "architect-orchestrator"
+  "topology": "writer_reviewer",
+  "confidence": 0.82,
+  "confidence_calibrated": false,
+  "signals": [
+    "authentication/session boundary",
+    "independent verification useful after implementation"
   ],
+  "rejected_topologies": {
+    "direct": "independent verification is required for this sensitive implementation",
+    "fan_out": "affected behavior is coupled; no independent ownership boundaries were declared",
+    "audit": "an audit alone would not implement the requested change"
+  },
+  "skills_available": ["security-hardening", "architect-orchestrator"],
   "skills_recommended_missing": [],
   "routing_advice": []
 }
+```
+
+For a focused visual task, the same router returns a deliberately smaller plan:
+
+```text
+Task: "Cambia el color del botón de pago en este CSS"
+Risk: RISK_1
+Topology: direct
+Signals: presentation-only scope
+Rejected: probe (no investigation), fan_out (no independent work), audit (no critical boundary)
+Subagents: max 0
+```
+
+`confidence` is an uncalibrated deterministic signal-strength score, not a probability. The router is intentionally a regex/metadata policy engine: it does not inspect dependency graphs, understand file coupling, or prove that delegation improves agent output. The checked-in evals are regression cases for router decisions only, not a quality, token, latency, or cost benchmark.
+
+Run them with:
+
+```bash
+python3 evals/run.py
+python3 evals/run.py --json
 ```
 
 ### Local Machine Inventory
@@ -213,6 +271,9 @@ python3 -m unittest discover -s router -p "test_*.py"
 
 # Run full harness and installer tests
 python3 -m unittest discover -s tests
+
+# Run representative routing cases
+python3 evals/run.py
 ```
 
 ---
@@ -221,6 +282,7 @@ python3 -m unittest discover -s tests
 
 ```
 agentit/
+├── ABOUT.md                    # Core philosophy & architecture overview
 ├── AGENTS.md                  # Canonical global instruction guide
 ├── CLAUDE.md                  # Claude Code runtime guide
 ├── CODEX.md                   # OpenAI Codex runtime guide
@@ -231,6 +293,8 @@ agentit/
 ├── ROLLBACK.md                # Safety & rollback guide
 ├── MIGRATION_PLAN.md          # Architectural migration guide
 ├── registry.yaml              # Portable skills & rules registry
+├── profiles.yaml              # Global and project-local skill visibility policy
+├── agentit                    # Plan-first project profile CLI
 ├── install.sh                 # Safe, idempotent installer script
 ├── update.sh                  # Repository sync script
 ├── agents/                    # Multi-agent definitions for Claude Code

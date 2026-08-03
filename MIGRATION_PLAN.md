@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-La implementación está en la rama `feature/safe-context-harness-audit` del repositorio `agents-config`. Los commits son rollbackables. La instalación real no se ha aplicado; solo se validó un HOME temporal.
+La implementación está en la rama `feature/safe-context-harness-audit` del repositorio `agents-config`. Los commits son rollbackables. El baseline se aplicó al HOME real el 2026-08-03 con backup en `/home/Marc/backups/agent-harness-pre-install-20260803-160912`.
 
 ## Etapas
 
@@ -19,7 +19,7 @@ La implementación está en la rama `feature/safe-context-harness-audit` del rep
    El primer comando es plan; revisar rutas. El segundo no copia settings, guías ni hook.
 
 5. **Provider check:** comprobar discovery en Codex, Claude y Gemini/Antigravity; verificar que cada skill apunta al hash esperado.
-6. **Settings:** no aplicar `--with-settings` hasta revisar `skipDangerousModePermissionPrompt`, auto-upload y hooks; preferir un settings seguro separado.
+6. **Settings:** el `settings.json` versionado ya es el baseline seguro (aviso peligroso, sin auto-upload, retención de 90 días y sin hook); aplicarlo con `--with-settings` solo después de revisar el backup y el diff.
 7. **Hook:** mantener desactivado hasta tener scrub, límites de bytes, escritura atómica, procedencia y tests adversariales.
 8. **Optimización:** probar únicamente perfiles aislados; activar Caveman solo para output `TERSE_SAFE` si la medición neta lo justifica.
 9. **Compresión de herramientas:** RTK/Headroom/LLMLingua nunca se activan globalmente en la primera migración.

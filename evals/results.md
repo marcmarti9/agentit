@@ -16,6 +16,8 @@
 | Preservación | archivo no relacionado en `.claude` del sandbox | conservado |
 | Actualizador | `update.sh --home /tmp/... --provider claude` sin `--apply` | mostró plan; no escribió repo |
 | Arquitectura remota | `git fetch --no-tags origin main`; comparación con `origin/main@eab20ca` | integrada; single-agent-first y providers aislados conservados |
+| Aplicación real | `bash install.sh --apply --provider all --with-settings` | completada con backup; no se copiaron guías globales, settings.local, hook ni compresores |
+| Post-check real | `jq` sobre `~/.claude/settings.json`, hashes de agentes, `gemini skills list` | danger prompt false, auto-upload false, hooks ausentes, hashes coincidentes, `task-router` Enabled |
 | OmniRoute estado | `curl --max-time 2 http://127.0.0.1:20128/` | no disponible; no se asumió activo |
 
 Durante TDD, dos tests fallaron inicialmente por expresiones regulares singleton sin coma: el código iteraba caracteres en vez de tratar una tupla de patrones. La causa se corrigió; después se añadieron dos pruebas de routing adaptativo y los 9 tests pasan. No se ocultaron excepciones del test.

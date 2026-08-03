@@ -30,25 +30,11 @@
     }
   },
   "agent": "architect",
-  "skipDangerousModePermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": false,
   "theme": "auto",
   "agentPushNotifEnabled": true,
-  "cleanupPeriodDays": 36500,
+  "cleanupPeriodDays": 90,
   "fileCheckpointingEnabled": true,
   "autoCompactEnabled": true,
-  "autoUploadSessions": true,
-  "hooks": {
-    "PreCompact": [
-      {
-        "matcher": "manual|auto",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/precompact-memory.sh",
-            "timeout": 90
-          }
-        ]
-      }
-    ]
-  }
+  "autoUploadSessions": false
 }

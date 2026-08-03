@@ -1,0 +1,6 @@
+This manifest records the repository configuration before the safe settings baseline.
+It is versioned in git; no secret values are included.
+date=2026-08-03
+settings.json sha256=4d0f3d95a083ee09a7dd2e4cf22e0516b41f1229f96bb3c175e7f24ee602f5a4
+settings.local.json sha256=d467ee47439b9b6f39fc547462ca7f20d30a43559236ef3395839052ce48544c
+hooks/precompact-memory.sh sha256=37652e379fc55683b2eebf0b35be760f2d3b3528179360899656ad970b021b18

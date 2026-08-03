@@ -20,6 +20,7 @@
 | SEC-11 | Alta | seis `/home/Marc/.cursor/**/mcp_auth.json` tienen modo `644` | secretos MCP legibles por otros usuarios del sistema | revisar y endurecer a mínimo privilegio sin imprimir valores |
 | SEC-12 | Media | `/home/Marc/.gemini/antigravity-cli/settings.json:3-10` confía en `/home/Marc` y varios proyectos | agents/hooks de proyecto pueden cargarse en un ámbito amplio | reducir a proyectos necesarios y revisar cada raíz |
 | SEC-13 | Media | Superpowers `6.2.0/hooks/hooks.json:3-12` y Addy `hooks/session-start.sh:1-21` inyectan contexto en cada sesión | coste fijo, duplicación y contenido externo no seleccionado por tarea | una sola fuente de meta-skill; hooks desactivados hasta revisión |
+| SEC-14 | Alta | `/home/Marc/.bashrc:70` y numerosos perfiles Claude declaran `ANTHROPIC_BASE_URL=http://localhost:20128`, pero el listener no existe | Claude puede fallar o depender de un gateway no verificado; las condiciones de red del gateway también aplican a la sesión | no se eliminó porque cambiar routing/auth requiere decisión; se documenta como preflight obligatorio |
 
 ## Hook PreCompact
 
@@ -35,6 +36,7 @@ No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es u
 - Settings, settings.local, guías y hook son opt-in; el actualizador no importa `settings.local`.
 - `update.sh` usa allowlist de agentes y skills, no copia un directorio arbitrario ni ejecuta hooks.
 - El router prohíbe compresión para riesgo alto y contenido crítico; no ejecuta comandos.
+- `settings.json` del repositorio ya no omite el aviso de modo peligroso, desactiva la subida automática de sesiones, limita retención a 90 días y no declara `PreCompact`. El hook se conserva solo como artefacto pendiente de revisión.
 
 ## Amenazas del modelo
 
@@ -51,3 +53,5 @@ No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es u
 - No hay pruebas de fidelidad de RTK/Headroom/LLMLingua porque no están instalados ni activados.
 - No se ha hecho una revisión independiente final de esta rama; debe actuar un Auditor antes de integrar cambios de settings/hooks.
 - Los permisos de `mcp_auth.json`, aliases peligrosos y confianza de Antigravity requieren una intervención separada y reversible; este trabajo no los ha modificado.
+- La configuración segura de Claude aún debe aplicarse al HOME real con backup y revisión de diff; hasta entonces el inventario local sigue describiendo la configuración anterior.
+- Se realizó una corrección local reversible fuera del repo: backup versionado del `.bashrc`, aliases bypass comentados, `.bashrc` en modo `600` y seis `mcp_auth.json` en modo `600`. No se leyó ni mostró ningún secreto.

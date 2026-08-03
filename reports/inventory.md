@@ -16,6 +16,8 @@
 - `/home/Marc/.bashrc:34-36` contiene aliases que lanzan Claude/`agy`/Codex con bypasses peligrosos. `/home/Marc/.bashrc:45` contiene una variable con apariencia de credencial; su valor no se reproduce.
 - OmniRoute `3.8.48` está instalado como paquete Node y contiene catálogo de compresión, pero `127.0.0.1:20128` no responde en la inspección. Su estado operativo es `UNKNOWN/NOT_RUNNING`, no `ACTIVE`.
 - Antes de esta rama, `install.sh` sobrescribía destinos con `rm -rf` y copiaba settings/hooks sin una activación separada. La rama actual reemplaza ese comportamiento por plan por defecto, backups y allowlist; no se ha aplicado al HOME real.
+- El 2026-08-03 se aplicó al HOME real el baseline de proveedor con `install.sh --apply --provider all --with-settings`. El backup está en `/home/Marc/backups/agent-harness-pre-install-20260803-160912`.
+- Tras la aplicación, Claude tiene la arquitectura adaptativa y settings seguro; Codex tiene skills compartidas y `task-router`; Antigravity/Gemini descubre `task-router` desde `/home/Marc/.agents/skills`.
 
 ## Ejecutables y proveedores
 
@@ -95,7 +97,7 @@ No hay listener en `127.0.0.1:20128` y `curl` devolvió conexión rechazada; por
 
 | Estado | Elementos |
 |---|---|
-| ACTIVE_GLOBAL | Codex, Claude, Gemini global skills, agentes personalizados, Addy skills expuestas |
+| ACTIVE_GLOBAL | Codex, Claude, Gemini global skills, agentes adaptativos de Claude, Addy skills expuestas, task-router |
 | ACTIVE_PROJECT | instrucciones `CLAUDE.md`/`AGENTS.md` en varios proyectos; deben resolverse por alcance |
 | AVAILABLE_ON_DEMAND | OpenCode, repositorios externos no instalados, optimizadores no instalados |
 | DUPLICATED | copias de agentes/skills y `superpowers` 6.1.1/6.2.0 en cache |

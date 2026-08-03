@@ -34,6 +34,8 @@ El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en 
 - hook PreCompact y `autoUploadSessions` en un baseline seguro hasta revisar privacidad, atomicidad, límites y consentimiento;
 - `skipDangerousModePermissionPrompt: true` en una configuración segura.
 
+La configuración de repositorio ya aplica la alternativa segura: aviso peligroso conservado, auto-upload desactivado, retención de 90 días y hook PreCompact fuera del baseline. Se aplicará a esta máquina solo con el instalador y su backup.
+
 ## Clasificación final de optimizadores
 
 | Elemento | Decisión | Condición de promoción |

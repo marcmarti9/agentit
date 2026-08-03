@@ -1,66 +1,388 @@
 #!/usr/bin/env bash
-# Instala esta configuración de agentes separando Claude Code y Codex.
-# Uso: bash install.sh
+# Despliegue reversible y separado por proveedor.
+# Por defecto solo muestra el plan. --apply es obligatorio para escribir.
+# Nunca elimina archivos existentes; crea backup y reemplaza archivos uno a uno.
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+USER_HOME="${HOME:?HOME must be set}"
+MODE="plan"
+PROVIDER="all"
+WITH_SETTINGS="false"
+WITH_LOCAL_SETTINGS="false"
+WITH_HOOK="false"
+WITH_GUIDES="false"
+BACKUP_ROOT=""
 
-backup_and_copy() {
-  local src="$1"
-  local dst="$2"
-  [ -e "$src" ] || return 0
+usage() {
+  cat <<'EOF'
+Uso: bash install.sh [opciones]
 
-  if [ -e "$dst" ]; then
-    local backup_root
-    backup_root="$(dirname "$dst")/backups/pre-install-$(date +%Y%m%d-%H%M%S)"
-    mkdir -p "$backup_root"
-    cp -r "$dst" "$backup_root/$(basename "$dst")"
-  fi
+Por defecto no modifica nada y muestra el plan.
 
-  mkdir -p "$(dirname "$dst")"
-  rm -rf "$dst"
-  cp -r "$src" "$dst"
-  echo "instalado: $dst"
+  --apply                    aplicar cambios (requiere backup automático)
+  --provider NAME            all|claude|codex|antigravity (por defecto: all)
+  --home DIR                 raíz de usuario alternativa para pruebas
+  --with-settings            copiar settings.json de Claude (revisar antes)
+  --with-local-settings      copiar settings.local.json (no recomendado)
+  --with-hook                copiar el hook de Claude (opt-in)
+  --with-guides              copiar las guías globales a DIR
+  --backup-dir DIR           directorio explícito para backups
+  --help                     mostrar esta ayuda
+EOF
 }
 
-# Claude Code conserva la jerarquía multiagente y las skills.
-mkdir -p "$HOME/.claude"
-backup_and_copy "$REPO_DIR/agents" "$HOME/.claude/agents"
-backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.claude/skills/architect-orchestrator"
-backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.claude/skills/supabase-postgres-best-practices"
+die() {
+  printf 'ERROR: %s\n' "$*" >&2
+  exit 2
+}
 
-[ ! -f "$REPO_DIR/settings.json" ] || backup_and_copy "$REPO_DIR/settings.json" "$HOME/.claude/settings.json"
-[ ! -f "$REPO_DIR/settings.local.json" ] || backup_and_copy "$REPO_DIR/settings.local.json" "$HOME/.claude/settings.local.json"
+note() {
+  printf '%s\n' "$*"
+}
 
-if [ -d "$REPO_DIR/hooks" ]; then
-  backup_and_copy "$REPO_DIR/hooks" "$HOME/.claude/hooks"
-  chmod +x "$HOME/.claude/hooks/"*.sh 2>/dev/null || true
+while (($#)); do
+  case "$1" in
+    --apply) MODE="apply" ;;
+    --provider)
+      (($# >= 2)) || die "--provider requiere un valor"
+      PROVIDER="$2"
+      shift
+      ;;
+    --home)
+      (($# >= 2)) || die "--home requiere un valor"
+      USER_HOME="$2"
+      shift
+      ;;
+    --with-settings) WITH_SETTINGS="true" ;;
+    --with-local-settings) WITH_LOCAL_SETTINGS="true" ;;
+    --with-hook) WITH_HOOK="true" ;;
+    --with-guides) WITH_GUIDES="true" ;;
+    --backup-dir)
+      (($# >= 2)) || die "--backup-dir requiere un valor"
+      BACKUP_ROOT="$2"
+      shift
+      ;;
+    --help|-h) usage; exit 0 ;;
+    *) die "opción desconocida: $1" ;;
+  esac
+  shift
+done
+
+case "$PROVIDER" in
+  all|claude|codex|antigravity) ;;
+  *) die "provider inválido: $PROVIDER" ;;
+esac
+[[ "$WITH_SETTINGS" == "false" || "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || \
+  die "settings solo aplica al provider claude"
+[[ "$WITH_LOCAL_SETTINGS" == "false" || "$WITH_SETTINGS" == "true" ]] || \
+  die "--with-local-settings requiere --with-settings"
+[[ "$WITH_HOOK" == "false" || "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || \
+  die "hook solo aplica al provider claude"
+
+[[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
+[[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
+USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+
+assert_manifest_path() {
+  local path="$1"
+  [[ "$path" != *$'\n'* && "$path" != *$'\r'* ]] || \
+    die "ruta con CR/LF rechazada para manifest"
+}
+
+assert_no_symlink_components() {
+  local current="$1"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    [[ ! -L "$current" ]] || die "componente symlink rechazado: $current"
+    current="$(dirname -- "$current")"
+  done
+}
+
+assert_safe_directory_path() {
+  local current="$1"
+  assert_no_symlink_components "$current"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    if [[ -e "$current" || -L "$current" ]]; then
+      [[ -d "$current" && ! -L "$current" ]] || \
+        die "componente existente no es un directorio seguro: $current"
+    fi
+    current="$(dirname -- "$current")"
+  done
+}
+
+create_manifest() {
+  local path="$1"
+  assert_manifest_path "$path"
+  assert_no_symlink_components "$path"
+  [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
+  (umask 077; set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+}
+
+declare -A BACKED_UP=()
+
+assert_safe_source() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  [[ -e "$path" ]] || die "fuente ausente: $path"
+}
+
+assert_safe_destination() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  assert_safe_directory_path "$(dirname -- "$path")"
+}
+
+backup_existing() {
+  local dst="$1"
+  local rel="$2"
+  assert_manifest_path "$dst"
+  [[ -e "$dst" || -L "$dst" ]] || return 0
+  assert_safe_destination "$dst"
+  [[ -f "$dst" ]] || die "destino existente no es un archivo regular: $dst"
+  [[ -n "${BACKED_UP[$dst]+yes}" ]] && return 0
+  BACKED_UP["$dst"]=1
+  local backup_path="$BACKUP_ROOT/$rel"
+  assert_manifest_path "$backup_path"
+  assert_no_symlink_components "$backup_path"
+  [[ ! -e "$backup_path" && ! -L "$backup_path" ]] || die "destino de backup ya existe: $backup_path"
+  local original_mode
+  original_mode="$(stat -c '%a' -- "$dst")"
+  (umask 077; mkdir -p "$(dirname "$backup_path")")
+  (umask 077; cp --preserve=timestamps -- "$dst" "$backup_path")
+  chmod 0600 "$backup_path"
+  printf 'backup path=%s destination=%s original_mode=%s original_sha256=%s backup_sha256=%s\n' \
+    "$backup_path" "$dst" "$original_mode" "$(sha256sum -- "$dst" | awk '{print $1}')" \
+    "$(sha256sum -- "$backup_path" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
+}
+
+copy_file() {
+  local src="$1"
+  local dst="$2"
+  local rel="$3"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
+  assert_safe_source "$src"
+  [[ -f "$src" ]] || die "solo se copian archivos regulares: $src"
+  assert_safe_destination "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
+  if [[ "$MODE" == "plan" ]]; then
+    note "plan: $src -> $dst"
+    return 0
+  fi
+  local before_state="absent"
+  [[ -e "$dst" ]] && before_state="present"
+  local source_hash
+  source_hash="$(sha256sum -- "$src" | awk '{print $1}')"
+  backup_existing "$dst" "$rel"
+  mkdir -p "$(dirname "$dst")"
+  local tmp
+  tmp="$(mktemp "$(dirname "$dst")/.agent-harness-copy.XXXXXX")"
+  cp --preserve=mode,timestamps -- "$src" "$tmp"
+  mv -T -- "$tmp" "$dst"
+  printf 'copy source=%s destination=%s before_state=%s source_sha256=%s backup=%s destination_sha256=%s\n' \
+    "$src" "$dst" "$before_state" "$source_hash" \
+    "$([[ "$before_state" == "present" ]] && printf '%s' "$BACKUP_ROOT/$rel" || printf '%s' none)" \
+    "$(sha256sum -- "$dst" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
+  note "instalado: $dst"
+}
+
+copy_tree() {
+  local src_root="$1"
+  local dst_root="$2"
+  local rel_prefix="$3"
+  assert_safe_source "$src_root"
+  [[ -d "$src_root" ]] || die "fuente no es directorio: $src_root"
+  local symlink_path
+  if ! symlink_path="$(find -P "$src_root" -type l -print -quit)"; then
+    die "no se pudo inspeccionar symlinks de la fuente: $src_root"
+  fi
+  [[ -z "$symlink_path" ]] || die "la fuente contiene symlinks y se rechaza: $src_root"
+  local file_list
+  file_list="$(mktemp /tmp/agent-harness-install-find.XXXXXX)"
+  if ! find -P "$src_root" -type f -print0 > "$file_list"; then
+    rm -f -- "$file_list"
+    die "no se pudo enumerar completamente la fuente: $src_root"
+  fi
+  while IFS= read -r -d '' src; do
+    local rel="${src#"$src_root"/}"
+    copy_file "$src" "$dst_root/$rel" "$rel_prefix/$rel"
+  done < "$file_list"
+  rm -f -- "$file_list"
+}
+
+copy_shared_skills() {
+  local provider="$1"
+  local target="$2"
+  copy_tree "$REPO_DIR/skills" "$target/skills" "$provider/skills"
+  copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md" "${provider}/skills/task-router/SKILL.md"
+}
+
+preflight_copy_file() {
+  local src="$1"
+  local dst="$2"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
+  assert_safe_source "$src"
+  [[ -f "$src" ]] || die "solo se copian archivos regulares: $src"
+  assert_safe_destination "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
+}
+
+preflight_copy_tree() {
+  local src_root="$1"
+  local dst_root="$2"
+  assert_safe_source "$src_root"
+  [[ -d "$src_root" ]] || die "fuente no es directorio: $src_root"
+
+  local -a source_symlinks=()
+  find -P "$src_root" -type l -print0 > /dev/null || \
+    die "no se pudo inspeccionar symlinks de la fuente: $src_root"
+  mapfile -d '' -n 1 source_symlinks < <(find -P "$src_root" -type l -print0)
+  ((${#source_symlinks[@]} == 0)) || \
+    die "la fuente contiene symlinks y se rechaza: $src_root"
+
+  local -a source_files=()
+  find -P "$src_root" -type f -print0 > /dev/null || \
+    die "no se pudo enumerar completamente la fuente: $src_root"
+  mapfile -d '' source_files < <(find -P "$src_root" -type f -print0)
+  local src
+  for src in "${source_files[@]}"; do
+    local rel="${src#"$src_root"/}"
+    preflight_copy_file "$src" "$dst_root/$rel"
+  done
+}
+
+preflight_shared_skills() {
+  local target="$1"
+  preflight_copy_tree "$REPO_DIR/skills" "$target/skills"
+  preflight_copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md"
+}
+
+preflight_install() {
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
+    preflight_copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents"
+    preflight_shared_skills "$USER_HOME/.claude"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
+    preflight_shared_skills "$USER_HOME/.codex"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
+    preflight_shared_skills "$USER_HOME/.agents"
+  fi
+  if [[ "$WITH_SETTINGS" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json"
+  fi
+  if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json"
+  fi
+  if [[ "$WITH_HOOK" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/hooks/precompact-memory.sh" "$USER_HOME/.claude/hooks/precompact-memory.sh"
+  fi
+  if [[ "$WITH_GUIDES" == "true" ]]; then
+    local -a guides=()
+    case "$PROVIDER" in
+      claude) guides=(AGENTS.md CLAUDE.md) ;;
+      codex) guides=(AGENTS.md CODEX.md) ;;
+      antigravity) guides=(AGENTS.md) ;;
+      all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+    esac
+    local guide
+    for guide in "${guides[@]}"; do
+      [[ -f "$REPO_DIR/$guide" ]] || continue
+      preflight_copy_file "$REPO_DIR/$guide" "$USER_HOME/$guide"
+    done
+  fi
+}
+
+preflight_install
+
+if [[ "$MODE" == "plan" ]]; then
+  note "MODO PLAN: no se escribirán archivos. Usa --apply para aplicar."
+else
+  if [[ -z "$BACKUP_ROOT" ]]; then
+    BACKUP_ROOT="$USER_HOME/backups/agent-harness-pre-install-$(date +%Y%m%d-%H%M%S)"
+  fi
+  assert_manifest_path "$REPO_DIR"
+  assert_manifest_path "$BACKUP_ROOT"
+  assert_safe_directory_path "$BACKUP_ROOT"
+  [[ ! -e "$BACKUP_ROOT" && ! -L "$BACKUP_ROOT" ]] || \
+    die "la raíz de backup debe ser nueva: $BACKUP_ROOT"
+  manifest_path="$BACKUP_ROOT/manifest.txt"
+  assert_manifest_path "$manifest_path"
+  assert_no_symlink_components "$manifest_path"
+  [[ ! -e "$manifest_path" && ! -L "$manifest_path" ]] || \
+    die "manifest ya existe; se rechaza sobrescribirlo: $manifest_path"
+  (umask 077; mkdir -p "$BACKUP_ROOT")
+  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  chmod 0700 "$BACKUP_ROOT"
+  create_manifest "$manifest_path"
+  note "Backup: $BACKUP_ROOT"
+  {
+    printf 'repo=%s\n' "$REPO_DIR"
+    printf 'provider=%s\n' "$PROVIDER"
+    printf 'date=%s\n' "$(date --iso-8601=seconds)"
+  } >> "$manifest_path"
 fi
 
-# Codex recibe la guía global, workers acotados y skills compartidas. No se
-# instala la jerarquía de agentes de Claude en ~/.codex/agents.
-mkdir -p "$HOME/.codex/agents" "$HOME/.codex/skills"
-for agent_file in "$REPO_DIR/.codex/agents/"*.toml; do
-  [ -f "$agent_file" ] || continue
-  backup_and_copy "$agent_file" "$HOME/.codex/agents/$(basename "$agent_file")"
-done
-backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.codex/skills/architect-orchestrator"
-backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.codex/skills/supabase-postgres-best-practices"
+# Claude conserva los agentes adaptativos y las skills.
+if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
+  note "[claude] agentes adaptativos + skills"
+  copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents" "claude/agents"
+  copy_shared_skills "claude" "$USER_HOME/.claude"
+fi
 
-# Open Skills / Antigravity.
-mkdir -p "$HOME/.agents/skills"
-backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.agents/skills/architect-orchestrator"
-backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.agents/skills/supabase-postgres-best-practices"
+# Codex recibe la guía global y skills bajo demanda; no se impone la jerarquía
+# de Claude en ~/.codex/agents. Los archivos antiguos no se eliminan.
+if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
+  note "[codex] skills compartidas; sin jerarquía obligatoria"
+  copy_shared_skills "codex" "$USER_HOME/.codex"
+fi
 
-# Guías globales. AGENTS.md es la fuente común; las otras son adaptadores.
-for f in AGENTS.md CLAUDE.md CODEX.md; do
-  [ ! -f "$REPO_DIR/$f" ] || backup_and_copy "$REPO_DIR/$f" "$HOME/$f"
-done
-[ ! -f "$REPO_DIR/AGENTS.md" ] || backup_and_copy "$REPO_DIR/AGENTS.md" "$HOME/.codex/AGENTS.md"
+# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; no se
+# presupone un wrapper ni un runtime específico adicional.
+if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
+  note "[antigravity] Open Skills globales en ~/.agents/skills"
+  copy_tree "$REPO_DIR/skills" "$USER_HOME/.agents/skills" "antigravity/skills"
+  copy_file "$REPO_DIR/router/SKILL.md" "$USER_HOME/.agents/skills/task-router/SKILL.md" "antigravity/skills/task-router/SKILL.md"
+fi
 
-cat <<'EOF'
+if [[ "$WITH_SETTINGS" == "true" ]]; then
+  note "ADVERTENCIA: settings.json puede activar hooks/configuración global; revisa el backup y el diff."
+  copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json" "claude/settings.json"
+fi
+if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
+  note "ADVERTENCIA: settings.local.json es específico de máquina; se copia solo por petición explícita."
+  copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json" "claude/settings.local.json"
+fi
+if [[ "$WITH_HOOK" == "true" ]]; then
+  note "ADVERTENCIA: hook opt-in; no se activa ninguna referencia adicional automáticamente."
+  copy_file "$REPO_DIR/hooks/precompact-memory.sh" "$USER_HOME/.claude/hooks/precompact-memory.sh" "claude/hooks/precompact-memory.sh"
+  if [[ "$MODE" == "apply" ]]; then
+    chmod 0755 "$USER_HOME/.claude/hooks/precompact-memory.sh"
+  fi
+fi
+if [[ "$WITH_GUIDES" == "true" ]]; then
+  case "$PROVIDER" in
+    claude) guides=(AGENTS.md CLAUDE.md) ;;
+    codex) guides=(AGENTS.md CODEX.md) ;;
+    antigravity) guides=(AGENTS.md) ;;
+    all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+  esac
+  for guide in "${guides[@]}"; do
+    [[ -f "$REPO_DIR/$guide" ]] || continue
+    copy_file "$REPO_DIR/$guide" "$USER_HOME/$guide" "guides/$guide"
+  done
+fi
 
-Instalación completada.
-- Claude Code: jerarquía multiagente + skills.
-- Codex: guía global + workers acotados + skills compartidas, sin jerarquía obligatoria.
-EOF
+if [[ "$MODE" == "plan" ]]; then
+  note "Plan terminado. No se modificó el sistema."
+else
+  note "Instalación aplicada sin eliminar archivos existentes."
+  note "Para deshacer: conserva $BACKUP_ROOT y restaura solo los destinos revisados."
+fi

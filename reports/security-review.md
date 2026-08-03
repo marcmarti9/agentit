@@ -52,6 +52,6 @@ No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es u
 
 - No hay todavía un hook seguro alternativo validado con fixtures de secretos y prompt injection.
 - No hay pruebas de fidelidad de RTK/Headroom/LLMLingua porque no están instalados ni activados.
-- La revisión independiente inicial encontró fallos en separación, symlinks, router e informes; fueron corregidos y deben quedar cubiertos por la auditoría final antes del push.
+- La revisión independiente inicial encontró fallos en separación, symlinks, router e informes; fueron corregidos. La auditoría independiente final sobre `299f2db` aprobó el estado sin hallazgos críticos ni no críticos.
 - La confianza amplia de Antigravity y la URL de proxy no disponible siguen siendo decisiones pendientes; no se cambiaron por riesgo de alterar routing/autenticación.
 - Se realizó una corrección local reversible fuera del repo: backup versionado del `.bashrc`, aliases bypass comentados, `.bashrc` en modo `600` y seis `mcp_auth.json` en modo `600`. No se leyó ni mostró ningún secreto.

@@ -7,7 +7,7 @@ La implementación está en la rama `feature/safe-context-harness-audit` del rep
 ## Etapas
 
 1. **Descubrimiento:** completado; inventario en `reports/inventory.md`.
-2. **Auditoría:** inventario, auditoría local y revisión de los cambios principales completados; la auditoría independiente final sigue siendo el gate antes de publicar la rama.
+2. **Auditoría:** inventario, auditoría local y revisión de los cambios principales completados; la auditoría independiente final aprobó `299f2db` sin hallazgos críticos ni no críticos.
 3. **Backup:** para cada aplicación real, usar `install.sh --apply`, que exige y genera backup/manifiesto/hash. Mantener el commit anterior.
 4. **Baseline provider-neutral:** desplegar solo agentes, skills locales y `task-router` con:
 

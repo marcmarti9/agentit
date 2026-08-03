@@ -1,6 +1,6 @@
 # Recomendaciones integradas
 
-**Estado:** baseline seguro aplicado al HOME; el push permanece bloqueado hasta completar la auditoría de los fixes finales.
+**Estado:** baseline seguro aplicado al HOME; auditoría independiente final aprobada sobre `299f2db`; lista para publicar la rama.
 **Prioridad:** corrección, integridad, seguridad y rollback preceden a contexto y coste.
 
 El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en `eab20ca` (`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`). Se integra como diseño superior al esquema fijo: mantiene nombres por compatibilidad, pero usa single-agent-first, probes, fan-out, pipelines y auditoría solo cuando el beneficio compensa la coordinación.
@@ -73,3 +73,5 @@ La mejora de mayor confianza es progressive disclosure + deduplicación exacta +
 - integración del commit remoto `eab20ca`; no se debe volver a la pirámide fija ni duplicar la arquitectura del portátil.
 
 Se modificó el HOME real solo mediante backups/acciones explícitas descritas en el inventario; no se instaló ningún compresor ni se activó ningún MCP/proxy nuevo.
+
+La auditoría independiente final verificó el commit `299f2db`, los cuatro fixtures de seguridad del instalador/hardening, YAML, tests y árbol limpio; no dejó acciones críticas o no críticas pendientes antes de publicar.

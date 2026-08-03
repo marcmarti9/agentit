@@ -26,6 +26,7 @@
 | Find error propagation | fixture con fuente ilegible | instalación rechazada; no se ignora el error de `find` |
 | NUL-safe MCP paths | fixture con directorio con salto de línea | hardening rechazado sin reinterpretar la ruta |
 | Guide separation | `install.sh --provider codex --with-guides` en sandbox | solo `AGENTS.md` y `CODEX.md` instalados |
+| Auditoría independiente final | HEAD `299f2db`; cuatro fixtures, YAML y árbol git | `APPROVED`; 0 críticos y 0 no críticos |
 | Hardening local | `security/harden-local.sh` sobre HOME real | aliases ausentes; seis MCP confirmados en modo 600; plan no escribió |
 | OmniRoute estado | `curl --max-time 2 http://127.0.0.1:20128/` | no disponible; no se asumió activo |
 
@@ -37,6 +38,5 @@ Durante TDD, dos tests fallaron inicialmente por expresiones regulares singleton
 - comparación de stdout/stderr/exit code de wrappers;
 - pruebas de browser, DB desechable o proxy;
 - carga con cada proveedor real y medición de tokens facturados;
-- auditoría independiente final de la rama después de estos últimos cambios.
 
 No se declara ahorro neto. Las evaluaciones extensivas quedan preparadas en `evaluation-plan.md` y requieren instalaciones aisladas y fixtures.

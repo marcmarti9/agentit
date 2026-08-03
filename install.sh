@@ -37,9 +37,14 @@ if [ -d "$REPO_DIR/hooks" ]; then
   chmod +x "$HOME/.claude/hooks/"*.sh 2>/dev/null || true
 fi
 
-# Codex recibe solo instrucciones y skills compartidas. No se instala la
-# jerarquía de agentes de Claude en ~/.codex/agents por defecto.
-mkdir -p "$HOME/.codex/skills"
+# Codex recibe la guía global, workers acotados y skills compartidas. No se
+# instala la jerarquía de agentes de Claude en ~/.codex/agents.
+mkdir -p "$HOME/.codex/agents" "$HOME/.codex/skills"
+for agent_file in "$REPO_DIR/.codex/agents/"*.toml; do
+  [ -f "$agent_file" ] || continue
+  backup_and_copy "$agent_file" "$HOME/.codex/agents/$(basename "$agent_file")"
+done
+backup_and_copy "$REPO_DIR/skills/architect-orchestrator" "$HOME/.codex/skills/architect-orchestrator"
 backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.codex/skills/supabase-postgres-best-practices"
 
 # Open Skills / Antigravity.
@@ -51,10 +56,11 @@ backup_and_copy "$REPO_DIR/skills/supabase-postgres-best-practices" "$HOME/.agen
 for f in AGENTS.md CLAUDE.md CODEX.md; do
   [ ! -f "$REPO_DIR/$f" ] || backup_and_copy "$REPO_DIR/$f" "$HOME/$f"
 done
+[ ! -f "$REPO_DIR/AGENTS.md" ] || backup_and_copy "$REPO_DIR/AGENTS.md" "$HOME/.codex/AGENTS.md"
 
 cat <<'EOF'
 
 Instalación completada.
 - Claude Code: jerarquía multiagente + skills.
-- Codex: guía global compacta + skills compartidas, sin jerarquía obligatoria.
+- Codex: guía global + workers acotados + skills compartidas, sin jerarquía obligatoria.
 EOF

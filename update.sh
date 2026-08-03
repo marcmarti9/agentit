@@ -25,10 +25,27 @@ fi
 
 # Las guías globales se sincronizan de forma explícita. CODEX.md no se genera
 # desde ~/.codex/agents ni absorbe la configuración de Claude.
-for f in AGENTS.md CLAUDE.md CODEX.md; do
+for f in CLAUDE.md CODEX.md; do
   if [ -f "$HOME/$f" ]; then
     cp "$HOME/$f" "$REPO_DIR/$f"
   fi
 done
+
+if [ -f "$HOME/.codex/AGENTS.md" ]; then
+  cp "$HOME/.codex/AGENTS.md" "$REPO_DIR/AGENTS.md"
+elif [ -f "$HOME/AGENTS.md" ]; then
+  cp "$HOME/AGENTS.md" "$REPO_DIR/AGENTS.md"
+fi
+
+# Solo se sincronizan los perfiles portables declarados por este repo; no se
+# suben perfiles personales ni el config.toml completo de la máquina.
+if [ -d "$HOME/.codex/agents" ]; then
+  mkdir -p "$REPO_DIR/.codex/agents"
+  for f in terra-worker.toml luna-worker.toml; do
+    if [ -f "$HOME/.codex/agents/$f" ]; then
+      cp "$HOME/.codex/agents/$f" "$REPO_DIR/.codex/agents/$f"
+    fi
+  done
+fi
 
 echo "Sincronización completada sin mezclar agentes de Claude y Codex."

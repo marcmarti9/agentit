@@ -5,7 +5,7 @@ description: Classifies a task by risk, complexity, content type, skill budget, 
 
 # Conservative task router
 
-Use the router as a planning aid, not as permission to execute. It is provider-neutral and deliberately does not load skill bodies, rewrite stdout, install hooks, call MCP servers, or reduce an inferred risk level.
+Use the router as a planning aid, not as permission to execute. It is provider-neutral and deliberately does not load skill bodies, rewrite stdout, install hooks, call MCP servers, or reduce an inferred risk level. The default topology is one capable agent; a budget is not an instruction to spawn.
 
 ## Invocation
 
@@ -27,6 +27,10 @@ The JSON result is a proposal. The active provider, project instructions, and ex
 5. Use only exact deduplication by default. Reversible CCR may be considered for RISK_2 large outputs when the original is retained and retrieval is explicit.
 6. For RISK_3 and RISK_4, retrieve original content before a decision if compressed content could influence it. For RISK_4 require backup evidence, dry run where possible, independent review, and a post-operation check.
 7. Do not spawn an agent solely because the budget allows it. Delegation must have a bounded scope and a verification result.
+
+## Adaptive execution
+
+Prefer `direct` for focused or tightly coupled work, `probe` for isolated read-only investigation, `fan_out` only for genuinely independent packages, and `audit` for high-risk independent review. A delegated contract must declare objective, inputs, ownership, output artifact, verifier, stop condition, and escalation boundary. Use one writer per file or contract; parallel writers require isolated branches or worktrees.
 
 ## Provider adapters
 

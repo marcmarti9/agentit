@@ -58,6 +58,20 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertEqual(result["category"], "marketing")
         self.assertEqual(result["skills"], ["marketing-skills"])
 
+    def test_single_agent_is_default_even_for_standard_development(self):
+        result = route_task("Implementa una feature pequeña de perfiles")
+
+        self.assertEqual(result["topology"], "direct")
+        self.assertEqual(result["subagents"]["recommended"], 0)
+        self.assertEqual(result["subagents"]["max"], 0)
+
+    def test_explicit_independent_work_gets_bounded_fan_out_budget(self):
+        result = route_task("Investiga en paralelo dos hipótesis independientes del bug")
+
+        self.assertEqual(result["topology"], "probe")
+        self.assertEqual(result["subagents"]["max"], 3)
+        self.assertTrue(result["subagents"]["requires_justification"])
+
 
 if __name__ == "__main__":
     unittest.main()

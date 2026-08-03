@@ -34,6 +34,29 @@ providers:
       - /home/Marc/.opencode
     status: AVAILABLE_ON_DEMAND
 entries:
+  - id: adaptive-agent-architecture
+    name: "Adaptive loop-and-graph orchestration"
+    kind: architecture
+    category: orchestration
+    provenance: origin-main
+    version: "origin/main@eab20ca"
+    paths:
+      - /home/Marc/agents-config/docs/ADAPTIVE_AGENT_ARCHITECTURE.md
+      - /home/Marc/agents-config/skills/architect-orchestrator/SKILL.md
+    trigger: "task routing, delegation, graph ownership, bounded loops, or independent audit"
+    avoid_when: "focused task with no context-isolation or parallelism benefit"
+    context_cost: low_if_index_only
+    execution_cost: medium_when_delegating
+    depth: adaptive
+    risk: medium_to_high
+    conflicts: ["fixed hierarchy treated as mandatory", "unbounded fan-out"]
+    dependencies: ["provider subagent runtime only when selected"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
   - id: architect-orchestrator
     name: "Custom agent hierarchy"
     kind: skill-and-agents

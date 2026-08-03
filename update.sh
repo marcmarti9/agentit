@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Importa cambios locales seleccionados al repositorio de forma explícita.
-# Por defecto solo muestra el plan y nunca importa settings.local ni secretos.
+# Importa solo componentes canónicos desde un provider; por defecto plan.
+# Nunca importa settings.local, secretos ni directorios arbitrarios.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -64,9 +64,9 @@ done
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
 case "$SOURCE_PROVIDER" in
-  claude) SOURCE_ROOT="$USER_HOME/.claude" ;;
-  codex) SOURCE_ROOT="$USER_HOME/.codex" ;;
-  antigravity) SOURCE_ROOT="$USER_HOME/.gemini/antigravity-cli" ;;
+  claude) SOURCE_ROOT="$USER_HOME/.claude"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
+  codex) SOURCE_ROOT="$USER_HOME/.codex"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
+  antigravity) SOURCE_ROOT="$USER_HOME/.gemini/antigravity-cli"; SOURCE_SKILLS="$USER_HOME/.agents/skills" ;;
   *) die "provider inválido: $SOURCE_PROVIDER" ;;
 esac
 [[ -d "$SOURCE_ROOT" ]] || die "no existe el target del provider: $SOURCE_ROOT"
@@ -121,33 +121,38 @@ import_file() {
   printf 'importado: %s\n' "$dst"
 }
 
-if [[ "$SOURCE_PROVIDER" == "antigravity" ]]; then
-  SOURCE_SKILLS="$USER_HOME/.agents/skills"
-else
-  SOURCE_SKILLS="$SOURCE_ROOT/skills"
+# Allowlist: solo agentes adaptativos de Claude; Codex/Antigravity no son
+# fuentes de la jerarquía. Los archivos ausentes se omiten con evidencia.
+if [[ "$SOURCE_PROVIDER" == "claude" ]]; then
+  for agent in architect auditor orchestrator supervisor worker; do
+    if [[ -f "$SOURCE_ROOT/agents/$agent.md" ]]; then
+      import_file "$SOURCE_ROOT/agents/$agent.md" "$REPO_DIR/agents/$agent.md" "agents/$agent.md"
+    else
+      printf 'skip: agente no instalado: %s\n' "$agent"
+    fi
+  done
 fi
 
-# Allowlist deliberada: solo componentes que pertenecen a este harness.
-for agent in architect auditor orchestrator supervisor worker; do
-  import_file "$SOURCE_ROOT/agents/$agent.md" "$REPO_DIR/agents/$agent.md" "agents/$agent.md"
-done
-for skill in architect-orchestrator supabase-postgres-best-practices task-router; do
+for skill in architect-orchestrator supabase-postgres-best-practices; do
   if [[ -f "$SOURCE_SKILLS/$skill/SKILL.md" ]]; then
-    if [[ "$skill" == "task-router" ]]; then
-      import_file "$SOURCE_SKILLS/$skill/SKILL.md" "$REPO_DIR/router/SKILL.md" "router/SKILL.md"
-    else
-      import_file "$SOURCE_SKILLS/$skill/SKILL.md" "$REPO_DIR/skills/$skill/SKILL.md" "skills/$skill/SKILL.md"
-    fi
+    import_file "$SOURCE_SKILLS/$skill/SKILL.md" "$REPO_DIR/skills/$skill/SKILL.md" "skills/$skill/SKILL.md"
   else
-    printf 'skip: skill no instalada en el provider: %s\n' "$skill"
+    printf 'skip: skill no instalada: %s\n' "$skill"
   fi
 done
+if [[ -f "$SOURCE_SKILLS/task-router/SKILL.md" ]]; then
+  import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/router/SKILL.md" "router/SKILL.md"
+else
+  printf 'skip: task-router no instalado en el provider\n'
+fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then
+  [[ "$SOURCE_PROVIDER" == "claude" ]] || die "settings solo se importa desde Claude"
   printf 'ADVERTENCIA: settings.json puede contener hooks y preferencias de máquina.\n'
   import_file "$SOURCE_ROOT/settings.json" "$REPO_DIR/settings.json" "settings.json"
 fi
 if [[ "$WITH_HOOK" == "true" ]]; then
+  [[ "$SOURCE_PROVIDER" == "claude" ]] || die "hook solo se importa desde Claude"
   import_file "$SOURCE_ROOT/hooks/precompact-memory.sh" "$REPO_DIR/hooks/precompact-memory.sh" "hooks/precompact-memory.sh"
 fi
 if [[ "$WITH_GUIDES" == "true" ]]; then

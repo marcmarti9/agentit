@@ -144,6 +144,44 @@ def _skills(text: str, category: str, risk: str) -> list[str]:
     return list(dict.fromkeys(selected))
 
 
+def _topology(text: str, risk: str) -> str:
+    """Choose a minimal execution shape; risk alone never creates agents."""
+    if _matches(
+        text,
+        (r"probe|investiga|reproduce|localiza|trace|root cause|causa raíz",),
+    ):
+        return "probe"
+    if _matches(
+        text,
+        (
+            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
+            r"multidomain|multidominio|separate packages|paquetes separados",
+        ),
+    ):
+        return "fan_out"
+    if risk in {"RISK_3", "RISK_4"}:
+        return "audit"
+    return "direct"
+
+
+def _subagent_budget(text: str, risk: str) -> dict[str, Any]:
+    """Return a budget, not a command to spawn agents."""
+    explicit_delegation = _matches(
+        text,
+        (
+            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
+            r"multidomain|multidominio|separate packages|paquetes separados",
+        ),
+    )
+    if not explicit_delegation or risk in {"RISK_0", "RISK_1"}:
+        maximum = 0
+    elif risk == "RISK_2":
+        maximum = 3
+    else:
+        maximum = 5
+    return {"recommended": 0, "max": maximum, "requires_justification": maximum > 0}
+
+
 def route_task(prompt: str, explicit_risk: str | None = None) -> dict[str, Any]:
     text = prompt.strip()
     inferred, reasons = _infer_risk(text.lower())
@@ -217,7 +255,8 @@ def route_task(prompt: str, explicit_risk: str | None = None) -> dict[str, Any]:
         "skills": _skills(text, category, risk),
         "output_profile": output_profile,
         "compression": compression,
-        "subagents": {"max": [0, 0, 2, 4, 5][RISK_ORDER[risk]]},
+        "topology": _topology(text.lower(), risk),
+        "subagents": _subagent_budget(text.lower(), risk),
         "verification": verification,
         "reversible": True,
         "recovery": "retrieve originals before RISK_3/RISK_4 actions" if risk in {"RISK_3", "RISK_4"} else "not needed",

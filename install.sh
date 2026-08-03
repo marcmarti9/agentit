@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# Despliegue conservador del harness para Claude Code, Codex y Antigravity.
-#
-# Por defecto solo muestra el plan. Para escribir en el sistema hay que usar
-# --apply. Nunca elimina archivos existentes; crea backup y reemplaza archivos
-# de forma individual. Settings, guías globales y hooks son opt-in.
+# Despliegue reversible y separado por proveedor.
+# Por defecto solo muestra el plan. --apply es obligatorio para escribir.
+# Nunca elimina archivos existentes; crea backup y reemplaza archivos uno a uno.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -27,8 +25,8 @@ Por defecto no modifica nada y muestra el plan.
   --home DIR                 raíz de usuario alternativa para pruebas
   --with-settings            copiar settings.json de Claude (revisar antes)
   --with-local-settings      copiar settings.local.json (no recomendado)
-  --with-hook                copiar hooks/precompact-memory.sh (opt-in)
-  --with-guides              copiar AGENTS.md, CLAUDE.md y CODEX.md a DIR
+  --with-hook                copiar el hook de Claude (opt-in)
+  --with-guides              copiar las guías globales a DIR
   --backup-dir DIR           directorio explícito para backups
   --help                     mostrar esta ayuda
 EOF
@@ -156,25 +154,33 @@ copy_tree() {
   done < <(find -P "$src_root" -type f -print0 | sort -z)
 }
 
-install_provider() {
+copy_shared_skills() {
   local provider="$1"
-  local root="$2"
-  note "[$provider] target: $root"
-  copy_tree "$REPO_DIR/agents" "$root/agents" "$provider/agents"
-  copy_tree "$REPO_DIR/skills" "$root/skills" "$provider/skills"
-  copy_file "$REPO_DIR/router/SKILL.md" "$root/skills/task-router/SKILL.md" "${provider}/skills/task-router/SKILL.md"
+  local target="$2"
+  copy_tree "$REPO_DIR/skills" "$target/skills" "$provider/skills"
+  copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md" "${provider}/skills/task-router/SKILL.md"
 }
 
+# Claude conserva los agentes adaptativos y las skills.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
-  install_provider "claude" "$USER_HOME/.claude"
+  note "[claude] agentes adaptativos + skills"
+  copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents" "claude/agents"
+  copy_shared_skills "claude" "$USER_HOME/.claude"
 fi
+
+# Codex recibe la guía global y skills bajo demanda; no se impone la jerarquía
+# de Claude en ~/.codex/agents. Los archivos antiguos no se eliminan.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
-  install_provider "codex" "$USER_HOME/.codex"
+  note "[codex] skills compartidas; sin jerarquía obligatoria"
+  copy_shared_skills "codex" "$USER_HOME/.codex"
 fi
+
+# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills. El wrapper
+# local observado es agy; no se presupone un runtime específico adicional.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-  install_provider "antigravity" "$USER_HOME/.gemini/antigravity-cli"
-  copy_tree "$REPO_DIR/skills" "$USER_HOME/.agents/skills" "antigravity/generic-skills"
-  copy_file "$REPO_DIR/router/SKILL.md" "$USER_HOME/.agents/skills/task-router/SKILL.md" "antigravity/generic-skills/task-router/SKILL.md"
+  note "[antigravity] Open Skills globales en ~/.agents/skills"
+  copy_tree "$REPO_DIR/skills" "$USER_HOME/.agents/skills" "antigravity/skills"
+  copy_file "$REPO_DIR/router/SKILL.md" "$USER_HOME/.agents/skills/task-router/SKILL.md" "antigravity/skills/task-router/SKILL.md"
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then

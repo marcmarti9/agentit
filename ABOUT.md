@@ -1,6 +1,6 @@
 # About Agentit
 
-> **Agentit is a portable, provider-neutral harness for safe AI coding-agent orchestration, skill routing, and configuration management.**
+> **Agentit is a portable, provider-neutral meta-harness for safe AI coding-agent orchestration, skill routing, persistent context management, and ecosystem tool incubation.**
 
 ---
 
@@ -18,30 +18,36 @@ In the modern AI software engineering ecosystem, most agent frameworks default t
 
 ---
 
-## 🛠️ The Three Engineering Layers
+## 🛠️ The Four Engineering Layers
 
-Agentit structures agent orchestration across three distinct, complementary layers:
+Agentit structures agent orchestration across four distinct, complementary layers:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Layer 1: Harness & Context                    │
+│                    Layer 1: Harness & Policy                     │
 │   (Permissions, Environment Isolation, Tools, Skills Registry)  │
 └────────────────────────────────┬────────────────────────────────┘
                                  │
 ┌────────────────────────────────┴────────────────────────────────┐
-│                    Layer 2: Local Bounded Loops                 │
-│   (Observable Goal ──► Action ──► Evidence ──► Verification)    │
+│                   Layer 2: Native Context Engines               │
+│   (Tool Filtering, Artifact References & CCR, Session Dedup)    │
 └────────────────────────────────┬────────────────────────────────┘
                                  │
 ┌────────────────────────────────┴────────────────────────────────┐
-│                    Layer 3: Directed Graphs (DAG)               │
+│                    Layer 3: Directed Topologies                 │
 │   (Direct ── Probe ── Fan-Out ── Pipeline ── Writer/Reviewers)  │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                  Layer 4: Scout & Incubator Pipeline            │
+│   (Ecosystem Ingestion, Candidate Evaluation, Promotion Gates)  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Layer 1: Harness & Context Engineering**: Controls environment permissions, git worktree isolation, tool availability, and progressive disclosure of modular skills.
-2. **Layer 2: Local Bounded Loops**: Defines how each agent acts, gathers empirical evidence, verifies changes against automated test suites, and halts upon completion or single-retry limits.
-3. **Layer 3: Graph Engineering (DAG)**: Connects multiple bounded loops in deterministic acyclic graphs for parallel, non-overlapping work units.
+1. **Layer 1: Harness & Policy**: Controls environment permissions, git worktree isolation, tool availability, and progressive disclosure of modular skills via bounded profiles.
+2. **Layer 2: Native Context Engines**: Operates format-aware tool-output filtering (`tool_filter.py`), exact artifact archiving with SHA-256 sidecars (`artifact_ref.py`), and cross-process turn deduplication (`dedup.py`).
+3. **Layer 3: Directed Topologies**: Connects multiple bounded loops in deterministic acyclic graphs for parallel, non-overlapping work units.
+4. **Layer 4: Scout & Incubator Pipeline**: Ingests ecosystem tools, papers, repos, and tweets, evaluating them against strict benefit/risk metrics in `incubator/candidates.yaml` before promoting them into core architecture.
 
 ---
 
@@ -60,9 +66,9 @@ Agentit is designed from the ground up to be vendor-neutral. It decouples operat
 
 Agentit is built with a strict **safety-first engineering posture**:
 
-- **Dry-Run by Default**: All management scripts (`install.sh`, `update.sh`, `harden-local.sh`) run in preview mode by default. File modifications occur strictly when passed an explicit `--apply` flag.
-- **SHA-256 Backup Manifests**: Before overwriting or updating files, Agentit creates timestamped, private backup manifests with strict file permissions (`0700` directories, `0600` files).
-- **Symlink Protection**: Scripts reject symlinked source or destination paths to prevent arbitrary file overwrite attacks.
+- **Dry-Run by Default**: All management scripts (`install.sh`, `update.sh`, `harden-local.sh`, `./agentit`) run in preview mode by default. File modifications occur strictly when passed an explicit `--apply` flag.
+- **SHA-256 Sidecar Verification**: Artifact references verify full SHA-256 content checksums against sidecar metadata JSON files (`ref-<hash>.json`) to detect accidental disk corruption or edits.
+- **Symlink Component Protection**: All path operations walk parent directory components (`reject_symlink_components`) to reject symlinks and prevent directory traversal.
 - **Machine Isolation**: Environment secrets and local machine configurations remain isolated in gitignored files (`reports/local/inventory.yaml`, `settings.local.json`). Agentit never collects or stores secret credential values.
 
 ---

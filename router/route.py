@@ -12,6 +12,11 @@ import re
 from pathlib import Path
 from typing import Any
 
+try:
+    import yaml
+except ImportError:  # pragma: no cover - exercised by the CI dependency check
+    yaml = None
+
 
 RISK_ORDER = {f"RISK_{level}": level for level in range(5)}
 CRITICAL_CONTENT = {
@@ -22,6 +27,101 @@ CRITICAL_CONTENT = {
     "secrets",
     "sql",
 }
+DEFAULT_REGISTRY_PATH = Path(__file__).resolve().parents[1] / "registry.yaml"
+KNOWN_REGISTRY_STATES = {
+    "ACTIVE_GLOBAL",
+    "DUPLICATED",
+    "AVAILABLE_ON_DEMAND",
+    "NOT_INSTALLED",
+    "DISABLED",
+    "ARCHIVED",
+    "BROKEN",
+    "SECURITY_REVIEW_REQUIRED",
+    "UNKNOWN",
+}
+AVAILABLE_REGISTRY_STATES = {"ACTIVE_GLOBAL", "DUPLICATED"}
+
+
+class RegistryError(RuntimeError):
+    """Raised when routing metadata is unavailable or unsafe to consume."""
+
+
+def load_registry(registry_path: Path | None = None) -> dict[str, dict[str, Any]]:
+    """Load and validate the portable registry, indexed by unique entry ID."""
+    path = Path(registry_path) if registry_path is not None else DEFAULT_REGISTRY_PATH
+    if yaml is None:
+        raise RegistryError("PyYAML is required to load registry.yaml")
+    try:
+        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise RegistryError(f"cannot read registry {path}: {exc}") from exc
+    except yaml.YAMLError as exc:
+        raise RegistryError(f"invalid YAML in registry {path}: {exc}") from exc
+
+    if not isinstance(raw, dict) or raw.get("schema_version") != 1:
+        raise RegistryError("registry root must be a mapping with schema_version: 1")
+    entries = raw.get("entries")
+    if not isinstance(entries, list):
+        raise RegistryError("registry entries must be a list")
+
+    indexed: dict[str, dict[str, Any]] = {}
+    for position, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise RegistryError(f"registry entry {position} must be a mapping")
+        skill_id = entry.get("id")
+        state = entry.get("state")
+        paths = entry.get("paths")
+        dependencies = entry.get("essential_dependencies", [])
+        required_signals = entry.get("requires_signals_any", [])
+        if not isinstance(skill_id, str) or not skill_id.strip():
+            raise RegistryError(f"registry entry {position} has an invalid id")
+        if skill_id in indexed:
+            raise RegistryError(f"duplicate registry id: {skill_id}")
+        if state not in KNOWN_REGISTRY_STATES:
+            raise RegistryError(f"unknown registry state for {skill_id}: {state!r}")
+        if not isinstance(paths, list) or not all(isinstance(item, str) for item in paths):
+            raise RegistryError(f"registry paths for {skill_id} must be a string list")
+        for template in paths:
+            if not (
+                template == "${HOME}"
+                or template.startswith("${HOME}/")
+                or template == "${REPO_ROOT}"
+                or template.startswith("${REPO_ROOT}/")
+            ):
+                raise RegistryError(
+                    f"registry path for {skill_id} must use ${{HOME}} or ${{REPO_ROOT}}: {template}"
+                )
+            suffix = template.split("/", 1)[1] if "/" in template else ""
+            if ".." in Path(suffix).parts:
+                raise RegistryError(f"registry path for {skill_id} escapes its root: {template}")
+        if not isinstance(dependencies, list) or not all(
+            isinstance(item, str) and item for item in dependencies
+        ):
+            raise RegistryError(
+                f"essential_dependencies for {skill_id} must be an ID list"
+            )
+        if not isinstance(required_signals, list) or not all(
+            isinstance(item, str) and item for item in required_signals
+        ):
+            raise RegistryError(f"requires_signals_any for {skill_id} must be a string list")
+        normalized = dict(entry)
+        normalized["essential_dependencies"] = list(dependencies)
+        indexed[skill_id] = normalized
+    return indexed
+
+
+def resolve_registry_path(template: str, *, registry_path: Path, home: Path) -> Path:
+    """Resolve one validated portable template without general env expansion."""
+    repo_root = registry_path.resolve().parent
+    if template == "${HOME}":
+        return home.resolve()
+    if template.startswith("${HOME}/"):
+        return home.resolve() / template.removeprefix("${HOME}/")
+    if template == "${REPO_ROOT}":
+        return repo_root
+    if template.startswith("${REPO_ROOT}/"):
+        return repo_root / template.removeprefix("${REPO_ROOT}/")
+    raise RegistryError(f"unsupported registry path template: {template}")
 
 
 def _matches(text: str, patterns: tuple[str, ...]) -> bool:
@@ -30,27 +130,78 @@ def _matches(text: str, patterns: tuple[str, ...]) -> bool:
 
 def _infer_risk(text: str) -> tuple[str, list[str]]:
     reasons: list[str] = []
-    destructive = _matches(
+    explanatory = _matches(
+        text,
+        (
+            r"^\s*(explain|explícame|explica|qué es|what is)\b",
+            r"^\s*(describe|review|revisa)\b.{0,80}\b(without changing|sin cambiar|conceptual|policy|política)\b",
+        ),
+    )
+    documentation = _matches(
+        text, (r"^\s*(document|documenta|documentar|añade documentación)\b",)
+    )
+    explicitly_not_requested = _matches(
+        text,
+        (
+            r"^\s*(do not|don't|never)\b.{0,80}\b(restore|delete|drop|chmod|chown|deploy|rotate)\b",
+            r"^\s*(no|nunca)\b.{0,80}\b(restaures?|restaurar|elimines?|eliminar|borres?|borrar|ejecutes?|ejecutar|despliegues?|desplegar|rotes?|rotar)\b",
+        ),
+    )
+    if explanatory:
+        return "RISK_0", ["parece una explicación sin una operación solicitada"]
+    if documentation:
+        return "RISK_1", ["parece documentación sin una operación solicitada"]
+    if explicitly_not_requested:
+        return "RISK_0", ["el texto rechaza explícitamente ejecutar la operación"]
+
+    destructive_action = _matches(
         text,
         (
             r"\b(drop|truncate|destroy|delete|wipe|purge)\b",
-            r"\b(elimina|borrar|destruye|destruir|irreversible|restaura|restaurar)\b",
-            r"data\s*loss|pérdida\s+de\s+datos",
+            r"\b(elimina|eliminar|borra|borrar|destruye|destruir)\b",
+            r"\b(irreversible|sin posibilidad de recuperación)\b",
         ),
     )
-    production = _matches(text, (r"\bprod(?:uction)?\b", r"producción", r"live"))
-    risk_four_signal = _matches(
+    production_action = _matches(
         text,
         (
-            r"\b(backup|backups|restore|restores|restaurar|restaura|restauración)\b",
-            r"copia\s+de\s+seguridad",
-            r"credential|credencial|secret|secreto|api[_ -]?key|password|contraseña",
-            r"critical\s+permission|permisos\s+críticos|chmod|chown|iam|privilegios\s+críticos",
-            r"data\s*loss|pérdida\s+de\s+datos",
+            r"\b(change|modify|deploy|release|run|execute|apply|restore|delete|drop)\b.{0,80}\b(prod(?:uction)?|live)\b",
+            r"\b(haz|hacer|cambia|cambiar|modifica|modificar|despliega|desplegar|ejecuta|ejecutar|aplica|aplicar|restaura|restaurar|elimina|eliminar)\b.{0,80}\bproducción\b",
         ),
     )
-    if production or destructive or risk_four_signal:
-        reasons.append("detecté una señal de producción, irreversibilidad o control crítico")
+    backup_action = _matches(
+        text,
+        (
+            r"\b(restore|restores|restoring|delete|remove|overwrite|create|take)\b.{0,50}\bbackups?\b",
+            r"\b(restaura|restaurar|elimina|eliminar|sobrescribe|sobrescribir|crea|crear|haz)\b.{0,50}\b(backups?|copia(?:s)? de seguridad)\b",
+        ),
+    )
+    credential_action = _matches(
+        text,
+        (
+            r"\b(rotate|revoke|delete|replace|expose|change)\b.{0,50}\b(credentials?|secrets?|api[_ -]?keys?|passwords?)\b",
+            r"\b(rota|rotar|revoca|revocar|elimina|eliminar|reemplaza|reemplazar|expone|cambia|cambiar)\b.{0,50}\b(credenciales?|secretos?|claves? api|contraseñas?)\b",
+        ),
+    )
+    permission_action = _matches(
+        text,
+        (
+            r"\b(run|execute|apply|change)\b.{0,50}\b(chmod|chown|iam|critical permissions?)\b",
+            r"\b(ejecuta|ejecutar|aplica|aplicar|cambia|cambiar)\b.{0,50}\b(chmod|chown|iam|permisos? críticos?)\b",
+        ),
+    )
+    data_loss = _matches(text, (r"data\s*loss|pérdida\s+de\s+datos",))
+    if any(
+        (
+            destructive_action,
+            production_action,
+            backup_action,
+            credential_action,
+            permission_action,
+            data_loss,
+        )
+    ):
+        reasons.append("detecté una acción real irreversible, de producción o de control crítico")
         return "RISK_4", reasons
 
     high_impact = _matches(
@@ -61,10 +212,10 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
             r"pii|personal data|datos personales|secret|secreto|credential|credencial",
             r"migration|migración|deploy|desplieg|infrastructure|infraestructura",
             r"public api|api pública|api contract|contrato de api",
-            r"concurren|race condition|rollback|backup|restore|base de datos|database",
+            r"concurren|race condition|rollback|base de datos|database",
         ),
     )
-    if high_impact or destructive:
+    if high_impact:
         return "RISK_3", reasons + ["detecté impacto en seguridad, persistencia o infraestructura"]
     if _matches(text, (r"explain|explíca|explica|qué es|what is|question|pregunta|brainstorm",)):
         return "RISK_0", ["parece una explicación o conversación sin cambio real"]
@@ -76,6 +227,10 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
 
 
 def _category(text: str, risk: str) -> str:
+    if risk == "RISK_0" and _matches(
+        text, (r"\b(explain|explícame|explica|qué es|what is|question|pregunta)\b",)
+    ):
+        return "explanation"
     patterns = (
         ("marketing", r"marketing|cro|seo|copy|landing|conversion|analytics|analítica|growth"),
         ("design", r"design|diseño|visual|screenshot|captura|ui estética|redesign"),
@@ -125,7 +280,7 @@ def _content_types(text: str) -> list[str]:
     return found or ["unknown"]
 
 
-def _skills(text: str, category: str, risk: str) -> list[str]:
+def _recommended_skill_ids(text: str, category: str, risk: str) -> list[str]:
     selected: list[str] = []
     if risk in {"RISK_3", "RISK_4"}:
         selected.extend(["security-hardening", "architect-orchestrator"])
@@ -133,7 +288,7 @@ def _skills(text: str, category: str, risk: str) -> list[str]:
         selected.append("marketingskills")
         return list(dict.fromkeys(selected))
     if category == "design":
-        selected.append("hallmark")
+        selected.extend(["frontend-ui-engineering", "hallmark"])
         return list(dict.fromkeys(selected))
     if category == "documentation" and _matches(text, (r"public|público|copy|writing|texto",)):
         selected.append("no-ai-slop")
@@ -149,9 +304,105 @@ def _skills(text: str, category: str, risk: str) -> list[str]:
         selected.append("frontend-ui-engineering")
     if _matches(text, (r"context|contexto|token|compresión|compression|memory|memoria",)):
         selected.append("context-engineering")
-    if risk == "RISK_2" and not selected:
-        selected.append("superpowers")
     return list(dict.fromkeys(selected))
+
+
+def _entry_available(
+    skill_id: str,
+    entries: dict[str, dict[str, Any]],
+    *,
+    registry_path: Path,
+    home: Path,
+    resolving: set[str] | None = None,
+) -> bool:
+    entry = entries.get(skill_id)
+    if entry is None:
+        raise RegistryError(f"router candidate is absent from registry: {skill_id}")
+    if entry["state"] not in AVAILABLE_REGISTRY_STATES:
+        return False
+    paths = entry["paths"]
+    if not paths or not any(
+        resolve_registry_path(template, registry_path=registry_path, home=home).exists()
+        for template in paths
+    ):
+        return False
+
+    chain = set() if resolving is None else set(resolving)
+    if skill_id in chain:
+        raise RegistryError(f"essential dependency cycle involving {skill_id}")
+    chain.add(skill_id)
+    for dependency_id in entry["essential_dependencies"]:
+        if dependency_id not in entries:
+            raise RegistryError(
+                f"essential dependency for {skill_id} is absent: {dependency_id}"
+            )
+        if not _entry_available(
+            dependency_id,
+            entries,
+            registry_path=registry_path,
+            home=home,
+            resolving=chain,
+        ):
+            return False
+    return True
+
+
+def _resolve_skill_recommendations(
+    candidates: list[str],
+    entries: dict[str, dict[str, Any]],
+    *,
+    registry_path: Path,
+    home: Path,
+    text: str,
+) -> tuple[list[str], list[str], dict[str, dict[str, Any]]]:
+    available: list[str] = []
+    missing: list[str] = []
+    metadata: dict[str, dict[str, Any]] = {}
+    priority_order = {
+        "core": 0,
+        "on_demand": 1,
+        "specialized": 2,
+        "optional": 3,
+        "experimental": 4,
+        "reference": 5,
+    }
+    ordered_candidates = sorted(
+        candidates,
+        key=lambda skill_id: (
+            priority_order.get(entries.get(skill_id, {}).get("priority"), 99),
+            candidates.index(skill_id),
+        ),
+    )
+    for skill_id in ordered_candidates:
+        entry = entries.get(skill_id)
+        if entry is None:
+            raise RegistryError(f"router candidate is absent from registry: {skill_id}")
+        signals = entry.get("requires_signals_any", [])
+        if signals and not any(
+            re.search(rf"\b{re.escape(signal)}\b", text, re.IGNORECASE)
+            for signal in signals
+        ):
+            continue
+        metadata[skill_id] = {
+            "priority": entry.get("priority"),
+            "context_cost": entry.get("context_cost"),
+            "execution_cost": entry.get("execution_cost"),
+            "conflicts": entry.get("conflicts", []),
+            "trigger": entry.get("trigger"),
+            "avoid_when": entry.get("avoid_when"),
+        }
+        target = (
+            available
+            if _entry_available(
+                skill_id,
+                entries,
+                registry_path=registry_path,
+                home=home,
+            )
+            else missing
+        )
+        target.append(skill_id)
+    return available, missing, metadata
 
 
 def _topology(text: str, risk: str) -> str:
@@ -192,7 +443,18 @@ def _subagent_budget(text: str, risk: str) -> dict[str, Any]:
     return {"recommended": 0, "max": maximum, "requires_justification": maximum > 0}
 
 
-def route_task(prompt: str, explicit_risk: str | None = None) -> dict[str, Any]:
+def route_task(
+    prompt: str,
+    explicit_risk: str | None = None,
+    *,
+    registry_path: Path | None = None,
+    home: Path | None = None,
+) -> dict[str, Any]:
+    resolved_registry_path = (
+        Path(registry_path) if registry_path is not None else DEFAULT_REGISTRY_PATH
+    )
+    resolved_home = Path(home) if home is not None else Path.home()
+    registry_entries = load_registry(resolved_registry_path)
     text = prompt.strip()
     inferred, reasons = _infer_risk(text.lower())
     risk = inferred
@@ -257,12 +519,26 @@ def route_task(prompt: str, explicit_risk: str | None = None) -> dict[str, Any]:
         "dry_run_required": risk == "RISK_4",
         "post_check_required": risk in {"RISK_3", "RISK_4"},
     }
+    (
+        skills_available,
+        skills_recommended_missing,
+        skill_recommendation_metadata,
+    ) = _resolve_skill_recommendations(
+        _recommended_skill_ids(text.lower(), category, risk),
+        registry_entries,
+        registry_path=resolved_registry_path,
+        home=resolved_home,
+        text=text.lower(),
+    )
     return {
         "risk": risk,
         "category": category,
         "complexity": complexity,
         "content_types": content_types,
-        "skills": _skills(text, category, risk),
+        "skills": skills_available,
+        "skills_available": skills_available,
+        "skills_recommended_missing": skills_recommended_missing,
+        "skill_recommendation_metadata": skill_recommendation_metadata,
         "output_profile": output_profile,
         "compression": compression,
         "topology": _topology(text.lower(), risk),
@@ -283,11 +559,22 @@ def main() -> int:
     parser.add_argument("prompt", nargs="*", help="task text")
     parser.add_argument("--risk", choices=sorted(RISK_ORDER), dest="explicit_risk")
     parser.add_argument("--file", type=Path, help="read the task text from a UTF-8 file")
+    parser.add_argument("--registry", type=Path, help="portable registry path")
+    parser.add_argument("--home", type=Path, help="HOME used for bounded path discovery")
     args = parser.parse_args()
     prompt = args.file.read_text(encoding="utf-8") if args.file else " ".join(args.prompt)
     if not prompt.strip():
         parser.error("provide a prompt or --file")
-    print(json.dumps(route_task(prompt, args.explicit_risk), ensure_ascii=False, indent=2, sort_keys=True))
+    try:
+        result = route_task(
+            prompt,
+            args.explicit_risk,
+            registry_path=args.registry,
+            home=args.home,
+        )
+    except RegistryError as exc:
+        parser.error(str(exc))
+    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0
 
 

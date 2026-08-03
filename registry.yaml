@@ -1,0 +1,411 @@
+schema_version: 1
+generated_at: "2026-08-03"
+purpose: "Compact inventory and routing metadata; descriptions are not skill bodies."
+defaults:
+  load_mode: progressive_disclosure
+  compression: disabled_until_selected
+  risk_floor: preserve_inferred_risk
+  unknowns: stop_and_inspect
+providers:
+  - id: codex-cli
+    executable: /home/Marc/.local/bin/codex
+    version: "0.146.0"
+    target_roots:
+      - /home/Marc/.codex
+    status: ACTIVE_GLOBAL
+  - id: claude-code
+    executable: /home/Marc/.local/bin/claude
+    version: "2.1.220"
+    target_roots:
+      - /home/Marc/.claude
+    status: ACTIVE_GLOBAL
+  - id: antigravity-cli
+    executable: /home/Marc/.npm-global/bin/gemini
+    version: "0.47.0"
+    target_roots:
+      - /home/Marc/.gemini/antigravity-cli
+      - /home/Marc/.agents
+    notes: "No standalone antigravity executable was found; Gemini CLI is the installed entrypoint."
+    status: ACTIVE_GLOBAL
+  - id: opencode
+    executable: /home/Marc/.opencode/bin/opencode
+    version: "1.17.20"
+    target_roots:
+      - /home/Marc/.opencode
+    status: AVAILABLE_ON_DEMAND
+entries:
+  - id: architect-orchestrator
+    name: "Custom agent hierarchy"
+    kind: skill-and-agents
+    category: orchestration
+    provenance: local-repository
+    version: "repo@4e6db85"
+    paths:
+      - /home/Marc/agents-config/skills/architect-orchestrator
+      - /home/Marc/.agents/skills/architect-orchestrator
+      - /home/Marc/.claude/skills/architect-orchestrator
+      - /home/Marc/.gemini/antigravity-cli/skills/architect-orchestrator
+    trigger: "multidomain task, explicit delegation, or critical independent review"
+    avoid_when: "trivial or single-line task"
+    context_cost: medium
+    execution_cost: medium
+    depth: deep
+    risk: medium
+    conflicts: ["duplicate orchestration methodologies"]
+    dependencies: []
+    required_tools: ["provider subagents, if delegation is justified"]
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
+  - id: supabase-postgres-best-practices
+    name: "Postgres performance and schema guidance"
+    kind: skill
+    category: database
+    provenance: local-repository
+    version: "repo@4e6db85"
+    paths:
+      - /home/Marc/agents-config/skills/supabase-postgres-best-practices
+      - /home/Marc/.agents/skills/supabase-postgres-best-practices
+      - /home/Marc/.claude/skills/supabase-postgres-best-practices
+      - /home/Marc/.gemini/antigravity-cli/skills/supabase-postgres-best-practices
+    trigger: "Postgres query, schema, index, or database performance work"
+    avoid_when: "non-database work"
+    context_cost: medium
+    execution_cost: low
+    depth: standard
+    risk: high
+    conflicts: ["generic database advice without project evidence"]
+    dependencies: ["Postgres/Supabase context when applicable"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
+  - id: addy-agent-skills
+    name: "Addy Osmani production engineering skills bundle"
+    kind: bundle
+    category: engineering
+    provenance: external-git
+    version: "marketplace@7829ffd90d973b6325f5f12f1b1226dcace74443"
+    paths:
+      - /home/Marc/.claude/plugins/marketplaces/addy-agent-skills
+      - /home/Marc/.agents/skills
+    trigger: "select only the specific lifecycle or engineering skill required"
+    avoid_when: "loading the whole bundle for a trivial task"
+    context_cost: low_to_high_by_skill
+    execution_cost: low_to_medium
+    depth: lite_to_deep
+    risk: medium
+    conflicts: ["superpowers lifecycle overlap", "drifted provider copies"]
+    dependencies: ["provider skill discovery"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: DUPLICATED
+    priority: core
+
+  - id: superpowers
+    name: "Structured development methodology"
+    kind: plugin
+    category: engineering-methodology
+    provenance: external-plugin
+    version: "claude-cache@6.2.0; stale@6.1.1"
+    paths:
+      - /home/Marc/.claude/plugins/cache/claude-plugins-official/superpowers/6.2.0
+      - /home/Marc/.claude/plugins/cache/claude-plugins-official/superpowers/6.1.1
+    trigger: "feature or bug work where explicit design, plan, tests, and review add value"
+    avoid_when: "trivial change or explanation"
+    context_cost: high_when_global
+    execution_cost: medium
+    depth: deep
+    risk: medium
+    conflicts: ["duplicate planning/TDD lifecycle"]
+    dependencies: ["Claude plugin runtime or portable adaptation"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: DUPLICATED
+    priority: on_demand
+
+  - id: pm-skills
+    name: "Product and marketing skills currently installed"
+    kind: bundle
+    category: marketing
+    provenance: external-git
+    version: "marketplace@18468a95"
+    paths:
+      - /home/Marc/.claude/plugins/marketplaces/pm-skills
+      - /home/Marc/.claude/plugins/cache/pm-skills/pm-marketing-growth/2.1.0
+    trigger: "product, growth, or marketing task after checking actual skill fit"
+    avoid_when: "assuming this is coreyhaines31/marketingskills"
+    context_cost: medium
+    execution_cost: low_to_medium
+    depth: standard
+    risk: low
+    conflicts: ["requested marketingskills repository is not installed"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized
+
+  - id: ecc
+    name: "Everything Claude Code"
+    kind: external-repository
+    category: engineering-bundle
+    provenance: not-installed
+    version: "remote-tag-v2.1.0 observed 2026-08-03"
+    paths: []
+    trigger: "evaluate individual components only"
+    avoid_when: "installing the monolith globally without overlap review"
+    context_cost: very_high_if_global
+    execution_cost: medium_to_high
+    depth: deep
+    risk: high
+    conflicts: ["nearly every engineering lifecycle and orchestration bundle"]
+    dependencies: ["upstream review"]
+    required_tools: []
+    compression_applied: none
+    reversibility: medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: marketingskills
+    name: "Corey Haines marketing skills"
+    kind: external-repository
+    category: marketing
+    provenance: not-installed
+    version: "remote-tag-v2.9.1 observed 2026-08-03"
+    paths: []
+    trigger: "CRO, copy, SEO, analytics, or growth task"
+    avoid_when: "generic engineering task"
+    context_cost: medium
+    execution_cost: low
+    depth: specialized
+    risk: low
+    conflicts: ["installed pm-skills overlap must be tested"]
+    dependencies: ["upstream review"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized
+
+  - id: hallmark
+    name: "Visual design audit and implementation guidance"
+    kind: external-repository
+    category: design
+    provenance: not-installed
+    version: "remote-main observed 2026-08-03"
+    paths: []
+    trigger: "visual design, screenshot audit, redesign, or frontend aesthetic work"
+    avoid_when: "backend-only task"
+    context_cost: medium
+    execution_cost: medium
+    depth: specialized
+    risk: low_to_medium
+    conflicts: ["frontend-ui-engineering overlap"]
+    dependencies: ["browser or visual verification when claims depend on rendering"]
+    required_tools: ["browser-testing-with-devtools when browser behavior is in scope"]
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized
+
+  - id: no-ai-slop
+    name: "Public writing cleanup"
+    kind: external-repository
+    category: writing
+    provenance: not-installed
+    version: "remote-tag-v1.0.6 observed 2026-08-03"
+    paths: []
+    trigger: "final review of public-facing prose when the user requests style cleanup"
+    avoid_when: "code, legal text, safety instructions, or factual editing without review"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: low_to_medium
+    conflicts: ["user-requested voice", "meaning-preserving edits"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: optional
+
+  - id: context-engineering
+    name: "Context selection, progressive disclosure, and memory guidance"
+    kind: skill
+    category: context
+    provenance: local-and-external
+    version: "local@installed; upstream-context-engineering@61f38ffc"
+    paths:
+      - /home/Marc/.agents/skills/context-engineering
+      - /home/Marc/.claude/skills/context-engineering
+      - /home/Marc/.gemini/antigravity-cli/skills/context-engineering
+      - /home/Marc/.claude/plugins/marketplaces/addy-agent-skills
+    trigger: "context budget, memory, progressive disclosure, or agent harness design"
+    avoid_when: "ordinary coding task where it adds no decision"
+    context_cost: medium
+    execution_cost: low
+    depth: standard
+    risk: medium
+    conflicts: ["semantic compression without retrieval"]
+    dependencies: ["stable source references"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: DUPLICATED
+    priority: core
+
+  - id: caveman
+    name: "Output concision/compression utility"
+    kind: optimizer
+    category: output
+    provenance: not-installed
+    version: "remote-tag-v1.9.1 observed 2026-08-03"
+    paths: []
+    trigger: "manual or TERSE_SAFE output profile only"
+    avoid_when: "explanations, reviews, errors, or risk >= RISK_2"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: medium
+    conflicts: ["clarity", "provider-native output formatting"]
+    dependencies: ["provider-specific integration review"]
+    required_tools: []
+    compression_applied: none
+    reversibility: medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: rtk
+    name: "Terminal output filtering and command rewriting"
+    kind: optimizer
+    category: tool-output
+    provenance: not-installed
+    version: "remote releases observed 2026-08-03"
+    paths: []
+    trigger: "manual allowlisted commands with raw-output fallback"
+    avoid_when: "pipes, redirects, diffs, errors, SQL, migrations, destructive or ambiguous commands"
+    context_cost: low
+    execution_cost: medium
+    depth: standard
+    risk: high
+    conflicts: ["stdout fidelity", "shell semantics"]
+    dependencies: ["allowlist, exact-output fixtures, recovery path"]
+    required_tools: ["shell wrapper/hook only after opt-in"]
+    compression_applied: none
+    reversibility: medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: headroom
+    name: "Content-aware reversible tool-output routing"
+    kind: optimizer
+    category: context
+    provenance: not-installed
+    version: "remote-tag-v0.9.7 observed 2026-08-03"
+    paths: []
+    trigger: "retrievable large outputs in an isolated evaluation profile"
+    avoid_when: "risk >= RISK_3, exact code/SQL/diff/error content, or unavailable retrieval"
+    context_cost: medium
+    execution_cost: medium
+    depth: deep
+    risk: medium_to_high
+    conflicts: ["retrieval latency", "provider integration"]
+    dependencies: ["local CCR store, stable IDs, raw-output retention"]
+    required_tools: ["MCP/proxy/wrapper depending on integration"]
+    compression_applied: none
+    reversibility: high_if_configured_correctly
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: context-compress
+    name: "Instruction/document compression utility"
+    kind: optimizer
+    category: context
+    provenance: not-installed
+    version: "remote-main@be17aef observed 2026-08-03"
+    paths: []
+    trigger: "offline experiments on non-critical prose"
+    avoid_when: "code, SQL, schemas, errors, security text, or auto-hooks"
+    context_cost: medium
+    execution_cost: medium
+    depth: standard
+    risk: medium
+    conflicts: ["negations", "exact wording"]
+    dependencies: ["fixture-based semantic/fidelity checks"]
+    required_tools: []
+    compression_applied: none
+    reversibility: medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: tokless
+    name: "Unified context optimization pipeline"
+    kind: optimizer
+    category: context
+    provenance: not-installed
+    version: "remote-tag-v0.3.1 observed 2026-08-03"
+    paths: []
+    trigger: "research only until installer and integration are independently reviewed"
+    avoid_when: "global install, unknown hooks, or overlapping wrappers"
+    context_cost: medium
+    execution_cost: high
+    depth: deep
+    risk: high
+    conflicts: ["RTK/Caveman/Headroom overlap", "supply chain"]
+    dependencies: ["manual source review"]
+    required_tools: []
+    compression_applied: none
+    reversibility: low_to_medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: llmlingua-2
+    name: "Semantic prompt compression research component"
+    kind: optimizer
+    category: semantic-compression
+    provenance: not-installed
+    version: "remote@v0.2.2 observed 2026-08-03"
+    paths: ["/home/Marc/.nvm/versions/node/v22.23.0/lib/node_modules/omniroute/node_modules/@atjsh/llmlingua-2"]
+    trigger: "offline prose experiments with original retained"
+    avoid_when: "code, commands, SQL, schemas, diffs, errors, numbers, negations, or risk >= RISK_2"
+    context_cost: high
+    execution_cost: high
+    depth: deep
+    risk: high
+    conflicts: ["exact fidelity", "latency", "model/runtime dependency"]
+    dependencies: ["local model/runtime and adversarial fixtures"]
+    required_tools: ["Python or Node integration, depending on adapter"]
+    compression_applied: none
+    reversibility: high_only_with_original
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
+
+  - id: omniroute-compression
+    name: "Installed OmniRoute compression catalog"
+    kind: local-runtime-component
+    category: router
+    provenance: installed-node-package
+    version: "3.8.48"
+    paths:
+      - /home/Marc/.nvm/versions/node/v22.23.0/lib/node_modules/omniroute
+    trigger: "inspection/reference only; not enabled by this harness"
+    avoid_when: "assuming localhost:20128 is running or treating vendor savings as measured"
+    context_cost: unknown
+    execution_cost: unknown
+    depth: deep
+    risk: high
+    conflicts: ["proxy ownership", "duplicate interceptors"]
+    dependencies: ["OmniRoute process and local configuration"]
+    required_tools: ["localhost:20128 only if verified live"]
+    compression_applied: none
+    reversibility: unknown
+    state: UNKNOWN
+    priority: reference

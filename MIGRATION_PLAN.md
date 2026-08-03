@@ -1,35 +1,30 @@
 # Plan de migración segura
 
-## Estado actual
+## Estado
 
-La implementación está en la rama `feature/safe-context-harness-audit` del repositorio `agents-config`. Los commits son rollbackables. El baseline se aplicó al HOME real el 2026-08-03 con backup en `/home/Marc/backups/agent-harness-pre-install-20260803-160912`.
+Esta corrección actualiza el repositorio y genera un inventario local ignorado. No ejecutó `install.sh --apply`, `update.sh --apply` ni `security/harden-local.sh --apply` sobre el HOME real, y no constituye aprobación para producción.
+
+## Requisitos
+
+- Linux con Bash 4+ y utilidades GNU (`coreutils`, `findutils`);
+- Python 3 con PyYAML para router, catálogo e inventario;
+- destino, provider y backup revisados antes de aplicar;
+- revisión humana para RISK_3/RISK_4 y cualquier operación crítica.
 
 ## Etapas
 
-1. **Descubrimiento:** completado; inventario en `reports/inventory.md`.
-2. **Auditoría:** inventario, auditoría local y revisión de los cambios principales completados; la auditoría independiente final aprobó `299f2db` sin hallazgos críticos ni no críticos.
-3. **Backup:** para cada aplicación real, usar `install.sh --apply`, que exige y genera backup/manifiesto/hash. Mantener el commit anterior.
-4. **Baseline provider-neutral:** desplegar solo agentes, skills locales y `task-router` con:
-
-   ```bash
-   bash install.sh --provider all
-   bash install.sh --apply --provider all
-   ```
-
-   El primer comando es plan; revisar rutas. El segundo no copia settings, guías ni hook.
-
-5. **Provider check:** comprobar discovery en Codex, Claude y Gemini/Antigravity; verificar que cada skill apunta al hash esperado.
-6. **Settings:** el `settings.json` versionado es el baseline seguro (aviso peligroso, sin auto-upload, retención de 90 días y sin hook) y ya se aplicó en esta máquina con backup. En otra máquina, aplicarlo con `--with-settings` solo después de revisar el backup y el diff.
-7. **Hook:** mantener desactivado hasta tener scrub, límites de bytes, escritura atómica, procedencia y tests adversariales.
-8. **Optimización:** probar únicamente perfiles aislados; activar Caveman solo para output `TERSE_SAFE` si la medición neta lo justifica.
-9. **Compresión de herramientas:** RTK/Headroom/LLMLingua nunca se activan globalmente en la primera migración.
-10. **Evaluación:** ejecutar Fase A y luego una muestra de Fase B/C; guardar resultados, no claims.
+1. **Inventario:** ejecutar `python3 -m router.inventory`; revisar `reports/local/inventory.yaml` sin versionarlo. Las versiones pueden quedar sin observar.
+2. **Validación local:** ejecutar las suites y comprobaciones listadas en `evals/results.md`; comprobar GitHub Actions por separado cuando se publique la rama.
+3. **Plan:** ejecutar `bash install.sh --provider <provider>` sin `--apply` y revisar todas las rutas.
+4. **Backup:** elegir un directorio privado y confirmar que no existe ni contiene symlinks. El script crea raíz `0700`, copias `0600` y registra hashes más `original_mode`.
+5. **Aplicación:** usar `--apply` solo tras la revisión. Settings, guías y hook siguen siendo opt-in.
+6. **Post-check:** comparar destinos con el manifiesto y verificar discovery del provider sin asumir que el catálogo demuestra disponibilidad.
+7. **Rollback:** ensayar [`ROLLBACK.md`](ROLLBACK.md). Un destino nuevo solo puede eliminarse si conserva exactamente el hash registrado.
 
 ## Restricciones
 
-- no instalar upstream automáticamente;
-- no ejecutar `curl | bash`;
-- no activar proxy/MCP/hook global;
+- no instalar upstream automáticamente ni ejecutar `curl | bash`;
+- no activar proxy, MCP, hook o compresión global sin revisión independiente;
 - no copiar `settings.local.json` salvo petición explícita;
-- no tocar proyectos, bases de datos ni producción;
-- si un destino es symlink o ambiguo, detenerse.
+- no tocar proyectos, bases de datos ni producción durante la evaluación;
+- detenerse ante symlinks, rutas ambiguas, hash distinto o backup no verificable.

@@ -1,36 +1,34 @@
 # Rollback
 
-## Rollback del código
+## Compatibilidad
 
-La rama conserva commits pequeños y reversibles. Antes de integrar, revisar:
+Los scripts y el formato de evidencia están dirigidos a Linux con Bash 4+ y utilidades GNU. No automatices este procedimiento con un parser no revisado ni trates el manifiesto como código shell.
 
-```bash
-git log --oneline --decorate -8
-git diff main...HEAD
-git status --short
-```
+## Cambios del repositorio
 
-Para abandonar la integración local, cambiar a otra rama o eliminar la rama solo después de confirmar que no contiene cambios del usuario. No se debe usar `git reset --hard` sobre trabajo no revisado.
+Antes de descartar cambios, revisa `git status`, `git diff` y el historial. Conserva trabajo del usuario y evita `git reset --hard`; cambiar o eliminar una rama requiere confirmar primero que no contiene cambios necesarios.
 
-## Rollback de una instalación
+## Evidencia de instalación o actualización
 
-`install.sh --apply` crea un directorio `backups/agent-harness-pre-install-<timestamp>` o el indicado por `--backup-dir`, guarda destinos reemplazados, `manifest.txt` y SHA-256. El instalador no elimina archivos extra, por lo que el rollback consiste en restaurar únicamente los destinos listados en el manifiesto, después de comprobar que siguen perteneciendo a esta instalación.
+Con `--apply`, `install.sh` y `update.sh` crean una raíz de backup modo `0700`. Cada copia de un archivo preexistente queda modo `0600` y el manifiesto registra:
 
-Procedimiento seguro:
+- `backup_sha256` y `original_sha256`;
+- `original_mode`, que debe reaplicarse al restaurar;
+- por cada copia, `before_state` y `destination_sha256`.
 
-1. detener el uso del provider afectado;
-2. revisar el manifiesto y los hashes;
-3. comparar backup, destino y fuente actual;
-4. restaurar archivos uno por uno a un directorio temporal;
-5. comprobar permisos y contenido;
-6. moverlos al destino solo después de la revisión;
-7. verificar discovery del provider y ejecutar una prueba mínima.
+## Procedimiento por archivo
 
-No restaurar automáticamente settings, hooks, credenciales ni archivos que hayan cambiado posteriormente. No se usa una eliminación recursiva como mecanismo de rollback.
+1. Detén el provider afectado y revisa manualmente el destino exacto y su línea de manifiesto.
+2. Rechaza symlinks, archivos no regulares, rutas ambiguas o hashes que no coincidan.
+3. Si `before_state=present`, verifica `backup_sha256` y que el destino actual conserva `destination_sha256`. Restaura primero a un temporal, mueve el archivo individualmente y aplica `original_mode`. Si el destino cambió después de la instalación, no lo sobrescribas: conserva ambos y resuelve el conflicto manualmente.
+4. Si `before_state=absent`, no existe backup que restaurar. Elimina únicamente ese archivo si sigue siendo regular, no es symlink y su SHA-256 actual coincide exactamente con `destination_sha256`. Si difiere, consérvalo para revisión.
+5. No elimines directorios de forma recursiva ni archivos extra; el manifiesto no demuestra ownership de directorios.
+6. Verifica permisos, hashes y discovery del provider después de cada restauración o retirada.
 
-## Rollback de experimentos
+## Hardening local
 
-- Caveman/RTK/Headroom/LLMLingua: apagar el perfil/adaptador y usar stdout/original local.
-- CCR: conservar el almacén y recuperar por ID; si la recuperación falla, detener la acción y no improvisar.
-- Hook de memoria: deshabilitar la entrada `PreCompact`, preservar las memorias para revisión y volver a la última configuración conocida.
-- MCP/proxy: quitar solo la entrada explícita tras capturar configuración y logs; no borrar caches de terceros.
+`security/harden-local.sh` conserva copias privadas y `original_mode`, pero los cambios de aliases y permisos requieren revisión manual antes de restaurar. No elimines `.bashrc`, credenciales, settings, hooks o caches como mecanismo de rollback.
+
+## Experimentos y servicios
+
+Desactiva solo la entrada explícita de un hook, proxy, MCP o adaptador después de preservar configuración y logs. Si el original no puede recuperarse o el hash no coincide, detén el rollback y solicita revisión humana.

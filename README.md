@@ -1,6 +1,6 @@
 # agents-config
 
-Configuración multi-proveedor sincronizada entre máquinas, con routing adaptativo, progressive disclosure y despliegue reversible.
+Configuración multi-proveedor con routing adaptativo, progressive disclosure, inventario local y despliegue reversible.
 
 ## Principio principal
 
@@ -33,8 +33,9 @@ La decisión completa está en [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAP
 - `CODEX.md`: adaptación mínima para Codex.
 - `agents/`: capacidades multiagente para Claude Code.
 - `skills/`: habilidades reutilizables y documentación bajo demanda.
-- `router/`, `registry.yaml` y `policies/`: selección de contexto, riesgo y compresión segura.
-- `reports/` y `evals/`: inventario, auditoría y evaluaciones reproducibles.
+- `router/` y `policies/`: clasificación heurística y planificación; nunca ejecutan la tarea.
+- `registry.yaml`: política operativa portable, con rutas `${HOME}`/`${REPO_ROOT}` y sin observaciones de una máquina.
+- `reports/` y `evals/`: método de inventario, revisiones y evaluaciones reproducibles.
 - `security/harden-local.sh`: hardening reversible de aliases bypass y permisos MCP.
 - `settings*.json` y `hooks/`: configuración de Claude Code.
 - `install.sh`: instala cada proveedor de forma aislada.
@@ -42,13 +43,15 @@ La decisión completa está en [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAP
 
 ## Instalar
 
+Los scripts shell están dirigidos a Linux con Bash 4+ y utilidades GNU (`coreutils` y `findutils`). El router y el inventario requieren Python 3 y PyYAML.
+
 ```bash
 git clone https://github.com/marcmarti9/agents-config.git ~/agents-config
 cd ~/agents-config
 bash install.sh
 ```
 
-El instalador muestra un plan y no modifica nada por defecto. Para aplicar, revisa el plan y ejecuta `bash install.sh --apply`. Genera backup y hashes, rechaza symlinks y no elimina archivos existentes. Settings, guías globales y hooks requieren flags explícitos.
+El instalador muestra un plan y no modifica nada por defecto. Para aplicar, revisa el plan y ejecuta `bash install.sh --apply`. Genera un backup privado, registra hashes y el modo original, rechaza symlinks y no elimina archivos existentes. Settings, guías globales y hooks requieren flags explícitos. Consulta [`ROLLBACK.md`](ROLLBACK.md) antes de aplicar.
 
 Para una instalación específica:
 
@@ -75,7 +78,22 @@ bash security/harden-local.sh
 bash security/harden-local.sh --apply
 ```
 
-No lee ni muestra credenciales y no cambia la configuración del proxy.
+No analiza ni muestra valores de credenciales y no cambia la configuración del proxy. En modo apply calcula SHA-256 para verificar backups, por lo que lee los bytes del archivo sin interpretarlos.
+
+## Router e inventario local
+
+```bash
+python3 router/route.py "describe la tarea"
+python3 -m router.inventory
+```
+
+El router devuelve una propuesta JSON: clasifica y planifica, pero no ejecuta comandos, carga skills ni concede permiso. Las operaciones críticas requieren revisión humana y las instrucciones activas siguen teniendo precedencia.
+
+- `skills_available`: recomendaciones cuyo estado, ruta y dependencias esenciales son compatibles en la máquina consultada.
+- `skills_recommended_missing`: recomendaciones pertinentes que no superaron esas comprobaciones.
+- `skills`: alias heredado de `skills_available`; nunca incluye recomendaciones ausentes.
+
+`python3 -m router.inventory` escribe por defecto `reports/local/inventory.yaml`, una ruta ignorada por Git. El resultado es específico de la máquina y puede dejar la versión de un ejecutable sin observar; no debe convertirse en evidencia portable ni publicarse sin revisión.
 
 ## Uso recomendado
 

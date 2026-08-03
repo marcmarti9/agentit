@@ -1,77 +1,36 @@
 # Recomendaciones integradas
 
-**Estado:** baseline seguro aplicado al HOME; auditoría independiente final aprobada sobre `299f2db`; lista para publicar la rama.
-**Prioridad:** corrección, integridad, seguridad y rollback preceden a contexto y coste.
+**Alcance:** decisiones de diseño para el repositorio. No constituyen aprobación de seguridad, despliegue ni publicación.
 
-El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en `eab20ca` (`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`). Se integra como diseño superior al esquema fijo: mantiene nombres por compatibilidad, pero usa single-agent-first, probes, fan-out, pipelines y auditoría solo cuando el beneficio compensa la coordinación.
+## Conservar como núcleo
 
-## Configuración recomendada
+- resolución directa y cero subagentes por defecto; delegación solo con independencia, ownership y verificador claros;
+- `router/route.py` como clasificador heurístico y planificador, nunca como ejecutor o fuente de autorización;
+- revisión humana para RISK_3/RISK_4 y todas las operaciones críticas;
+- `registry.yaml` como política operativa portable, separada del inventario observado;
+- progressive disclosure, deduplicación exacta y preservación íntegra de comandos, SQL, errores, diffs, rutas, hashes y números;
+- instalador y actualizador en modo plan por defecto, con copias por archivo, manifiesto y rollback manual verificable.
 
-### Conservar como core
+## Selección de skills
 
-- guía global mínima con Architect como owner y topologías adaptativas, sin jerarquía obligatoria;
-- arquitectura adaptativa de `origin/main`, con cero subagentes por defecto, contratos mínimos, ownership y loops acotados;
-- router puro `router/route.py` y su skill de progressive disclosure;
-- políticas de riesgo, anti-overengineering y denylist;
-- una sola copia canónica del repositorio `agents-config`, con despliegues por manifiesto y hash;
-- Addy Agent Skills como biblioteca de skills individuales, no como prompt global completo;
-- `supabase-postgres-best-practices` solo para tareas Postgres/Supabase.
+El router debe informar por separado:
 
-### Dejar bajo demanda
+- `skills_available`: recomendaciones que superaron estado, ruta y dependencias esenciales;
+- `skills_recommended_missing`: recomendaciones pertinentes que no superaron esas comprobaciones;
+- `skills`: alias heredado que contiene únicamente `skills_available`.
 
-- Superpowers para features/bugs complejos donde spec/plan/TDD/worktree aporten valor;
-- debugging, TDD, frontend, API, performance, seguridad y browser testing solo por trigger;
-- Marketing Skills correcto (`coreyhaines31/marketingskills`) cuando se instale y valide, separado del `pm-skills` actual;
-- Hallmark para diseño visual y No AI Slop para la revisión final de prosa pública;
-- ECC por componentes seleccionados tras comparar solapamientos.
+No se debe cargar ni anunciar como utilizable una recomendación ausente. `supabase-postgres-best-practices` requiere una señal explícita de Postgres, PostgreSQL, `psql` o Supabase; SQLite no cumple esa condición.
 
-### Desactivar o no activar globalmente
+## Inventario y plataforma
 
-- RTK auto-rewrite global, hooks de compresión y cualquier pipeline que modifique stdout sin fallback;
-- compresión semántica en código, SQL, errores, diffs, comandos, números, requisitos y seguridad;
-- tokless y scripts de instalación remota no revisados;
-- OmniRoute como gateway: no está escuchando y no es necesario para este harness;
-- hook PreCompact y `autoUploadSessions` en un baseline seguro hasta revisar privacidad, atomicidad, límites y consentimiento;
-- `skipDangerousModePermissionPrompt: true` en una configuración segura.
+Generar la observación de cada máquina con `python3 -m router.inventory`. `reports/local/inventory.yaml` está ignorado por Git y puede omitir versiones que no se hayan observado. No trasladar sus rutas o estados al catálogo portable.
 
-La configuración de repositorio y HOME ya aplican la alternativa segura: aviso peligroso conservado, auto-upload desactivado, retención de 90 días y hook PreCompact fuera del baseline.
+Los scripts shell requieren Linux, Bash 4+ y utilidades GNU. En otros sistemas deben ejecutarse únicamente en un entorno compatible o adaptarse y probarse antes de usar `--apply`.
 
-## Clasificación final de optimizadores
+## Componentes externos
 
-| Elemento | Decisión | Condición de promoción |
-|---|---|---|
-| Caveman | `ENABLE_BY_PROFILE` | solo `TERSE_SAFE`, comparación de claridad y output |
-| RTK | `MANUAL_ONLY` | allowlist, pipes/redirects denegados, stdout raw recuperable, exit/stderr verificados |
-| Headroom | `EXPERIMENTAL` por tarea | CCR local, ID estable, recuperación por rango y pruebas adversariales |
-| context-compress | `MANUAL_ONLY` | batch de prosa secundaria y diff semántico revisado |
-| tokless | `REJECT` para instalación automática | revisión de supply chain y necesidad demostrada |
-| LLMLingua-2 | `EXPERIMENTAL` offline | originales retenidos y holdout adversarial sin pérdidas críticas |
-| Agent Skills context engineering | `KEEP_AS_REFERENCE` | usar prácticas; no instalar duplicados completos |
-| OmniRoute | `MANUAL_ONLY` | proceso verificado y ownership del proxy documentado |
+Mantener hooks de compresión, proxies, MCP, wrappers y repositorios externos fuera del baseline hasta revisar procedencia, permisos, red, fidelidad y rollback. Los estados del catálogo son decisiones de política, no afirmaciones sobre lo instalado en una máquina.
 
-## Contexto y ahorro esperado
+## Evidencia y cambios locales
 
-La mejora de mayor confianza es progressive disclosure + deduplicación exacta + selección mínima. La compresión semántica no tiene aún ahorro neto medido. Antes/después se estima en `reports/context-budget.md`; cualquier porcentaje futuro debe incluir repeticiones, recuperaciones y subagentes.
-
-## Conflictos y decisiones pendientes
-
-1. Elegir una fuente canónica entre marketplace Addy, copias globales y repo local.
-2. Decidir si Superpowers será la metodología estándar de deep work o una opción junto con Addy.
-3. Instalar o no el repo correcto de Marketing Skills; no confundirlo con `pm-skills`.
-4. Confirmar la ruta real de Antigravity para cada máquina; en este host el discovery global es `.agents`.
-5. Añadir pruebas A/B de wrappers solo en un entorno desechable.
-6. Revisar `agy`, las raíces confiadas de Antigravity y el proxy antes de cualquier optimización.
-
-## Qué se implementó
-
-- router conservador y pruebas unitarias;
-- registro compacto con estados y triggers;
-- políticas de riesgo, compresión y anti-overengineering;
-- instalador multi-proveedor en modo plan por defecto, con backups, hashes, rechazo de symlinks y sin eliminaciones;
-- actualizador con allowlist y opt-in de settings/hook;
-- integración de `task-router` para Claude, Codex y Antigravity en el plan de despliegue.
-- integración del commit remoto `eab20ca`; no se debe volver a la pirámide fija ni duplicar la arquitectura del portátil.
-
-Se modificó el HOME real solo mediante backups/acciones explícitas descritas en el inventario; no se instaló ningún compresor ni se activó ningún MCP/proxy nuevo.
-
-La auditoría independiente final verificó el commit `299f2db`, los cuatro fixtures de seguridad del instalador/hardening, YAML, tests y árbol limpio; no dejó acciones críticas o no críticas pendientes antes de publicar.
+Los resultados locales reproducibles se registran en `evals/results.md`; el estado de GitHub Actions se informa por separado y solo después de una ejecución real. Esta corrección no ejecutó `--apply` ni modificó el HOME real: solo cambió el repositorio y generó el inventario ignorado.

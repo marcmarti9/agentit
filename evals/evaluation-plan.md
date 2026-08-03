@@ -2,71 +2,34 @@
 
 ## Objetivo
 
-Medir calidad y coste total, no solo reducción de input. Cada caso debe conservar el original y el resultado completo en un fixture local. No se ejecutan operaciones destructivas reales.
+Evaluar exactitud, fidelidad y reversibilidad sin ejecutar operaciones destructivas reales. El router se prueba como heurística de planificación: nunca como ejecutor ni autorización. Las decisiones críticas requieren revisión humana.
 
-El runtime se evalúa con la arquitectura adaptativa de `docs/ADAPTIVE_AGENT_ARCHITECTURE.md`: single-agent-first, cero subagentes por defecto, fan-out solo con independencia real y Auditor solo como gate de riesgo.
+## Fase A: contrato local
 
-## Fases
+- riesgo por intención y entorno: explicación de backup, documentación de `chmod`, landing sobre backups y restore real en producción;
+- separación de `skills_available`, `skills_recommended_missing` y el alias heredado `skills`;
+- fallo cerrado ante catálogo ausente, YAML inválido, IDs duplicados, estados desconocidos, escape de rutas o dependencias esenciales ausentes;
+- condición PostgreSQL/Supabase frente a SQLite;
+- generación atómica del inventario local ignorado;
+- sintaxis shell, YAML y JSON.
 
-### Fase A: smoke seguro (primera pasada)
+## Fase B: scripts en entorno desechable
 
-- clasificación del router para explicación, CSS, bug, marketing, auth y producción;
-- detección de diff/pipeline/SQL/secretos;
-- validación de registry YAML;
-- `bash -n` de instalador/actualizador;
-- instalación en HOME temporal con archivo no relacionado para comprobar preservación;
-- plan de actualización sin escritura.
+- opciones incompatibles rechazadas antes de cualquier escritura;
+- instalación y actualización por proveedor en HOME temporal;
+- preservación de archivos no relacionados y rechazo de symlinks;
+- backups privados (`0700`), copias privadas (`0600`), hashes y `original_mode` en el manifiesto;
+- rollback simulado: restaurar reemplazos con hash y modo verificados; eliminar un destino nuevo solo si su hash actual coincide con `destination_sha256`;
+- ejecución objetivo en Linux con Bash 4+ y utilidades GNU.
 
-### Fase B: fidelidad de contenido
+## Fase C: fidelidad y tareas representativas
 
-Fixtures de logs, JSON, tablas, código, SQL, diffs, stack traces, hashes, IDs, rutas, números, negaciones, pipes, redirecciones y stdout redirigido. Comparar stdout, stderr, exit code, orden, líneas y recuperación exacta.
-
-### Fase C: tareas representativas
-
-1. cambio trivial de UI;
-2. bug evidente;
-3. bug desconocido;
-4. feature pequeña;
-5. feature mediana;
-6. refactor;
-7. revisión de seguridad;
-8. operación de DB simulada;
-9. migración simulada con rollback incompleto;
-10. landing, copy comercial y CRO;
-11. documentación y revisión de texto;
-12. logs grandes, JSON grande, muchos tests exitosos con un fallo;
-13. `git status`/`git diff` grande;
-14. pipeline de shell.
-
-### Fase D: comparativas
-
-Para cada tarea, comparar solo cuando el adaptador esté instalado de forma aislada:
-
-- baseline sin skill/compresión;
-- configuración actual;
-- router sin compresión;
-- Caveman por perfil;
-- RTK allowlisted;
-- Headroom/CCR aislado;
-- compresión semántica offline;
-- skill A frente a skill B con solapamiento.
-
-## Pruebas adversariales obligatorias
-
-- fallo importante al final de miles de líneas;
-- número crítico en tabla grande;
-- negación que cambia el requisito;
-- archivo peligroso omitido por truncado;
-- stack trace cuya última línea no es la causa;
-- comando con pipe y otro con redirección;
-- JSON con claves repetidas pero valores distintos;
-- migración con rollback incompleto;
-- consulta aparentemente de lectura que modifica datos.
+Usar fixtures de logs, JSON, tablas, código, SQL, diffs, errores, hashes, IDs, rutas, números, negaciones, pipes y redirecciones. Comparar stdout, stderr, exit code, orden y recuperación exacta. Incluir UI trivial, bug, feature, auth, migración simulada, marketing, documentación, SQLite y PostgreSQL.
 
 ## Métricas
 
-Registrar `input_no_cache`, creación/lecturas de cache, output, subagentes, repeticiones, recuperaciones, bytes/palabras originales y adaptados, duración, éxito, tests, regresiones, número de skills, archivos releídos y errores de compresión. Emitir ahorro bruto, neto, económico, de ventana y cambio de calidad por separado.
+Registrar bytes/palabras originales y adaptados, skills recomendadas/cargadas, llamadas de herramienta, output, subagentes, recuperaciones, repeticiones, duración, tests y regresiones. No publicar cifras de reducción de contexto, tokens o coste sin un baseline comparable.
 
 ## Criterios de promoción
 
-Ningún optimizador pasa a global por una sola tarea. Debe conservar exit codes y contenido crítico, tener rollback y fallback raw, no aumentar repeticiones, y demostrar mejora neta en un conjunto representativo. Un fallo adversarial en contenido crítico bloquea promoción.
+Un componente solo se promueve si conserva contenido crítico y exit codes, tiene rollback comprobable, no aumenta repeticiones y mejora un conjunto representativo. Un fallo adversarial en contenido crítico bloquea la promoción. Los resultados locales y GitHub Actions se registran por separado; nunca se infiere el estado de CI a partir de una ejecución local.

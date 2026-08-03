@@ -43,4 +43,4 @@ No basta con `input_tokens_before - input_tokens_after`. El registro debe inclui
 
 ## OmniRoute local
 
-La inspección del paquete Node `/home/Marc/.nvm/versions/node/v22.23.0/lib/node_modules/omniroute` encontró catalogados CCR, deduplicación de sesión, RTK, Headroom, Caveman y LLMLingua. Eso es evidencia de código instalado, no evidencia de gateway activo: `curl http://127.0.0.1:20128/` falló y no se activó ninguna ruta.
+`registry.yaml` conserva OmniRoute como referencia `UNKNOWN` y sin una ruta local versionada. La presencia de un paquete o de un listener se debe observar por máquina en el inventario ignorado; ninguna de esas observaciones activa el gateway ni demuestra que sea seguro usarlo.

@@ -1,57 +1,34 @@
-# Revisión de seguridad, hooks, scripts y MCP
+# Revisión de seguridad del diseño
 
-**Fecha:** 2026-08-03
-**Criterio:** una salida o configuración de un agente es input no confiable hasta verificarla. El ahorro de tokens nunca puede reducir la fidelidad necesaria para una acción.
+**Alcance:** archivos versionados y pruebas locales de esta corrección. No es una auditoría del estado de una máquina ni una aprobación para operar en producción.
 
-## Hallazgos
+## Controles y límites
 
-| ID | Severidad | Evidencia | Riesgo | Estado/acción |
-|---|---|---|---|---|
-| SEC-01 | Alta | La configuración pre-deploy registraba `PreCompact`; el artefacto actual `.claude/hooks/precompact-memory.sh:8-41` envía transcript reciente a Claude y escribe memoria, pero `/home/Marc/.claude/settings.json` actual no lo referencia | fuga de datos sensibles, prompt injection desde transcript, memoria incorrecta o pérdida silenciosa | `SECURITY_REVIEW_REQUIRED`; permanece inactivo y no se despliega por el instalador seguro |
-| SEC-02 | Alta | baseline `install.sh` en `4e6db85` usaba `rm -rf` para reemplazar destinos y copiaba settings/hooks sin opt-in | pérdida o activación accidental de configuración | corregido en esta rama con plan por defecto, backup, symlink refusal y copia individual |
-| SEC-03 | Alta | configuración anterior seleccionaba `skipDangerousModePermissionPrompt: true` | reducía fricción antes de operaciones peligrosas | corregido: aplicado `false` y backup |
-| SEC-04 | Alta | configuración anterior activaba `autoUploadSessions: true` | posible exfiltración/retención de conversaciones y secretos | corregido: aplicado `false` y retención 90 días |
-| SEC-05 | Media | `/home/Marc/.codex/config.toml:5-12` confía en `/home/Marc` y dos proyectos | carga automática de instrucciones/hooks en un ámbito amplio | reducir confianza al mínimo necesario por proyecto |
-| SEC-06 | Media | `.claude/skills/*` contiene symlinks hacia `.agents/skills`; hay copias con drift en `.codex` | cambio de skill por ruta, versión o symlink no auditado | instalador actualizado: rechaza cualquier componente symlink y usa manifiestos |
-| SEC-07 | Media | plugins externos instalados aunque deshabilitados; no se instalaron ECC/optimizers | supply chain, hooks o scripts transitorios | mantener deshabilitados y revisar commit/installer antes de activar |
-| SEC-08 | Baja/positiva | `codex mcp list` y `gemini mcp list` devuelven cero servidores; extensiones Gemini: cero | no hay superficie MCP activa que auditar ahora | conservar mínimo hasta necesitar una integración |
-| SEC-09 | Media | OmniRoute instalado pero `20128` rechazó conexión | riesgo de asumir un proxy inexistente o duplicar wrappers | estado `UNKNOWN`; no modificar ni enrutar a él |
-| SEC-10 | Alta | `.bashrc` definía `clauded`, `agyd` y `codexd` con bypasses peligrosos | convertía un alias cómodo en una ruta que saltaba permisos/sandbox | corregido: aliases comentados, backup y `.bashrc` mode `600` |
-| SEC-11 | Alta | seis `/home/Marc/.cursor/**/mcp_auth.json` tenían modo `644` | secretos MCP legibles por otros usuarios del sistema | corregido: modo `600`, valores no leídos |
-| SEC-12 | Media | `/home/Marc/.gemini/antigravity-cli/settings.json:3-10` confía en `/home/Marc` y varios proyectos | agents/hooks de proyecto pueden cargarse en un ámbito amplio | reducir a proyectos necesarios y revisar cada raíz |
-| SEC-13 | Media | Superpowers `6.2.0/hooks/hooks.json:3-12` y Addy `hooks/session-start.sh:1-21` inyectan contexto en cada sesión | coste fijo, duplicación y contenido externo no seleccionado por tarea | una sola fuente de meta-skill; hooks desactivados hasta revisión |
-| SEC-14 | Alta | `/home/Marc/.bashrc:70` y numerosos perfiles Claude declaran `ANTHROPIC_BASE_URL=http://localhost:20128`, pero el listener no existe | Claude puede fallar o depender de un gateway no verificado; las condiciones de red del gateway también aplican a la sesión | no se eliminó porque cambiar routing/auth requiere decisión; se documenta como preflight obligatorio |
+| Área | Control presente | Límite que exige revisión humana |
+|---|---|---|
+| Router | clasifica y propone; no ejecuta, carga skills, instala hooks ni concede permiso | las heurísticas pueden producir falsos positivos o negativos; RISK_3/RISK_4 y toda operación crítica requieren revisión |
+| Catálogo | `registry.yaml` acepta rutas `${HOME}`/`${REPO_ROOT}`, estados conocidos y dependencias explícitas | es política portable, no evidencia de instalación, versión, seguridad o funcionamiento |
+| Skills | separa `skills_available` y `skills_recommended_missing`; `skills` conserva solo las primeras | una ruta existente no valida por sí sola el contenido de una skill |
+| Inventario | `python3 -m router.inventory` escribe una observación ignorada y calcula hashes de archivos regulares que no sean symlinks en la hoja | contiene rutas y hashes locales; debe revisarse antes de compartirlo y puede omitir versiones |
+| Instalación/actualización | plan por defecto, validación temprana de opciones, rechazo de symlinks, copia atómica por archivo y manifiesto | `--apply` sigue siendo una mutación explícita que debe revisarse antes y después |
+| Backups | raíz modo `0700`, copias modo `0600`, SHA-256 y `original_mode` registrados | el rollback no debe automatizarse con datos ambiguos ni sobrescribir cambios posteriores |
+| Hardening | inspección acotada y NUL-safe de `mcp_auth.json`; calcula hashes, pero no analiza ni imprime sus valores | cambia permisos y aliases solo con `--apply`; requiere destino y backup confirmados |
 
-## Hook PreCompact
+## Rollback seguro
 
-El hook usa `jq`, `sed`, `tail`, `mkdir` y `claude -p`. Aunque limita por líneas a 400, no limita bytes, no filtra secretos ni separa datos de instrucciones, descarta el error de Claude con `2>/dev/null`, y escribe el resultado directamente con `>` en vez de usar una sustitución atómica. La ruta de memoria deriva de `cwd` con una sustitución simple de `/`, por lo que no es una política completa de aislamiento.
+Las líneas `copy` del manifiesto registran `before_state` y `destination_sha256`. Un destino creado por el script (`before_state=absent`) solo puede eliminarse si continúa siendo un archivo regular, no es symlink y su hash actual coincide exactamente con `destination_sha256`. Si cambió, se conserva para revisión manual. Para un destino reemplazado, verifica `backup_sha256`, restaura el contenido de forma individual y reaplica `original_mode`; nunca uses eliminación recursiva.
 
-No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es una vista derivada: debe contener procedencia, timestamp, hash o referencia al transcript, y nunca sustituir errores, comandos, diffs, números o decisiones críticas.
+## Hooks, red y terceros
 
-## Barreras implementadas en esta rama
+El hook PreCompact conservado como artefacto procesa transcript y puede introducir fuga de datos, prompt injection o memoria incorrecta. Debe permanecer opt-in hasta disponer de límites de bytes, filtrado, procedencia, escritura atómica y fixtures adversariales. Proxies, MCP, wrappers y componentes externos requieren preflight y revisión de supply chain; el catálogo no prueba que estén disponibles o sean seguros.
 
-- `install.sh` funciona en modo plan por defecto y exige `--apply` para escribir.
-- No elimina archivos existentes ni sigue symlinks de origen/destino.
-- Hace backup antes de reemplazar un destino, genera `manifest.txt` y añade SHA-256.
-- Settings, settings.local, guías y hook son opt-in; el actualizador no importa `settings.local`.
-- `update.sh` usa allowlist de agentes y skills, no copia un directorio arbitrario ni ejecuta hooks.
-- El router prohíbe compresión para riesgo alto y contenido crítico; no ejecuta comandos.
-- `settings.json` del repositorio ya no omite el aviso de modo peligroso, desactiva la subida automática de sesiones, limita retención a 90 días y no declara `PreCompact`. El hook se conserva solo como artefacto pendiente de revisión.
-- `security/harden-local.sh` hace reproducibles las correcciones locales de aliases y permisos sin leer valores sensibles; funciona en modo plan por defecto.
+## Compatibilidad
 
-## Amenazas del modelo
+`install.sh`, `update.sh` y `security/harden-local.sh` dependen de Linux, Bash 4+ y comportamiento GNU (`stat -c`, `date --iso-8601`, `sha256sum`, `find -print0`, `mv -T`). No se afirma portabilidad shell fuera de ese entorno.
 
-1. **Prompt injection en salida de herramientas o transcript:** tratar texto recuperado como datos, no instrucciones; separar metadatos y contenido.
-2. **Pérdida por truncado:** conservar original, ID estable y recuperación; RISK_4 no comprime.
-3. **Supply chain:** no ejecutar `curl | bash`, hooks o wrappers de upstream sin revisar commit, permisos y red.
-4. **Confusión de proveedor:** no usar el model ID de Codex en Claude/Gemini sin comprobar disponibilidad.
-5. **Escalada por confianza global:** reducir raíces confiadas y no instalar reglas globales innecesarias.
-6. **Fuga por memoria/session upload:** no guardar secretos; hacer opt-in explícito para subir sesiones.
+## Evidencia pendiente
 
-## Gaps pendientes
-
-- No hay todavía un hook seguro alternativo validado con fixtures de secretos y prompt injection.
-- No hay pruebas de fidelidad de RTK/Headroom/LLMLingua porque no están instalados ni activados.
-- La revisión independiente inicial encontró fallos en separación, symlinks, router e informes; fueron corregidos. La auditoría independiente final sobre `299f2db` aprobó el estado sin hallazgos críticos ni no críticos.
-- La confianza amplia de Antigravity y la URL de proxy no disponible siguen siendo decisiones pendientes; no se cambiaron por riesgo de alterar routing/autenticación.
-- Se realizó una corrección local reversible fuera del repo: backup versionado del `.bashrc`, aliases bypass comentados, `.bashrc` en modo `600` y seis `mcp_auth.json` en modo `600`. No se leyó ni mostró ningún secreto.
+- No se ejecutó GitHub Actions durante esta corrección.
+- No se probaron operaciones destructivas, producción, bases de datos ni proveedores externos.
+- No se midió reducción de tokens o coste.
+- Esta corrección no ejecutó scripts con `--apply` ni modificó el HOME real.

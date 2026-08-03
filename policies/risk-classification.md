@@ -1,14 +1,18 @@
 # Clasificación de riesgo
 
-Usa el nivel más alto que aplique. La etiqueta proporcionada por el usuario puede subir el nivel, pero nunca rebajarlo cuando la tarea contiene señales de mayor impacto.
+Usa el nivel más alto que aplique a la acción solicitada y al entorno de destino. La etiqueta proporcionada por el usuario puede subir el nivel, pero nunca rebajarlo cuando la tarea contiene señales de mayor impacto.
 
 | Nivel | Alcance | Requisito mínimo |
 |---|---|---|
 | RISK_0 | conversación, explicación o brainstorming sin cambio real | concisión segura; sin skills salvo necesidad explícita |
 | RISK_1 | cambio trivial y reversible, como CSS localizado, texto o formato | compresión estructural moderada; verificación dirigida |
 | RISK_2 | feature, bug, refactor o integración normal | contexto arquitectónico suficiente; compresión selectiva y reversible |
-| RISK_3 | auth, permisos, pagos, PII, APIs públicas, infraestructura, despliegue, migraciones, persistencia o concurrencia | contexto completo recuperable; pruebas amplias; revisión independiente |
-| RISK_4 | producción, eliminación o transformación irreversible, backups/restores, credenciales, permisos críticos o pérdida potencial de datos | fidelidad completa; backup verificado; dry run; revisión independiente; comprobación posterior |
+| RISK_3 | cambio solicitado en auth, permisos, pagos, PII, APIs públicas, infraestructura, despliegue, migraciones, persistencia o concurrencia | contexto completo recuperable; pruebas amplias; revisión humana e independiente |
+| RISK_4 | acción solicitada en producción, eliminación o transformación irreversible, restore, credenciales, permisos críticos o pérdida potencial de datos | fidelidad completa; backup verificado; dry run; revisión humana e independiente; comprobación posterior |
+
+## Intención y entorno
+
+La presencia de una palabra sensible no basta para elevar el riesgo: «explica un backup» es RISK_0 y «documenta `chmod`» es RISK_1 porque no piden ejecutar esas operaciones. En cambio, «restaura este backup en producción» solicita una acción sobre un entorno real y es RISK_4. Si la intención o el destino no están claros, pide confirmación o conserva el nivel superior; el router no autoriza la ejecución.
 
 ## Suelo de seguridad
 

@@ -10,9 +10,12 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import tempfile
 from pathlib import Path
 from typing import Any
+
+SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 
 class ContextDeduplicator:
@@ -24,10 +27,21 @@ class ContextDeduplicator:
         project_dir: Path | None = None,
         min_block_length: int = 100,
     ) -> None:
+        if not SESSION_ID_RE.fullmatch(session_id):
+            raise ValueError(f"Invalid session id: {session_id}")
+
         self.session_id = session_id
         self.min_block_length = min_block_length
         base_dir = Path(project_dir) if project_dir is not None else Path.cwd()
-        self.session_dir = base_dir / ".agentit" / "sessions" / session_id
+        session_root = (base_dir / ".agentit" / "sessions").resolve()
+        self.session_dir = (session_root / session_id).resolve()
+
+        try:
+            if not self.session_dir.is_relative_to(session_root):
+                raise ValueError(f"Session path escapes project root: {session_id}")
+        except ValueError:
+            raise ValueError(f"Session path escapes project root: {session_id}")
+
         self.session_file = self.session_dir / "dedup.json"
         self.seen_hashes: set[str] = set()
         self._load_session_state()

@@ -130,6 +130,12 @@ class ProjectProfileCliTests(unittest.TestCase):
         self.assertEqual(0, activated.returncode, activated.stdout)
         self.assertIn("MODO PLAN", activated.stdout)
 
+    def test_enable_without_profile_name_emits_clean_error(self):
+        result = self.run_cli("enable")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("enable requiere un nombre de perfil", result.stdout)
+        self.assertNotIn("AttributeError", result.stdout)
+
     def test_disable_does_not_remove_unmanaged_or_modified_files(self):
         self.assertEqual(0, self.run_cli("enable", "supabase", "--apply").returncode)
         unmanaged = self.project / ".agents" / "skills" / "unmanaged" / "SKILL.md"

@@ -1,12 +1,15 @@
 """Artifact reference and CCR (Context Content Retention) module for Agentit.
 
 Archives large text blocks (>150 lines or >10KB) into .agentit/artifacts/
-with 0600 permissions, atomic mkstemp writing, and symlink protection.
+with sidecar metadata JSON files, SHA-256 verification on retrieval, 
+0600 permissions, atomic mkstemp writing, and full symlink component protection.
 """
 
 from __future__ import annotations
 
+import datetime
 import hashlib
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -15,10 +18,40 @@ from typing import Any
 PROTECTED_CONTENT_TYPES = {"commands", "diff", "sql", "secrets", "configs"}
 
 
+def reject_symlink_components(path: Path, stop: Path) -> None:
+    """Walk up parent directory components from path to stop, rejecting any symlinks."""
+    current = path
+    stop_resolved = stop.resolve()
+    while True:
+        if current.is_symlink():
+            raise PermissionError(f"Symlink component rejected: {current}")
+        if current.resolve() == stop_resolved or current == current.parent:
+            break
+        current = current.parent
+
+
+def verify_artifact_integrity(artifact_file: Path) -> dict[str, Any]:
+    """Verify that the artifact file content matches its sidecar metadata SHA-256."""
+    sidecar_file = artifact_file.with_suffix(".json")
+    if not sidecar_file.is_file() or sidecar_file.is_symlink():
+        raise ValueError(f"Artifact metadata sidecar missing or invalid: {sidecar_file}")
+
+    metadata = json.loads(sidecar_file.read_text(encoding="utf-8"))
+    expected_hash = metadata.get("sha256")
+    actual_hash = hashlib.sha256(artifact_file.read_bytes()).hexdigest()
+
+    if actual_hash != expected_hash:
+        raise ValueError(f"Artifact integrity failure for {artifact_file.name}: expected {expected_hash}, got {actual_hash}")
+
+    return metadata
+
+
 def resolve_agentit_uri(uri: str, project_root: Path | None = None) -> Path:
     """Resolve an agentit://artifacts/ref-<hash>.txt URI to an absolute Path securely."""
     base_dir = Path(project_root) if project_root is not None else Path.cwd()
+    expected_root = (base_dir / ".agentit" / "artifacts").absolute()
     prefix = "agentit://artifacts/"
+
     if not uri.startswith(prefix):
         raise ValueError(f"Invalid URI scheme: {uri}")
 
@@ -26,14 +59,22 @@ def resolve_agentit_uri(uri: str, project_root: Path | None = None) -> Path:
     if ".." in rel_name or "/" in rel_name or "\\" in rel_name:
         raise ValueError(f"Path traversal detected in URI: {uri}")
 
-    target_path = (base_dir / ".agentit" / "artifacts" / rel_name).resolve()
-    expected_root = (base_dir / ".agentit" / "artifacts").resolve()
-    if not str(target_path).startswith(str(expected_root)):
+    raw_target_path = expected_root / rel_name
+    reject_symlink_components(raw_target_path, stop=base_dir)
+
+    target_path = raw_target_path.resolve()
+    resolved_root = expected_root.resolve()
+
+    try:
+        if not target_path.is_relative_to(resolved_root):
+            raise ValueError(f"Resolved path outside artifacts directory: {target_path}")
+    except ValueError:
         raise ValueError(f"Resolved path outside artifacts directory: {target_path}")
 
-    if target_path.is_symlink():
-        raise PermissionError(f"Symlink rejected: {target_path}")
+    if not target_path.is_file() or target_path.is_symlink():
+        raise FileNotFoundError(f"Artifact file missing or invalid: {target_path}")
 
+    verify_artifact_integrity(target_path)
     return target_path
 
 
@@ -45,7 +86,7 @@ def create_artifact_reference(
     min_bytes: int = 10240,
     content_type: str | None = None,
 ) -> dict[str, Any]:
-    """Archive content securely if it exceeds line/byte threshold or is a protected content type."""
+    """Archive content securely with sidecar metadata if threshold met or protected content type."""
     content_bytes = content.encode("utf-8")
     lines = content.splitlines()
     is_protected = content_type in PROTECTED_CONTENT_TYPES
@@ -62,17 +103,16 @@ def create_artifact_reference(
 
     sha256_hash = hashlib.sha256(content_bytes).hexdigest()
     short_hash = sha256_hash[:16]
-    artifact_filename = f"ref-{short_hash}.txt"
-    final_path = artifact_dir / artifact_filename
+    base_name = f"ref-{short_hash}"
+    artifact_file = artifact_dir / f"{base_name}.txt"
+    sidecar_file = artifact_dir / f"{base_name}.json"
 
-    if final_path.is_symlink():
-        raise PermissionError(f"Symlink target rejected: {final_path}")
+    reject_symlink_components(artifact_file, stop=artifact_dir.parent.parent)
 
-    if final_path.is_file():
-        existing_hash = hashlib.sha256(final_path.read_bytes()).hexdigest()
-        if existing_hash != sha256_hash:
-            raise ValueError(f"Hash mismatch on existing artifact file: {final_path}")
+    if artifact_file.is_file():
+        verify_artifact_integrity(artifact_file)
     else:
+        # Write .txt file atomically
         fd, temp_path_str = tempfile.mkstemp(prefix=".artifact-tmp-", dir=artifact_dir, text=True)
         temp_path = Path(temp_path_str)
         try:
@@ -81,17 +121,41 @@ def create_artifact_reference(
                 stream.write(content)
                 stream.flush()
                 os.fsync(fd)
-            os.replace(temp_path, final_path)
-            os.chmod(final_path, 0o600)
+            os.replace(temp_path, artifact_file)
+            os.chmod(artifact_file, 0o600)
         finally:
             temp_path.unlink(missing_ok=True)
+
+        # Write sidecar .json metadata file atomically
+        metadata = {
+            "sha256": sha256_hash,
+            "content_type": content_type or "text",
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "description": description,
+            "total_lines": len(lines),
+            "total_bytes": len(content_bytes),
+        }
+        meta_content = json.dumps(metadata, indent=2)
+
+        fd_m, temp_meta_str = tempfile.mkstemp(prefix=".meta-tmp-", dir=artifact_dir, text=True)
+        temp_meta = Path(temp_meta_str)
+        try:
+            os.fchmod(fd_m, 0o600)
+            with os.fdopen(fd_m, "w", encoding="utf-8") as stream:
+                stream.write(meta_content)
+                stream.flush()
+                os.fsync(fd_m)
+            os.replace(temp_meta, sidecar_file)
+            os.chmod(sidecar_file, 0o600)
+        finally:
+            temp_meta.unlink(missing_ok=True)
 
     summary_head = lines[:5]
     summary_tail = lines[-5:]
 
     reference_payload = {
         "archived": True,
-        "content_ref": f"agentit://artifacts/{artifact_filename}",
+        "content_ref": f"agentit://artifacts/{base_name}.txt",
         "description": description,
         "content_type": content_type,
         "total_lines": len(lines),
@@ -99,7 +163,8 @@ def create_artifact_reference(
         "sha256": sha256_hash,
         "preview_head": summary_head,
         "preview_tail": summary_tail,
-        "retrieval_path": str(final_path),
+        "retrieval_path": str(artifact_file),
+        "sidecar_path": str(sidecar_file),
     }
 
     return reference_payload

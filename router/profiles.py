@@ -524,10 +524,10 @@ def main(argv: list[str] | None = None) -> int:
 
             parser.error(f"subcomando context desconocido: {sub}")
 
-        if args.command in {"enable", "activate", "disable"} and not args.subcommand and not args.name:
+        if args.command in {"enable", "activate", "disable"} and not args.subcommand:
             parser.error(f"{args.command} requiere un nombre de perfil")
 
-        target_name = args.subcommand or args.name
+        target_name = args.subcommand
         if args.command in {"enable", "activate"}:
             lines = enable_profile(
                 target_name,

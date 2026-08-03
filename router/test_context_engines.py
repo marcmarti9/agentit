@@ -143,6 +143,45 @@ class ContextEnginesTestCase(unittest.TestCase):
         )
         self.assertIn("151:log entry 150", grep_proc.stdout)
 
+    def test_session_id_path_traversal_rejection(self) -> None:
+        with self.assertRaises(ValueError):
+            ContextDeduplicator(session_id="../evil_session", project_dir=self.project_dir)
+
+        with self.assertRaises(ValueError):
+            ContextDeduplicator(session_id="session/with/slashes", project_dir=self.project_dir)
+
+    def test_symlink_component_rejection_in_artifact_resolution(self) -> None:
+        symlink_dir = self.project_dir / "symlink_dir"
+        symlink_dir.mkdir()
+        symlink_target = self.project_dir / ".agentit" / "artifacts" / "symlink_file.txt"
+        symlink_target.parent.mkdir(parents=True, exist_ok=True)
+        symlink_target.write_text("data", encoding="utf-8")
+
+        bad_link = self.project_dir / ".agentit" / "artifacts" / "bad_link.txt"
+        bad_link.symlink_to(symlink_target)
+
+        with self.assertRaises(PermissionError):
+            resolve_agentit_uri("agentit://artifacts/bad_link.txt", project_root=self.project_dir)
+
+    def test_sha256_tampering_detection(self) -> None:
+        large_content = "\n".join([f"line content {i} - unique text data" for i in range(200)])
+        res = create_artifact_reference(
+            large_content,
+            description="Tamper test",
+            artifact_dir=self.artifact_dir,
+            min_lines=150,
+        )
+        artifact_path = Path(res["retrieval_path"])
+        self.assertTrue(artifact_path.is_file())
+
+        # Tamper with file content
+        artifact_path.write_text("TAMPERED CONTENT", encoding="utf-8")
+
+        # Resolving URI must raise ValueError due to SHA-256 mismatch
+        with self.assertRaises(ValueError) as ctx:
+            resolve_agentit_uri(res["content_ref"], project_root=self.project_dir)
+        self.assertIn("integrity failure", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

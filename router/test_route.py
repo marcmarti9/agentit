@@ -1,6 +1,9 @@
 import unittest
 
-from route import route_task
+try:
+    from .route import route_task
+except ImportError:  # unittest discover with router as the start directory
+    from route import route_task
 
 
 class RouterSafetyTests(unittest.TestCase):
@@ -52,11 +55,19 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertIn("pipelines", result["content_types"])
         self.assertFalse(result["compression"]["enabled"])
 
-    def test_marketing_task_selects_only_specialized_skill(self):
+    def test_marketing_task_selects_specialized_skill(self):
         result = route_task("Audita el CRO y el copy de la landing")
 
         self.assertEqual(result["category"], "marketing")
-        self.assertEqual(result["skills"], ["marketing-skills"])
+        self.assertEqual(result["skills"], ["marketingskills"])
+
+    def test_high_risk_marketing_keeps_security_gate(self):
+        result = route_task("Audita pagos y datos personales en el funnel de marketing")
+
+        self.assertEqual(result["risk"], "RISK_3")
+        self.assertIn("security-hardening", result["skills"])
+        self.assertIn("marketingskills", result["skills"])
+        self.assertIsNone(result["reversible"])
 
     def test_single_agent_is_default_even_for_standard_development(self):
         result = route_task("Implementa una feature pequeña de perfiles")

@@ -45,14 +45,24 @@ while (($#)); do
 done
 
 [[ -d "$USER_HOME" ]] || die "HOME inexistente: $USER_HOME"
+[[ ! -L "$USER_HOME" ]] || die "se rechaza HOME symlink: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
 [[ -f "$USER_HOME/.bashrc" ]] || die "no existe .bashrc en $USER_HOME"
 [[ ! -L "$USER_HOME/.bashrc" ]] || die "se rechaza .bashrc symlink"
+
+assert_no_symlink_components() {
+  local current="$1"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    [[ ! -L "$current" ]] || die "componente symlink rechazado: $current"
+    current="$(dirname -- "$current")"
+  done
+}
 
 if [[ "$MODE" == "apply" ]]; then
   if [[ -z "$BACKUP_ROOT" ]]; then
     BACKUP_ROOT="$USER_HOME/backups/agent-harness-local-hardening-$(date +%Y%m%d-%H%M%S)"
   fi
+  assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
   printf 'date=%s\n' "$(date --iso-8601=seconds)" > "$BACKUP_ROOT/manifest.txt"
 fi
@@ -62,6 +72,8 @@ backup_file() {
   local rel="${src#"$USER_HOME"/}"
   [[ ! -L "$src" ]] || die "se rechaza symlink: $src"
   local dst="$BACKUP_ROOT/$rel"
+  assert_no_symlink_components "$dst"
+  [[ ! -e "$dst" && ! -L "$dst" ]] || die "destino de backup ya existe: $dst"
   mkdir -p "$(dirname "$dst")"
   cp --preserve=mode,timestamps -- "$src" "$dst"
   sha256sum "$src" >> "$BACKUP_ROOT/manifest.txt"
@@ -92,7 +104,26 @@ else
   fi
 fi
 
-mapfile -d '' auth_files < <(find -P "$USER_HOME/.cursor" -type f -name 'mcp_auth.json' -print0 2>/dev/null || true)
+auth_files=()
+auth_root="$USER_HOME/.cursor"
+if [[ -e "$auth_root" && ! -d "$auth_root" ]]; then
+  die "~/.cursor existe pero no es un directorio"
+fi
+if [[ -L "$auth_root" ]]; then
+  die "se rechaza ~/.cursor symlink"
+fi
+auth_list=""
+if [[ -d "$auth_root" ]]; then
+  symlink_path="$(find -P "$auth_root" -type l -print -quit)" || die "no se pudo inspeccionar symlinks de ~/.cursor; no se aplica hardening"
+  [[ -z "$symlink_path" ]] || die "se rechazan symlinks bajo ~/.cursor"
+  auth_list="$(find -P "$auth_root" -type f -name 'mcp_auth.json' -print)" || die "no se pudo inspeccionar ~/.cursor; no se aplica hardening"
+  if [[ -n "$auth_list" ]]; then
+    while IFS= read -r auth_file; do
+      [[ "$auth_file" != *$'\n'* ]] || die "ruta MCP con salto de línea rechazada"
+      auth_files+=("$auth_file")
+    done <<< "$auth_list"
+  fi
+fi
 if ((${#auth_files[@]} == 0)); then
   printf 'ok: no se encontraron mcp_auth.json bajo .cursor\n'
 else

@@ -7,17 +7,17 @@
 
 | ID | Severidad | Evidencia | Riesgo | Estado/acción |
 |---|---|---|---|---|
-| SEC-01 | Alta | `/home/Marc/.claude/settings.json:40-53` activa `PreCompact`; `.claude/hooks/precompact-memory.sh:8-41` envía transcript reciente a Claude y escribe memoria | fuga de datos sensibles, prompt injection desde transcript, memoria incorrecta o pérdida silenciosa | `SECURITY_REVIEW_REQUIRED`; no se despliega por el instalador seguro |
+| SEC-01 | Alta | La configuración pre-deploy registraba `PreCompact`; el artefacto actual `.claude/hooks/precompact-memory.sh:8-41` envía transcript reciente a Claude y escribe memoria, pero `/home/Marc/.claude/settings.json` actual no lo referencia | fuga de datos sensibles, prompt injection desde transcript, memoria incorrecta o pérdida silenciosa | `SECURITY_REVIEW_REQUIRED`; permanece inactivo y no se despliega por el instalador seguro |
 | SEC-02 | Alta | baseline `install.sh` en `4e6db85` usaba `rm -rf` para reemplazar destinos y copiaba settings/hooks sin opt-in | pérdida o activación accidental de configuración | corregido en esta rama con plan por defecto, backup, symlink refusal y copia individual |
-| SEC-03 | Alta | `/home/Marc/.claude/settings.json:32-33` selecciona `architect` y `skipDangerousModePermissionPrompt: true` | reduce fricción antes de operaciones peligrosas | mantener fuera del baseline recomendado; requiere decisión explícita |
-| SEC-04 | Alta | `/home/Marc/.claude/settings.json:37-39` activa `autoUploadSessions: true` | posible exfiltración/retención de conversaciones y secretos | recomendar desactivar en configuración segura o documentar consentimiento |
+| SEC-03 | Alta | configuración anterior seleccionaba `skipDangerousModePermissionPrompt: true` | reducía fricción antes de operaciones peligrosas | corregido: aplicado `false` y backup |
+| SEC-04 | Alta | configuración anterior activaba `autoUploadSessions: true` | posible exfiltración/retención de conversaciones y secretos | corregido: aplicado `false` y retención 90 días |
 | SEC-05 | Media | `/home/Marc/.codex/config.toml:5-12` confía en `/home/Marc` y dos proyectos | carga automática de instrucciones/hooks en un ámbito amplio | reducir confianza al mínimo necesario por proyecto |
-| SEC-06 | Media | `.claude/skills/*` contiene symlinks hacia `.agents/skills`; hay copias con drift en `.codex` | cambio de skill por ruta, versión o symlink no auditado | una fuente canónica y manifiesto de hashes; no seguir symlinks al instalar |
+| SEC-06 | Media | `.claude/skills/*` contiene symlinks hacia `.agents/skills`; hay copias con drift en `.codex` | cambio de skill por ruta, versión o symlink no auditado | instalador actualizado: rechaza cualquier componente symlink y usa manifiestos |
 | SEC-07 | Media | plugins externos instalados aunque deshabilitados; no se instalaron ECC/optimizers | supply chain, hooks o scripts transitorios | mantener deshabilitados y revisar commit/installer antes de activar |
 | SEC-08 | Baja/positiva | `codex mcp list` y `gemini mcp list` devuelven cero servidores; extensiones Gemini: cero | no hay superficie MCP activa que auditar ahora | conservar mínimo hasta necesitar una integración |
 | SEC-09 | Media | OmniRoute instalado pero `20128` rechazó conexión | riesgo de asumir un proxy inexistente o duplicar wrappers | estado `UNKNOWN`; no modificar ni enrutar a él |
-| SEC-10 | Alta | `/home/Marc/.bashrc:34-36` define `clauded`, `agyd` y `codexd` con bypasses peligrosos | convierte un alias cómodo en una ruta global que puede saltar permisos/sandbox | no ejecutar; sustituir por comandos explícitos o alias que no omitan confirmaciones |
-| SEC-11 | Alta | seis `/home/Marc/.cursor/**/mcp_auth.json` tienen modo `644` | secretos MCP legibles por otros usuarios del sistema | revisar y endurecer a mínimo privilegio sin imprimir valores |
+| SEC-10 | Alta | `.bashrc` definía `clauded`, `agyd` y `codexd` con bypasses peligrosos | convertía un alias cómodo en una ruta que saltaba permisos/sandbox | corregido: aliases comentados, backup y `.bashrc` mode `600` |
+| SEC-11 | Alta | seis `/home/Marc/.cursor/**/mcp_auth.json` tenían modo `644` | secretos MCP legibles por otros usuarios del sistema | corregido: modo `600`, valores no leídos |
 | SEC-12 | Media | `/home/Marc/.gemini/antigravity-cli/settings.json:3-10` confía en `/home/Marc` y varios proyectos | agents/hooks de proyecto pueden cargarse en un ámbito amplio | reducir a proyectos necesarios y revisar cada raíz |
 | SEC-13 | Media | Superpowers `6.2.0/hooks/hooks.json:3-12` y Addy `hooks/session-start.sh:1-21` inyectan contexto en cada sesión | coste fijo, duplicación y contenido externo no seleccionado por tarea | una sola fuente de meta-skill; hooks desactivados hasta revisión |
 | SEC-14 | Alta | `/home/Marc/.bashrc:70` y numerosos perfiles Claude declaran `ANTHROPIC_BASE_URL=http://localhost:20128`, pero el listener no existe | Claude puede fallar o depender de un gateway no verificado; las condiciones de red del gateway también aplican a la sesión | no se eliminó porque cambiar routing/auth requiere decisión; se documenta como preflight obligatorio |
@@ -52,7 +52,6 @@ No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es u
 
 - No hay todavía un hook seguro alternativo validado con fixtures de secretos y prompt injection.
 - No hay pruebas de fidelidad de RTK/Headroom/LLMLingua porque no están instalados ni activados.
-- No se ha hecho una revisión independiente final de esta rama; debe actuar un Auditor antes de integrar cambios de settings/hooks.
-- Los permisos de `mcp_auth.json`, aliases peligrosos y confianza de Antigravity requieren una intervención separada y reversible; este trabajo no los ha modificado.
-- La configuración segura de Claude aún debe aplicarse al HOME real con backup y revisión de diff; hasta entonces el inventario local sigue describiendo la configuración anterior.
+- La revisión independiente inicial encontró fallos en separación, symlinks, router e informes; fueron corregidos y deben quedar cubiertos por la auditoría final antes del push.
+- La confianza amplia de Antigravity y la URL de proxy no disponible siguen siendo decisiones pendientes; no se cambiaron por riesgo de alterar routing/autenticación.
 - Se realizó una corrección local reversible fuera del repo: backup versionado del `.bashrc`, aliases bypass comentados, `.bashrc` en modo `600` y seis `mcp_auth.json` en modo `600`. No se leyó ni mostró ningún secreto.

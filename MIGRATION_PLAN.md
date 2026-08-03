@@ -7,7 +7,7 @@ La implementación está en la rama `feature/safe-context-harness-audit` del rep
 ## Etapas
 
 1. **Descubrimiento:** completado; inventario en `reports/inventory.md`.
-2. **Auditoría:** local completada; auditoría delegada y revisión independiente deben integrarse antes de settings/hooks.
+2. **Auditoría:** inventario, auditoría local y revisión de los cambios principales completados; la auditoría independiente final sigue siendo el gate antes de publicar la rama.
 3. **Backup:** para cada aplicación real, usar `install.sh --apply`, que exige y genera backup/manifiesto/hash. Mantener el commit anterior.
 4. **Baseline provider-neutral:** desplegar solo agentes, skills locales y `task-router` con:
 
@@ -19,7 +19,7 @@ La implementación está en la rama `feature/safe-context-harness-audit` del rep
    El primer comando es plan; revisar rutas. El segundo no copia settings, guías ni hook.
 
 5. **Provider check:** comprobar discovery en Codex, Claude y Gemini/Antigravity; verificar que cada skill apunta al hash esperado.
-6. **Settings:** el `settings.json` versionado ya es el baseline seguro (aviso peligroso, sin auto-upload, retención de 90 días y sin hook); aplicarlo con `--with-settings` solo después de revisar el backup y el diff.
+6. **Settings:** el `settings.json` versionado es el baseline seguro (aviso peligroso, sin auto-upload, retención de 90 días y sin hook) y ya se aplicó en esta máquina con backup. En otra máquina, aplicarlo con `--with-settings` solo después de revisar el backup y el diff.
 7. **Hook:** mantener desactivado hasta tener scrub, límites de bytes, escritura atómica, procedencia y tests adversariales.
 8. **Optimización:** probar únicamente perfiles aislados; activar Caveman solo para output `TERSE_SAFE` si la medición neta lo justifica.
 9. **Compresión de herramientas:** RTK/Headroom/LLMLingua nunca se activan globalmente en la primera migración.

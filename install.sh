@@ -75,7 +75,16 @@ case "$PROVIDER" in
 esac
 
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
+[[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+
+assert_no_symlink_components() {
+  local current="$1"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    [[ ! -L "$current" ]] || die "componente symlink rechazado: $current"
+    current="$(dirname -- "$current")"
+  done
+}
 
 if [[ "$MODE" == "plan" ]]; then
   note "MODO PLAN: no se escribirán archivos. Usa --apply para aplicar."
@@ -83,6 +92,7 @@ else
   if [[ -z "$BACKUP_ROOT" ]]; then
     BACKUP_ROOT="$USER_HOME/backups/agent-harness-pre-install-$(date +%Y%m%d-%H%M%S)"
   fi
+  assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
   note "Backup: $BACKUP_ROOT"
   {
@@ -96,13 +106,13 @@ declare -A BACKED_UP=()
 
 assert_safe_source() {
   local path="$1"
+  assert_no_symlink_components "$path"
   [[ -e "$path" ]] || die "fuente ausente: $path"
-  [[ ! -L "$path" ]] || die "no se siguen symlinks de la fuente: $path"
 }
 
 assert_safe_destination() {
   local path="$1"
-  [[ ! -L "$path" ]] || die "destino symlink rechazado: $path"
+  assert_no_symlink_components "$path"
 }
 
 backup_existing() {
@@ -110,12 +120,17 @@ backup_existing() {
   local rel="$2"
   [[ -e "$dst" || -L "$dst" ]] || return 0
   assert_safe_destination "$dst"
+  [[ -f "$dst" ]] || die "destino existente no es un archivo regular: $dst"
   [[ -n "${BACKED_UP[$dst]+yes}" ]] && return 0
   BACKED_UP["$dst"]=1
   local backup_path="$BACKUP_ROOT/$rel"
+  assert_no_symlink_components "$backup_path"
+  [[ ! -e "$backup_path" && ! -L "$backup_path" ]] || die "destino de backup ya existe: $backup_path"
   mkdir -p "$(dirname "$backup_path")"
   cp -a -- "$dst" "$backup_path"
-  printf 'backup: %s -> %s\n' "$dst" "$backup_path" >> "$BACKUP_ROOT/manifest.txt"
+  printf 'backup path=%s destination=%s original_sha256=%s backup_sha256=%s\n' \
+    "$backup_path" "$dst" "$(sha256sum -- "$dst" | awk '{print $1}')" \
+    "$(sha256sum -- "$backup_path" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
 }
 
 copy_file() {
@@ -129,13 +144,20 @@ copy_file() {
     note "plan: $src -> $dst"
     return 0
   fi
+  local before_state="absent"
+  [[ -e "$dst" ]] && before_state="present"
+  local source_hash
+  source_hash="$(sha256sum -- "$src" | awk '{print $1}')"
   backup_existing "$dst" "$rel"
   mkdir -p "$(dirname "$dst")"
   local tmp
   tmp="$(mktemp "$(dirname "$dst")/.agent-harness-copy.XXXXXX")"
   cp --preserve=mode,timestamps -- "$src" "$tmp"
   mv -T -- "$tmp" "$dst"
-  sha256sum "$dst" >> "$BACKUP_ROOT/manifest.txt"
+  printf 'copy source=%s destination=%s before_state=%s source_sha256=%s backup=%s destination_sha256=%s\n' \
+    "$src" "$dst" "$before_state" "$source_hash" \
+    "$([[ "$before_state" == "present" ]] && printf '%s' "$BACKUP_ROOT/$rel" || printf '%s' none)" \
+    "$(sha256sum -- "$dst" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
   note "instalado: $dst"
 }
 

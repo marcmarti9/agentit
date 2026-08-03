@@ -1,6 +1,6 @@
 # Recomendaciones integradas
 
-**Estado:** baseline seguro implementado en la rama; integración independiente de auditoría pendiente antes de tocar settings/hooks globales.
+**Estado:** baseline seguro aplicado al HOME; el push permanece bloqueado hasta completar la auditoría de los fixes finales.
 **Prioridad:** corrección, integridad, seguridad y rollback preceden a contexto y coste.
 
 El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en `eab20ca` (`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`). Se integra como diseño superior al esquema fijo: mantiene nombres por compatibilidad, pero usa single-agent-first, probes, fan-out, pipelines y auditoría solo cuando el beneficio compensa la coordinación.
@@ -9,7 +9,7 @@ El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en 
 
 ### Conservar como core
 
-- guía global mínima y jerarquía Architect/Orchestrator/Supervisor/Worker/Auditor, activada solo cuando el alcance lo justifique;
+- guía global mínima con Architect como owner y topologías adaptativas, sin jerarquía obligatoria;
 - arquitectura adaptativa de `origin/main`, con cero subagentes por defecto, contratos mínimos, ownership y loops acotados;
 - router puro `router/route.py` y su skill de progressive disclosure;
 - políticas de riesgo, anti-overengineering y denylist;
@@ -34,7 +34,7 @@ El remoto `origin/main` ya contiene la arquitectura adaptativa del portátil en 
 - hook PreCompact y `autoUploadSessions` en un baseline seguro hasta revisar privacidad, atomicidad, límites y consentimiento;
 - `skipDangerousModePermissionPrompt: true` en una configuración segura.
 
-La configuración de repositorio ya aplica la alternativa segura: aviso peligroso conservado, auto-upload desactivado, retención de 90 días y hook PreCompact fuera del baseline. Se aplicará a esta máquina solo con el instalador y su backup.
+La configuración de repositorio y HOME ya aplican la alternativa segura: aviso peligroso conservado, auto-upload desactivado, retención de 90 días y hook PreCompact fuera del baseline.
 
 ## Clasificación final de optimizadores
 
@@ -58,10 +58,9 @@ La mejora de mayor confianza es progressive disclosure + deduplicación exacta +
 1. Elegir una fuente canónica entre marketplace Addy, copias globales y repo local.
 2. Decidir si Superpowers será la metodología estándar de deep work o una opción junto con Addy.
 3. Instalar o no el repo correcto de Marketing Skills; no confundirlo con `pm-skills`.
-4. Revisar y decidir sobre auto-upload, aviso de modo peligroso y PreCompact.
-5. Confirmar la ruta real de Antigravity para cada máquina; en este host el destino específico es `.gemini/antigravity-cli` y el discovery global es `.agents`.
-6. Añadir pruebas A/B de wrappers solo en un entorno desechable.
-7. Revisar `agy`, las raíces confiadas de Antigravity, aliases de `.bashrc` y permisos MCP antes de cualquier optimización.
+4. Confirmar la ruta real de Antigravity para cada máquina; en este host el discovery global es `.agents`.
+5. Añadir pruebas A/B de wrappers solo en un entorno desechable.
+6. Revisar `agy`, las raíces confiadas de Antigravity y el proxy antes de cualquier optimización.
 
 ## Qué se implementó
 
@@ -71,6 +70,6 @@ La mejora de mayor confianza es progressive disclosure + deduplicación exacta +
 - instalador multi-proveedor en modo plan por defecto, con backups, hashes, rechazo de symlinks y sin eliminaciones;
 - actualizador con allowlist y opt-in de settings/hook;
 - integración de `task-router` para Claude, Codex y Antigravity en el plan de despliegue.
-- integración pendiente del commit remoto `eab20ca`; no se debe volver a la pirámide fija ni duplicar la arquitectura del portátil.
+- integración del commit remoto `eab20ca`; no se debe volver a la pirámide fija ni duplicar la arquitectura del portátil.
 
-No se modificó el HOME real, no se instaló ningún compresor y no se activó ningún MCP/proxy nuevo.
+Se modificó el HOME real solo mediante backups/acciones explícitas descritas en el inventario; no se instaló ningún compresor ni se activó ningún MCP/proxy nuevo.

@@ -1,0 +1,7 @@
+This manifest records the global guide files before adaptive routing was applied.
+No secret values are included.
+date=2026-08-03
+/home/Marc/AGENTS.md sha256_before=12b26c16cf1948c70b15b7dce00319322715929cfcac8bb970b8b113c884efe7
+/home/Marc/CODEX.md sha256_before=560b727b59d946e430ec2292f0ad9ed7c327ba133c2997f9a61acb6d319335b3
+/home/Marc/CLAUDE.md sha256_before=39aba200df0698affe9e10a127541a94ee25bfb10a09e51301bbd7a67f86eb45
+backup_directory=/home/Marc/backups/agent-harness-pre-root-guides-20260803

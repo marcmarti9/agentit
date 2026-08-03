@@ -6,16 +6,16 @@
 
 ## Resumen ejecutivo
 
-- El repositorio de trabajo es `/home/Marc/agents-config`, en la rama `feature/safe-context-harness-audit`, derivada de `main` en `4e6db85`.
+- El repositorio de trabajo es `/home/Marc/agents-config`, en la rama `feature/safe-context-harness-audit`, que integra `origin/main@eab20ca` sobre `main@4e6db85`.
 - Codex, Claude Code, Gemini CLI, el wrapper local `agy` y OpenCode están instalados. No existe un ejecutable independiente llamado `antigravity`; el entrypoint Antigravity observado es `/home/Marc/.local/bin/agy`, mientras Gemini CLI está en `/home/Marc/.npm-global/bin/gemini`.
 - Codex usa `gpt-5.6-luna` con razonamiento `max` en `/home/Marc/.codex/config.toml:1-3`. Claude usa `sonnet` en `/home/Marc/.claude/settings.json:5`; no se debe imponer el identificador de Luna a proveedores que no lo soporten.
-- Hay cinco agentes personalizados replicados en Claude, Codex y Antigravity. Las copias de agentes inspeccionadas tienen los mismos SHA-256 que el repositorio.
+- Claude conserva los cinco agentes adaptativos. Las copias antiguas de esos agentes en Codex y Antigravity fueron archivadas con backup; no se eliminaron.
 - Addy Agent Skills está instalado como marketplace y sus skills se exponen globalmente mediante `.agents/skills`; `.claude/skills` contiene symlinks hacia esa colección. Hay copias adicionales y drift entre `.agents`, `.claude` y `.codex`.
 - No hay MCP configurado en Codex ni Gemini, y no hay extensiones Gemini instaladas. Esto reduce superficie de ataque, aunque algunas skills anuncian dependencias MCP que no están disponibles.
-- Cursor conserva seis `mcp_auth.json` con permisos `644`; solo se inspeccionó metadata y no se leyó ningún valor.
-- `/home/Marc/.bashrc:34-36` contiene aliases que lanzan Claude/`agy`/Codex con bypasses peligrosos. `/home/Marc/.bashrc:45` contiene una variable con apariencia de credencial; su valor no se reproduce.
+- Cursor conserva seis `mcp_auth.json`, ahora con permisos `600`; solo se inspeccionó metadata y no se leyó ningún valor.
+- `/home/Marc/.bashrc` conserva una variable con apariencia de credencial cuyo valor no se reproduce; los tres aliases bypass fueron comentados y el archivo quedó en modo `600`.
 - OmniRoute `3.8.48` está instalado como paquete Node y contiene catálogo de compresión, pero `127.0.0.1:20128` no responde en la inspección. Su estado operativo es `UNKNOWN/NOT_RUNNING`, no `ACTIVE`.
-- Antes de esta rama, `install.sh` sobrescribía destinos con `rm -rf` y copiaba settings/hooks sin una activación separada. La rama actual reemplaza ese comportamiento por plan por defecto, backups y allowlist; no se ha aplicado al HOME real.
+- Antes de esta rama, `install.sh` sobrescribía destinos con `rm -rf` y copiaba settings/hooks sin una activación separada. La rama actual reemplaza ese comportamiento por plan por defecto, backups estructurados y allowlist.
 - El 2026-08-03 se aplicó al HOME real el baseline de proveedor con `install.sh --apply --provider all --with-settings`. El backup está en `/home/Marc/backups/agent-harness-pre-install-20260803-160912`.
 - Tras la aplicación, Claude tiene la arquitectura adaptativa y settings seguro; Codex tiene skills compartidas y `task-router`; Antigravity/Gemini descubre `task-router` desde `/home/Marc/.agents/skills`.
 
@@ -24,7 +24,7 @@
 | Elemento | Ruta | Versión observada | Estado | Notas |
 |---|---|---:|---|---|
 | Codex CLI | `/home/Marc/.local/bin/codex` | `0.146.0` | ACTIVE_GLOBAL | MCP: ninguno |
-| Claude Code | `/home/Marc/.local/bin/claude` | `2.1.220` | ACTIVE_GLOBAL | PreCompact global configurado |
+| Claude Code | `/home/Marc/.local/bin/claude` | `2.1.220` | ACTIVE_GLOBAL | hook PreCompact existente como artefacto, no referenciado |
 | Gemini CLI / Antigravity | `/home/Marc/.npm-global/bin/gemini` | `0.47.0` | ACTIVE_GLOBAL | proyecto `/home/Marc` marcado no confiable para agents/hooks |
 | Antigravity wrapper | `/home/Marc/.local/bin/agy` | por verificar | ACTIVE_GLOBAL | usa settings de `.gemini/antigravity-cli` |
 | OpenCode | `/home/Marc/.opencode/bin/opencode` | `1.17.20` | AVAILABLE_ON_DEMAND | fuera del despliegue inicial |
@@ -37,9 +37,9 @@
 
 | Ruta | Tipo/estado | Evidencia y función |
 |---|---|---|
-| `/home/Marc/.codex` | global activo | `config.toml`, agentes y skills |
+| `/home/Marc/.codex` | global activo | `config.toml` y skills; agentes antiguos archivados |
 | `/home/Marc/.claude` | global activo | settings, agentes, skills, plugins, hook y memorias |
-| `/home/Marc/.gemini/antigravity-cli` | global disponible | agentes y dos skills locales; es el destino específico de Antigravity |
+| `/home/Marc/.gemini/antigravity-cli` | global disponible | settings; agentes antiguos archivados; discovery de skills en `.agents` |
 | `/home/Marc/.agents` | global activo | 29 carpetas/66 archivos de skills; Gemini las descubre globalmente |
 | `/home/Marc/.cursor` | existente | no se encontró una configuración de harness equivalente en el primer recorrido |
 | `/home/Marc/.config`, `/home/Marc/.local/share` | existentes | inspeccionados como ubicaciones probables; sin activar rutas de compresión identificadas |
@@ -56,7 +56,7 @@
 
 ### Claude Code
 
-`/home/Marc/.claude/settings.json:3-5` limita profundidad de subagentes a `2` y selecciona `sonnet`. `:32-33` selecciona el agente `architect` y permite saltar el aviso de modo peligroso. `:37-39` activa checkpoints, compactación automática y subida automática de sesiones. `:40-53` registra el hook `PreCompact` que ejecuta `bash ~/.claude/hooks/precompact-memory.sh`.
+La configuración previa de `/home/Marc/.claude/settings.json` seleccionaba `architect`, permitía saltar el aviso de modo peligroso, activaba la subida automática de sesiones y registraba `PreCompact`; esas observaciones están conservadas como evidencia histórica en el backup de instalación. La versión actualmente aplicada mantiene profundidad de subagentes `2` y modelo `sonnet` en `:3-5`, conserva `agent: architect` en `:32`, fija `skipDangerousModePermissionPrompt: false` en `:33`, usa retención de 90 días, checkpoints y compactación automática en `:36-38`, fija `autoUploadSessions: false` en `:39` y no declara hooks.
 
 El archivo local `/home/Marc/.claude/settings.local.json` solo se inventarió por forma; no se reportan sus valores. El actualizador seguro nunca lo importa.
 
@@ -66,12 +66,12 @@ El archivo local `/home/Marc/.claude/settings.local.json` solo se inventarió po
 
 ## Agentes y skills duplicados
 
-Los cinco agentes `architect`, `auditor`, `orchestrator`, `supervisor` y `worker` existen en:
+Los cinco agentes `architect`, `auditor`, `orchestrator`, `supervisor` y `worker` existen activamente en:
 
 - `/home/Marc/agents-config/agents`
 - `/home/Marc/.claude/agents`
-- `/home/Marc/.codex/agents`
-- `/home/Marc/.gemini/antigravity-cli/agents`
+
+Las copias antiguas de Codex y Antigravity están en `/home/Marc/backups/agent-harness-archive-old-provider-agents-20260803`, con manifiesto y hashes.
 
 Los hashes del repositorio y de Claude coinciden en los cinco archivos durante la inspección. `architect-orchestrator` y `supabase-postgres-best-practices` también coinciden entre el repositorio y los destinos inspeccionados.
 
@@ -87,7 +87,7 @@ No se encontraron clones locales de ECC, `coreyhaines31/marketingskills`, Hallma
 
 ## Hooks, memoria y red
 
-Existe un único hook de Claude en `/home/Marc/.claude/hooks/precompact-memory.sh`. Hay memorias bajo `/home/Marc/.claude/projects/*/memory/MEMORY.md`; no se leyó su contenido.
+Existe un único hook de Claude como artefacto en `/home/Marc/.claude/hooks/precompact-memory.sh`, pero la configuración aplicada no lo referencia. Hay memorias bajo `/home/Marc/.claude/projects/*/memory/MEMORY.md`; no se leyó su contenido.
 
 El hook recibe JSONL de transcript, toma las últimas 400 líneas, construye un prompt y llama a Claude headless; el análisis de seguridad está en `reports/security-review.md`. No se ha activado ningún hook nuevo por esta rama.
 
@@ -100,8 +100,8 @@ No hay listener en `127.0.0.1:20128` y `curl` devolvió conexión rechazada; por
 | ACTIVE_GLOBAL | Codex, Claude, Gemini global skills, agentes adaptativos de Claude, Addy skills expuestas, task-router |
 | ACTIVE_PROJECT | instrucciones `CLAUDE.md`/`AGENTS.md` en varios proyectos; deben resolverse por alcance |
 | AVAILABLE_ON_DEMAND | OpenCode, repositorios externos no instalados, optimizadores no instalados |
-| DUPLICATED | copias de agentes/skills y `superpowers` 6.1.1/6.2.0 en cache |
-| SECURITY_REVIEW_REQUIRED | hook PreCompact, `skipDangerousModePermissionPrompt`, auto-upload, directorios confiados, terceros |
+| DUPLICATED | copias de skills y `superpowers` 6.1.1/6.2.0 en cache |
+| SECURITY_REVIEW_REQUIRED | hook archivado, proxy no disponible, directorios confiados, terceros |
 | UNKNOWN | estado de OmniRoute, algunos wrappers fuera de las rutas iniciales, procedencia exacta de todas las copias del Codex |
 
 ## Límites del descubrimiento

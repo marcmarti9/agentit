@@ -119,16 +119,19 @@ def _content_types(text: str) -> list[str]:
 
 
 def _skills(text: str, category: str, risk: str) -> list[str]:
-    if category == "marketing":
-        return ["marketing-skills"]
-    if category == "design":
-        return ["hallmark"]
-    if category == "documentation" and _matches(text, (r"public|público|copy|writing|texto",)):
-        return ["no-ai-slop"]
-
     selected: list[str] = []
     if risk in {"RISK_3", "RISK_4"}:
         selected.extend(["security-hardening", "architect-orchestrator"])
+    if category == "marketing":
+        selected.append("marketingskills")
+        return list(dict.fromkeys(selected))
+    if category == "design":
+        selected.append("hallmark")
+        return list(dict.fromkeys(selected))
+    if category == "documentation" and _matches(text, (r"public|público|copy|writing|texto",)):
+        selected.append("no-ai-slop")
+        return list(dict.fromkeys(selected))
+
     if category == "bug":
         selected.append("debugging-and-error-recovery")
     if category == "testing":
@@ -258,8 +261,12 @@ def route_task(prompt: str, explicit_risk: str | None = None) -> dict[str, Any]:
         "topology": _topology(text.lower(), risk),
         "subagents": _subagent_budget(text.lower(), risk),
         "verification": verification,
-        "reversible": True,
-        "recovery": "retrieve originals before RISK_3/RISK_4 actions" if risk in {"RISK_3", "RISK_4"} else "not needed",
+        "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
+        "recovery": (
+            "not proven; retrieve originals before RISK_3/RISK_4 actions"
+            if risk in {"RISK_3", "RISK_4"}
+            else "not needed"
+        ),
         "reasons": reasons,
     }
 

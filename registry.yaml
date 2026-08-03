@@ -129,6 +129,94 @@ entries:
     state: ACTIVE_GLOBAL
     priority: on_demand
 
+  - id: security-hardening
+    name: "Security and hardening guidance"
+    kind: skill
+    category: security
+    provenance: local-addy-skill
+    version: "installed@local"
+    paths:
+      - /home/Marc/.agents/skills/security-and-hardening/SKILL.md
+    trigger: "auth, secrets, permissions, external input, hooks, or integrations"
+    avoid_when: "RISK_0/RISK_1 without a security boundary"
+    context_cost: medium
+    execution_cost: low
+    depth: standard
+    risk: high
+    conflicts: ["security through obscurity", "unsafe fallback behavior"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
+  - id: debugging-and-error-recovery
+    name: "Root-cause debugging guidance"
+    kind: skill
+    category: debugging
+    provenance: local-addy-skill
+    version: "installed@local"
+    paths:
+      - /home/Marc/.agents/skills/debugging-and-error-recovery/SKILL.md
+    trigger: "test failure, build failure, unexpected behavior, or error diagnosis"
+    avoid_when: "no failure or diagnosis is needed"
+    context_cost: medium
+    execution_cost: low_to_medium
+    depth: standard
+    risk: medium
+    conflicts: ["guessing", "silent fallback"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
+  - id: test-driven-development
+    name: "Behavior-first testing workflow"
+    kind: skill
+    category: testing
+    provenance: local-addy-skill
+    version: "installed@local"
+    paths:
+      - /home/Marc/.agents/skills/test-driven-development/SKILL.md
+    trigger: "new logic, behavior change, bug fix, or regression test"
+    avoid_when: "explanation or no testable behavior"
+    context_cost: medium
+    execution_cost: medium
+    depth: standard
+    risk: medium
+    conflicts: ["ceremonial tests", "testing after implementation only"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
+  - id: frontend-ui-engineering
+    name: "Accessible responsive frontend engineering"
+    kind: skill
+    category: frontend
+    provenance: local-addy-skill
+    version: "installed@local"
+    paths:
+      - /home/Marc/.agents/skills/frontend-ui-engineering/SKILL.md
+    trigger: "frontend, UI, CSS, accessibility, or responsive behavior"
+    avoid_when: "backend-only task"
+    context_cost: medium
+    execution_cost: medium
+    depth: standard
+    risk: medium
+    conflicts: ["visual claims without browser evidence"]
+    dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
   - id: addy-agent-skills
     name: "Addy Osmani production engineering skills bundle"
     kind: bundle

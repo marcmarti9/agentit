@@ -62,7 +62,15 @@ while (($#)); do
 done
 
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
+[[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+assert_no_symlink_components() {
+  local current="$1"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    [[ ! -L "$current" ]] || die "componente symlink rechazado: $current"
+    current="$(dirname -- "$current")"
+  done
+}
 case "$SOURCE_PROVIDER" in
   claude) SOURCE_ROOT="$USER_HOME/.claude"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
   codex) SOURCE_ROOT="$USER_HOME/.codex"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
@@ -77,6 +85,7 @@ else
   if [[ -z "$BACKUP_ROOT" ]]; then
     BACKUP_ROOT="$REPO_DIR/backups/update-$(date +%Y%m%d-%H%M%S)"
   fi
+  assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
   printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" > "$BACKUP_ROOT/manifest.txt"
 fi
@@ -85,8 +94,8 @@ declare -A BACKED_UP=()
 
 assert_source() {
   local path="$1"
+  assert_no_symlink_components "$path"
   [[ -e "$path" ]] || die "fuente ausente: $path"
-  [[ ! -L "$path" ]] || die "no se siguen symlinks: $path"
 }
 
 backup_existing() {
@@ -94,11 +103,17 @@ backup_existing() {
   local rel="$2"
   [[ -e "$dst" || -L "$dst" ]] || return 0
   [[ ! -L "$dst" ]] || die "destino symlink rechazado: $dst"
+  [[ -f "$dst" ]] || die "destino existente no es un archivo regular: $dst"
   [[ -n "${BACKED_UP[$dst]+yes}" ]] && return 0
   BACKED_UP["$dst"]=1
-  mkdir -p "$(dirname "$BACKUP_ROOT/$rel")"
-  cp -a -- "$dst" "$BACKUP_ROOT/$rel"
-  printf 'backup: %s\n' "$dst" >> "$BACKUP_ROOT/manifest.txt"
+  local backup_path="$BACKUP_ROOT/$rel"
+  assert_no_symlink_components "$backup_path"
+  [[ ! -e "$backup_path" && ! -L "$backup_path" ]] || die "destino de backup ya existe: $backup_path"
+  mkdir -p "$(dirname "$backup_path")"
+  cp -a -- "$dst" "$backup_path"
+  printf 'backup path=%s destination=%s original_sha256=%s backup_sha256=%s\n' \
+    "$backup_path" "$dst" "$(sha256sum -- "$dst" | awk '{print $1}')" \
+    "$(sha256sum -- "$backup_path" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
 }
 
 import_file() {
@@ -111,13 +126,20 @@ import_file() {
     printf 'plan: %s -> %s\n' "$src" "$dst"
     return 0
   fi
+  local before_state="absent"
+  [[ -e "$dst" ]] && before_state="present"
+  local source_hash
+  source_hash="$(sha256sum -- "$src" | awk '{print $1}')"
   backup_existing "$dst" "$rel"
   mkdir -p "$(dirname "$dst")"
   local tmp
   tmp="$(mktemp "$(dirname "$dst")/.agent-harness-import.XXXXXX")"
   cp --preserve=mode,timestamps -- "$src" "$tmp"
   mv -T -- "$tmp" "$dst"
-  sha256sum "$dst" >> "$BACKUP_ROOT/manifest.txt"
+  printf 'copy source=%s destination=%s before_state=%s source_sha256=%s backup=%s destination_sha256=%s\n' \
+    "$src" "$dst" "$before_state" "$source_hash" \
+    "$([[ "$before_state" == "present" ]] && printf '%s' "$BACKUP_ROOT/$rel" || printf '%s' none)" \
+    "$(sha256sum -- "$dst" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
   printf 'importado: %s\n' "$dst"
 }
 

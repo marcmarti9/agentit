@@ -196,6 +196,16 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertNotIn("supabase-postgres-best-practices", selected_or_missing)
         self.assert_skill_compatibility(result)
 
+    def test_generic_database_task_recommends_inspecting_the_stack(self):
+        result = self.route("Optimiza esta consulta de base de datos.")
+
+        selected_or_missing = set(result["skills_available"]) | set(
+            result["skills_recommended_missing"]
+        )
+        self.assertEqual(result["category"], "database")
+        self.assertNotIn("supabase-postgres-best-practices", selected_or_missing)
+        self.assertIn("inspect_database_stack", result["routing_advice"])
+
     def test_postgresql_supabase_selects_installed_database_guidance(self):
         result = self.route("Optimiza esta consulta PostgreSQL en Supabase.")
 

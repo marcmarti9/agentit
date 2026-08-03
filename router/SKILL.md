@@ -35,7 +35,7 @@ The JSON result is a proposal. The active provider, project instructions, explic
 5. Use only exact deduplication by default. Reversible CCR may be considered for RISK_2 large outputs when the original is retained and retrieval is explicit.
 6. For RISK_3 and RISK_4, retrieve original content before a decision if compressed content could influence it and require human review. For RISK_4 also require backup evidence, a dry run where possible, independent review, and a post-operation check.
 7. Do not spawn an agent solely because the budget allows it. Delegation must have a bounded scope and a verification result.
-8. Select `supabase-postgres-best-practices` only when the request includes a PostgreSQL signal such as Postgres, PostgreSQL, `psql`, or Supabase. A SQLite task is still a database task but must not receive Postgres-specific guidance.
+8. Select `supabase-postgres-best-practices` only when the request includes a PostgreSQL signal such as Postgres, PostgreSQL, `psql`, or Supabase. A SQLite task is still a database task but must not receive Postgres-specific guidance; if no database engine is known, return `inspect_database_stack` in `routing_advice`.
 
 ## Adaptive execution
 

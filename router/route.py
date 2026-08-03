@@ -521,6 +521,14 @@ def route_task(
     category = _category(text.lower(), risk)
     complexity = _complexity(text.lower(), risk)
     content_types = _content_types(text.lower())
+    routing_advice: list[str] = []
+    if category == "database" and not _matches(
+        text,
+        (
+            r"\b(postgres(?:ql)?|psql|supabase|sqlite|mysql|mariadb|mongodb|mongo|oracle|sql server|mssql|cockroachdb|dynamodb|redis)\b",
+        ),
+    ):
+        routing_advice.append("inspect_database_stack")
     critical = risk in {"RISK_3", "RISK_4"} or bool(CRITICAL_CONTENT.intersection(content_types))
 
     if risk in {"RISK_0", "RISK_1"}:
@@ -594,6 +602,7 @@ def route_task(
         "skills_recommended_missing": skills_recommended_missing,
         "skills_suppressed_conflicts": skills_suppressed_conflicts,
         "skill_recommendation_metadata": skill_recommendation_metadata,
+        "routing_advice": routing_advice,
         "output_profile": output_profile,
         "compression": compression,
         "topology": _topology(text.lower(), risk),

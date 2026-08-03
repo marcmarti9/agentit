@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import stat
 import sys
@@ -404,17 +405,22 @@ def project_status(*, project_root: Path) -> dict[str, Any]:
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles.")
+    parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles and context engines.")
     parser.add_argument(
-        "command", nargs="?", choices=("enable", "activate", "disable", "status")
+        "command", nargs="?", choices=("enable", "activate", "disable", "status", "artifact", "context")
     )
-    parser.add_argument("name", nargs="?")
+    parser.add_argument("subcommand", nargs="?")
+    parser.add_argument("target", nargs="?")
+    parser.add_argument("extra_arg", nargs="?")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--catalog", type=Path)
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--profile")
     parser.add_argument("--format", choices=("ids", "json", "text"), default="ids")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--session", default="default")
+    parser.add_argument("--description", default="CLI context artifact")
+    parser.add_argument("--lines", help="Line range N:M for artifact read")
     return parser
 
 
@@ -432,14 +438,99 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print("\n".join(skill_ids))
             return 0
-        if args.command in {"enable", "activate", "disable"} and not args.name:
-            parser.error(f"{args.command} requiere un nombre de perfil")
+
         project_root = args.project.absolute()
         if project_root.is_symlink():
             raise ProfileError(f"project root symlink rejected: {project_root}")
+
+        if args.command == "artifact":
+            sub = args.subcommand
+            uri = args.target
+            if not sub or not uri:
+                parser.error("artifact requiere subcomando (get|read|grep) y URI (agentit://artifacts/...)")
+
+            try:
+                from router.artifact_ref import resolve_agentit_uri
+            except ImportError:
+                from artifact_ref import resolve_agentit_uri
+
+            path = resolve_agentit_uri(uri, project_root=project_root)
+
+            if sub in {"get", "read"}:
+                text = path.read_text(encoding="utf-8")
+                if args.lines and ":" in args.lines:
+                    parts = args.lines.split(":", 1)
+                    start = int(parts[0]) - 1 if parts[0].isdigit() else 0
+                    end = int(parts[1]) if parts[1].isdigit() else len(text.splitlines())
+                    lines = text.splitlines()[start:end]
+                    print("\n".join(lines))
+                else:
+                    print(text)
+                return 0
+
+            if sub == "grep":
+                pattern = args.extra_arg
+                if not pattern:
+                    parser.error("artifact grep requiere un patrón")
+                text = path.read_text(encoding="utf-8")
+                rgx = re.compile(pattern, re.IGNORECASE)
+                for line_no, line in enumerate(text.splitlines(), 1):
+                    if rgx.search(line):
+                        print(f"{line_no}:{line}")
+                return 0
+
+            parser.error(f"subcomando artifact desconocido: {sub}")
+
+        if args.command == "context":
+            sub = args.subcommand
+            file_or_text = args.target
+            content = ""
+            if file_or_text and Path(file_or_text).is_file():
+                content = Path(file_or_text).read_text(encoding="utf-8")
+            elif file_or_text:
+                content = file_or_text
+            else:
+                content = sys.stdin.read()
+
+            artifact_dir = project_root / ".agentit" / "artifacts"
+
+            if sub == "filter":
+                try:
+                    from router.tool_filter import filter_tool_output
+                except ImportError:
+                    from tool_filter import filter_tool_output
+                res = filter_tool_output(content, artifact_dir=artifact_dir)
+                print(res["content"])
+                return 0
+
+            if sub == "archive":
+                try:
+                    from router.artifact_ref import create_artifact_reference
+                except ImportError:
+                    from artifact_ref import create_artifact_reference
+                res = create_artifact_reference(content, description=args.description, artifact_dir=artifact_dir)
+                print(json.dumps(res, ensure_ascii=False, indent=2))
+                return 0
+
+            if sub == "dedup":
+                try:
+                    from router.dedup import ContextDeduplicator
+                except ImportError:
+                    from dedup import ContextDeduplicator
+                deduper = ContextDeduplicator(session_id=args.session, project_dir=project_root)
+                res = deduper.process_block(content)
+                print(res["content"])
+                return 0
+
+            parser.error(f"subcomando context desconocido: {sub}")
+
+        if args.command in {"enable", "activate", "disable"} and not args.subcommand and not args.name:
+            parser.error(f"{args.command} requiere un nombre de perfil")
+
+        target_name = args.subcommand or args.name
         if args.command in {"enable", "activate"}:
             lines = enable_profile(
-                args.name,
+                target_name,
                 project_root=project_root,
                 repo_root=repo_root,
                 catalog_path=args.catalog,
@@ -447,7 +538,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         elif args.command == "disable":
             lines = disable_profile(
-                args.name,
+                target_name,
                 project_root=project_root,
                 repo_root=repo_root,
                 catalog_path=args.catalog,
@@ -464,7 +555,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         print("\n".join(lines))
         return 0
-    except ProfileError as exc:
+    except (ProfileError, ValueError, PermissionError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
 

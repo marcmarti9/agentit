@@ -263,6 +263,19 @@ class RegistryRouteTests(unittest.TestCase):
         self.assertEqual(result["skills_available"], ["frontend-ui-engineering"])
         self.assertEqual(result["skills_suppressed_conflicts"], ["hallmark"])
 
+        frontend["priority"] = "specialized"
+        hallmark["priority"] = "core"
+        self.write_registry([frontend, hallmark])
+        inverse = route_task(
+            "Rediseña visualmente esta interfaz.",
+            registry_path=self.registry_path,
+            home=self.home,
+        )
+        self.assertEqual(inverse["skills_available"], ["hallmark"])
+        self.assertEqual(
+            inverse["skills_suppressed_conflicts"], ["frontend-ui-engineering"]
+        )
+
     def test_real_catalog_available_outputs_have_compatible_state_and_path(self):
         entries = load_registry(DEFAULT_REGISTRY_PATH)
         prompts = (

@@ -64,6 +64,18 @@ assert_no_symlink_components() {
   done
 }
 
+assert_safe_directory_path() {
+  local current="$1"
+  assert_no_symlink_components "$current"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    if [[ -e "$current" || -L "$current" ]]; then
+      [[ -d "$current" && ! -L "$current" ]] || \
+        die "componente existente no es un directorio seguro: $current"
+    fi
+    current="$(dirname -- "$current")"
+  done
+}
+
 create_manifest() {
   local path="$1"
   assert_manifest_path "$path"
@@ -119,7 +131,9 @@ if [[ "$MODE" == "apply" ]]; then
     BACKUP_ROOT="$USER_HOME/backups/agent-harness-local-hardening-$(date +%Y%m%d-%H%M%S)"
   fi
   assert_manifest_path "$BACKUP_ROOT"
-  assert_no_symlink_components "$BACKUP_ROOT"
+  assert_safe_directory_path "$BACKUP_ROOT"
+  [[ ! -e "$BACKUP_ROOT" && ! -L "$BACKUP_ROOT" ]] || \
+    die "la raíz de backup debe ser nueva: $BACKUP_ROOT"
   (umask 077; mkdir -p "$BACKUP_ROOT")
   [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
   chmod 0700 "$BACKUP_ROOT"

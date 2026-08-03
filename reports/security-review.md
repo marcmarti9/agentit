@@ -31,4 +31,4 @@ El hook PreCompact conservado como artefacto procesa transcript y puede introduc
 - No se ejecutó GitHub Actions durante esta corrección.
 - No se probaron operaciones destructivas, producción, bases de datos ni proveedores externos.
 - No se midió reducción de tokens o coste.
-- Esta corrección no ejecutó scripts con `--apply` ni modificó el HOME real.
+- Esta corrección ejecutó scripts con `--apply` únicamente en fixtures temporales; no los ejecutó sobre el HOME real ni modificó ese HOME.

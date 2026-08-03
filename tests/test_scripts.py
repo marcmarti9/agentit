@@ -302,6 +302,82 @@ class ScriptRegressionTests(unittest.TestCase):
                 {"skills/architect-orchestrator/SKILL.md"}, changed_paths
             )
 
+    def test_existing_backup_roots_are_rejected_before_apply(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+
+            install_home = temporary_root / "install-home"
+            install_home.mkdir()
+            install_backup = temporary_root / "install-backup"
+            install_backup.mkdir()
+            install_result = run_script(
+                REPOSITORY / "install.sh",
+                install_home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--backup-dir",
+                str(install_backup),
+            )
+
+            repository_fixture = temporary_root / "repository-fixture"
+            shutil.copytree(
+                REPOSITORY,
+                repository_fixture,
+                symlinks=True,
+                ignore=shutil.ignore_patterns(".git", "__pycache__", "backups"),
+            )
+            update_home = temporary_root / "update-home"
+            source_skill = (
+                update_home
+                / ".codex"
+                / "skills"
+                / "architect-orchestrator"
+                / "SKILL.md"
+            )
+            source_skill.parent.mkdir(parents=True)
+            source_skill.write_text("fixture\n", encoding="utf-8")
+            update_backup = temporary_root / "update-backup"
+            update_backup.mkdir()
+            repository_before = snapshot_tree(repository_fixture)
+            update_result = run_script(
+                repository_fixture / "update.sh",
+                update_home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--backup-dir",
+                str(update_backup),
+            )
+
+            hardening_home = temporary_root / "hardening-home"
+            hardening_home.mkdir()
+            (hardening_home / ".bashrc").write_text(
+                "export EDITOR=vi\n", encoding="utf-8"
+            )
+            hardening_backup = temporary_root / "hardening-backup"
+            hardening_backup.mkdir()
+            hardening_result = run_script(
+                REPOSITORY / "security" / "harden-local.sh",
+                hardening_home,
+                "--apply",
+                "--backup-dir",
+                str(hardening_backup),
+            )
+
+            self.assertNotEqual(0, install_result.returncode, install_result.stdout)
+            self.assertFalse((install_backup / "manifest.txt").exists())
+            self.assertFalse((install_home / ".codex").exists())
+            self.assertNotEqual(0, update_result.returncode, update_result.stdout)
+            self.assertFalse((update_backup / "manifest.txt").exists())
+            self.assertEqual(repository_before, snapshot_tree(repository_fixture))
+            self.assertNotEqual(0, hardening_result.returncode, hardening_result.stdout)
+            self.assertFalse((hardening_backup / "manifest.txt").exists())
+            self.assertEqual(
+                "export EDITOR=vi\n",
+                (hardening_home / ".bashrc").read_text(encoding="utf-8"),
+            )
+
     def test_hardening_secures_backup_directories_and_credentials(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             home = Path(temporary_directory) / "home"

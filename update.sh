@@ -253,14 +253,13 @@ else
   fi
   assert_manifest_path "$BACKUP_ROOT"
   assert_safe_directory_path "$BACKUP_ROOT"
+  [[ ! -e "$BACKUP_ROOT" && ! -L "$BACKUP_ROOT" ]] || \
+    die "la raíz de backup debe ser nueva: $BACKUP_ROOT"
   manifest_path="$BACKUP_ROOT/manifest.txt"
   assert_manifest_path "$manifest_path"
   assert_no_symlink_components "$manifest_path"
   [[ ! -e "$manifest_path" && ! -L "$manifest_path" ]] || \
     die "manifest ya existe; se rechaza sobrescribirlo: $manifest_path"
-  if [[ -d "$BACKUP_ROOT" ]]; then
-    [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
-  fi
   (umask 077; mkdir -p "$BACKUP_ROOT")
   [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
   chmod 0700 "$BACKUP_ROOT"

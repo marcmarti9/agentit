@@ -33,4 +33,4 @@ Mantener hooks de compresión, proxies, MCP, wrappers y repositorios externos fu
 
 ## Evidencia y cambios locales
 
-Los resultados locales reproducibles se registran en `evals/results.md`; el estado de GitHub Actions se informa por separado y solo después de una ejecución real. Esta corrección no ejecutó `--apply` ni modificó el HOME real: solo cambió el repositorio y generó el inventario ignorado.
+Los resultados locales reproducibles se registran en `evals/results.md`; el estado de GitHub Actions se informa por separado y solo después de una ejecución real. Esta corrección ejecutó `--apply` únicamente en fixtures temporales; no lo ejecutó sobre el HOME real. Solo cambió el repositorio y generó el inventario ignorado.

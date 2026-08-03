@@ -162,7 +162,7 @@ def _matches(text: str, patterns: tuple[str, ...]) -> bool:
 
 def _infer_risk(text: str) -> tuple[str, list[str]]:
     reasons: list[str] = []
-    action_boundary = r"(?:^|[.;]|\bthen\b|\binstead\b|\by luego\b|\bdespués\b)\s*(?:please\s+|por favor\s+)?"
+    action_boundary = r"(?:^|[.;]|\bthen\b|\binstead\b|\band\b|\by luego\b|\bdespués\b|\by\b)\s*(?:please\s+|por favor\s+)?"
     explanatory = _matches(
         text,
         (
@@ -450,7 +450,14 @@ def _resolve_skill_recommendations(
             registry_path=registry_path,
             home=home,
         )
-        if is_available and set(entry["conflicts_with"]).intersection(available):
+        conflicts_with_available = set(entry["conflicts_with"]).intersection(available)
+        available_conflicts_with_current = any(
+            skill_id in entries[selected_id]["conflicts_with"]
+            for selected_id in available
+        )
+        if is_available and (
+            conflicts_with_available or available_conflicts_with_current
+        ):
             suppressed_conflicts.append(skill_id)
             continue
         target = available if is_available else missing

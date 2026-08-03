@@ -802,17 +802,27 @@ def route_task(
         compression = {
             "enabled": True,
             "mode": "SELECTIVE_REVERSIBLE",
-            "allowed": ["exact_dedup", "reversible_ccr"],
+            "allowed": ["exact_dedup", "tool_filtering", "artifact_references", "output_terse"],
             "semantic": False,
             "deny_reasons": [],
+            "engines": {
+                "exact_dedup": "router.dedup.ContextDeduplicator",
+                "tool_filtering": "router.tool_filter.filter_tool_output",
+                "artifact_references": "router.artifact_ref.create_artifact_reference",
+            },
         }
     else:
         compression = {
             "enabled": True,
             "mode": "SAFE_STRUCTURAL",
-            "allowed": ["exact_dedup", "output_terse"],
+            "allowed": ["exact_dedup", "tool_filtering", "artifact_references", "output_terse"],
             "semantic": False,
             "deny_reasons": [],
+            "engines": {
+                "exact_dedup": "router.dedup.ContextDeduplicator",
+                "tool_filtering": "router.tool_filter.filter_tool_output",
+                "artifact_references": "router.artifact_ref.create_artifact_reference",
+            },
         }
 
     verification = {

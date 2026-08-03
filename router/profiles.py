@@ -405,9 +405,9 @@ def project_status(*, project_root: Path) -> dict[str, Any]:
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles and context engines.")
+    parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles, context engines, and incubator scout.")
     parser.add_argument(
-        "command", nargs="?", choices=("enable", "activate", "disable", "status", "artifact", "context")
+        "command", nargs="?", choices=("enable", "activate", "disable", "status", "artifact", "context", "scout")
     )
     parser.add_argument("subcommand", nargs="?")
     parser.add_argument("target", nargs="?")
@@ -421,6 +421,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--session", default="default")
     parser.add_argument("--description", default="CLI context artifact")
     parser.add_argument("--lines", help="Line range N:M for artifact read")
+    parser.add_argument("--reason", default="Rejected during evaluation")
     return parser
 
 
@@ -523,6 +524,56 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
 
             parser.error(f"subcomando context desconocido: {sub}")
+
+        if args.command == "scout":
+            try:
+                from router.scout import add_candidate, inspect_candidate, load_candidates, load_rejected, reject_candidate
+            except ImportError:
+                from scout import add_candidate, inspect_candidate, load_candidates, load_rejected, reject_candidate
+
+            sub = args.subcommand or "status"
+            if sub == "status":
+                cand_data = load_candidates()
+                rej_data = load_rejected()
+                status_payload = {
+                    "active_candidates": len(cand_data.get("candidates", [])),
+                    "rejected_candidates": len(rej_data.get("rejected", [])),
+                    "candidates": cand_data.get("candidates", []),
+                }
+                print(json.dumps(status_payload, ensure_ascii=False, indent=2))
+                return 0
+
+            if sub == "add":
+                url_or_claim = args.target
+                if not url_or_claim:
+                    parser.error("scout add requiere un URL o claim")
+                item = add_candidate(url_or_claim)
+                print(json.dumps(item, ensure_ascii=False, indent=2))
+                return 0
+
+            if sub == "inspect":
+                cand_id = args.target
+                if not cand_id:
+                    parser.error("scout inspect requiere un ID de candidato")
+                item = inspect_candidate(cand_id)
+                if not item:
+                    print(f"Candidato '{cand_id}' no encontrado.", file=sys.stderr)
+                    return 1
+                print(json.dumps(item, ensure_ascii=False, indent=2))
+                return 0
+
+            if sub == "reject":
+                cand_id = args.target
+                if not cand_id:
+                    parser.error("scout reject requiere un ID de candidato")
+                ok = reject_candidate(cand_id, reason=args.reason)
+                if ok:
+                    print(f"Candidato '{cand_id}' rechazado.")
+                    return 0
+                print(f"Candidato '{cand_id}' no encontrado.", file=sys.stderr)
+                return 1
+
+            parser.error(f"subcomando scout desconocido: {sub}")
 
         if args.command in {"enable", "activate", "disable"} and not args.subcommand:
             parser.error(f"{args.command} requiere un nombre de perfil")

@@ -1,0 +1,10 @@
+# Agentit Incubator Rejected Registry
+# Tracks evaluated candidates that were rejected due to security, cost, or complexity.
+
+version: 1
+rejected:
+  - id: caveman-lossy-prose
+    source: "https://github.com/diegosouzapw/OmniRoute"
+    claim: "Rule-based prose compression trimming connecting words"
+    reason: "Risk of stripping negation operators (not, !=) and syntactic precision in code diffs and errors"
+    decision: rejected

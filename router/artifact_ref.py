@@ -1,8 +1,12 @@
 """Artifact reference and CCR (Context Content Retention) module for Agentit.
 
 Archives large text blocks (>150 lines or >10KB) into .agentit/artifacts/
-with sidecar metadata JSON files, SHA-256 verification on retrieval, 
+with sidecar metadata JSON files, SHA-256 sidecar integrity verification, 
 0600 permissions, atomic mkstemp writing, and full symlink component protection.
+
+Note: SHA-256 sidecar verification provides tamper/corruption detection against
+accidental edits. For cryptographic non-repudiation against arbitrary local writers,
+use project-level permissions or signed manifests.
 """
 
 from __future__ import annotations
@@ -30,15 +34,46 @@ def reject_symlink_components(path: Path, stop: Path) -> None:
         current = current.parent
 
 
-def verify_artifact_integrity(artifact_file: Path) -> dict[str, Any]:
+def verify_artifact_integrity(artifact_file: Path, expected_hash_check: str | None = None) -> dict[str, Any]:
     """Verify that the artifact file content matches its sidecar metadata SHA-256."""
     sidecar_file = artifact_file.with_suffix(".json")
-    if not sidecar_file.is_file() or sidecar_file.is_symlink():
-        raise ValueError(f"Artifact metadata sidecar missing or invalid: {sidecar_file}")
+    actual_hash = hashlib.sha256(artifact_file.read_bytes()).hexdigest()
+
+    # Automatic recovery for orphan .txt files missing a sidecar .json
+    if not sidecar_file.is_file() and artifact_file.is_file():
+        if expected_hash_check is not None and actual_hash != expected_hash_check:
+            raise ValueError(f"Orphan artifact content mismatch for {artifact_file.name}")
+
+        metadata = {
+            "sha256": actual_hash,
+            "content_type": "recovered_text",
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "description": "Recovered sidecar for orphan artifact",
+            "total_lines": len(artifact_file.read_text(encoding="utf-8").splitlines()),
+            "total_bytes": artifact_file.stat().st_size,
+        }
+        meta_content = json.dumps(metadata, indent=2)
+
+        fd_m, temp_meta_str = tempfile.mkstemp(prefix=".meta-tmp-", dir=artifact_file.parent, text=True)
+        temp_meta = Path(temp_meta_str)
+        try:
+            os.fchmod(fd_m, 0o600)
+            with os.fdopen(fd_m, "w", encoding="utf-8") as stream:
+                stream.write(meta_content)
+                stream.flush()
+                os.fsync(fd_m)
+            os.replace(temp_meta, sidecar_file)
+            os.chmod(sidecar_file, 0o600)
+        finally:
+            temp_meta.unlink(missing_ok=True)
+
+        return metadata
+
+    if sidecar_file.is_symlink():
+        raise PermissionError(f"Symlink sidecar rejected: {sidecar_file}")
 
     metadata = json.loads(sidecar_file.read_text(encoding="utf-8"))
     expected_hash = metadata.get("sha256")
-    actual_hash = hashlib.sha256(artifact_file.read_bytes()).hexdigest()
 
     if actual_hash != expected_hash:
         raise ValueError(f"Artifact integrity failure for {artifact_file.name}: expected {expected_hash}, got {actual_hash}")
@@ -110,7 +145,7 @@ def create_artifact_reference(
     reject_symlink_components(artifact_file, stop=artifact_dir.parent.parent)
 
     if artifact_file.is_file():
-        verify_artifact_integrity(artifact_file)
+        verify_artifact_integrity(artifact_file, expected_hash_check=sha256_hash)
     else:
         # Write .txt file atomically
         fd, temp_path_str = tempfile.mkstemp(prefix=".artifact-tmp-", dir=artifact_dir, text=True)

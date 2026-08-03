@@ -182,6 +182,50 @@ class ContextEnginesTestCase(unittest.TestCase):
             resolve_agentit_uri(res["content_ref"], project_root=self.project_dir)
         self.assertIn("integrity failure", str(ctx.exception))
 
+    def test_sessions_parent_directory_symlink_rejection(self) -> None:
+        target_dir = self.project_dir / "external_sessions"
+        target_dir.mkdir()
+        sessions_link = self.project_dir / ".agentit" / "sessions"
+        sessions_link.parent.mkdir(parents=True, exist_ok=True)
+        sessions_link.symlink_to(target_dir)
+
+        with self.assertRaises(PermissionError):
+            ContextDeduplicator(session_id="test-session", project_dir=self.project_dir)
+
+    def test_dedup_file_symlink_rejection(self) -> None:
+        session_dir = self.project_dir / ".agentit" / "sessions" / "test-sym-session"
+        session_dir.mkdir(parents=True, exist_ok=True)
+        external_file = self.project_dir / "external_dedup.json"
+        external_file.write_text("[]", encoding="utf-8")
+
+        dedup_link = session_dir / "dedup.json"
+        dedup_link.symlink_to(external_file)
+
+        with self.assertRaises(PermissionError):
+            ContextDeduplicator(session_id="test-sym-session", project_dir=self.project_dir)
+
+    def test_orphan_artifact_sidecar_recovery(self) -> None:
+        large_content = "\n".join([f"line content {i} - unique text data" for i in range(200)])
+        res = create_artifact_reference(
+            large_content,
+            description="Orphan test",
+            artifact_dir=self.artifact_dir,
+            min_lines=150,
+        )
+        artifact_path = Path(res["retrieval_path"])
+        sidecar_path = Path(res["sidecar_path"])
+        self.assertTrue(artifact_path.is_file())
+        self.assertTrue(sidecar_path.is_file())
+
+        # Delete sidecar file to simulate interrupted write
+        sidecar_path.unlink()
+        self.assertFalse(sidecar_path.exists())
+
+        # Resolving URI must recover missing sidecar and pass verification
+        resolved = resolve_agentit_uri(res["content_ref"], project_root=self.project_dir)
+        self.assertTrue(resolved.is_file())
+        self.assertTrue(sidecar_path.is_file())
+
 
 if __name__ == "__main__":
     unittest.main()

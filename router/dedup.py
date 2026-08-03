@@ -18,6 +18,18 @@ from typing import Any
 SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 
+def reject_symlink_components(path: Path, stop: Path) -> None:
+    """Walk up parent directory components from path to stop, rejecting any symlinks."""
+    current = path
+    stop_resolved = stop.resolve()
+    while True:
+        if current.is_symlink():
+            raise PermissionError(f"Symlink component rejected: {current}")
+        if current.resolve() == stop_resolved or current == current.parent:
+            break
+        current = current.parent
+
+
 class ContextDeduplicator:
     """Tracks seen text blocks per session across CLI executions."""
 
@@ -33,7 +45,11 @@ class ContextDeduplicator:
         self.session_id = session_id
         self.min_block_length = min_block_length
         base_dir = Path(project_dir) if project_dir is not None else Path.cwd()
-        session_root = (base_dir / ".agentit" / "sessions").resolve()
+
+        raw_session_root = base_dir / ".agentit" / "sessions"
+        reject_symlink_components(raw_session_root, stop=base_dir)
+
+        session_root = raw_session_root.resolve()
         self.session_dir = (session_root / session_id).resolve()
 
         try:
@@ -42,7 +58,12 @@ class ContextDeduplicator:
         except ValueError:
             raise ValueError(f"Session path escapes project root: {session_id}")
 
+        reject_symlink_components(self.session_dir, stop=base_dir)
+
         self.session_file = self.session_dir / "dedup.json"
+        if self.session_file.is_symlink():
+            raise PermissionError(f"Symlink session file rejected: {self.session_file}")
+
         self.seen_hashes: set[str] = set()
         self._load_session_state()
 
@@ -58,6 +79,9 @@ class ContextDeduplicator:
             self.seen_hashes = set()
 
     def _save_session_state(self) -> None:
+        if self.session_file.is_symlink():
+            raise PermissionError(f"Symlink session file rejected: {self.session_file}")
+
         self.session_dir.mkdir(parents=True, exist_ok=True)
         os.chmod(self.session_dir.parent, 0o700)
         os.chmod(self.session_dir, 0o700)

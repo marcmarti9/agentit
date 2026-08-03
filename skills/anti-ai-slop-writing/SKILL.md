@@ -18,13 +18,13 @@ Eliminate AI writing clichés, robotic structure, and empty filler. Write clear,
 | **Robotic Openings** | "In today's fast-paced digital landscape...", "In the ever-evolving world of..." | Start directly with the topic or problem |
 | **Robotic Closings** | "In conclusion...", "Ultimately, only time will tell...", "Summary: In short..." | End after the last real point. No generic summaries. |
 | **Empty Fillers** | "It is important to note that...", "Furthermore, it should be mentioned..." | Delete filler phrases; state the fact directly |
-| **Overuse of Emojis** | Placing 3 emojis per sentence across technical documentation | Use emojis sparingly or strictly for structural headings |
+| **Emoji Spam & Decorations** | Sprinkling decorative emojis across technical docs, PRs, commit messages, and code comments | Zero decorative emojis. Use clean markdown formatting, lists, and code blocks instead. |
 | **Superlative Inflation**| Calling every minor update "robust", "cutting-edge", or "groundbreaking" | Describe exact specifications and empirical performance data |
 
 ## Checklist for Technical Documentation & READMEs
 
 - [ ] Does the first sentence state what the software does without fluff?
-- [ ] Are all forbidden AI buzzwords removed?
+- [ ] Are all forbidden AI buzzwords and decorative emojis removed?
 - [ ] Is active voice used throughout?
 - [ ] Are code examples copy-paste runnable without missing imports?
 - [ ] Is the conclusion concise and free of generic wrap-up summaries?

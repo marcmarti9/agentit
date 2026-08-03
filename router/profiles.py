@@ -404,6 +404,16 @@ def project_status(*, project_root: Path) -> dict[str, Any]:
     }
 
 
+def _is_file_safe(path_str: str | None) -> bool:
+    if not path_str or "\n" in path_str or "\r" in path_str or len(path_str) > 255:
+        return False
+    try:
+        p = Path(path_str)
+        return p.is_file() and not p.is_symlink()
+    except Exception:
+        return False
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles, context engines, and incubator scout.")
     parser.add_argument(
@@ -486,7 +496,7 @@ def main(argv: list[str] | None = None) -> int:
             sub = args.subcommand
             file_or_text = args.target
             content = ""
-            if file_or_text and Path(file_or_text).is_file():
+            if file_or_text and _is_file_safe(file_or_text):
                 content = Path(file_or_text).read_text(encoding="utf-8")
             elif file_or_text:
                 content = file_or_text
@@ -606,7 +616,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         print("\n".join(lines))
         return 0
-    except (ProfileError, ValueError, PermissionError) as exc:
+    except (ProfileError, ValueError, PermissionError, OSError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
 

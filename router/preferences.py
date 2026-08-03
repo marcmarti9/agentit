@@ -1,13 +1,14 @@
 """User preferences and persistent agent memory management for Agentit.
 
 Manages ~/.agentit/preferences.yaml with strict file permissions (0600).
-Stores user coding preferences, preferred skills, auto-JIT profile rules, and auto-plan policy.
+Supports nested dotted key access (e.g. user_style_preferences.ui_styling).
 """
 
 from __future__ import annotations
 
 import os
 import sys
+import tempfile
 import yaml
 from pathlib import Path
 from typing import Any
@@ -34,50 +35,87 @@ DEFAULT_PREFERENCES: dict[str, Any] = {
 }
 
 
-def load_preferences() -> dict[str, Any]:
-    """Load user preferences from ~/.agentit/preferences.yaml or return defaults."""
-    if not PREFERENCES_FILE.is_file():
+def _get_nested(data: dict[str, Any], dotted_key: str, default: Any = None) -> Any:
+    """Traverse nested dictionaries using dot notation."""
+    parts = dotted_key.split(".")
+    current: Any = data
+    for part in parts:
+        if not isinstance(current, dict) or part not in current:
+            return default
+        current = current[part]
+    return current
+
+
+def _set_nested(data: dict[str, Any], dotted_key: str, value: Any) -> None:
+    """Set a nested dictionary value using dot notation, creating sub-dicts as needed."""
+    parts = dotted_key.split(".")
+    current = data
+    for part in parts[:-1]:
+        child = current.get(part)
+        if not isinstance(child, dict):
+            child = {}
+            current[part] = child
+        current = child
+    current[parts[-1]] = value
+
+
+def load_preferences(preferences_path: Path | None = None) -> dict[str, Any]:
+    """Load user preferences from path or ~/.agentit/preferences.yaml or return defaults."""
+    target = Path(preferences_path) if preferences_path is not None else PREFERENCES_FILE
+    if not target.is_file() or target.is_symlink():
         return dict(DEFAULT_PREFERENCES)
     try:
-        content = PREFERENCES_FILE.read_text(encoding="utf-8")
+        content = target.read_text(encoding="utf-8")
         data = yaml.safe_load(content)
         if isinstance(data, dict):
             merged = dict(DEFAULT_PREFERENCES)
-            merged.update(data)
+            for k, v in data.items():
+                if isinstance(v, dict) and isinstance(merged.get(k), dict):
+                    merged[k] = dict(merged[k])
+                    merged[k].update(v)
+                else:
+                    merged[k] = v
             return merged
     except Exception:
         pass
     return dict(DEFAULT_PREFERENCES)
 
 
-def save_preferences(data: dict[str, Any]) -> Path:
-    """Save user preferences to ~/.agentit/preferences.yaml with 0600 permissions."""
-    PREFERENCES_DIR.mkdir(parents=True, exist_ok=True)
-    os.chmod(PREFERENCES_DIR, 0o700)
-    
+def save_preferences(data: dict[str, Any], preferences_path: Path | None = None) -> Path:
+    """Save user preferences securely with 0600 permissions using mkstemp atomic write."""
+    target = Path(preferences_path) if preferences_path is not None else PREFERENCES_FILE
+    parent = target.parent
+    parent.mkdir(parents=True, exist_ok=True)
+    os.chmod(parent, 0o700)
+
     content = yaml.safe_dump(data, default_flow_style=False, sort_keys=False)
-    
-    # Atomic write
-    tmp_path = PREFERENCES_DIR / ".preferences.yaml.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        os.chmod(f.fileno(), 0o600)
-        f.write(content)
-        
-    os.replace(tmp_path, PREFERENCES_FILE)
-    return PREFERENCES_FILE
+
+    fd, temporary_name = tempfile.mkstemp(prefix=f".{target.name}.tmp-", dir=parent, text=True)
+    temporary_path = Path(temporary_name)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            stream.write(content)
+            stream.flush()
+            os.fsync(fd)
+        os.replace(temporary_path, target)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+
+    return target
 
 
-def get_preference(key: str, default: Any = None) -> Any:
-    """Get a specific preference key."""
-    prefs = load_preferences()
-    return prefs.get(key, default)
+def get_preference(key: str, default: Any = None, preferences_path: Path | None = None) -> Any:
+    """Get a specific nested preference key using dot notation."""
+    prefs = load_preferences(preferences_path)
+    return _get_nested(prefs, key, default)
 
 
-def set_preference(key: str, value: Any) -> dict[str, Any]:
-    """Set a specific preference key and save."""
-    prefs = load_preferences()
-    prefs[key] = value
-    save_preferences(prefs)
+def set_preference(key: str, value: Any, preferences_path: Path | None = None) -> dict[str, Any]:
+    """Set a specific nested preference key using dot notation and save."""
+    prefs = load_preferences(preferences_path)
+    _set_nested(prefs, key, value)
+    save_preferences(prefs, preferences_path)
     return prefs
 
 
@@ -88,21 +126,21 @@ def main() -> None:
         prefs = load_preferences()
         print(yaml.safe_dump(prefs, default_flow_style=False))
         return
-    
+
     if args[0] == "get" and len(args) >= 2:
         key = args[1]
-        prefs = load_preferences()
-        print(yaml.safe_dump({key: prefs.get(key)}, default_flow_style=False))
+        val = get_preference(key)
+        print(yaml.safe_dump({key: val}, default_flow_style=False))
         return
-        
+
     if args[0] == "set" and len(args) >= 3:
-        key, value = args[1], args[2]
-        # Parse boolean or int values
-        if value.lower() == "true":
+        key, value_str = args[1], args[2]
+        value: Any = value_str
+        if value_str.lower() == "true":
             value = True
-        elif value.lower() == "false":
+        elif value_str.lower() == "false":
             value = False
-        elif value.isdigit():
+        elif value_str.isdigit():
             value = int(value)
         set_preference(key, value)
         print(f"Updated {key} = {value}")

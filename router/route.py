@@ -18,7 +18,29 @@ except ImportError:  # pragma: no cover - exercised by the CI dependency check
     yaml = None
 
 
+try:
+    from router.preferences import load_preferences
+except ImportError:
+    from preferences import load_preferences
+
 RISK_ORDER = {f"RISK_{level}": level for level in range(5)}
+SKILL_PROFILE_MAP = {
+    "supabase-postgres-best-practices": "supabase",
+    "browser-testing-with-devtools": "frontend",
+    "anti-ai-slop-design": "design",
+    "api-and-interface-design": "backend",
+    "observability-and-instrumentation": "backend",
+    "marketing-and-growth": "product",
+    "anti-ai-slop-writing": "writing",
+    "shipping-and-launch": "release",
+    "ci-cd-and-automation": "release",
+    "deprecation-and-migration": "release",
+    "doubt-driven-development": "research",
+    "context-engineering": "research",
+    "idea-refine": "product",
+    "interview-me": "product",
+    "spec-driven-development": "product",
+}
 CRITICAL_CONTENT = {
     "commands",
     "diff",
@@ -819,6 +841,33 @@ def route_task(
         content_types=content_types,
         routing_advice=routing_advice,
     )
+    prefs = load_preferences(resolved_home / ".agentit" / "preferences.yaml")
+    auto_jit_enabled = bool(prefs.get("auto_jit_profiles", True))
+    auto_plan_enabled = bool(prefs.get("auto_plan_mode", True))
+
+    jit_profiles: list[str] = []
+    unmapped_skills: list[str] = []
+    if auto_jit_enabled and skills_recommended_missing:
+        mapped_set = set()
+        for skill in skills_recommended_missing:
+            if skill in SKILL_PROFILE_MAP:
+                mapped_set.add(SKILL_PROFILE_MAP[skill])
+            else:
+                unmapped_skills.append(skill)
+        jit_profiles = sorted(mapped_set)
+
+    auto_plan_recommended = (
+        (risk in {"RISK_2", "RISK_3", "RISK_4"} or topology != "direct")
+        if auto_plan_enabled
+        else (risk in {"RISK_3", "RISK_4"})
+    )
+
+    applied_prefs = {
+        "preferred_language": prefs.get("user_style_preferences", {}).get("preferred_language", "es"),
+        "testing_framework": prefs.get("user_style_preferences", {}).get("testing_framework", "pytest"),
+        "ui_styling": prefs.get("user_style_preferences", {}).get("ui_styling", "vanilla_css_oklch"),
+    }
+
     return {
         "risk": risk,
         "category": category,
@@ -839,18 +888,10 @@ def route_task(
         "topology": topology,
         "subagents": _subagent_budget(text.lower(), risk, topology),
         "verification": verification,
-        "auto_plan_mode_recommended": risk in {"RISK_2", "RISK_3", "RISK_4"} or topology != "direct",
-        "jit_profile_recommendations": sorted({
-            "supabase" if "supabase-postgres-best-practices" in skills_recommended_missing else
-            "frontend" if any(s in skills_recommended_missing for s in ["browser-testing-with-devtools", "anti-ai-slop-design"]) else
-            "backend" if "api-and-interface-design" in skills_recommended_missing else
-            "product" if "marketing-and-growth" in skills_recommended_missing else
-            "writing" if "anti-ai-slop-writing" in skills_recommended_missing else
-            "release" if "shipping-and-launch" in skills_recommended_missing else
-            "research" if "doubt-driven-development" in skills_recommended_missing else
-            "all"
-            for s in skills_recommended_missing
-        }),
+        "auto_plan_mode_recommended": auto_plan_recommended,
+        "jit_profile_recommendations": jit_profiles,
+        "unmapped_skills": unmapped_skills,
+        "applied_preferences": applied_prefs,
         "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
         "recovery": (
             "not proven; retrieve originals before RISK_3/RISK_4 actions"

@@ -23,6 +23,7 @@ DEFAULT_PREFERENCES: dict[str, Any] = {
         "code_style": "clean_modular",
         "testing_framework": "pytest",
         "ui_styling": "vanilla_css_oklch",
+        "response_style": "terse",
     },
     "auto_jit_profiles": True,
     "auto_plan_mode": True,

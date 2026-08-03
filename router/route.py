@@ -771,11 +771,14 @@ def route_task(
     ):
         routing_advice.append("inspect_database_stack")
     critical = risk in {"RISK_3", "RISK_4"} or bool(CRITICAL_CONTENT.intersection(content_types))
+    prefs = load_preferences(resolved_home / ".agentit" / "preferences.yaml")
+    user_style_prefs = prefs.get("user_style_preferences", {})
+    response_style = user_style_prefs.get("response_style", "terse")
 
     if risk in {"RISK_0", "RISK_1"}:
         output_profile = "TERSE_SAFE"
     elif risk == "RISK_2":
-        output_profile = "STANDARD"
+        output_profile = "TERSE_SAFE" if response_style == "terse" else "STANDARD"
     else:
         output_profile = "VERBOSE_ALLOWED"
 
@@ -866,6 +869,7 @@ def route_task(
         "preferred_language": prefs.get("user_style_preferences", {}).get("preferred_language", "es"),
         "testing_framework": prefs.get("user_style_preferences", {}).get("testing_framework", "pytest"),
         "ui_styling": prefs.get("user_style_preferences", {}).get("ui_styling", "vanilla_css_oklch"),
+        "response_style": response_style,
     }
 
     return {

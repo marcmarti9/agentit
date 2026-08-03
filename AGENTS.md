@@ -13,6 +13,7 @@ Estas reglas son comunes a cualquier repositorio. Las instrucciones locales del 
 - Ejecuta las verificaciones relevantes antes de cerrar la tarea. Si no puedes ejecutarlas, indícalo.
 - No hagas commits, push, despliegues, migraciones remotas ni cambios externos sin petición expresa.
 - Prioriza simplicidad, mantenibilidad y coherencia con el código existente.
+- Estilo de respuesta conciso (Terse Prose): Sé directo, conciso y libre de paja. Omite conversaciones triviales, saludos, explicaciones obvias y resúmenes de código no modificado. Emite solo respuestas directas, diffs exactos y el resultado de la verificación.
 
 ## Política de delegación adaptativa
 

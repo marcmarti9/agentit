@@ -39,12 +39,19 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
         ),
     )
     production = _matches(text, (r"\bprod(?:uction)?\b", r"producción", r"live"))
-    if destructive and production:
-        return "RISK_4", ["detecté una operación destructiva dirigida a producción"]
-    if _matches(text, (r"\b(drop|truncate)\s+database\b", r"base de datos de producción")):
-        return "RISK_4", ["detecté una operación potencialmente irreversible sobre datos"]
-    if destructive:
-        reasons.append("detecté una operación destructiva; se eleva como mínimo a RISK_3")
+    risk_four_signal = _matches(
+        text,
+        (
+            r"\b(backup|backups|restore|restores|restaurar|restaura|restauración)\b",
+            r"copia\s+de\s+seguridad",
+            r"credential|credencial|secret|secreto|api[_ -]?key|password|contraseña",
+            r"critical\s+permission|permisos\s+críticos|chmod|chown|iam|privilegios\s+críticos",
+            r"data\s*loss|pérdida\s+de\s+datos",
+        ),
+    )
+    if production or destructive or risk_four_signal:
+        reasons.append("detecté una señal de producción, irreversibilidad o control crítico")
+        return "RISK_4", reasons
 
     high_impact = _matches(
         text,

@@ -37,6 +37,15 @@ class RegistryRouteTests(unittest.TestCase):
         self.assertTrue(emitted)
         self.assertTrue(emitted <= self.registry_ids, emitted - self.registry_ids)
 
+    def test_active_registry_entries_have_at_least_one_observed_path(self):
+        registry_path = Path(__file__).parents[1] / "registry.yaml"
+        entries = yaml.safe_load(registry_path.read_text(encoding="utf-8"))["entries"]
+        for entry in entries:
+            if entry.get("state") != "ACTIVE_GLOBAL":
+                continue
+            observed = any(Path(path).exists() for path in entry.get("paths", []))
+            self.assertTrue(observed, entry["id"])
+
 
 if __name__ == "__main__":
     unittest.main()

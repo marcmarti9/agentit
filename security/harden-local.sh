@@ -58,13 +58,21 @@ assert_no_symlink_components() {
   done
 }
 
+create_manifest() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
+  (set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+}
+
 if [[ "$MODE" == "apply" ]]; then
   if [[ -z "$BACKUP_ROOT" ]]; then
     BACKUP_ROOT="$USER_HOME/backups/agent-harness-local-hardening-$(date +%Y%m%d-%H%M%S)"
   fi
   assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
-  printf 'date=%s\n' "$(date --iso-8601=seconds)" > "$BACKUP_ROOT/manifest.txt"
+  create_manifest "$BACKUP_ROOT/manifest.txt"
+  printf 'date=%s\n' "$(date --iso-8601=seconds)" >> "$BACKUP_ROOT/manifest.txt"
 fi
 
 backup_file() {
@@ -116,18 +124,22 @@ auth_list=""
 if [[ -d "$auth_root" ]]; then
   symlink_path="$(find -P "$auth_root" -type l -print -quit)" || die "no se pudo inspeccionar symlinks de ~/.cursor; no se aplica hardening"
   [[ -z "$symlink_path" ]] || die "se rechazan symlinks bajo ~/.cursor"
-  auth_list="$(find -P "$auth_root" -type f -name 'mcp_auth.json' -print)" || die "no se pudo inspeccionar ~/.cursor; no se aplica hardening"
-  if [[ -n "$auth_list" ]]; then
-    while IFS= read -r auth_file; do
-      [[ "$auth_file" != *$'\n'* ]] || die "ruta MCP con salto de línea rechazada"
-      auth_files+=("$auth_file")
-    done <<< "$auth_list"
+  auth_list_file="$(mktemp /tmp/agent-harness-cursor-find.XXXXXX)"
+  if ! find -P "$auth_root" -type f -name 'mcp_auth.json' -print0 > "$auth_list_file"; then
+    rm -f -- "$auth_list_file"
+    die "no se pudo inspeccionar ~/.cursor; no se aplica hardening"
   fi
+  if ! mapfile -d '' auth_files < "$auth_list_file"; then
+    rm -f -- "$auth_list_file"
+    die "no se pudo leer la lista de ~/.cursor; no se aplica hardening"
+  fi
+  rm -f -- "$auth_list_file"
 fi
 if ((${#auth_files[@]} == 0)); then
   printf 'ok: no se encontraron mcp_auth.json bajo .cursor\n'
 else
   for auth_file in "${auth_files[@]}"; do
+    [[ "$auth_file" != *$'\n'* ]] || die "ruta MCP con salto de línea rechazada"
     [[ ! -L "$auth_file" ]] || die "se rechaza symlink: $auth_file"
     if [[ "$MODE" == "plan" ]]; then
       printf 'plan: mode 600 %s\n' "${auth_file#"$USER_HOME"/}"

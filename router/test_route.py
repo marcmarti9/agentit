@@ -42,6 +42,22 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertTrue(result["verification"]["independent_review"])
         self.assertIn("pipelines", result["compression"]["deny_reasons"])
 
+    def test_policy_risk_four_signals_require_full_safety_gate(self):
+        prompts = (
+            "Haz un cambio en producción",
+            "Rota las credenciales del proveedor",
+            "Restaura el backup verificado",
+            "Cambia los permisos críticos del servicio",
+            "Elimina el archivo sin posibilidad de recuperación",
+        )
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                result = route_task(prompt)
+                self.assertEqual(result["risk"], "RISK_4")
+                self.assertTrue(result["verification"]["backup_required"])
+                self.assertTrue(result["verification"]["dry_run_required"])
+                self.assertEqual(result["compression"]["mode"], "FULL_FIDELITY")
+
     def test_explicit_low_risk_cannot_lower_inferred_high_risk(self):
         result = route_task("Haz DROP DATABASE en producción", explicit_risk="RISK_0")
 

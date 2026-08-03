@@ -86,6 +86,13 @@ assert_no_symlink_components() {
   done
 }
 
+create_manifest() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
+  (set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+}
+
 if [[ "$MODE" == "plan" ]]; then
   note "MODO PLAN: no se escribirán archivos. Usa --apply para aplicar."
 else
@@ -94,12 +101,13 @@ else
   fi
   assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
+  create_manifest "$BACKUP_ROOT/manifest.txt"
   note "Backup: $BACKUP_ROOT"
   {
     printf 'repo=%s\n' "$REPO_DIR"
     printf 'provider=%s\n' "$PROVIDER"
     printf 'date=%s\n' "$(date --iso-8601=seconds)"
-  } > "$BACKUP_ROOT/manifest.txt"
+  } >> "$BACKUP_ROOT/manifest.txt"
 fi
 
 declare -A BACKED_UP=()
@@ -167,13 +175,22 @@ copy_tree() {
   local rel_prefix="$3"
   assert_safe_source "$src_root"
   [[ -d "$src_root" ]] || die "fuente no es directorio: $src_root"
-  if find -P "$src_root" -type l -print -quit | grep -q .; then
-    die "la fuente contiene symlinks y se rechaza: $src_root"
+  local symlink_path
+  if ! symlink_path="$(find -P "$src_root" -type l -print -quit)"; then
+    die "no se pudo inspeccionar symlinks de la fuente: $src_root"
+  fi
+  [[ -z "$symlink_path" ]] || die "la fuente contiene symlinks y se rechaza: $src_root"
+  local file_list
+  file_list="$(mktemp /tmp/agent-harness-install-find.XXXXXX)"
+  if ! find -P "$src_root" -type f -print0 > "$file_list"; then
+    rm -f -- "$file_list"
+    die "no se pudo enumerar completamente la fuente: $src_root"
   fi
   while IFS= read -r -d '' src; do
     local rel="${src#"$src_root"/}"
     copy_file "$src" "$dst_root/$rel" "$rel_prefix/$rel"
-  done < <(find -P "$src_root" -type f -print0 | sort -z)
+  done < "$file_list"
+  rm -f -- "$file_list"
 }
 
 copy_shared_skills() {
@@ -224,7 +241,13 @@ if [[ "$WITH_HOOK" == "true" ]]; then
   fi
 fi
 if [[ "$WITH_GUIDES" == "true" ]]; then
-  for guide in AGENTS.md CLAUDE.md CODEX.md; do
+  case "$PROVIDER" in
+    claude) guides=(AGENTS.md CLAUDE.md) ;;
+    codex) guides=(AGENTS.md CODEX.md) ;;
+    antigravity) guides=(AGENTS.md) ;;
+    all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+  esac
+  for guide in "${guides[@]}"; do
     [[ -f "$REPO_DIR/$guide" ]] || continue
     copy_file "$REPO_DIR/$guide" "$USER_HOME/$guide" "guides/$guide"
   done

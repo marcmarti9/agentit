@@ -71,6 +71,13 @@ assert_no_symlink_components() {
     current="$(dirname -- "$current")"
   done
 }
+
+create_manifest() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
+  (set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+}
 case "$SOURCE_PROVIDER" in
   claude) SOURCE_ROOT="$USER_HOME/.claude"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
   codex) SOURCE_ROOT="$USER_HOME/.codex"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
@@ -78,6 +85,8 @@ case "$SOURCE_PROVIDER" in
   *) die "provider inválido: $SOURCE_PROVIDER" ;;
 esac
 [[ -d "$SOURCE_ROOT" ]] || die "no existe el target del provider: $SOURCE_ROOT"
+assert_no_symlink_components "$SOURCE_ROOT"
+assert_no_symlink_components "$SOURCE_SKILLS"
 
 if [[ "$MODE" == "plan" ]]; then
   printf 'MODO PLAN: no se escribirán archivos. Usa --apply para aplicar.\n'
@@ -87,7 +96,8 @@ else
   fi
   assert_no_symlink_components "$BACKUP_ROOT"
   mkdir -p "$BACKUP_ROOT"
-  printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" > "$BACKUP_ROOT/manifest.txt"
+  create_manifest "$BACKUP_ROOT/manifest.txt"
+  printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" >> "$BACKUP_ROOT/manifest.txt"
 fi
 
 declare -A BACKED_UP=()
@@ -122,6 +132,7 @@ import_file() {
   local rel="$3"
   assert_source "$src"
   [[ -f "$src" ]] || die "solo se importan archivos regulares: $src"
+  assert_no_symlink_components "$dst"
   if [[ "$MODE" == "plan" ]]; then
     printf 'plan: %s -> %s\n' "$src" "$dst"
     return 0
@@ -178,7 +189,12 @@ if [[ "$WITH_HOOK" == "true" ]]; then
   import_file "$SOURCE_ROOT/hooks/precompact-memory.sh" "$REPO_DIR/hooks/precompact-memory.sh" "hooks/precompact-memory.sh"
 fi
 if [[ "$WITH_GUIDES" == "true" ]]; then
-  for guide in AGENTS.md CLAUDE.md CODEX.md; do
+  case "$SOURCE_PROVIDER" in
+    claude) guides=(AGENTS.md CLAUDE.md) ;;
+    codex) guides=(AGENTS.md CODEX.md) ;;
+    antigravity) guides=(AGENTS.md) ;;
+  esac
+  for guide in "${guides[@]}"; do
     import_file "$USER_HOME/$guide" "$REPO_DIR/$guide" "$guide"
   done
 fi

@@ -80,16 +80,16 @@ entries:
     priority: core
 
   - id: architect-orchestrator
-    name: "Custom agent hierarchy"
+    name: "Adaptive orchestration guidance"
     kind: skill-and-agents
     category: orchestration
     provenance: local-repository
-    version: "repo@4e6db85"
+    version: "repo@adaptive"
     paths:
       - /home/Marc/agents-config/skills/architect-orchestrator
+      - /home/Marc/.codex/skills/architect-orchestrator
       - /home/Marc/.agents/skills/architect-orchestrator
       - /home/Marc/.claude/skills/architect-orchestrator
-      - /home/Marc/.gemini/antigravity-cli/skills/architect-orchestrator
     trigger: "multidomain task, explicit delegation, or critical independent review"
     avoid_when: "trivial or single-line task"
     context_cost: medium
@@ -109,9 +109,10 @@ entries:
     kind: skill
     category: database
     provenance: local-repository
-    version: "repo@4e6db85"
+    version: "repo@adaptive"
     paths:
       - /home/Marc/agents-config/skills/supabase-postgres-best-practices
+      - /home/Marc/.codex/skills/supabase-postgres-best-practices
       - /home/Marc/.agents/skills/supabase-postgres-best-practices
       - /home/Marc/.claude/skills/supabase-postgres-best-practices
       - /home/Marc/.gemini/antigravity-cli/skills/supabase-postgres-best-practices

@@ -27,6 +27,8 @@ The JSON result is a proposal. The active provider, project instructions, explic
 - `confidence` is an uncalibrated signal-strength score; `confidence_calibrated` is
   `false` until reviewed labels exist.
 - `rejected_topologies` explains why the other execution shapes were not selected.
+- `applied_preferences` exposes active user preferences (`preferred_language`, `testing_framework`, `ui_styling`). Agents should apply these preferences unless they conflict with project requirements or safety rules.
+- `jit_profile_recommendations` lists missing profiles recommended for the task. Agents may auto-activate them via `./agentit enable <profile> --project . --apply` when JIT mode is active.
 - `topology` can be `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or
   `audit`. `subagents` is a bounded proposal, never an instruction to spawn.
 

@@ -1,6 +1,6 @@
 ---
 name: architect-orchestrator
-description: Adaptive multi-agent routing for software engineering. Selects direct execution, probes, fan-out, pipelines, orchestration, or independent audit based on coupling, context, parallelism, permissions, risk, and coordination cost.
+description: Choose direct work or bounded delegation. Use for coupling, parallelism, orchestration, or independent review; not for focused single-agent changes.
 ---
 
 # Adaptive Agent Architecture

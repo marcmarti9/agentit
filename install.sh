@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Despliegue reversible y separado por proveedor.
 # Por defecto solo muestra el plan. --apply es obligatorio para escribir.
-# Nunca elimina archivos existentes; crea backup y reemplaza archivos uno a uno.
+# Nunca elimina archivos existentes salvo con --prune-on-demand; incluso esa
+# opción exige copia exacta del repositorio, backup y --apply explícito.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -12,8 +13,12 @@ WITH_SETTINGS="false"
 WITH_LOCAL_SETTINGS="false"
 WITH_HOOK="false"
 WITH_GUIDES="false"
+PRUNE_ON_DEMAND="false"
 BACKUP_ROOT=""
 CODEX_AGENT_PROFILES=("luna-worker.toml" "terra-worker.toml")
+CORE_SKILLS=()
+ON_DEMAND_SKILLS=()
+declare -A CORE_SKILL_SET=()
 
 usage() {
   cat <<'EOF'
@@ -28,6 +33,7 @@ Por defecto no modifica nada y muestra el plan.
   --with-local-settings      copiar settings.local.json (no recomendado)
   --with-hook                copiar el hook de Claude (opt-in)
   --with-guides              copiar las guías globales a DIR
+  --prune-on-demand          retirar copias Agentit exactas fuera de core
   --backup-dir DIR           directorio explícito para backups
   --help                     mostrar esta ayuda
 EOF
@@ -59,6 +65,7 @@ while (($#)); do
     --with-local-settings) WITH_LOCAL_SETTINGS="true" ;;
     --with-hook) WITH_HOOK="true" ;;
     --with-guides) WITH_GUIDES="true" ;;
+    --prune-on-demand) PRUNE_ON_DEMAND="true" ;;
     --backup-dir)
       (($# >= 2)) || die "--backup-dir requiere un valor"
       BACKUP_ROOT="$2"
@@ -84,6 +91,39 @@ esac
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
 [[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+
+load_global_skills() {
+  local listed_skills skill
+  listed_skills="$(python3 "$REPO_DIR/router/profiles.py" \
+    --repo-root "$REPO_DIR" --profile core --format ids)" || \
+    die "no se pudo cargar el perfil global core; instala Python 3 y PyYAML"
+  while IFS= read -r skill; do
+    [[ -n "$skill" ]] || continue
+    [[ "$skill" =~ ^[a-z0-9][a-z0-9-]*$ ]] || die "id de skill inválido en core: $skill"
+    [[ -f "$REPO_DIR/skills/$skill/SKILL.md" ]] || \
+      die "skill del perfil core no encontrada: $skill"
+    CORE_SKILLS+=("$skill")
+    CORE_SKILL_SET["$skill"]=1
+  done <<< "$listed_skills"
+  ((${#CORE_SKILLS[@]} > 0)) || die "el perfil global core no contiene skills"
+}
+
+load_global_skills
+
+load_on_demand_skills() {
+  local listed_skills skill
+  listed_skills="$(python3 "$REPO_DIR/router/profiles.py" \
+    --repo-root "$REPO_DIR" --profile all --format ids)" || \
+    die "no se pudo cargar el perfil all para la poda segura"
+  while IFS= read -r skill; do
+    [[ -n "$skill" ]] || continue
+    if [[ -z "${CORE_SKILL_SET[$skill]+yes}" ]]; then
+      ON_DEMAND_SKILLS+=("$skill")
+    fi
+  done <<< "$listed_skills"
+}
+
+load_on_demand_skills
 
 assert_manifest_path() {
   local path="$1"
@@ -228,8 +268,49 @@ copy_tree() {
 copy_shared_skills() {
   local provider="$1"
   local target="$2"
-  copy_tree "$REPO_DIR/skills" "$target/skills" "$provider/skills"
-  copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md" "${provider}/skills/task-router/SKILL.md"
+  local skill
+  for skill in "${CORE_SKILLS[@]}"; do
+    copy_tree "$REPO_DIR/skills/$skill" "$target/skills/$skill" "$provider/skills/$skill"
+  done
+}
+
+preflight_prune_on_demand() {
+  local provider="$1"
+  local target="$2"
+  local skill destination extra
+  for skill in "${ON_DEMAND_SKILLS[@]}"; do
+    destination="$target/skills/$skill/SKILL.md"
+    [[ -e "$destination" || -L "$destination" ]] || continue
+    assert_manifest_path "$destination"
+    assert_safe_destination "$destination"
+    [[ -f "$destination" && ! -L "$destination" ]] || \
+      die "no se puede podar un destino no regular: $destination"
+    cmp -s "$REPO_DIR/skills/$skill/SKILL.md" "$destination" || \
+      die "se rechaza podar una skill modificada: $destination"
+    extra="$(find -P "$(dirname -- "$destination")" -mindepth 1 -maxdepth 1 \
+      ! -name SKILL.md -print -quit)"
+    [[ -z "$extra" ]] || die "se rechaza podar una skill con archivos extra: $extra"
+    note "plan: prune $destination ($provider)"
+  done
+}
+
+prune_on_demand() {
+  local provider="$1"
+  local target="$2"
+  local skill destination
+  for skill in "${ON_DEMAND_SKILLS[@]}"; do
+    destination="$target/skills/$skill/SKILL.md"
+    [[ -e "$destination" || -L "$destination" ]] || continue
+    assert_safe_destination "$destination"
+    [[ -f "$destination" && ! -L "$destination" ]] || \
+      die "la skill cambió a un destino no regular; se detiene: $destination"
+    cmp -s "$REPO_DIR/skills/$skill/SKILL.md" "$destination" || \
+      die "la skill cambió después del preflight; se detiene: $destination"
+    backup_existing "$destination" "$provider/skills/$skill/SKILL.md"
+    rm -f -- "$destination"
+    rmdir -- "$(dirname -- "$destination")" 2>/dev/null || true
+    note "retirada: $destination"
+  done
 }
 
 preflight_copy_file() {
@@ -282,8 +363,10 @@ preflight_copy_tree() {
 
 preflight_shared_skills() {
   local target="$1"
-  preflight_copy_tree "$REPO_DIR/skills" "$target/skills"
-  preflight_copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md"
+  local skill
+  for skill in "${CORE_SKILLS[@]}"; do
+    preflight_copy_tree "$REPO_DIR/skills/$skill" "$target/skills/$skill"
+  done
 }
 
 preflight_install() {
@@ -297,6 +380,17 @@ preflight_install() {
   fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
     preflight_shared_skills "$USER_HOME/.agents"
+  fi
+  if [[ "$PRUNE_ON_DEMAND" == "true" ]]; then
+    if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
+      preflight_prune_on_demand "claude" "$USER_HOME/.claude"
+    fi
+    if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
+      preflight_prune_on_demand "codex" "$USER_HOME/.codex"
+    fi
+    if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
+      preflight_prune_on_demand "antigravity" "$USER_HOME/.agents"
+    fi
   fi
   if [[ "$WITH_SETTINGS" == "true" ]]; then
     preflight_copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json"
@@ -353,17 +447,30 @@ else
   } >> "$manifest_path"
 fi
 
-# Claude conserva los agentes adaptativos y las skills.
+if [[ "$PRUNE_ON_DEMAND" == "true" && "$MODE" == "apply" ]]; then
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
+    prune_on_demand "claude" "$USER_HOME/.claude"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
+    prune_on_demand "codex" "$USER_HOME/.codex"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
+    prune_on_demand "antigravity" "$USER_HOME/.agents"
+  fi
+fi
+
+# Claude conserva los agentes adaptativos y el perfil global core. Los demás
+# cuerpos permanecen en el repositorio y se activan bajo demanda por proyecto.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
-  note "[claude] agentes adaptativos + skills"
+  note "[claude] agentes adaptativos + perfil global core"
   copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents" "claude/agents"
   copy_shared_skills "claude" "$USER_HOME/.claude"
 fi
 
-# Codex recibe la guía global y skills bajo demanda; no se impone la jerarquía
-# de Claude en ~/.codex/agents. Los archivos antiguos no se eliminan.
+# Codex recibe solo el perfil global core y los workers portables; no se impone
+# la jerarquía de Claude en ~/.codex/agents. Los archivos antiguos no se eliminan.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
-  note "[codex] skills compartidas; sin jerarquía obligatoria"
+  note "[codex] perfil global core; sin jerarquía obligatoria"
   copy_shared_skills "codex" "$USER_HOME/.codex"
   copy_codex_agent_profiles "$USER_HOME/.codex"
 fi
@@ -371,9 +478,8 @@ fi
 # Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; no se
 # presupone un wrapper ni un runtime específico adicional.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-  note "[antigravity] Open Skills globales en ~/.agents/skills"
-  copy_tree "$REPO_DIR/skills" "$USER_HOME/.agents/skills" "antigravity/skills"
-  copy_file "$REPO_DIR/router/SKILL.md" "$USER_HOME/.agents/skills/task-router/SKILL.md" "antigravity/skills/task-router/SKILL.md"
+  note "[antigravity] perfil global core en ~/.agents/skills"
+  copy_shared_skills "antigravity" "$USER_HOME/.agents"
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then

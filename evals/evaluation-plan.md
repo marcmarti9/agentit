@@ -12,6 +12,12 @@ Evaluar exactitud, fidelidad y reversibilidad sin ejecutar operaciones destructi
 - condición PostgreSQL/Supabase frente a SQLite;
 - generación atómica del inventario local ignorado;
 - sintaxis shell, YAML y JSON.
+- visibilidad de skills: el perfil global `core` contiene 10 entradas y `all`
+  cubre exactamente los cuerpos presentes en `skills/`;
+- activación de proyecto en modo plan, manifiesto con hashes, rechazo de symlinks,
+  conflictos con archivos existentes y no eliminación de archivos no gestionados;
+- explicabilidad del router: `signals`, `confidence_calibrated: false` y razones en
+  `rejected_topologies`.
 
 ## Fase B: scripts en entorno desechable
 
@@ -29,6 +35,11 @@ Usar fixtures de logs, JSON, tablas, código, SQL, diffs, errores, hashes, IDs, 
 ## Métricas
 
 Registrar bytes/palabras originales y adaptados, skills recomendadas/cargadas, llamadas de herramienta, output, subagentes, recuperaciones, repeticiones, duración, tests y regresiones. No publicar cifras de reducción de contexto, tokens o coste sin un baseline comparable.
+
+El runner `python3 evals/run.py` registra únicamente decisiones deterministas del
+router. Sus nueve casos actuales son una suite de regresión, no una evaluación de
+calidad del agente. La puntuación `confidence` no está calibrada y no debe agregarse
+como precisión, probabilidad ni mejora frente a un agente sin Agentit.
 
 ## Criterios de promoción
 

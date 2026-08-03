@@ -1,0 +1,84 @@
+[
+  {
+    "id": "explanation_backup",
+    "prompt": "Explícame cómo funciona un backup.",
+    "expected": {
+      "risk": "RISK_0",
+      "category": "explanation",
+      "topology": "direct"
+    }
+  },
+  {
+    "id": "payment_button_css",
+    "prompt": "Cambia el color del botón de pago en este CSS",
+    "expected": {
+      "risk": "RISK_1",
+      "category": "frontend",
+      "topology": "direct"
+    }
+  },
+  {
+    "id": "marketing_landing",
+    "prompt": "Diseña una landing para un servicio de backups.",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "marketing",
+      "topology": "direct"
+    }
+  },
+  {
+    "id": "bug_probe",
+    "prompt": "Investiga y reproduce la causa raíz de este bug",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "bug",
+      "topology": "probe"
+    }
+  },
+  {
+    "id": "independent_packages",
+    "prompt": "Investiga en paralelo dos hipótesis independientes del bug",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "bug",
+      "topology": "probe"
+    }
+  },
+  {
+    "id": "auth_writer_reviewer",
+    "prompt": "Implementa el login y la expiración de sesiones",
+    "expected": {
+      "risk": "RISK_3",
+      "category": "security",
+      "topology": "writer_reviewer"
+    }
+  },
+  {
+    "id": "postgres_profile",
+    "prompt": "Optimiza esta consulta PostgreSQL en Supabase.",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "database",
+      "topology": "direct"
+    }
+  },
+  {
+    "id": "production_restore_audit",
+    "prompt": "Elimina la tabla de producción y restaura el backup",
+    "expected": {
+      "risk": "RISK_4",
+      "category": "database",
+      "topology": "audit"
+    }
+  },
+  {
+    "id": "generic_database_stack_probe",
+    "prompt": "Optimiza esta consulta de base de datos.",
+    "expected": {
+      "risk": "RISK_3",
+      "category": "database",
+      "topology": "writer_reviewer",
+      "routing_advice_contains": "inspect_database_stack"
+    }
+  }
+]

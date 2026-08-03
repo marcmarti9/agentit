@@ -28,7 +28,7 @@ Agentit is an **early-stage, opinionated, and safety-first agent harness (v0.1.0
   - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
 - **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
 - **📦 28 Curated Modular Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, performance optimization, and product/marketing strategy.
-- **📉 Bounded Skill Discovery**: Only the 10-skill `core` profile is installed globally by default. The remaining skills stay available in the repository and can be enabled by project profile when needed.
+- **📉 Bounded Skill Discovery**: Only the 10-skill `core` profile is installed globally by default. The remaining skills stay available in the repository and can be enabled by project profile when needed, reducing the global discovery footprint to remain within Codex's skills context budget.
 - **🛡️ Reversible & Safe Automation**: All deployment scripts (`install.sh`, `update.sh`, `harden-local.sh`) run in **dry-run plan mode by default**, requiring explicit `--apply` flags. Automatic SHA-256 backup manifests support verifiable rollback.
 
 ---
@@ -154,6 +154,11 @@ The installer copies only the bounded `core` profile to provider-global skill di
 
 Project activation records hashes in `.agentit/skills-manifest.json`. It refuses to overwrite a conflicting file or remove a managed file that was modified; it never removes unmanaged files.
 
+The provider controls the actual discovery-context percentage (Codex currently
+reports that budget itself). Agentit therefore does not hard-code a claim about
+the exact `2%`; it keeps the default global catalog to 10 discriminative skills
+as a conservative policy target and leaves the remaining bodies opt-in.
+
 `--prune-on-demand` is the explicit migration switch for an older global install.
 It refuses modified skills and files with extra contents, so a user-managed skill
 is left in place for manual review rather than guessed at.
@@ -195,7 +200,7 @@ python3 router/route.py "Implement user authentication with JWT"
 python3 router/route.py --risk RISK_3 "Migrate database schema"
 ```
 
-### Actual JSON Output Contract
+### Representative Decision Fields in JSON Contract (Key Excerpt)
 
 ```json
 {
@@ -210,7 +215,9 @@ python3 router/route.py --risk RISK_3 "Migrate database schema"
   "rejected_topologies": {
     "direct": "independent verification is required for this sensitive implementation",
     "fan_out": "affected behavior is coupled; no independent ownership boundaries were declared",
-    "audit": "an audit alone would not implement the requested change"
+    "audit": "an audit alone would not implement the requested change",
+    "pipeline": "no sequential artifact stages were declared",
+    "probe": "implementation was requested; investigation alone is insufficient"
   },
   "skills_available": ["security-hardening", "architect-orchestrator"],
   "skills_recommended_missing": [],
@@ -218,15 +225,16 @@ python3 router/route.py --risk RISK_3 "Migrate database schema"
 }
 ```
 
-For a focused visual task, the same router returns a deliberately smaller plan:
+For a focused visual task, the same router returns the following relevant fields
+inside its JSON response (the CLI does not emit a separate textual format):
 
-```text
-Task: "Cambia el color del botón de pago en este CSS"
-Risk: RISK_1
-Topology: direct
-Signals: presentation-only scope
-Rejected: probe (no investigation), fan_out (no independent work), audit (no critical boundary)
-Subagents: max 0
+```json
+{
+  "risk": "RISK_1",
+  "topology": "direct",
+  "signals": ["presentation-only scope"],
+  "subagents": {"max": 0, "recommended": 0, "requires_justification": false}
+}
 ```
 
 `confidence` is an uncalibrated deterministic signal-strength score, not a probability. The router is intentionally a regex/metadata policy engine: it does not inspect dependency graphs, understand file coupling, or prove that delegation improves agent output. The checked-in evals are regression cases for router decisions only, not a quality, token, latency, or cost benchmark.

@@ -1,6 +1,6 @@
 ---
 name: task-router
-description: Classifies a task by risk, complexity, content type, skill budget, output profile, and safe context policy before execution. Use when choosing skills, subagents, or compression for a task.
+description: Classify risk, topology, skills, and context before execution. Use to route a task; not as permission to run it.
 ---
 
 # Conservative task router
@@ -23,12 +23,18 @@ The JSON result is a proposal. The active provider, project instructions, explic
 - `skills_available` contains only recommended skills whose catalog state, observed path, and essential dependencies are compatible.
 - `skills_recommended_missing` contains relevant recommendations that are not usable under those checks.
 - `skills` is a legacy alias for `skills_available`; it never contains missing recommendations.
+- `signals` lists the human-readable evidence used by the deterministic heuristic.
+- `confidence` is an uncalibrated signal-strength score; `confidence_calibrated` is
+  `false` until reviewed labels exist.
+- `rejected_topologies` explains why the other execution shapes were not selected.
+- `topology` can be `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or
+  `audit`. `subagents` is a bounded proposal, never an instruction to spawn.
 
 `registry.yaml` is portable operational policy, not a machine inventory. It uses only `${HOME}` and `${REPO_ROOT}` path templates. Generate an ignored, per-machine observation with `python3 -m router.inventory`; executable versions may remain unobserved.
 
 ## Selection rules
 
-1. Infer risk from the requested action and target environment, not from a keyword mention alone. Explanation or documentation about backups, production, credentials, or permissions does not request that operation. An explicit risk label may raise the level but never lower an inferred RISK_3 or RISK_4.
+1. Infer risk from the requested action and target environment, not from a keyword mention alone. Explanation or documentation about backups, production, credentials, or permissions does not request that operation. An explicit risk label may raise the level but never lower any inferred risk.
 2. Select the smallest useful skill set. A registry entry is metadata; load its `SKILL.md` only after selection.
 3. Use `TERSE_SAFE` only for low-risk, unambiguous progress or explanation output. Use `STANDARD` for ordinary work and `VERBOSE_ALLOWED` when precision or review matters.
 4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, numbers, credentials, schemas, migrations, and affected-file lists.
@@ -36,6 +42,32 @@ The JSON result is a proposal. The active provider, project instructions, explic
 6. For RISK_3 and RISK_4, retrieve original content before a decision if compressed content could influence it and require human review. For RISK_4 also require backup evidence, a dry run where possible, independent review, and a post-operation check.
 7. Do not spawn an agent solely because the budget allows it. Delegation must have a bounded scope and a verification result.
 8. Select `supabase-postgres-best-practices` only when the request includes a PostgreSQL signal such as Postgres, PostgreSQL, `psql`, or Supabase. A SQLite task is still a database task but must not receive Postgres-specific guidance; if no database engine is known, return `inspect_database_stack` in `routing_advice`.
+
+## Skill visibility profiles
+
+The repository keeps all skill bodies in `skills/`, but `install.sh` copies only
+the 10-skill `core` profile to provider-global directories. Use the plan-first
+helper to add an opt-in profile to a project without overwriting or removing
+unmanaged files:
+
+```bash
+./agentit enable supabase --project .
+./agentit activate supabase --project .  # alias
+./agentit enable supabase --project . --apply
+./agentit status --project .
+./agentit disable supabase --project . --apply
+```
+
+`profiles.yaml` is the installation visibility policy. `registry.yaml` remains
+the compact routing/inventory metadata and does not imply that every repository
+skill should be globally discoverable.
+
+For an older global install, use the explicit migration flag below. It only removes
+unmodified byte-identical non-core copies after creating a backup:
+
+```bash
+bash install.sh --provider codex --apply --prune-on-demand
+```
 
 ## Adaptive execution
 

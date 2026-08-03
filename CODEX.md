@@ -2,6 +2,13 @@
 
 Usa `~/.codex/AGENTS.md` como guía global canónica de Codex. El instalador también mantiene `~/AGENTS.md` para los proveedores que usan la guía común.
 
+El instalador instala globalmente solo el perfil `core` de `profiles.yaml` para
+mantener acotado el catálogo de descubrimiento. Activa perfiles adicionales por
+proyecto con `./agentit enable <profile> --project .`; el comando muestra un plan
+por defecto y requiere `--apply` para escribir. Para migrar una instalación antigua
+que tenía todas las skills globales, usa `bash install.sh --provider codex
+--apply --prune-on-demand`; solo poda copias exactas y no modificadas con backup.
+
 - No cargues la jerarquía de Claude Architect → Supervisor → Worker por defecto.
 - Resuelve directamente tareas pequeñas y medianas.
 - Para tareas grandes, crea un plan y usa subagentes solo si existen frentes independientes que puedan avanzar en paralelo.

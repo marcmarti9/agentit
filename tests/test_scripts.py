@@ -123,6 +123,132 @@ class ScriptRegressionTests(unittest.TestCase):
             self.assertTrue(manifest.is_file())
             self.assertIn("provider=codex", manifest.read_text(encoding="utf-8"))
 
+    def test_codex_apply_installs_only_the_bounded_core_skill_profile(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            home = temporary_root / "home"
+            home.mkdir()
+            result = run_script(
+                REPOSITORY / "install.sh",
+                home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--backup-dir",
+                str(temporary_root / "install-backup"),
+            )
+            self.assertEqual(0, result.returncode, result.stdout)
+            installed = {
+                path.parent.name
+                for path in (home / ".codex" / "skills").glob("*/SKILL.md")
+            }
+            self.assertEqual(
+                {
+                    "task-router",
+                    "architect-orchestrator",
+                    "debugging-and-error-recovery",
+                    "code-review-and-quality",
+                    "test-driven-development",
+                    "security-and-hardening",
+                    "source-driven-development",
+                    "frontend-ui-engineering",
+                    "planning-and-task-breakdown",
+                    "using-agent-skills",
+                },
+                installed,
+            )
+
+    def test_codex_prune_on_demand_removes_only_exact_agentit_copies(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            home = temporary_root / "home"
+            home.mkdir()
+            codex_skills = home / ".codex" / "skills"
+            old_skill = "api-and-interface-design"
+            old_destination = codex_skills / old_skill / "SKILL.md"
+            old_destination.parent.mkdir(parents=True)
+            old_destination.write_bytes(
+                (REPOSITORY / "skills" / old_skill / "SKILL.md").read_bytes()
+            )
+            unrelated = codex_skills / "user-managed" / "SKILL.md"
+            unrelated.parent.mkdir(parents=True)
+            unrelated.write_text("keep this skill\n", encoding="utf-8")
+            backup_root = temporary_root / "install-backup"
+
+            result = run_script(
+                REPOSITORY / "install.sh",
+                home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--prune-on-demand",
+                "--backup-dir",
+                str(backup_root),
+            )
+
+            self.assertEqual(0, result.returncode, result.stdout)
+            self.assertFalse(old_destination.exists())
+            self.assertEqual("keep this skill\n", unrelated.read_text(encoding="utf-8"))
+            self.assertEqual(
+                (backup_root / "codex" / "skills" / old_skill / "SKILL.md").read_bytes(),
+                (REPOSITORY / "skills" / old_skill / "SKILL.md").read_bytes(),
+            )
+
+    def test_codex_prune_plan_does_not_remove_exact_agentit_copies(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            home = temporary_root / "home"
+            home.mkdir()
+            old_skill = "api-and-interface-design"
+            old_destination = home / ".codex" / "skills" / old_skill / "SKILL.md"
+            old_destination.parent.mkdir(parents=True)
+            old_destination.write_bytes(
+                (REPOSITORY / "skills" / old_skill / "SKILL.md").read_bytes()
+            )
+            before = snapshot_tree(home)
+            backup_root = temporary_root / "install-backup"
+
+            result = run_script(
+                REPOSITORY / "install.sh",
+                home,
+                "--provider",
+                "codex",
+                "--prune-on-demand",
+                "--backup-dir",
+                str(backup_root),
+            )
+
+            self.assertEqual(0, result.returncode, result.stdout)
+            self.assertEqual(before, snapshot_tree(home))
+            self.assertFalse(backup_root.exists())
+
+    def test_codex_prune_refuses_modified_on_demand_skill_before_backup(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            home = temporary_root / "home"
+            home.mkdir()
+            modified = (
+                home / ".codex" / "skills" / "api-and-interface-design" / "SKILL.md"
+            )
+            modified.parent.mkdir(parents=True)
+            modified.write_text("user modification\n", encoding="utf-8")
+            backup_root = temporary_root / "install-backup"
+
+            result = run_script(
+                REPOSITORY / "install.sh",
+                home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--prune-on-demand",
+                "--backup-dir",
+                str(backup_root),
+            )
+
+            self.assertNotEqual(0, result.returncode, result.stdout)
+            self.assertFalse(backup_root.exists())
+            self.assertEqual("user modification\n", modified.read_text(encoding="utf-8"))
+
     def test_codex_existing_profiles_are_backed_up_before_install(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             temporary_root = Path(temporary_directory)

@@ -1,0 +1,98 @@
+schema_version: 1
+default_profile: core
+global_profiles:
+  - core
+profiles:
+  core:
+    description: "Small global discovery set for common engineering work."
+    skills:
+      - task-router
+      - architect-orchestrator
+      - debugging-and-error-recovery
+      - code-review-and-quality
+      - test-driven-development
+      - security-and-hardening
+      - source-driven-development
+      - frontend-ui-engineering
+      - planning-and-task-breakdown
+      - using-agent-skills
+  frontend:
+    description: "Core plus browser, performance, and UI maintenance guidance."
+    extends:
+      - core
+    skills:
+      - browser-testing-with-devtools
+      - performance-optimization
+      - code-simplification
+  backend:
+    description: "Core plus API boundaries, observability, and service maintenance."
+    extends:
+      - core
+    skills:
+      - api-and-interface-design
+      - observability-and-instrumentation
+      - performance-optimization
+      - code-simplification
+  supabase:
+    description: "Backend profile plus PostgreSQL/Supabase-specific guidance."
+    extends:
+      - backend
+    skills:
+      - supabase-postgres-best-practices
+  product:
+    description: "Core plus discovery, writing, and product decision support."
+    extends:
+      - core
+    skills:
+      - idea-refine
+      - interview-me
+      - documentation-and-adrs
+      - spec-driven-development
+  release:
+    description: "Core plus CI, migration, launch, and operational readiness."
+    extends:
+      - core
+    skills:
+      - ci-cd-and-automation
+      - deprecation-and-migration
+      - shipping-and-launch
+      - documentation-and-adrs
+  research:
+    description: "Core plus context, specifications, and adversarial review."
+    extends:
+      - core
+    skills:
+      - context-engineering
+      - doubt-driven-development
+      - spec-driven-development
+  all:
+    description: "Every repository skill; use only when explicitly requested."
+    skills:
+      - api-and-interface-design
+      - architect-orchestrator
+      - browser-testing-with-devtools
+      - ci-cd-and-automation
+      - code-review-and-quality
+      - code-simplification
+      - context-engineering
+      - debugging-and-error-recovery
+      - deprecation-and-migration
+      - documentation-and-adrs
+      - doubt-driven-development
+      - find-skills
+      - frontend-ui-engineering
+      - git-workflow-and-versioning
+      - idea-refine
+      - incremental-implementation
+      - interview-me
+      - observability-and-instrumentation
+      - performance-optimization
+      - planning-and-task-breakdown
+      - security-and-hardening
+      - shipping-and-launch
+      - source-driven-development
+      - spec-driven-development
+      - supabase-postgres-best-practices
+      - task-router
+      - test-driven-development
+      - using-agent-skills

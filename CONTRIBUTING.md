@@ -22,9 +22,14 @@ Skills must be modular, single-responsibility guides or tools.
 - Place new skills inside `skills/<skill-name>/`.
 - Each skill directory must contain a valid `SKILL.md` with YAML frontmatter declaring `name` and `description`.
 - Keep skill bodies clean and concise to preserve agent context windows.
+- Keep discovery descriptions short and discriminative: state what activates the skill
+  and one clear non-trigger. Add new skills to an opt-in profile in `profiles.yaml`
+  before considering global visibility.
 
 ### 2. Router & Policy Improvements
 - Router logic lives in `router/route.py` and `registry.yaml`.
+- Global/project skill visibility lives in `profiles.yaml`; `install.sh` must keep
+  the global profile bounded.
 - Ensure risk classification rules distinguish between *explaining* an action and *executing* an action on a target system.
 - Add unit tests for any new router behavior in `router/test_route.py` or `router/test_registry.py`.
 
@@ -37,6 +42,9 @@ python3 -m unittest discover -s router -p "test_*.py"
 
 # Run harness & script tests
 python3 -m unittest discover -s tests
+
+# Run representative router cases
+python3 evals/run.py
 ```
 
 ---

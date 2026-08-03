@@ -40,6 +40,70 @@ KNOWN_REGISTRY_STATES = {
     "UNKNOWN",
 }
 AVAILABLE_REGISTRY_STATES = {"ACTIVE_GLOBAL", "DUPLICATED"}
+TOPOLOGIES = ("direct", "probe", "fan_out", "pipeline", "writer_reviewer", "audit")
+
+PRESENTATION_PATTERNS = (
+    r"\b(css|style|styles|color|colour|font|spacing|shadow|visual|visualmente)\b",
+    r"\b(copy|label|text|texto|copia|etiqueta)\b",
+)
+FUNCTIONAL_BOUNDARY_PATTERNS = (
+    r"\b(validation|validación|logic|lógica|endpoint|api|database|base de datos)\b",
+    r"\b(transaction|transacción|checkout|charge|cobro|process|procesamiento)\b",
+    r"\b(webhook|permission|permiso|credential|credencial|secret|secreto)\b",
+    r"\b(session|sesión|migration|migración|deploy|desplieg|infrastructure|infraestructura)\b",
+    r"\b(concurren|race condition|rollback)\b",
+)
+SENSITIVE_SIGNAL_PATTERNS = (
+    ("authentication/session boundary", r"auth|login|logout|sesión|session|authorization|autorización"),
+    ("payment/data boundary", r"payment|pago|billing|factur|pii|personal data|datos personales"),
+    ("credentials/secrets boundary", r"secret|secreto|credential|credencial|api[_ -]?key|password|contraseña"),
+    ("persistence/infrastructure boundary", r"migration|migración|deploy|desplieg|infrastructure|infraestructura|database|base de datos"),
+    ("public API/concurrency boundary", r"public api|api pública|api contract|contrato de api|concurren|race condition|rollback"),
+)
+EXPLANATORY_PATTERNS = (
+    r"^\s*[¿?]?\s*(explain|explícame|explica|qué es|what is|how to|cómo)\b",
+    r"^\s*[¿?]?\s*how\s+(?:do|can|should|would)\s+(?:i|we|you)\b",
+    r"^\s*[¿?]?\s*(what|why|when|where|which|qué|por qué|cuándo|dónde|cuál)\b",
+    r"^\s*[¿?]?\s*(describe|review|revisa)\b.{0,80}\b(without changing|sin cambiar|conceptual|policy|política)\b",
+)
+HOW_TO_QUESTION_PATTERNS = (
+    r"^\s*[¿?]?\s*how\s+(?:do|can|should|would)\s+(?:i|we|you)\b",
+    r"^\s*[¿?]?\s*how\s+to\b",
+    r"^\s*[¿?]?\s*¿?cómo\b",
+)
+IMPLEMENTATION_ACTION_PATTERNS = (
+    r"\b(?:implement(?:ing|ed)?|build|add|create|change|modify|update|fix|refactor|migrate|integrate|optimi[sz]e|improve|write)\b",
+    r"\b(?:implementa|implemento|implementar|construye|construir|añade|añadir|crea|crear|cambia|cambiar|modifica|modificar|actualiza|actualizar|arregla|arreglar|refactoriza|refactorizar|migra|migrar|integra|integrar|optimiza|optimizar|mejora|mejorar|escribe|escribir)\b",
+)
+PRESENTATION_OBJECT_PATTERNS = (
+    r"\b(button|botón|label|etiqueta|text|texto|copy|copia|color|colour|font|spacing|shadow|visual|visualmente|style|styles|estilo|estilos|ui|interfaz|screen|pantalla|page|página|stylesheet|hoja de estilos)\b",
+)
+REVIEW_ACTION_PATTERNS = (
+    r"^\s*[¿?]?\s*(review|revisa|revisar|audit|audita|auditar|inspect|inspecciona|inspeccionar)\b",
+    r"\b(?:review|revisa|revisar|audit|audita|auditar)\b.{0,100}\b(?:only|solo|without changing|sin cambiar|read[- ]only|solo lectura)\b",
+)
+CLAUSE_BOUNDARY_PATTERNS = (
+    r",",
+    r";",
+    r":",
+    r"\n",
+    r"\bthen\b",
+    r"\binstead\b",
+    r"\band\b",
+    r"\bbut\b",
+    r"\by luego\b",
+    r"\bdespués\b",
+    r"\by\b",
+    r"\bpero\b",
+)
+QUESTION_CLAUSE_BOUNDARY_PATTERNS = (
+    r",",
+    r";",
+    r":",
+    r"\n",
+    r"\bthen\b",
+    r"\binstead\b",
+)
 
 
 class RegistryError(RuntimeError):
@@ -160,16 +224,61 @@ def _matches(text: str, patterns: tuple[str, ...]) -> bool:
     return any(re.search(pattern, text, re.IGNORECASE) for pattern in patterns)
 
 
+def _explanatory_requested(text: str) -> bool:
+    return _matches(text, EXPLANATORY_PATTERNS)
+
+
+def _implementation_requested(text: str) -> bool:
+    if not _matches(text, IMPLEMENTATION_ACTION_PATTERNS):
+        return False
+    if not _explanatory_requested(text):
+        return True
+    boundaries = (
+        QUESTION_CLAUSE_BOUNDARY_PATTERNS
+        if _matches(text, HOW_TO_QUESTION_PATTERNS)
+        else CLAUSE_BOUNDARY_PATTERNS
+    )
+    return _matches(
+        text,
+        tuple(
+            rf"{boundary}.{{0,120}}{action}"
+            for boundary in boundaries
+            for action in IMPLEMENTATION_ACTION_PATTERNS
+        ),
+    )
+
+
+def _presentation_only(text: str) -> bool:
+    """Return true when sensitive nouns are present only in visual/prose scope."""
+    sensitive_patterns = tuple(pattern for _, pattern in SENSITIVE_SIGNAL_PATTERNS)
+    if not _matches(text, PRESENTATION_PATTERNS):
+        return False
+    if not _matches(text, sensitive_patterns) or _matches(
+        text, FUNCTIONAL_BOUNDARY_PATTERNS
+    ):
+        return False
+    return not (
+        _matches(text, IMPLEMENTATION_ACTION_PATTERNS)
+        and not _matches(text, PRESENTATION_OBJECT_PATTERNS)
+    )
+
+
+def _delegation_requested(text: str) -> bool:
+    return _matches(
+        text,
+        (
+            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
+            r"multidomain|multidominio|separate packages|paquetes separados",
+        ),
+    )
+
+
 def _infer_risk(text: str) -> tuple[str, list[str]]:
     reasons: list[str] = []
     action_boundary = r"(?:^|[.;:\n]|\bthen\b|\binstead\b|\band\b|\by luego\b|\bdespués\b|\by\b)\s*(?:please\s+|por favor\s+)?"
-    explanatory = _matches(
-        text,
-        (
-            r"^\s*(explain|explícame|explica|qué es|what is)\b",
-            r"^\s*(describe|review|revisa)\b.{0,80}\b(without changing|sin cambiar|conceptual|policy|política)\b",
-        ),
-    )
+    presentation_only = _presentation_only(text)
+    explanatory = _explanatory_requested(text)
+    implementation_requested = _implementation_requested(text)
     documentation = _matches(
         text, (r"^\s*(document|documenta|documentar|añade documentación)\b",)
     )
@@ -238,7 +347,7 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
         reasons.append("detecté una acción real irreversible, de producción o de control crítico")
         return "RISK_4", reasons
 
-    if explanatory:
+    if explanatory and not implementation_requested:
         return "RISK_0", ["parece una explicación sin una operación solicitada"]
     if documentation:
         return "RISK_1", ["parece documentación sin una operación solicitada"]
@@ -256,9 +365,9 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
             r"concurren|race condition|rollback|base de datos|database",
         ),
     )
-    if high_impact:
+    if high_impact and not presentation_only:
         return "RISK_3", reasons + ["detecté impacto en seguridad, persistencia o infraestructura"]
-    if _matches(text, (r"explain|explíca|explica|qué es|what is|question|pregunta|brainstorm",)):
+    if explanatory or _matches(text, (r"brainstorm|question|pregunta",)):
         return "RISK_0", ["parece una explicación o conversación sin cambio real"]
     if _matches(text, (r"css|rename|renombr|format|formato|document|documentación|copy|texto|typo",)):
         return "RISK_1", ["parece un cambio localizado y reversible"]
@@ -268,9 +377,7 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
 
 
 def _category(text: str, risk: str) -> str:
-    if risk == "RISK_0" and _matches(
-        text, (r"\b(explain|explícame|explica|qué es|what is|question|pregunta)\b",)
-    ):
+    if risk == "RISK_0" and _explanatory_requested(text):
         return "explanation"
     patterns = (
         ("marketing", r"marketing|cro|seo|copy|landing|conversion|analytics|analítica|growth"),
@@ -281,7 +388,7 @@ def _category(text: str, risk: str) -> str:
         ("testing", r"test|prueba|coverage|cobertura|eval|benchmark"),
         ("frontend", r"frontend|ui|css|react|component|web|browser"),
         ("documentation", r"document|readme|docs|texto|copy|writing|escritura"),
-        ("explanation", r"explain|explica|qué es|what is|question|pregunta"),
+        ("explanation", r"explain|explica|qué es|what is|how to|cómo|question|pregunta"),
     )
     for name, pattern in patterns:
         if _matches(text, (pattern,)):
@@ -472,35 +579,140 @@ def _topology(text: str, risk: str) -> str:
         (r"probe|investiga|reproduce|localiza|trace|root cause|causa raíz",),
     ):
         return "probe"
-    if _matches(
-        text,
-        (
-            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
-            r"multidomain|multidominio|separate packages|paquetes separados",
-        ),
-    ):
+    if _delegation_requested(text):
         return "fan_out"
+    if _matches(text, (r"pipeline|sequential stages|etapas secuenciales|dag de etapas",)):
+        return "pipeline"
     if risk in {"RISK_3", "RISK_4"}:
+        if risk == "RISK_4":
+            return "audit"
+        if _implementation_requested(text):
+            return "writer_reviewer"
         return "audit"
     return "direct"
 
 
-def _subagent_budget(text: str, risk: str) -> dict[str, Any]:
+def _subagent_budget(text: str, risk: str, topology: str) -> dict[str, Any]:
     """Return a budget, not a command to spawn agents."""
-    explicit_delegation = _matches(
-        text,
-        (
-            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
-            r"multidomain|multidominio|separate packages|paquetes separados",
-        ),
-    )
-    if not explicit_delegation or risk in {"RISK_0", "RISK_1"}:
+    if topology in {"writer_reviewer", "audit"}:
+        return {"recommended": 1, "max": 1, "requires_justification": True}
+    if not _delegation_requested(text) or risk in {"RISK_0", "RISK_1"}:
         maximum = 0
     elif risk == "RISK_2":
         maximum = 3
     else:
         maximum = 5
     return {"recommended": 0, "max": maximum, "requires_justification": maximum > 0}
+
+
+def _rejected_topologies(selected: str) -> dict[str, str]:
+    reasons: dict[str, str] = {}
+    for topology in TOPOLOGIES:
+        if topology == selected:
+            continue
+        if selected == "direct":
+            reasons = {
+                "probe": "no read-only investigation or reproduction request",
+                "fan_out": "no independent work units identified",
+                "pipeline": "no sequential artifact stages identified",
+                "writer_reviewer": "risk does not require independent verification",
+                "audit": "no critical review or operational boundary detected",
+            }
+            break
+        if selected == "probe":
+            reasons = {
+                "direct": "investigation evidence should be isolated before implementation",
+                "fan_out": "probe keeps the investigation read-only and bounded",
+                "pipeline": "no validated implementation artifacts exist yet",
+                "writer_reviewer": "implementation was not requested",
+                "audit": "the request is investigation, not a final critical-operation review",
+            }
+            break
+        if selected == "fan_out":
+            reasons = {
+                "direct": "independent work units were explicitly requested",
+                "probe": "the task requests work beyond read-only investigation",
+                "pipeline": "the work units do not declare sequential artifact dependencies",
+                "writer_reviewer": "parallel ownership is more useful than one writer plus review",
+                "audit": "the task does not request a critical-operation audit",
+            }
+            break
+        if selected == "pipeline":
+            reasons = {
+                "direct": "the task declares ordered stages with dependent artifacts",
+                "probe": "the task includes execution stages beyond investigation",
+                "fan_out": "stages depend on validated outputs rather than being independent",
+                "writer_reviewer": "stage dependencies are primary; review is not the main shape",
+                "audit": "no critical-operation review is the primary request",
+            }
+            break
+        if selected == "writer_reviewer":
+            reasons = {
+                "direct": "independent verification is required for this sensitive implementation",
+                "probe": "implementation was requested; investigation alone is insufficient",
+                "fan_out": "affected behavior is coupled; no independent ownership boundaries were declared",
+                "pipeline": "no sequential artifact stages were declared",
+                "audit": "an audit alone would not implement the requested change",
+            }
+            break
+        if selected == "audit":
+            reasons = {
+                "direct": "the risk or review request requires an independent safety check",
+                "probe": "the request is not limited to read-only investigation",
+                "fan_out": "the safety decision needs one bounded review owner",
+                "pipeline": "no validated sequential artifacts are required for the review",
+                "writer_reviewer": "no implementation writer was requested; review-only control is sufficient",
+            }
+            break
+    return reasons
+
+
+def _signals(
+    text: str,
+    *,
+    risk: str,
+    topology: str,
+    content_types: list[str],
+    routing_advice: list[str],
+) -> list[str]:
+    signals: list[str] = []
+    presentation_only = _presentation_only(text)
+    if presentation_only:
+        signals.append("presentation-only scope")
+    for label, pattern in SENSITIVE_SIGNAL_PATTERNS:
+        if risk not in {"RISK_0", "RISK_1"} and _matches(text, (pattern,)) and not presentation_only:
+            signals.append(label)
+    if risk == "RISK_0":
+        signals.append("explanation or conversation without a requested mutation")
+    elif risk == "RISK_1" and not signals:
+        signals.append("localized reversible change")
+    elif risk == "RISK_2" and not signals:
+        signals.append("standard development scope with possible regression")
+    if _delegation_requested(text):
+        signals.append("independent work explicitly requested")
+    if topology == "probe":
+        signals.append("read-only investigation or reproduction requested")
+    if topology == "writer_reviewer":
+        signals.append("independent verification useful after implementation")
+    if topology == "audit":
+        signals.append("independent safety review required before action")
+    for content_type in sorted(set(content_types).intersection(CRITICAL_CONTENT)):
+        signals.append(f"critical content: {content_type}")
+    signals.extend(f"routing advice: {advice}" for advice in routing_advice)
+    return list(dict.fromkeys(signals))
+
+
+def _heuristic_confidence(risk: str, signals: list[str]) -> float:
+    """Return an uncalibrated strength score, never a probability claim."""
+    if risk == "RISK_4":
+        return 0.96
+    if risk == "RISK_3":
+        return 0.82 if any("boundary" in signal for signal in signals) else 0.70
+    if risk == "RISK_1":
+        return 0.90 if "presentation-only scope" in signals else 0.76
+    if risk == "RISK_0":
+        return 0.94
+    return 0.62 if len(signals) <= 1 else 0.70
 
 
 def route_task(
@@ -599,6 +811,14 @@ def route_task(
         home=resolved_home,
         text=text.lower(),
     )
+    topology = _topology(text.lower(), risk)
+    signals = _signals(
+        text.lower(),
+        risk=risk,
+        topology=topology,
+        content_types=content_types,
+        routing_advice=routing_advice,
+    )
     return {
         "risk": risk,
         "category": category,
@@ -610,10 +830,14 @@ def route_task(
         "skills_suppressed_conflicts": skills_suppressed_conflicts,
         "skill_recommendation_metadata": skill_recommendation_metadata,
         "routing_advice": routing_advice,
+        "signals": signals,
+        "confidence": _heuristic_confidence(risk, signals),
+        "confidence_calibrated": False,
+        "rejected_topologies": _rejected_topologies(topology),
         "output_profile": output_profile,
         "compression": compression,
-        "topology": _topology(text.lower(), risk),
-        "subagents": _subagent_budget(text.lower(), risk),
+        "topology": topology,
+        "subagents": _subagent_budget(text.lower(), risk, topology),
         "verification": verification,
         "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
         "recovery": (

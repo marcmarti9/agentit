@@ -59,6 +59,81 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertEqual(result["subagents"]["max"], 0)
         self.assertNotIn("semantic", result["compression"]["allowed"])
 
+    def test_presentation_only_payment_wording_does_not_raise_sensitive_risk(self):
+        result = self.route("Cambia el color del botón de pago en este CSS")
+
+        self.assertEqual(result["risk"], "RISK_1")
+        self.assertEqual(result["topology"], "direct")
+        self.assertIn("presentation-only scope", result["signals"])
+
+    def test_real_payment_implementation_is_not_hidden_by_css_wording(self):
+        result = self.route("Implementa el flujo de pagos y añade CSS")
+
+        self.assertEqual(result["risk"], "RISK_3")
+        self.assertEqual(result["topology"], "writer_reviewer")
+        self.assertIn("payment/data boundary", result["signals"])
+
+    def test_production_css_change_keeps_the_production_safety_gate(self):
+        result = self.route("Cambia el CSS en producción")
+
+        self.assertEqual(result["risk"], "RISK_4")
+        self.assertTrue(result["verification"]["dry_run_required"])
+
+    def test_how_to_questions_are_explanations_not_implementations(self):
+        for prompt in (
+            "How do I implement login and session expiration?",
+            "¿Cómo implemento el pago?",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+
+                self.assertEqual(result["risk"], "RISK_0")
+                self.assertEqual(result["category"], "explanation")
+                self.assertEqual(result["topology"], "direct")
+                self.assertFalse(result["verification"]["independent_review"])
+
+    def test_later_implementation_overrides_an_explanatory_prefix(self):
+        result = self.route(
+            "Explain what authentication is, then implement login and session expiration"
+        )
+
+        self.assertEqual(result["risk"], "RISK_3")
+        self.assertEqual(result["topology"], "writer_reviewer")
+
+    def test_review_only_sensitive_work_uses_audit(self):
+        result = self.route("Revisa solo la implementación de login")
+
+        self.assertEqual(result["risk"], "RISK_3")
+        self.assertEqual(result["topology"], "audit")
+        self.assertIn("independent safety review", result["signals"][-1])
+
+    def test_signals_include_each_sensitive_boundary_detected(self):
+        result = self.route("Implementa login y procesa pagos")
+
+        self.assertIn("authentication/session boundary", result["signals"])
+        self.assertIn("payment/data boundary", result["signals"])
+
+    def test_auth_implementation_explains_writer_reviewer_decision(self):
+        result = self.route("Implementa el login y la expiración de sesiones")
+
+        self.assertEqual(result["topology"], "writer_reviewer")
+        self.assertGreaterEqual(result["confidence"], 0.70)
+        self.assertFalse(result["confidence_calibrated"])
+        self.assertTrue(
+            any("authentication" in signal for signal in result["signals"])
+        )
+        self.assertIn("direct", result["rejected_topologies"])
+        self.assertIn("fan_out", result["rejected_topologies"])
+        self.assertIn("audit", result["rejected_topologies"])
+        self.assertIn("independent verification", result["rejected_topologies"]["direct"])
+
+    def test_explanation_keeps_topology_reasons_explicit(self):
+        result = self.route("Explícame qué es un hash de forma sencilla")
+
+        self.assertEqual(result["topology"], "direct")
+        self.assertIn("no read-only investigation", result["rejected_topologies"]["probe"])
+        self.assertIn("no independent work", result["rejected_topologies"]["fan_out"])
+
     def test_auth_feature_requires_security_and_fuller_context(self):
         result = self.route("Implementa el login y la expiración de sesiones")
 

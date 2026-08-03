@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feature/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install YAML dependency
+        run: python3 -m pip install PyYAML
+
+      - name: Run router tests
+        run: python3 -m unittest discover -s router -p 'test_*.py' -v
+
+      - name: Run script tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Check shell syntax
+        run: bash -n install.sh update.sh security/harden-local.sh
+
+      - name: Validate registry YAML
+        run: python3 -c "import yaml; yaml.safe_load(open('registry.yaml', encoding='utf-8'))"
+
+      - name: Validate settings JSON
+        run: python3 -m json.tool settings.json >/dev/null

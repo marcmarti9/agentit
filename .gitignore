@@ -1,0 +1,14 @@
+.DS_Store
+*.swp
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local-only reports, credentials and provider state must never enter this repo.
+*.local.yaml
+*.local.json
+*.secret
+*.secrets
+reports/local/
+backups/local/

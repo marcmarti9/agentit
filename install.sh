@@ -13,6 +13,7 @@ WITH_LOCAL_SETTINGS="false"
 WITH_HOOK="false"
 WITH_GUIDES="false"
 BACKUP_ROOT=""
+CODEX_AGENT_PROFILES=("luna-worker.toml" "terra-worker.toml")
 
 usage() {
   cat <<'EOF'
@@ -189,6 +190,17 @@ copy_file() {
   note "instalado: $dst"
 }
 
+copy_codex_agent_profiles() {
+  local target_root="$1"
+  local profile_name
+  for profile_name in "${CODEX_AGENT_PROFILES[@]}"; do
+    copy_file \
+      "$REPO_DIR/.codex/agents/$profile_name" \
+      "$target_root/agents/$profile_name" \
+      "codex/agents/$profile_name"
+  done
+}
+
 copy_tree() {
   local src_root="$1"
   local dst_root="$2"
@@ -234,6 +246,16 @@ preflight_copy_file() {
   fi
 }
 
+preflight_copy_codex_agent_profiles() {
+  local target_root="$1"
+  local profile_name
+  for profile_name in "${CODEX_AGENT_PROFILES[@]}"; do
+    preflight_copy_file \
+      "$REPO_DIR/.codex/agents/$profile_name" \
+      "$target_root/agents/$profile_name"
+  done
+}
+
 preflight_copy_tree() {
   local src_root="$1"
   local dst_root="$2"
@@ -271,6 +293,7 @@ preflight_install() {
   fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
     preflight_shared_skills "$USER_HOME/.codex"
+    preflight_copy_codex_agent_profiles "$USER_HOME/.codex"
   fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
     preflight_shared_skills "$USER_HOME/.agents"
@@ -342,6 +365,7 @@ fi
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
   note "[codex] skills compartidas; sin jerarquía obligatoria"
   copy_shared_skills "codex" "$USER_HOME/.codex"
+  copy_codex_agent_profiles "$USER_HOME/.codex"
 fi
 
 # Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; no se

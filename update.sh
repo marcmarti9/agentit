@@ -11,6 +11,7 @@ WITH_SETTINGS="false"
 WITH_HOOK="false"
 WITH_GUIDES="false"
 BACKUP_ROOT=""
+CODEX_AGENT_PROFILES=("luna-worker.toml" "terra-worker.toml")
 
 usage() {
   cat <<'EOF'
@@ -203,6 +204,25 @@ preflight_import_file() {
   fi
 }
 
+preflight_import_codex_agent_profiles() {
+  local profile_name
+  for profile_name in "${CODEX_AGENT_PROFILES[@]}"; do
+    preflight_import_file \
+      "$SOURCE_ROOT/agents/$profile_name" \
+      "$REPO_DIR/.codex/agents/$profile_name"
+  done
+}
+
+import_codex_agent_profiles() {
+  local profile_name
+  for profile_name in "${CODEX_AGENT_PROFILES[@]}"; do
+    import_file \
+      "$SOURCE_ROOT/agents/$profile_name" \
+      "$REPO_DIR/.codex/agents/$profile_name" \
+      "codex/agents/$profile_name"
+  done
+}
+
 preflight_update() {
   if [[ "$SOURCE_PROVIDER" == "claude" ]]; then
     local agent
@@ -211,6 +231,10 @@ preflight_update() {
         preflight_import_file "$SOURCE_ROOT/agents/$agent.md" "$REPO_DIR/agents/$agent.md"
       fi
     done
+  fi
+
+  if [[ "$SOURCE_PROVIDER" == "codex" ]]; then
+    preflight_import_codex_agent_profiles
   fi
 
   local skill
@@ -290,6 +314,10 @@ if [[ -f "$SOURCE_SKILLS/task-router/SKILL.md" ]]; then
   import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/router/SKILL.md" "router/SKILL.md"
 else
   printf 'skip: task-router no instalado en el provider\n'
+fi
+
+if [[ "$SOURCE_PROVIDER" == "codex" ]]; then
+  import_codex_agent_profiles
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then

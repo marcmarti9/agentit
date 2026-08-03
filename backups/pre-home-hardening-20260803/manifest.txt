@@ -1,9 +1,0 @@
-This manifest records local security-only changes made outside the repository.
-No credential values are included.
-date=2026-08-03
-backup=/home/Marc/.bashrc.agent-harness-prehardening-20260803
-backup_sha256=71950880401c5535aabfe08df2a63394d3c516c2b6d3f18c3d42a02862d07d0c
-original_bashrc_mode=644
-new_bashrc_mode=600
-action=commented three dangerous bypass aliases; preserved the original in backup
-action=changed six Cursor mcp_auth.json files from mode 644 to 600; values not read

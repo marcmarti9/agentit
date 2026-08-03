@@ -61,9 +61,25 @@ while (($#)); do
   shift
 done
 
+case "$SOURCE_PROVIDER" in
+  claude|codex|antigravity) ;;
+  *) die "provider inválido: $SOURCE_PROVIDER" ;;
+esac
+[[ "$WITH_SETTINGS" == "false" || "$SOURCE_PROVIDER" == "claude" ]] || \
+  die "settings solo se importa desde Claude"
+[[ "$WITH_HOOK" == "false" || "$SOURCE_PROVIDER" == "claude" ]] || \
+  die "hook solo se importa desde Claude"
+
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
 [[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+
+assert_manifest_path() {
+  local path="$1"
+  [[ "$path" != *$'\n'* && "$path" != *$'\r'* ]] || \
+    die "ruta con CR/LF rechazada para manifest"
+}
+
 assert_no_symlink_components() {
   local current="$1"
   while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
@@ -74,17 +90,19 @@ assert_no_symlink_components() {
 
 create_manifest() {
   local path="$1"
+  assert_manifest_path "$path"
   assert_no_symlink_components "$path"
   [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
-  (set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+  (umask 077; set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
 }
 case "$SOURCE_PROVIDER" in
   claude) SOURCE_ROOT="$USER_HOME/.claude"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
   codex) SOURCE_ROOT="$USER_HOME/.codex"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
-  antigravity) SOURCE_ROOT="$USER_HOME/.gemini/antigravity-cli"; SOURCE_SKILLS="$USER_HOME/.agents/skills" ;;
-  *) die "provider inválido: $SOURCE_PROVIDER" ;;
+  antigravity) SOURCE_ROOT="$USER_HOME/.agents"; SOURCE_SKILLS="$SOURCE_ROOT/skills" ;;
 esac
 [[ -d "$SOURCE_ROOT" ]] || die "no existe el target del provider: $SOURCE_ROOT"
+assert_manifest_path "$SOURCE_ROOT"
+assert_manifest_path "$SOURCE_SKILLS"
 assert_no_symlink_components "$SOURCE_ROOT"
 assert_no_symlink_components "$SOURCE_SKILLS"
 
@@ -92,10 +110,13 @@ if [[ "$MODE" == "plan" ]]; then
   printf 'MODO PLAN: no se escribirán archivos. Usa --apply para aplicar.\n'
 else
   if [[ -z "$BACKUP_ROOT" ]]; then
-    BACKUP_ROOT="$REPO_DIR/backups/update-$(date +%Y%m%d-%H%M%S)"
+    BACKUP_ROOT="$REPO_DIR/backups/local/update-$(date +%Y%m%d-%H%M%S)"
   fi
+  assert_manifest_path "$BACKUP_ROOT"
   assert_no_symlink_components "$BACKUP_ROOT"
-  mkdir -p "$BACKUP_ROOT"
+  (umask 077; mkdir -p "$BACKUP_ROOT")
+  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  chmod 0700 "$BACKUP_ROOT"
   create_manifest "$BACKUP_ROOT/manifest.txt"
   printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" >> "$BACKUP_ROOT/manifest.txt"
 fi
@@ -111,18 +132,23 @@ assert_source() {
 backup_existing() {
   local dst="$1"
   local rel="$2"
+  assert_manifest_path "$dst"
   [[ -e "$dst" || -L "$dst" ]] || return 0
   [[ ! -L "$dst" ]] || die "destino symlink rechazado: $dst"
   [[ -f "$dst" ]] || die "destino existente no es un archivo regular: $dst"
   [[ -n "${BACKED_UP[$dst]+yes}" ]] && return 0
   BACKED_UP["$dst"]=1
   local backup_path="$BACKUP_ROOT/$rel"
+  assert_manifest_path "$backup_path"
   assert_no_symlink_components "$backup_path"
   [[ ! -e "$backup_path" && ! -L "$backup_path" ]] || die "destino de backup ya existe: $backup_path"
-  mkdir -p "$(dirname "$backup_path")"
-  cp -a -- "$dst" "$backup_path"
-  printf 'backup path=%s destination=%s original_sha256=%s backup_sha256=%s\n' \
-    "$backup_path" "$dst" "$(sha256sum -- "$dst" | awk '{print $1}')" \
+  local original_mode
+  original_mode="$(stat -c '%a' -- "$dst")"
+  (umask 077; mkdir -p "$(dirname "$backup_path")")
+  (umask 077; cp --preserve=timestamps -- "$dst" "$backup_path")
+  chmod 0600 "$backup_path"
+  printf 'backup path=%s destination=%s original_mode=%s original_sha256=%s backup_sha256=%s\n' \
+    "$backup_path" "$dst" "$original_mode" "$(sha256sum -- "$dst" | awk '{print $1}')" \
     "$(sha256sum -- "$backup_path" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
 }
 
@@ -130,9 +156,15 @@ import_file() {
   local src="$1"
   local dst="$2"
   local rel="$3"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
   assert_source "$src"
   [[ -f "$src" ]] || die "solo se importan archivos regulares: $src"
   assert_no_symlink_components "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
   if [[ "$MODE" == "plan" ]]; then
     printf 'plan: %s -> %s\n' "$src" "$dst"
     return 0
@@ -180,12 +212,10 @@ else
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then
-  [[ "$SOURCE_PROVIDER" == "claude" ]] || die "settings solo se importa desde Claude"
   printf 'ADVERTENCIA: settings.json puede contener hooks y preferencias de máquina.\n'
   import_file "$SOURCE_ROOT/settings.json" "$REPO_DIR/settings.json" "settings.json"
 fi
 if [[ "$WITH_HOOK" == "true" ]]; then
-  [[ "$SOURCE_PROVIDER" == "claude" ]] || die "hook solo se importa desde Claude"
   import_file "$SOURCE_ROOT/hooks/precompact-memory.sh" "$REPO_DIR/hooks/precompact-memory.sh" "hooks/precompact-memory.sh"
 fi
 if [[ "$WITH_GUIDES" == "true" ]]; then

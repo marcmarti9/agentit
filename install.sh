@@ -73,10 +73,22 @@ case "$PROVIDER" in
   all|claude|codex|antigravity) ;;
   *) die "provider inválido: $PROVIDER" ;;
 esac
+[[ "$WITH_SETTINGS" == "false" || "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || \
+  die "settings solo aplica al provider claude"
+[[ "$WITH_LOCAL_SETTINGS" == "false" || "$WITH_SETTINGS" == "true" ]] || \
+  die "--with-local-settings requiere --with-settings"
+[[ "$WITH_HOOK" == "false" || "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || \
+  die "hook solo aplica al provider claude"
 
 [[ -d "$USER_HOME" ]] || die "la raíz de usuario no existe: $USER_HOME"
 [[ ! -L "$USER_HOME" ]] || die "la raíz de usuario symlink se rechaza: $USER_HOME"
 USER_HOME="$(cd "$USER_HOME" && pwd -P)"
+
+assert_manifest_path() {
+  local path="$1"
+  [[ "$path" != *$'\n'* && "$path" != *$'\r'* ]] || \
+    die "ruta con CR/LF rechazada para manifest"
+}
 
 assert_no_symlink_components() {
   local current="$1"
@@ -88,9 +100,10 @@ assert_no_symlink_components() {
 
 create_manifest() {
   local path="$1"
+  assert_manifest_path "$path"
   assert_no_symlink_components "$path"
   [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
-  (set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
+  (umask 077; set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
 }
 
 if [[ "$MODE" == "plan" ]]; then
@@ -99,8 +112,12 @@ else
   if [[ -z "$BACKUP_ROOT" ]]; then
     BACKUP_ROOT="$USER_HOME/backups/agent-harness-pre-install-$(date +%Y%m%d-%H%M%S)"
   fi
+  assert_manifest_path "$REPO_DIR"
+  assert_manifest_path "$BACKUP_ROOT"
   assert_no_symlink_components "$BACKUP_ROOT"
-  mkdir -p "$BACKUP_ROOT"
+  (umask 077; mkdir -p "$BACKUP_ROOT")
+  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  chmod 0700 "$BACKUP_ROOT"
   create_manifest "$BACKUP_ROOT/manifest.txt"
   note "Backup: $BACKUP_ROOT"
   {
@@ -126,18 +143,23 @@ assert_safe_destination() {
 backup_existing() {
   local dst="$1"
   local rel="$2"
+  assert_manifest_path "$dst"
   [[ -e "$dst" || -L "$dst" ]] || return 0
   assert_safe_destination "$dst"
   [[ -f "$dst" ]] || die "destino existente no es un archivo regular: $dst"
   [[ -n "${BACKED_UP[$dst]+yes}" ]] && return 0
   BACKED_UP["$dst"]=1
   local backup_path="$BACKUP_ROOT/$rel"
+  assert_manifest_path "$backup_path"
   assert_no_symlink_components "$backup_path"
   [[ ! -e "$backup_path" && ! -L "$backup_path" ]] || die "destino de backup ya existe: $backup_path"
-  mkdir -p "$(dirname "$backup_path")"
-  cp -a -- "$dst" "$backup_path"
-  printf 'backup path=%s destination=%s original_sha256=%s backup_sha256=%s\n' \
-    "$backup_path" "$dst" "$(sha256sum -- "$dst" | awk '{print $1}')" \
+  local original_mode
+  original_mode="$(stat -c '%a' -- "$dst")"
+  (umask 077; mkdir -p "$(dirname "$backup_path")")
+  (umask 077; cp --preserve=timestamps -- "$dst" "$backup_path")
+  chmod 0600 "$backup_path"
+  printf 'backup path=%s destination=%s original_mode=%s original_sha256=%s backup_sha256=%s\n' \
+    "$backup_path" "$dst" "$original_mode" "$(sha256sum -- "$dst" | awk '{print $1}')" \
     "$(sha256sum -- "$backup_path" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
 }
 
@@ -145,9 +167,15 @@ copy_file() {
   local src="$1"
   local dst="$2"
   local rel="$3"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
   assert_safe_source "$src"
   [[ -f "$src" ]] || die "solo se copian archivos regulares: $src"
   assert_safe_destination "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
   if [[ "$MODE" == "plan" ]]; then
     note "plan: $src -> $dst"
     return 0
@@ -223,17 +251,14 @@ if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then
-  [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || die "settings solo aplica al provider claude"
   note "ADVERTENCIA: settings.json puede activar hooks/configuración global; revisa el backup y el diff."
   copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json" "claude/settings.json"
 fi
 if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
-  [[ "$WITH_SETTINGS" == "true" ]] || die "--with-local-settings requiere --with-settings"
   note "ADVERTENCIA: settings.local.json es específico de máquina; se copia solo por petición explícita."
   copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json" "claude/settings.local.json"
 fi
 if [[ "$WITH_HOOK" == "true" ]]; then
-  [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || die "hook solo aplica al provider claude"
   note "ADVERTENCIA: hook opt-in; no se activa ninguna referencia adicional automáticamente."
   copy_file "$REPO_DIR/hooks/precompact-memory.sh" "$USER_HOME/.claude/hooks/precompact-memory.sh" "claude/hooks/precompact-memory.sh"
   if [[ "$MODE" == "apply" ]]; then

@@ -162,7 +162,7 @@ def _matches(text: str, patterns: tuple[str, ...]) -> bool:
 
 def _infer_risk(text: str) -> tuple[str, list[str]]:
     reasons: list[str] = []
-    action_boundary = r"(?:^|[.;]|\bthen\b|\binstead\b|\band\b|\by luego\b|\bdespués\b|\by\b)\s*(?:please\s+|por favor\s+)?"
+    action_boundary = r"(?:^|[.;:\n]|\bthen\b|\binstead\b|\band\b|\by luego\b|\bdespués\b|\by\b)\s*(?:please\s+|por favor\s+)?"
     explanatory = _matches(
         text,
         (

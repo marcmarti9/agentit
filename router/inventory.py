@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import os
 import shutil
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -89,16 +90,26 @@ def build_inventory(registry_path: Path, home: Path) -> dict[str, Any]:
 
 def write_inventory(output: Path, inventory: dict[str, Any]) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = output.with_name(f".{output.name}.tmp-{os.getpid()}")
+    temporary: Path | None = None
     try:
-        temporary.write_text(
-            yaml.safe_dump(inventory, sort_keys=False, allow_unicode=True),
+        with tempfile.NamedTemporaryFile(
+            mode="w",
             encoding="utf-8",
-        )
+            dir=output.parent,
+            prefix=f".{output.name}.tmp-",
+            delete=False,
+        ) as handle:
+            temporary = Path(handle.name)
+            yaml.safe_dump(
+                inventory,
+                handle,
+                sort_keys=False,
+                allow_unicode=True,
+            )
         temporary.chmod(0o600)
         os.replace(temporary, output)
     finally:
-        if temporary.exists():
+        if temporary is not None and temporary.exists():
             temporary.unlink()
 
 

@@ -8,9 +8,9 @@
 
 | Comando | Resultado local observado |
 |---|---|
-| `python3 -m unittest discover -s router -p 'test_*.py' -v` | 41/41 tests OK |
-| `python3 -B -m unittest -v router.test_route router.test_registry router.test_inventory` | 41/41 tests OK como módulos |
-| suite del router con un `HOME` temporal vacío | 41/41 tests OK; no depende del inventario del autor |
+| `python3 -m unittest discover -s router -p 'test_*.py' -v` | 42/42 tests OK |
+| `python3 -B -m unittest -v router.test_route router.test_registry router.test_inventory` | 42/42 tests OK como módulos |
+| suite del router con un `HOME` temporal vacío | 42/42 tests OK; no depende del inventario del autor |
 | `python3 -m unittest discover -s tests -p 'test_*.py' -v` | 5/5 tests OK; los cambios se realizaron en fixtures temporales |
 | `bash -n install.sh update.sh security/harden-local.sh` | exit code 0 |
 | `python3 -c "import yaml; yaml.safe_load(open('registry.yaml', encoding='utf-8'))"` | exit code 0 |

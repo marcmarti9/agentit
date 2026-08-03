@@ -1,3 +1,4 @@
+import os
 import stat
 import tempfile
 import unittest
@@ -56,6 +57,21 @@ class LocalInventoryTests(unittest.TestCase):
             self.assertEqual(len(path_observation["sha256"]), 64)
             self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
             self.assertEqual(list(output.parent.glob(".*.tmp-*")), [])
+
+    def test_inventory_write_does_not_follow_predictable_temporary_symlink(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            output = root / "inventory.yaml"
+            victim = root / "victim.txt"
+            victim.write_text("do not change\n", encoding="utf-8")
+            predictable = output.with_name(f".{output.name}.tmp-{os.getpid()}")
+            predictable.symlink_to(victim)
+
+            write_inventory(output, {"fixture": True})
+
+            self.assertEqual("do not change\n", victim.read_text(encoding="utf-8"))
+            self.assertEqual({"fixture": True}, yaml.safe_load(output.read_text()))
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
 
 
 if __name__ == "__main__":

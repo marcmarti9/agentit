@@ -76,6 +76,22 @@ Never copy the full parent conversation or broad project documentation. Store la
 
 Every delegated package returns: artifacts/files changed, tests run or skipped with reason, known risks, pending decisions and stop reason.
 
+## Acceptance and correction
+
+- Treat worker reports as claims, not evidence. Before acceptance, the Architect inspects the actual working tree and complete diff, confirms scope, and reruns the relevant verification.
+- The Architect retains architecture, interfaces, decomposition, review, correction decisions, and final acceptance.
+- If a worker is wrong, preferably return a corrected specification to the same worker and verify again; do not create a replacement worker merely to avoid a pending correction.
+- Run independent tasks with non-overlapping files in parallel only when useful; serialize shared-file and dependent tasks.
+- Workers must not create PRs, push, deploy, or run migrations without explicit authorization from the Architect or user.
+
+## Model policy
+
+- Prefer direct execution or Terra Medium for normal tasks.
+- Use Luna Max for extensive, well-delimited reading, writing, or implementation.
+- Use Sol Medium for coordination or architecture when it adds concrete value; reserve Sol High for exceptionally difficult or high-risk decisions.
+- Reserve a second independent Sol review for RISK_4, critical security, destructive migrations, hard-to-reverse public contracts, or equivalent risk; it is not mandatory for routine features.
+- Do not escalate by habit or delegate when coordination costs more than direct execution.
+
 ## Context and memory
 
 Use project instructions as a routing index, not a knowledge dump. Load skills and documentation on demand. Persist plans and decisions in small artifacts for long tasks. Promote only stable, reusable lessons into memory or skills; do not store session narratives.

@@ -37,6 +37,7 @@ No se debe corregir el hook suponiendo que el resumen es verdad. Un resumen es u
 - `update.sh` usa allowlist de agentes y skills, no copia un directorio arbitrario ni ejecuta hooks.
 - El router prohíbe compresión para riesgo alto y contenido crítico; no ejecuta comandos.
 - `settings.json` del repositorio ya no omite el aviso de modo peligroso, desactiva la subida automática de sesiones, limita retención a 90 días y no declara `PreCompact`. El hook se conserva solo como artefacto pendiente de revisión.
+- `security/harden-local.sh` hace reproducibles las correcciones locales de aliases y permisos sin leer valores sensibles; funciona en modo plan por defecto.
 
 ## Amenazas del modelo
 

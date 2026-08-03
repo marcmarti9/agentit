@@ -34,6 +34,28 @@ providers:
       - /home/Marc/.opencode
     status: AVAILABLE_ON_DEMAND
 entries:
+  - id: local-security-hardening
+    name: "Local shell and MCP permission hardening"
+    kind: script
+    category: security
+    provenance: local-repository
+    version: "repo@current"
+    paths:
+      - /home/Marc/agents-config/security/harden-local.sh
+    trigger: "explicit local security hardening or permission audit"
+    avoid_when: "unknown HOME, symlinked config, or request to alter credentials/proxy"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: medium
+    conflicts: ["user-managed aliases", "provider-specific secret stores"]
+    dependencies: ["bash, find, awk, sha256sum"]
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
   - id: adaptive-agent-architecture
     name: "Adaptive loop-and-graph orchestration"
     kind: architecture

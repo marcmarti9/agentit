@@ -35,6 +35,7 @@ La decisión completa está en [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAP
 - `skills/`: habilidades reutilizables y documentación bajo demanda.
 - `router/`, `registry.yaml` y `policies/`: selección de contexto, riesgo y compresión segura.
 - `reports/` y `evals/`: inventario, auditoría y evaluaciones reproducibles.
+- `security/harden-local.sh`: hardening reversible de aliases bypass y permisos MCP.
 - `settings*.json` y `hooks/`: configuración de Claude Code.
 - `install.sh`: instala cada proveedor de forma aislada.
 - `update.sh`: sincroniza cambios locales sin mezclar configuraciones.
@@ -66,6 +67,15 @@ git diff
 ```
 
 `update.sh` también muestra un plan por defecto; aplica una allowlist solo con `--apply`. No importa `settings.local.json` ni directorios arbitrarios.
+
+El hardening local también es plan por defecto:
+
+```bash
+bash security/harden-local.sh
+bash security/harden-local.sh --apply
+```
+
+No lee ni muestra credenciales y no cambia la configuración del proxy.
 
 ## Uso recomendado
 

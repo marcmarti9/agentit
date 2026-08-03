@@ -10,7 +10,7 @@
 | Router unitario | `python3 -m unittest discover -s router -p 'test_*.py' -v` | 9/9 OK |
 | Riesgo alto | auth, producción, explicit risk bajo | clasificación y revisión independiente correctas en tests |
 | Contenido crítico | git diff + pipeline | compresión desactivada en test |
-| Registry | `yaml.safe_load('registry.yaml')` | OK; 17 entradas |
+| Registry | `yaml.safe_load('registry.yaml')` | OK; 19 entradas |
 | Sintaxis shell | `bash -n install.sh update.sh` | OK |
 | Instalador sandbox | `install.sh --apply --home /tmp/... --provider all` | agentes/skills/task-router en Claude, Codex, Antigravity y `.agents`; backup/hash creado |
 | Preservación | archivo no relacionado en `.claude` del sandbox | conservado |

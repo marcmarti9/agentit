@@ -18,7 +18,7 @@ Eliminate AI writing clichés, robotic structure, and empty filler. Write clear,
 | **Robotic Openings** | "In today's fast-paced digital landscape...", "In the ever-evolving world of..." | Start directly with the topic or problem |
 | **Robotic Closings** | "In conclusion...", "Ultimately, only time will tell...", "Summary: In short..." | End after the last real point. No generic summaries. |
 | **Empty Fillers** | "It is important to note that...", "Furthermore, it should be mentioned..." | Delete filler phrases; state the fact directly |
-| **Emoji Spam & Decorations** | Sprinkling decorative emojis across technical docs, PRs, commit messages, and code comments | Zero decorative emojis. Use clean markdown formatting, lists, and code blocks instead. |
+| **Decorative Emoji Spam** | Sprinkling decorative emojis across technical docs, PRs, commit messages, and code comments | No decorative emojis by default. Preserve emojis when part of UI states, user content, brand identity, or explicit request. |
 | **Superlative Inflation**| Calling every minor update "robust", "cutting-edge", or "groundbreaking" | Describe exact specifications and empirical performance data |
 
 ## Checklist for Technical Documentation & READMEs

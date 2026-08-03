@@ -169,7 +169,7 @@ if grep -Eq '^alias (clauded|agyd|codexd)=' "$USER_HOME/.bashrc"; then
     tmp="$(mktemp "$USER_HOME/.bashrc.agentit.XXXXXX")"
     awk '
       /^alias (clauded|agyd|codexd)=/ {
-        print "# disabled by agents-config security/harden-local.sh: " $0
+        print "# disabled by agentit security/harden-local.sh: " $0
         next
       }
       { print }

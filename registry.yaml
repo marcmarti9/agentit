@@ -341,6 +341,7 @@ entries:
     depth: specialized
     risk: low_to_medium
     conflicts: ["frontend-ui-engineering overlap"]
+    conflicts_with: [frontend-ui-engineering]
     dependencies: ["browser or visual verification when claims depend on rendering"]
     essential_dependencies: []
     required_tools: ["browser-testing-with-devtools when browser behavior is in scope"]

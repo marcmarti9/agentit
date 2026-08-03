@@ -1,3 +1,4 @@
+import stat
 import tempfile
 import unittest
 from pathlib import Path
@@ -33,6 +34,7 @@ class LocalInventoryTests(unittest.TestCase):
                         "entries": [
                             {
                                 "id": "fixture-skill",
+                                "kind": "skill",
                                 "state": "ACTIVE_GLOBAL",
                                 "paths": ["${HOME}/skill/SKILL.md"],
                                 "essential_dependencies": [],
@@ -52,6 +54,7 @@ class LocalInventoryTests(unittest.TestCase):
             self.assertEqual(path_observation["path"], str(skill))
             self.assertTrue(path_observation["exists"])
             self.assertEqual(len(path_observation["sha256"]), 64)
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
             self.assertEqual(list(output.parent.glob(".*.tmp-*")), [])
 
 

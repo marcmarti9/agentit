@@ -95,6 +95,7 @@ def write_inventory(output: Path, inventory: dict[str, Any]) -> None:
             yaml.safe_dump(inventory, sort_keys=False, allow_unicode=True),
             encoding="utf-8",
         )
+        temporary.chmod(0o600)
         os.replace(temporary, output)
     finally:
         if temporary.exists():

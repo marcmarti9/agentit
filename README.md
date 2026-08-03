@@ -89,11 +89,11 @@ python3 -m router.inventory
 
 El router devuelve una propuesta JSON: clasifica y planifica, pero no ejecuta comandos, carga skills ni concede permiso. Las operaciones críticas requieren revisión humana y las instrucciones activas siguen teniendo precedencia.
 
-- `skills_available`: recomendaciones cuyo estado, ruta y dependencias esenciales son compatibles en la máquina consultada.
+- `skills_available`: recomendaciones cuyo estado, artefacto local cargable, dependencias esenciales y conflictos son compatibles en la máquina consultada.
 - `skills_recommended_missing`: recomendaciones pertinentes que no superaron esas comprobaciones.
 - `skills`: alias heredado de `skills_available`; nunca incluye recomendaciones ausentes.
 
-`python3 -m router.inventory` escribe por defecto `reports/local/inventory.yaml`, una ruta ignorada por Git. El resultado es específico de la máquina y puede dejar la versión de un ejecutable sin observar; no debe convertirse en evidencia portable ni publicarse sin revisión.
+`python3 -m router.inventory` escribe por defecto `reports/local/inventory.yaml`, con modo `0600`, en una ruta ignorada por Git. El resultado es específico de la máquina y puede dejar la versión de un ejecutable sin observar; no debe convertirse en evidencia portable ni publicarse sin revisión.
 
 ## Uso recomendado
 

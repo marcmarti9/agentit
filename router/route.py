@@ -73,6 +73,7 @@ def load_registry(registry_path: Path | None = None) -> dict[str, dict[str, Any]
         paths = entry.get("paths")
         dependencies = entry.get("essential_dependencies", [])
         required_signals = entry.get("requires_signals_any", [])
+        conflicts_with = entry.get("conflicts_with", [])
         if not isinstance(skill_id, str) or not skill_id.strip():
             raise RegistryError(f"registry entry {position} has an invalid id")
         if skill_id in indexed:
@@ -104,9 +105,25 @@ def load_registry(registry_path: Path | None = None) -> dict[str, dict[str, Any]
             isinstance(item, str) and item for item in required_signals
         ):
             raise RegistryError(f"requires_signals_any for {skill_id} must be a string list")
+        if not isinstance(conflicts_with, list) or not all(
+            isinstance(item, str) and item for item in conflicts_with
+        ):
+            raise RegistryError(f"conflicts_with for {skill_id} must be an ID list")
+        for field in ("priority", "context_cost", "execution_cost", "trigger", "avoid_when"):
+            value = entry.get(field)
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise RegistryError(f"{field} for {skill_id} must be a non-empty string")
+        conflicts = entry.get("conflicts", [])
+        if not isinstance(conflicts, list) or not all(isinstance(item, str) for item in conflicts):
+            raise RegistryError(f"conflicts for {skill_id} must be a string list")
         normalized = dict(entry)
         normalized["essential_dependencies"] = list(dependencies)
+        normalized["conflicts_with"] = list(conflicts_with)
         indexed[skill_id] = normalized
+    for skill_id, entry in indexed.items():
+        for reference in entry["essential_dependencies"] + entry["conflicts_with"]:
+            if reference not in indexed:
+                raise RegistryError(f"registry reference for {skill_id} is absent: {reference}")
     return indexed
 
 
@@ -114,14 +131,29 @@ def resolve_registry_path(template: str, *, registry_path: Path, home: Path) -> 
     """Resolve one validated portable template without general env expansion."""
     repo_root = registry_path.resolve().parent
     if template == "${HOME}":
-        return home.resolve()
-    if template.startswith("${HOME}/"):
-        return home.resolve() / template.removeprefix("${HOME}/")
-    if template == "${REPO_ROOT}":
-        return repo_root
-    if template.startswith("${REPO_ROOT}/"):
-        return repo_root / template.removeprefix("${REPO_ROOT}/")
-    raise RegistryError(f"unsupported registry path template: {template}")
+        root, relative = home.resolve(), ""
+    elif template.startswith("${HOME}/"):
+        root, relative = home.resolve(), template.removeprefix("${HOME}/")
+    elif template == "${REPO_ROOT}":
+        root, relative = repo_root, ""
+    elif template.startswith("${REPO_ROOT}/"):
+        root, relative = repo_root, template.removeprefix("${REPO_ROOT}/")
+    else:
+        raise RegistryError(f"unsupported registry path template: {template}")
+    candidate = root / relative
+    if not candidate.resolve(strict=False).is_relative_to(root):
+        raise RegistryError(f"registry path escapes its resolved root: {template}")
+    return candidate
+
+
+def _path_is_loadable(entry: dict[str, Any], path: Path) -> bool:
+    if path.is_symlink():
+        return False
+    kind = entry.get("kind", "skill")
+    if "skill" not in kind and kind not in {"plugin", "bundle"}:
+        return path.is_file()
+    skill_file = path if path.is_file() else path / "SKILL.md"
+    return skill_file.is_file() and not skill_file.is_symlink()
 
 
 def _matches(text: str, patterns: tuple[str, ...]) -> bool:
@@ -130,6 +162,7 @@ def _matches(text: str, patterns: tuple[str, ...]) -> bool:
 
 def _infer_risk(text: str) -> tuple[str, list[str]]:
     reasons: list[str] = []
+    action_boundary = r"(?:^|[.;]|\bthen\b|\binstead\b|\by luego\b|\bdespués\b)\s*(?:please\s+|por favor\s+)?"
     explanatory = _matches(
         text,
         (
@@ -147,50 +180,51 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
             r"^\s*(no|nunca)\b.{0,80}\b(restaures?|restaurar|elimines?|eliminar|borres?|borrar|ejecutes?|ejecutar|despliegues?|desplegar|rotes?|rotar)\b",
         ),
     )
-    if explanatory:
-        return "RISK_0", ["parece una explicación sin una operación solicitada"]
-    if documentation:
-        return "RISK_1", ["parece documentación sin una operación solicitada"]
-    if explicitly_not_requested:
-        return "RISK_0", ["el texto rechaza explícitamente ejecutar la operación"]
-
     destructive_action = _matches(
         text,
         (
-            r"\b(drop|truncate|destroy|delete|wipe|purge)\b",
-            r"\b(elimina|eliminar|borra|borrar|destruye|destruir)\b",
-            r"\b(irreversible|sin posibilidad de recuperación)\b",
+            action_boundary + r"(?:drop|truncate|destroy|delete|wipe|purge)\b.{0,50}\b(?:databases?|tables?|schemas?|data|records?|files?|directories|accounts?|backups?|credentials?|secrets?)\b",
+            action_boundary + r"(?:elimina|eliminar|borra|borrar|destruye|destruir|trunca|truncar)\b.{0,50}\b(?:bases? de datos|tablas?|esquemas?|datos|registros?|archivos?|directorios?|cuentas?|backups?|copias? de seguridad|credenciales?|secretos?)\b",
+            action_boundary + r"rm\s+-[^\n;]*(?:r|f)[^\n;]*\s+/",
+            action_boundary + r"[^.;]{0,80}\b(irreversible|sin posibilidad de recuperación)\b",
         ),
     )
     production_action = _matches(
         text,
         (
-            r"\b(change|modify|deploy|release|run|execute|apply|restore|delete|drop)\b.{0,80}\b(prod(?:uction)?|live)\b",
-            r"\b(haz|hacer|cambia|cambiar|modifica|modificar|despliega|desplegar|ejecuta|ejecutar|aplica|aplicar|restaura|restaurar|elimina|eliminar)\b.{0,80}\bproducción\b",
+            action_boundary + r"(change|modify|deploy|release|run|execute|apply|restore|delete|drop)\b.{0,80}\b(prod|production(?![- ]?like\b)|live (?:environment|system|database|service|site))\b",
+            action_boundary + r"(haz|hacer|cambia|cambiar|modifica|modificar|despliega|desplegar|ejecuta|ejecutar|aplica|aplicar|restaura|restaurar|elimina|eliminar)\b.{0,80}\bproducción\b",
         ),
     )
     backup_action = _matches(
         text,
         (
-            r"\b(restore|restores|restoring|delete|remove|overwrite|create|take)\b.{0,50}\bbackups?\b",
-            r"\b(restaura|restaurar|elimina|eliminar|sobrescribe|sobrescribir|crea|crear|haz)\b.{0,50}\b(backups?|copia(?:s)? de seguridad)\b",
+            action_boundary + r"(restore|restores|restoring|delete|remove|overwrite)\b.{0,50}\bbackups?\b",
+            action_boundary + r"(restaura|restaurar|elimina|eliminar|sobrescribe|sobrescribir)\b.{0,50}\b(backups?|copia(?:s)? de seguridad)\b",
         ),
     )
     credential_action = _matches(
         text,
         (
-            r"\b(rotate|revoke|delete|replace|expose|change)\b.{0,50}\b(credentials?|secrets?|api[_ -]?keys?|passwords?)\b",
-            r"\b(rota|rotar|revoca|revocar|elimina|eliminar|reemplaza|reemplazar|expone|cambia|cambiar)\b.{0,50}\b(credenciales?|secretos?|claves? api|contraseñas?)\b",
+            action_boundary + r"(rotate|revoke|delete|replace|expose|change)\b.{0,50}\b(credentials?|secrets?|api[_ -]?keys?|passwords?)\b",
+            action_boundary + r"(rota|rotar|revoca|revocar|elimina|eliminar|reemplaza|reemplazar|expone|cambia|cambiar)\b.{0,50}\b(credenciales?|secretos?|claves? api|contraseñas?)\b",
         ),
     )
     permission_action = _matches(
         text,
         (
-            r"\b(run|execute|apply|change)\b.{0,50}\b(chmod|chown|iam|critical permissions?)\b",
-            r"\b(ejecuta|ejecutar|aplica|aplicar|cambia|cambiar)\b.{0,50}\b(chmod|chown|iam|permisos? críticos?)\b",
+            action_boundary + r"(?:(?:run|execute|apply|change)\b.{0,30})?(chmod|chown)\b",
+            action_boundary + r"(run|execute|apply|change)\b.{0,50}\b(iam|critical permissions?)\b",
+            action_boundary + r"(?:(?:ejecuta|ejecutar|aplica|aplicar|cambia|cambiar)\b.{0,30})?(chmod|chown)\b",
+            action_boundary + r"(ejecuta|ejecutar|aplica|aplicar|cambia|cambiar)\b.{0,50}\b(iam|permisos? críticos?)\b",
         ),
     )
-    data_loss = _matches(text, (r"data\s*loss|pérdida\s+de\s+datos",))
+    data_loss = _matches(
+        text,
+        (
+            action_boundary + r"(?:cause|risk|accept|provoca|causa|acepta)\b.{0,40}\b(?:data\s*loss|pérdida\s+de\s+datos)\b",
+        ),
+    )
     if any(
         (
             destructive_action,
@@ -203,6 +237,13 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
     ):
         reasons.append("detecté una acción real irreversible, de producción o de control crítico")
         return "RISK_4", reasons
+
+    if explanatory:
+        return "RISK_0", ["parece una explicación sin una operación solicitada"]
+    if documentation:
+        return "RISK_1", ["parece documentación sin una operación solicitada"]
+    if explicitly_not_requested:
+        return "RISK_0", ["el texto rechaza explícitamente ejecutar la operación"]
 
     high_impact = _matches(
         text,
@@ -322,7 +363,10 @@ def _entry_available(
         return False
     paths = entry["paths"]
     if not paths or not any(
-        resolve_registry_path(template, registry_path=registry_path, home=home).exists()
+        _path_is_loadable(
+            entry,
+            resolve_registry_path(template, registry_path=registry_path, home=home),
+        )
         for template in paths
     ):
         return False
@@ -354,9 +398,10 @@ def _resolve_skill_recommendations(
     registry_path: Path,
     home: Path,
     text: str,
-) -> tuple[list[str], list[str], dict[str, dict[str, Any]]]:
+) -> tuple[list[str], list[str], list[str], dict[str, dict[str, Any]]]:
     available: list[str] = []
     missing: list[str] = []
+    suppressed_conflicts: list[str] = []
     metadata: dict[str, dict[str, Any]] = {}
     priority_order = {
         "core": 0,
@@ -366,10 +411,18 @@ def _resolve_skill_recommendations(
         "experimental": 4,
         "reference": 5,
     }
+    cost_order = {"low": 0, "medium": 1, "high": 2, "unknown": 3}
+
+    def cost_rank(value: Any) -> int:
+        if not isinstance(value, str):
+            return 99
+        return next((rank for prefix, rank in cost_order.items() if value.startswith(prefix)), 99)
+
     ordered_candidates = sorted(
         candidates,
         key=lambda skill_id: (
             priority_order.get(entries.get(skill_id, {}).get("priority"), 99),
+            cost_rank(entries.get(skill_id, {}).get("context_cost")),
             candidates.index(skill_id),
         ),
     )
@@ -391,18 +444,18 @@ def _resolve_skill_recommendations(
             "trigger": entry.get("trigger"),
             "avoid_when": entry.get("avoid_when"),
         }
-        target = (
-            available
-            if _entry_available(
-                skill_id,
-                entries,
-                registry_path=registry_path,
-                home=home,
-            )
-            else missing
+        is_available = _entry_available(
+            skill_id,
+            entries,
+            registry_path=registry_path,
+            home=home,
         )
+        if is_available and set(entry["conflicts_with"]).intersection(available):
+            suppressed_conflicts.append(skill_id)
+            continue
+        target = available if is_available else missing
         target.append(skill_id)
-    return available, missing, metadata
+    return available, missing, suppressed_conflicts, metadata
 
 
 def _topology(text: str, risk: str) -> str:
@@ -522,6 +575,7 @@ def route_task(
     (
         skills_available,
         skills_recommended_missing,
+        skills_suppressed_conflicts,
         skill_recommendation_metadata,
     ) = _resolve_skill_recommendations(
         _recommended_skill_ids(text.lower(), category, risk),
@@ -538,6 +592,7 @@ def route_task(
         "skills": skills_available,
         "skills_available": skills_available,
         "skills_recommended_missing": skills_recommended_missing,
+        "skills_suppressed_conflicts": skills_suppressed_conflicts,
         "skill_recommendation_metadata": skill_recommendation_metadata,
         "output_profile": output_profile,
         "compression": compression,

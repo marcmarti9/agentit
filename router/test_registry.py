@@ -49,6 +49,12 @@ class RegistryRouteTests(unittest.TestCase):
         payload = {"schema_version": 1, "entries": entries}
         self.registry_path.write_text(json.dumps(payload), encoding="utf-8")
 
+    def install_skill(self, relative="skill"):
+        skill_file = self.home / relative / "SKILL.md"
+        skill_file.parent.mkdir(parents=True, exist_ok=True)
+        skill_file.write_text("fixture\n", encoding="utf-8")
+        return skill_file
+
     def entry(
         self,
         *,
@@ -59,6 +65,7 @@ class RegistryRouteTests(unittest.TestCase):
     ):
         return {
             "id": skill_id,
+            "kind": "skill",
             "state": state,
             "paths": paths if paths is not None else ["${HOME}/skill"],
             "essential_dependencies": (
@@ -95,14 +102,14 @@ class RegistryRouteTests(unittest.TestCase):
         self.assertTrue(issubclass(RegistryError, Exception))
 
     def test_duplicate_entry_ids_are_rejected(self):
-        (self.home / "skill").mkdir()
+        self.install_skill()
         self.write_registry([self.entry(), self.entry(state="DUPLICATED")])
 
         with self.assert_registry_error():
             self.route_marketing()
 
     def test_arbitrary_registry_state_is_rejected(self):
-        (self.home / "skill").mkdir()
+        self.install_skill()
         self.write_registry([self.entry(state="READY_WHENEVER")])
 
         with self.assert_registry_error():
@@ -125,7 +132,7 @@ class RegistryRouteTests(unittest.TestCase):
             self.route_marketing()
 
     def test_registry_state_mutation_changes_missing_skill_to_available(self):
-        (self.home / "skill").mkdir()
+        self.install_skill()
         self.write_registry([self.entry(state="AVAILABLE_ON_DEMAND")])
         self.assert_missing(self.route_marketing())
 
@@ -140,7 +147,7 @@ class RegistryRouteTests(unittest.TestCase):
         self.assert_missing(self.route_marketing())
 
     def test_active_entry_with_missing_essential_dependency_is_reported_missing(self):
-        (self.home / "skill").mkdir()
+        self.install_skill()
         self.write_registry(
             [
                 self.entry(
@@ -157,7 +164,7 @@ class RegistryRouteTests(unittest.TestCase):
         self.assert_missing(self.route_marketing())
 
     def test_known_states_have_explicit_availability_semantics(self):
-        (self.home / "skill").mkdir()
+        self.install_skill()
         available_states = ("ACTIVE_GLOBAL", "DUPLICATED")
         incompatible_states = (
             "AVAILABLE_ON_DEMAND",
@@ -181,8 +188,9 @@ class RegistryRouteTests(unittest.TestCase):
     def test_home_and_repo_root_path_templates_are_portable(self):
         home_skill = self.home / "skill"
         repo_skill = self.repo_root / "repo-skill"
-        home_skill.mkdir()
+        self.install_skill()
         repo_skill.mkdir()
+        (repo_skill / "SKILL.md").write_text("fixture\n", encoding="utf-8")
 
         for path_template in ("${HOME}/skill", "${REPO_ROOT}/repo-skill"):
             with self.subTest(path_template=path_template):
@@ -194,6 +202,66 @@ class RegistryRouteTests(unittest.TestCase):
 
         with self.assert_registry_error():
             self.route_marketing()
+
+    def test_empty_directory_is_not_a_loadable_skill(self):
+        (self.home / "skill").mkdir()
+        self.write_registry([self.entry()])
+
+        self.assert_missing(self.route_marketing())
+
+    def test_symlinked_skill_file_is_not_loadable(self):
+        outside = self.repo_root / "outside-SKILL.md"
+        outside.write_text("fixture\n", encoding="utf-8")
+        skill_dir = self.home / "skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").symlink_to(outside)
+        self.write_registry([self.entry()])
+
+        self.assert_missing(self.route_marketing())
+
+    def test_resolved_path_cannot_escape_root_through_symlink(self):
+        outside = self.repo_root / "outside"
+        outside.mkdir()
+        (outside / "SKILL.md").write_text("fixture\n", encoding="utf-8")
+        (self.home / "skill").symlink_to(outside, target_is_directory=True)
+        self.write_registry([self.entry()])
+
+        with self.assert_registry_error():
+            self.route_marketing()
+
+    def test_malformed_operational_metadata_is_rejected(self):
+        self.install_skill()
+        malformed = self.entry()
+        malformed["conflicts_with"] = "frontend-ui-engineering"
+        self.write_registry([malformed])
+
+        with self.assert_registry_error():
+            self.route_marketing()
+
+    def test_registry_conflict_suppresses_lower_priority_available_skill(self):
+        for relative in ("frontend", "hallmark"):
+            self.install_skill(relative)
+        frontend = self.entry(
+            skill_id="frontend-ui-engineering",
+            paths=["${HOME}/frontend"],
+        )
+        frontend["priority"] = "on_demand"
+        hallmark = self.entry(
+            skill_id="hallmark",
+            paths=["${HOME}/hallmark"],
+        )
+        hallmark["priority"] = "specialized"
+        hallmark["conflicts_with"] = ["frontend-ui-engineering"]
+        self.write_registry([frontend, hallmark])
+
+        result = route_task(
+            "Rediseña visualmente esta interfaz.",
+            registry_path=self.registry_path,
+            home=self.home,
+        )
+
+        self.assertEqual(result["skills_available"], ["frontend-ui-engineering"])
+        self.assertEqual(result["skills_suppressed_conflicts"], ["hallmark"])
 
     def test_real_catalog_available_outputs_have_compatible_state_and_path(self):
         entries = load_registry(DEFAULT_REGISTRY_PATH)

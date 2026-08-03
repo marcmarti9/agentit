@@ -88,6 +88,24 @@ assert_no_symlink_components() {
   done
 }
 
+assert_safe_directory_path() {
+  local current="$1"
+  assert_no_symlink_components "$current"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    if [[ -e "$current" || -L "$current" ]]; then
+      [[ -d "$current" && ! -L "$current" ]] || \
+        die "componente existente no es un directorio seguro: $current"
+    fi
+    current="$(dirname -- "$current")"
+  done
+}
+
+assert_safe_destination() {
+  local path="$1"
+  assert_no_symlink_components "$path"
+  assert_safe_directory_path "$(dirname -- "$path")"
+}
+
 create_manifest() {
   local path="$1"
   assert_manifest_path "$path"
@@ -105,21 +123,6 @@ assert_manifest_path "$SOURCE_ROOT"
 assert_manifest_path "$SOURCE_SKILLS"
 assert_no_symlink_components "$SOURCE_ROOT"
 assert_no_symlink_components "$SOURCE_SKILLS"
-
-if [[ "$MODE" == "plan" ]]; then
-  printf 'MODO PLAN: no se escribirán archivos. Usa --apply para aplicar.\n'
-else
-  if [[ -z "$BACKUP_ROOT" ]]; then
-    BACKUP_ROOT="$REPO_DIR/backups/local/update-$(date +%Y%m%d-%H%M%S)"
-  fi
-  assert_manifest_path "$BACKUP_ROOT"
-  assert_no_symlink_components "$BACKUP_ROOT"
-  (umask 077; mkdir -p "$BACKUP_ROOT")
-  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
-  chmod 0700 "$BACKUP_ROOT"
-  create_manifest "$BACKUP_ROOT/manifest.txt"
-  printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" >> "$BACKUP_ROOT/manifest.txt"
-fi
 
 declare -A BACKED_UP=()
 
@@ -160,7 +163,7 @@ import_file() {
   assert_manifest_path "$dst"
   assert_source "$src"
   [[ -f "$src" ]] || die "solo se importan archivos regulares: $src"
-  assert_no_symlink_components "$dst"
+  assert_safe_destination "$dst"
   if [[ -e "$dst" || -L "$dst" ]]; then
     [[ -f "$dst" && ! -L "$dst" ]] || \
       die "destino existente no es un archivo regular: $dst"
@@ -185,6 +188,85 @@ import_file() {
     "$(sha256sum -- "$dst" | awk '{print $1}')" >> "$BACKUP_ROOT/manifest.txt"
   printf 'importado: %s\n' "$dst"
 }
+
+preflight_import_file() {
+  local src="$1"
+  local dst="$2"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
+  assert_source "$src"
+  [[ -f "$src" ]] || die "solo se importan archivos regulares: $src"
+  assert_safe_destination "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
+}
+
+preflight_update() {
+  if [[ "$SOURCE_PROVIDER" == "claude" ]]; then
+    local agent
+    for agent in architect auditor orchestrator supervisor worker; do
+      if [[ -f "$SOURCE_ROOT/agents/$agent.md" ]]; then
+        preflight_import_file "$SOURCE_ROOT/agents/$agent.md" "$REPO_DIR/agents/$agent.md"
+      fi
+    done
+  fi
+
+  local skill
+  for skill in architect-orchestrator supabase-postgres-best-practices; do
+    if [[ -f "$SOURCE_SKILLS/$skill/SKILL.md" ]]; then
+      preflight_import_file "$SOURCE_SKILLS/$skill/SKILL.md" "$REPO_DIR/skills/$skill/SKILL.md"
+    fi
+  done
+  if [[ -f "$SOURCE_SKILLS/task-router/SKILL.md" ]]; then
+    preflight_import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/router/SKILL.md"
+  fi
+
+  if [[ "$WITH_SETTINGS" == "true" ]]; then
+    preflight_import_file "$SOURCE_ROOT/settings.json" "$REPO_DIR/settings.json"
+  fi
+  if [[ "$WITH_HOOK" == "true" ]]; then
+    preflight_import_file "$SOURCE_ROOT/hooks/precompact-memory.sh" "$REPO_DIR/hooks/precompact-memory.sh"
+  fi
+  if [[ "$WITH_GUIDES" == "true" ]]; then
+    local -a guides=()
+    case "$SOURCE_PROVIDER" in
+      claude) guides=(AGENTS.md CLAUDE.md) ;;
+      codex) guides=(AGENTS.md CODEX.md) ;;
+      antigravity) guides=(AGENTS.md) ;;
+    esac
+    local guide
+    for guide in "${guides[@]}"; do
+      preflight_import_file "$USER_HOME/$guide" "$REPO_DIR/$guide"
+    done
+  fi
+}
+
+preflight_update
+
+if [[ "$MODE" == "plan" ]]; then
+  printf 'MODO PLAN: no se escribirán archivos. Usa --apply para aplicar.\n'
+else
+  if [[ -z "$BACKUP_ROOT" ]]; then
+    BACKUP_ROOT="$REPO_DIR/backups/local/update-$(date +%Y%m%d-%H%M%S)"
+  fi
+  assert_manifest_path "$BACKUP_ROOT"
+  assert_safe_directory_path "$BACKUP_ROOT"
+  manifest_path="$BACKUP_ROOT/manifest.txt"
+  assert_manifest_path "$manifest_path"
+  assert_no_symlink_components "$manifest_path"
+  [[ ! -e "$manifest_path" && ! -L "$manifest_path" ]] || \
+    die "manifest ya existe; se rechaza sobrescribirlo: $manifest_path"
+  if [[ -d "$BACKUP_ROOT" ]]; then
+    [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  fi
+  (umask 077; mkdir -p "$BACKUP_ROOT")
+  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  chmod 0700 "$BACKUP_ROOT"
+  create_manifest "$manifest_path"
+  printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" >> "$manifest_path"
+fi
 
 # Allowlist: solo agentes adaptativos de Claude; Codex/Antigravity no son
 # fuentes de la jerarquía. Los archivos ausentes se omiten con evidencia.

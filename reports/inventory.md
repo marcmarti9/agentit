@@ -16,7 +16,7 @@ Desde la raíz del repositorio:
 python3 -m router.inventory
 ```
 
-El comando solo escribe el informe local; no instala componentes ni modifica configuración de proveedores. Se puede elegir otro destino con `--output`, otro catálogo con `--registry` y una raíz de usuario desechable con `--home`.
+El comando solo escribe el informe local con modo `0600`; no instala componentes ni modifica configuración de proveedores. Se puede elegir otro destino con `--output`, otro catálogo con `--registry` y una raíz de usuario desechable con `--home`.
 
 ## Esquema local
 

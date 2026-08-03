@@ -98,6 +98,18 @@ assert_no_symlink_components() {
   done
 }
 
+assert_safe_directory_path() {
+  local current="$1"
+  assert_no_symlink_components "$current"
+  while [[ "$current" != "/" && "$current" != "." && -n "$current" ]]; do
+    if [[ -e "$current" || -L "$current" ]]; then
+      [[ -d "$current" && ! -L "$current" ]] || \
+        die "componente existente no es un directorio seguro: $current"
+    fi
+    current="$(dirname -- "$current")"
+  done
+}
+
 create_manifest() {
   local path="$1"
   assert_manifest_path "$path"
@@ -105,27 +117,6 @@ create_manifest() {
   [[ ! -e "$path" && ! -L "$path" ]] || die "manifest ya existe; se rechaza sobrescribirlo: $path"
   (umask 077; set -o noclobber; : > "$path") || die "no se pudo crear manifest de forma exclusiva: $path"
 }
-
-if [[ "$MODE" == "plan" ]]; then
-  note "MODO PLAN: no se escribirán archivos. Usa --apply para aplicar."
-else
-  if [[ -z "$BACKUP_ROOT" ]]; then
-    BACKUP_ROOT="$USER_HOME/backups/agent-harness-pre-install-$(date +%Y%m%d-%H%M%S)"
-  fi
-  assert_manifest_path "$REPO_DIR"
-  assert_manifest_path "$BACKUP_ROOT"
-  assert_no_symlink_components "$BACKUP_ROOT"
-  (umask 077; mkdir -p "$BACKUP_ROOT")
-  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
-  chmod 0700 "$BACKUP_ROOT"
-  create_manifest "$BACKUP_ROOT/manifest.txt"
-  note "Backup: $BACKUP_ROOT"
-  {
-    printf 'repo=%s\n' "$REPO_DIR"
-    printf 'provider=%s\n' "$PROVIDER"
-    printf 'date=%s\n' "$(date --iso-8601=seconds)"
-  } >> "$BACKUP_ROOT/manifest.txt"
-fi
 
 declare -A BACKED_UP=()
 
@@ -138,6 +129,7 @@ assert_safe_source() {
 assert_safe_destination() {
   local path="$1"
   assert_no_symlink_components "$path"
+  assert_safe_directory_path "$(dirname -- "$path")"
 }
 
 backup_existing() {
@@ -228,6 +220,117 @@ copy_shared_skills() {
   copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md" "${provider}/skills/task-router/SKILL.md"
 }
 
+preflight_copy_file() {
+  local src="$1"
+  local dst="$2"
+  assert_manifest_path "$src"
+  assert_manifest_path "$dst"
+  assert_safe_source "$src"
+  [[ -f "$src" ]] || die "solo se copian archivos regulares: $src"
+  assert_safe_destination "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    [[ -f "$dst" && ! -L "$dst" ]] || \
+      die "destino existente no es un archivo regular: $dst"
+  fi
+}
+
+preflight_copy_tree() {
+  local src_root="$1"
+  local dst_root="$2"
+  assert_safe_source "$src_root"
+  [[ -d "$src_root" ]] || die "fuente no es directorio: $src_root"
+
+  local -a source_symlinks=()
+  find -P "$src_root" -type l -print0 > /dev/null || \
+    die "no se pudo inspeccionar symlinks de la fuente: $src_root"
+  mapfile -d '' -n 1 source_symlinks < <(find -P "$src_root" -type l -print0)
+  ((${#source_symlinks[@]} == 0)) || \
+    die "la fuente contiene symlinks y se rechaza: $src_root"
+
+  local -a source_files=()
+  find -P "$src_root" -type f -print0 > /dev/null || \
+    die "no se pudo enumerar completamente la fuente: $src_root"
+  mapfile -d '' source_files < <(find -P "$src_root" -type f -print0)
+  local src
+  for src in "${source_files[@]}"; do
+    local rel="${src#"$src_root"/}"
+    preflight_copy_file "$src" "$dst_root/$rel"
+  done
+}
+
+preflight_shared_skills() {
+  local target="$1"
+  preflight_copy_tree "$REPO_DIR/skills" "$target/skills"
+  preflight_copy_file "$REPO_DIR/router/SKILL.md" "$target/skills/task-router/SKILL.md"
+}
+
+preflight_install() {
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
+    preflight_copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents"
+    preflight_shared_skills "$USER_HOME/.claude"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
+    preflight_shared_skills "$USER_HOME/.codex"
+  fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
+    preflight_shared_skills "$USER_HOME/.agents"
+  fi
+  if [[ "$WITH_SETTINGS" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json"
+  fi
+  if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json"
+  fi
+  if [[ "$WITH_HOOK" == "true" ]]; then
+    preflight_copy_file "$REPO_DIR/hooks/precompact-memory.sh" "$USER_HOME/.claude/hooks/precompact-memory.sh"
+  fi
+  if [[ "$WITH_GUIDES" == "true" ]]; then
+    local -a guides=()
+    case "$PROVIDER" in
+      claude) guides=(AGENTS.md CLAUDE.md) ;;
+      codex) guides=(AGENTS.md CODEX.md) ;;
+      antigravity) guides=(AGENTS.md) ;;
+      all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+    esac
+    local guide
+    for guide in "${guides[@]}"; do
+      [[ -f "$REPO_DIR/$guide" ]] || continue
+      preflight_copy_file "$REPO_DIR/$guide" "$USER_HOME/$guide"
+    done
+  fi
+}
+
+preflight_install
+
+if [[ "$MODE" == "plan" ]]; then
+  note "MODO PLAN: no se escribirán archivos. Usa --apply para aplicar."
+else
+  if [[ -z "$BACKUP_ROOT" ]]; then
+    BACKUP_ROOT="$USER_HOME/backups/agent-harness-pre-install-$(date +%Y%m%d-%H%M%S)"
+  fi
+  assert_manifest_path "$REPO_DIR"
+  assert_manifest_path "$BACKUP_ROOT"
+  assert_safe_directory_path "$BACKUP_ROOT"
+  manifest_path="$BACKUP_ROOT/manifest.txt"
+  assert_manifest_path "$manifest_path"
+  assert_no_symlink_components "$manifest_path"
+  [[ ! -e "$manifest_path" && ! -L "$manifest_path" ]] || \
+    die "manifest ya existe; se rechaza sobrescribirlo: $manifest_path"
+  if [[ -d "$BACKUP_ROOT" ]]; then
+    [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  fi
+  (umask 077; mkdir -p "$BACKUP_ROOT")
+  [[ -O "$BACKUP_ROOT" ]] || die "backup no pertenece al usuario actual: $BACKUP_ROOT"
+  chmod 0700 "$BACKUP_ROOT"
+  create_manifest "$manifest_path"
+  note "Backup: $BACKUP_ROOT"
+  {
+    printf 'repo=%s\n' "$REPO_DIR"
+    printf 'provider=%s\n' "$PROVIDER"
+    printf 'date=%s\n' "$(date --iso-8601=seconds)"
+  } >> "$manifest_path"
+fi
+
 # Claude conserva los agentes adaptativos y las skills.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
   note "[claude] agentes adaptativos + skills"
@@ -242,8 +345,8 @@ if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
   copy_shared_skills "codex" "$USER_HOME/.codex"
 fi
 
-# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills. El wrapper
-# local observado es agy; no se presupone un runtime específico adicional.
+# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; no se
+# presupone un wrapper ni un runtime específico adicional.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
   note "[antigravity] Open Skills globales en ~/.agents/skills"
   copy_tree "$REPO_DIR/skills" "$USER_HOME/.agents/skills" "antigravity/skills"

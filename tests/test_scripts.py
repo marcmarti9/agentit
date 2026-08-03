@@ -127,14 +127,118 @@ class ScriptRegressionTests(unittest.TestCase):
                 ),
             )
 
-    def test_antigravity_install_can_immediately_drive_update_plan(self):
+    def test_unsafe_destinations_are_rejected_before_creating_backups(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
-            home = Path(temporary_directory) / "home"
+            temporary_root = Path(temporary_directory)
+
+            install_home = temporary_root / "install-home"
+            install_home.mkdir()
+            install_external = temporary_root / "install-external"
+            install_external.mkdir()
+            (install_home / ".codex").symlink_to(
+                install_external, target_is_directory=True
+            )
+            install_backup = install_home / "unsafe-install-backup"
+            install_before = snapshot_tree(install_home)
+
+            install_result = run_script(
+                REPOSITORY / "install.sh",
+                install_home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--backup-dir",
+                str(install_backup),
+            )
+
+            repository_fixture = temporary_root / "repository-fixture"
+            shutil.copytree(
+                REPOSITORY,
+                repository_fixture,
+                symlinks=True,
+                ignore=shutil.ignore_patterns(".git", "__pycache__", "backups"),
+            )
+            update_home = temporary_root / "update-home"
+            source_skill = (
+                update_home
+                / ".codex"
+                / "skills"
+                / "architect-orchestrator"
+                / "SKILL.md"
+            )
+            source_skill.parent.mkdir(parents=True)
+            source_skill.write_text("unsafe destination fixture\n", encoding="utf-8")
+            update_external = temporary_root / "update-external.md"
+            update_external.write_text("must remain unchanged\n", encoding="utf-8")
+            unsafe_destination = (
+                repository_fixture
+                / "skills"
+                / "architect-orchestrator"
+                / "SKILL.md"
+            )
+            unsafe_destination.unlink()
+            unsafe_destination.symlink_to(update_external)
+            update_backup = temporary_root / "unsafe-update-backup"
+            repository_before = snapshot_tree(repository_fixture)
+
+            update_result = run_script(
+                repository_fixture / "update.sh",
+                update_home,
+                "--apply",
+                "--provider",
+                "codex",
+                "--backup-dir",
+                str(update_backup),
+            )
+
+            violations = []
+            if install_result.returncode == 0:
+                violations.append("install accepted a symlink provider destination")
+            if snapshot_tree(install_home) != install_before:
+                violations.append("install changed HOME before rejecting the destination")
+            if install_backup.exists():
+                violations.append("install created a backup before destination validation")
+            if list(install_external.iterdir()):
+                violations.append("install wrote through the .codex symlink")
+            if update_result.returncode == 0:
+                violations.append("update accepted a symlink repository destination")
+            if snapshot_tree(repository_fixture) != repository_before:
+                violations.append("update changed the repository before rejection")
+            if update_backup.exists():
+                violations.append("update created a backup before destination validation")
+            if update_external.read_text(encoding="utf-8") != "must remain unchanged\n":
+                violations.append("update wrote through the repository symlink")
+
+            self.assertEqual(
+                [],
+                violations,
+                "\n".join(
+                    [
+                        *violations,
+                        "install output:",
+                        install_result.stdout,
+                        "update output:",
+                        update_result.stdout,
+                    ]
+                ),
+            )
+
+    def test_antigravity_round_trip_imports_only_allowlisted_skill_files(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            repository_fixture = temporary_root / "repository-fixture"
+            shutil.copytree(
+                REPOSITORY,
+                repository_fixture,
+                symlinks=True,
+                ignore=shutil.ignore_patterns(".git", "__pycache__", "backups"),
+            )
+            home = temporary_root / "home"
             home.mkdir()
             install_backup = home / "antigravity-install-backup"
 
             install_result = run_script(
-                REPOSITORY / "install.sh",
+                repository_fixture / "install.sh",
                 home,
                 "--apply",
                 "--provider",
@@ -148,11 +252,55 @@ class ScriptRegressionTests(unittest.TestCase):
             )
             self.assertFalse((home / ".gemini" / "antigravity-cli").exists())
 
-            update_result = run_script(
-                REPOSITORY / "update.sh", home, "--provider", "antigravity"
+            installed_skill = (
+                home
+                / ".agents"
+                / "skills"
+                / "architect-orchestrator"
+                / "SKILL.md"
             )
-
+            round_trip_content = "antigravity round-trip fixture\n"
+            installed_skill.write_text(round_trip_content, encoding="utf-8")
+            unallowlisted_source = installed_skill.parent / "NOT_ALLOWLISTED.md"
+            unallowlisted_source.write_text(
+                "must not be imported\n", encoding="utf-8"
+            )
+            repository_before = snapshot_tree(repository_fixture)
+            update_backup = home / "antigravity-update-backup"
+            update_result = run_script(
+                repository_fixture / "update.sh",
+                home,
+                "--apply",
+                "--provider",
+                "antigravity",
+                "--backup-dir",
+                str(update_backup),
+            )
             self.assertEqual(0, update_result.returncode, update_result.stdout)
+            imported_skill = (
+                repository_fixture
+                / "skills"
+                / "architect-orchestrator"
+                / "SKILL.md"
+            )
+            self.assertEqual(round_trip_content, imported_skill.read_text(encoding="utf-8"))
+            self.assertFalse(
+                (
+                    repository_fixture
+                    / "skills"
+                    / "architect-orchestrator"
+                    / "NOT_ALLOWLISTED.md"
+                ).exists()
+            )
+            repository_after = snapshot_tree(repository_fixture)
+            changed_paths = {
+                path
+                for path in repository_before.keys() | repository_after.keys()
+                if repository_before.get(path) != repository_after.get(path)
+            }
+            self.assertEqual(
+                {"skills/architect-orchestrator/SKILL.md"}, changed_paths
+            )
 
     def test_hardening_secures_backup_directories_and_credentials(self):
         with tempfile.TemporaryDirectory() as temporary_directory:

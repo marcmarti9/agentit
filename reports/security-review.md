@@ -8,9 +8,9 @@
 |---|---|---|
 | Router | clasifica y propone; no ejecuta, carga skills, instala hooks ni concede permiso | las heurísticas pueden producir falsos positivos o negativos; RISK_3/RISK_4 y toda operación crítica requieren revisión |
 | Catálogo | `registry.yaml` acepta rutas `${HOME}`/`${REPO_ROOT}`, estados conocidos y dependencias explícitas | es política portable, no evidencia de instalación, versión, seguridad o funcionamiento |
-| Skills | separa `skills_available` y `skills_recommended_missing`; `skills` conserva solo las primeras | una ruta existente no valida por sí sola el contenido de una skill |
-| Inventario | `python3 -m router.inventory` escribe una observación ignorada y calcula hashes de archivos regulares que no sean symlinks en la hoja | contiene rutas y hashes locales; debe revisarse antes de compartirlo y puede omitir versiones |
-| Instalación/actualización | plan por defecto, validación temprana de opciones, rechazo de symlinks, copia atómica por archivo y manifiesto | `--apply` sigue siendo una mutación explícita que debe revisarse antes y después |
+| Skills | separa `skills_available` y `skills_recommended_missing`; exige un `SKILL.md` regular y acotado para skills locales; `skills` conserva solo las disponibles | la comprobación de carga no audita el contenido ni prueba que sea correcto o seguro |
+| Inventario | `python3 -m router.inventory` escribe una observación ignorada con modo `0600` y calcula hashes de archivos regulares que no sean symlinks en la hoja | contiene rutas y hashes locales; debe revisarse antes de compartirlo y puede omitir versiones |
+| Instalación/actualización | plan por defecto, prevalidación completa antes del backup, rechazo de symlinks, copia atómica por archivo y manifiesto | existe una ventana TOCTOU acotada; las comprobaciones se repiten al operar y `--apply` exige revisión antes y después |
 | Backups | raíz modo `0700`, copias modo `0600`, SHA-256 y `original_mode` registrados | el rollback no debe automatizarse con datos ambiguos ni sobrescribir cambios posteriores |
 | Hardening | inspección acotada y NUL-safe de `mcp_auth.json`; calcula hashes, pero no analiza ni imprime sus valores | cambia permisos y aliases solo con `--apply`; requiere destino y backup confirmados |
 

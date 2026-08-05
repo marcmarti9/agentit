@@ -70,17 +70,28 @@ Si no hay una respuesta positiva y concreta, no delegues.
 
 # Contrato mínimo de delegación
 
-Todo subagente recibe solo:
+**Toda** creación de subagente debe pasar por el Worker Context Contract
+(`router/worker_context.py` / `agentit worker build`). No es una skill: es
+parte del runtime de topología. Contexto fresco sin proyectar instrucciones
+del proyecto = negligencia.
 
-- objetivo exacto y criterio de terminado;
-- archivos o artefactos de entrada permitidos;
-- alcance de escritura y herramientas;
-- restricciones e invariantes relevantes;
+Todo subagente recibe un payload auditable con:
+
+- objetivo exacto, alcance y criterio de terminado;
+- instrucciones de proyecto descubiertas (`AGENTS.md`, `CLAUDE.md`, …) en raíz y subdir de trabajo;
+- skills activas acotadas a la tarea (nunca las 31 globales);
+- preferencias de usuario seguras (sin secretos);
+- riesgo y constraints (`no commits` / `no pushes` / `no external` salvo autorización);
+- archivos o artefactos de entrada permitidos y ownership de escritura;
 - artefacto o formato de salida esperado;
 - comandos de verificación aplicables;
 - stop conditions y cuándo escalar una decisión.
 
-No copies la conversación completa, la filosofía del workflow ni documentación no relacionada. Los resultados voluminosos deben guardarse en archivos/worktrees; el mensaje de retorno contiene referencias y un resumen corto.
+Precedencia: `safety > user > project > preferences > defaults`.
+
+No copies la conversación completa ni documentación no relacionada. Los
+resultados voluminosos se guardan en archivos/worktrees; el retorno es un
+recibo breve con referencias.
 
 # Ejecución e integración
 

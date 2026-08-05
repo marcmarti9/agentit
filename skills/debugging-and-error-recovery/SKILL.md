@@ -33,13 +33,34 @@ When anything unexpected happens:
 
 **Don't push past a failing test or broken build to work on the next feature.** Errors compound. A bug in Step 3 that goes unfixed makes Steps 4-6 wrong.
 
+## Iron Law
+
+```
+NO FIXES WITHOUT A RED-CAPABLE FEEDBACK LOOP FIRST
+```
+
+Do not generate ranked root-cause hypotheses until you have a command (or structured harness) that can go **red on this specific symptom** and that you have already run at least once. Staring at code without a loop is not debugging.
+
 ## The Triage Checklist
 
 Work through these steps in order. Do not skip steps.
 
-### Step 1: Reproduce
+### Step 1: Reproduce — build a tight feedback loop
 
 Make the failure happen reliably. If you can't reproduce it, you can't fix it with confidence.
+
+**Prefer loops in this order:**
+
+1. Failing automated test at the right seam
+2. CLI / curl / script against a running process
+3. Headless browser script asserting the user symptom
+4. Replay of a captured payload/trace
+5. Minimal throwaway harness around one code path
+6. Only then: HITL script with structured capture
+
+**Tighten the loop:** faster, sharper assert on the *user's exact symptom*, deterministic (pin time/seed/network where needed). A 30s flaky loop is barely better than none.
+
+**Done when Phase 1 completes:** you can name **one command you already ran**, with output pasted or summarized, that is red-capable for this bug. No red-capable command → no hypothesis phase.
 
 ```
 Can you reproduce the failure?
@@ -263,7 +284,8 @@ Add logging only when it helps. Remove it when done.
 
 | Rationalization | Reality |
 |---|---|
-| "I know what the bug is, I'll just fix it" | You might be right 70% of the time. The other 30% costs hours. Reproduce first. |
+| "I know what the bug is, I'll just fix it" | You might be right 70% of the time. The other 30% costs hours. Red loop first. |
+| "I'll read the code and form a theory" | Theory without a red-capable command is a vibe. Build the loop first. |
 | "The failing test is probably wrong" | Verify that assumption. If the test is wrong, fix the test. Don't just skip it. |
 | "It works on my machine" | Environments differ. Check CI, check config, check dependencies. |
 | "I'll fix it in the next commit" | Fix it now. The next commit will introduce new bugs on top of this one. |
@@ -292,9 +314,11 @@ Error messages, stack traces, log output, and exception details from external so
 
 After fixing a bug:
 
+- [ ] A red-capable feedback loop existed before the fix (command + observed red)
 - [ ] Root cause is identified and documented
 - [ ] Fix addresses the root cause, not just symptoms
 - [ ] A regression test exists that fails without the fix
-- [ ] All existing tests pass
-- [ ] Build succeeds
+- [ ] The red loop is now green (fresh run after the fix)
+- [ ] All existing tests pass (fresh run)
+- [ ] Build succeeds if relevant
 - [ ] The original bug scenario is verified end-to-end

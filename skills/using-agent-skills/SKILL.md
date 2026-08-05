@@ -28,6 +28,7 @@ Task arrives
     │   └── Stakes high / unfamiliar code? ──→ doubt-driven-development
     ├── Writing/running tests? ────────→ test-driven-development
     │   └── Browser-based? ───────────→ browser-testing-with-devtools
+    ├── About to claim done/fixed? ────→ verification-before-completion
     ├── Something broke? ──────────────→ debugging-and-error-recovery
     ├── Reviewing code? ───────────────→ code-review-and-quality
     │   ├── Too complex? ─────────────→ code-simplification
@@ -106,11 +107,25 @@ Do NOT:
 
 Your job is surgical precision, not unsolicited renovation.
 
-### 6. Verify, Don't Assume
+### 6. Verify, Don't Assume (iron law)
 
 Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
 
+**Iron law:** no completion, fixed, or passing claim without **fresh** command evidence from this turn (after the last relevant edit). See `verification-before-completion`.
+
 Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `references/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
+
+### 7. Write documents for agents (when authoring skills or AGENTS.md)
+
+When creating or editing a skill, `AGENTS.md`, or any always-loaded agent doc, optimize for **process reliability**, not marketing prose:
+
+- **Context pointers:** a description or index line must state *what* the material is and *which branches* should trigger loading it. Front-load the leading trigger word.
+- **Two loads:** always-loaded text costs context every turn; human-only indexes cost cognitive load. Disclose reference behind pointers; keep steps the agent always needs inline.
+- **Completion criteria:** every step ends with a checkable done condition. Vague bounds invite premature completion.
+- **Progressive disclosure:** push branch-only reference to sibling files; keep the trunk short.
+- **Do not dump the full catalog** into a worker — project task-scoped skills via the Worker Context Contract.
+
+If the document is a skill, also follow frontmatter and trigger discipline in this file's Skill Rules.
 
 ## Failure Modes to Avoid
 
@@ -152,15 +167,16 @@ For a complete feature, the typical skill sequence is:
 8.  observability-and-instrumentation → Instrument as you build (runs parallel with 7-9, not after)
 9.  doubt-driven-development    → Cross-examine non-trivial decisions in-flight
 10. test-driven-development     → Prove each slice works
-11. code-review-and-quality     → Review before merge
-12. code-simplification         → Reduce unnecessary complexity while preserving behavior
-13. git-workflow-and-versioning → Clean commit history
-14. documentation-and-adrs      → Document decisions
-15. deprecation-and-migration   → Retire old systems and move users safely when needed
-16. shipping-and-launch         → Deploy safely
+11. verification-before-completion → Fresh evidence before any done claim
+12. code-review-and-quality     → Review before merge
+13. code-simplification         → Reduce unnecessary complexity while preserving behavior
+14. git-workflow-and-versioning → Clean commit history
+15. documentation-and-adrs      → Document decisions
+16. deprecation-and-migration   → Retire old systems and move users safely when needed
+17. shipping-and-launch         → Deploy safely
 ```
 
-Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
+Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `verification-before-completion` → `code-review-and-quality`.
 
 ## Quick Reference
 
@@ -177,6 +193,7 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 | Build | frontend-ui-engineering | Production-quality UI with accessibility |
 | Build | api-and-interface-design | Stable interfaces with clear contracts |
 | Verify | test-driven-development | Failing test first, then make it pass |
+| Verify | verification-before-completion | Fresh command evidence before any done claim |
 | Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
 | Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
 | Review | code-review-and-quality | Five-axis review with quality gates |

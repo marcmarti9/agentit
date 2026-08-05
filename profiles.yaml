@@ -50,6 +50,7 @@ profiles:
       - documentation-and-adrs
       - spec-driven-development
       - marketing-and-growth
+      - verification-before-completion
   writing:
     description: "Technical writing, documentation, and anti-AI-slop editing."
     extends:
@@ -72,6 +73,7 @@ profiles:
       - deprecation-and-migration
       - shipping-and-launch
       - documentation-and-adrs
+      - verification-before-completion
   research:
     description: "Core plus context, specifications, and adversarial review."
     extends:
@@ -80,6 +82,7 @@ profiles:
       - context-engineering
       - doubt-driven-development
       - spec-driven-development
+      - verification-before-completion
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:
@@ -114,3 +117,4 @@ profiles:
       - task-router
       - test-driven-development
       - using-agent-skills
+      - verification-before-completion

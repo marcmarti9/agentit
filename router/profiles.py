@@ -417,7 +417,18 @@ def _is_file_safe(path_str: str | None) -> bool:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles, context engines, and incubator scout.")
     parser.add_argument(
-        "command", nargs="?", choices=("enable", "activate", "disable", "status", "artifact", "context", "scout")
+        "command",
+        nargs="?",
+        choices=(
+            "enable",
+            "activate",
+            "disable",
+            "status",
+            "artifact",
+            "context",
+            "scout",
+            "worker",
+        ),
     )
     parser.add_argument("subcommand", nargs="?")
     parser.add_argument("target", nargs="?")
@@ -534,6 +545,75 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
 
             parser.error(f"subcomando context desconocido: {sub}")
+
+        if args.command == "worker":
+            # Worker Context Contract: mandatory projection before delegated spawn.
+            # Runtime topology infrastructure (not a skill). See router/worker_context.py.
+            try:
+                from router.worker_context import (
+                    WorkerContextError,
+                    WorkerTaskSpec,
+                    build_worker_context,
+                    render_worker_prompt,
+                    validate_for_spawn,
+                )
+            except ImportError:
+                from worker_context import (
+                    WorkerContextError,
+                    WorkerTaskSpec,
+                    build_worker_context,
+                    render_worker_prompt,
+                    validate_for_spawn,
+                )
+
+            sub = args.subcommand or "build"
+            if sub not in {"build", "render", "validate"}:
+                parser.error("worker requiere subcomando build|render|validate")
+
+            # target = objective when positional; prefer --description reuse avoided
+            objective = args.target or ""
+            if not objective:
+                parser.error(
+                    "worker build requiere un objetivo "
+                    '(ej: agentit worker build "Add settings page" --skill security-and-hardening)'
+                )
+
+            skills: list[str] = []
+            if args.extra_arg:
+                # Optional comma-separated skills as second positional
+                skills = [s.strip() for s in args.extra_arg.split(",") if s.strip()]
+
+            try:
+                prefs = None
+                try:
+                    from router.preferences import load_preferences
+                except ImportError:
+                    from preferences import load_preferences
+                prefs = load_preferences()
+
+                spec = WorkerTaskSpec(
+                    objective=objective,
+                    skills=tuple(skills),
+                    risk="RISK_2",
+                    role="implementer",
+                )
+                payload = build_worker_context(
+                    spec,
+                    project_root=project_root,
+                    preferences=prefs,
+                )
+                validate_for_spawn(
+                    payload,
+                    require_project_instructions=False,
+                )
+            except WorkerContextError as exc:
+                raise ProfileError(str(exc)) from exc
+
+            if sub == "render" or args.format == "text":
+                print(render_worker_prompt(payload), end="")
+            else:
+                print(json.dumps(payload, ensure_ascii=False, indent=2))
+            return 0
 
         if args.command == "scout":
             try:

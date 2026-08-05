@@ -25,18 +25,25 @@ No uses debate abierto ni peer-to-peer por defecto. La comunicación pasa por co
 
 # Contrato de cada paquete
 
-Cada Supervisor recibe:
+Cada Supervisor (y cualquier Worker que derive) recibe un **Worker Context
+Contract** proyectado por el runtime (`router/worker_context.py`). La
+proyección de instrucciones de proyecto y skills activas de la tarea es
+obligatoria antes del spawn.
+
+Cada paquete declara:
 
 - propósito y definición de terminado;
-- entradas exactas;
+- instrucciones de proyecto relevantes (raíz y subdir si aplica);
+- skills de la tarea (acotadas);
+- entradas exactas y artefactos;
 - archivos permitidos para lectura y escritura;
-- invariantes y decisiones ya fijadas;
+- invariantes, preferencias aplicables y constraints de riesgo;
 - dependencias previas y artefactos esperados;
 - formato de salida;
 - verificación requerida;
 - stop conditions y decisiones que debe escalar.
 
-No le pases toda la conversación ni documentos globales innecesarios.
+No le pases toda la conversación ni el catálogo global de skills.
 
 # Plan de ejecución
 

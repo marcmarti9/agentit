@@ -26,6 +26,7 @@ Agentit is an opinionated, safety-first meta-harness (v0.3.2) designed for devel
   - **Artifact References & CCR (`router/artifact_ref.py`)**: Archives text blocks (>150 lines or >10KB) into `.agentit/artifacts/` with sidecar SHA-256 metadata (`ref-<hash>.json`) and a secure `agentit://` URI resolver.
   - **Session Deduplication (`router/dedup.py`)**: Persists SHA-256 context hashes across CLI executions in `.agentit/sessions/<id>/dedup.json` with strict `0600` permissions and symlink protection.
 - **🔬 Scout & Incubator Meta-Harness (`router/scout.py`)**: Ingests, evaluates, and classifies ecosystem ideas, repos, papers, and tweets (e.g. NanoNets Graft, Claude Company profiles) into a structured incubator (`incubator/candidates.yaml`) before promoting them to core architecture.
+- **🔌 MCP Runtime (`agentit mcp` + `agentit-manager`)**: Curated catalog plus **mid-session enable/disable** across Claude, Cursor, Codex, Grok, and Antigravity. Agents call `status` / `enable` / `disable` (CLI or MCP tools).
 - **🔌 Provider-Isolated Deployment**: Cleanly separates configurations across runtimes:
   - **Claude Code**: Adaptive agents (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks, and skills. (Fully Supported)
   - **OpenAI Codex**: Global `AGENTS.md`, isolated worker profiles (`terra_worker`, `luna_worker`), and shared skills. (Fully Supported)
@@ -104,6 +105,22 @@ skills/
 ├── test-driven-development       # TDD & test-first implementation
 └── using-agent-skills            # Meta-skill for skill discovery
 ```
+
+---
+
+## 🔌 MCP Catalog & Runtime
+
+Agents can **see and toggle** curated MCPs in-session (all major clients):
+
+```bash
+agentit mcp install-gateway --apply   # once: agentit-manager meta MCP
+agentit mcp status
+agentit mcp enable context7 --apply
+agentit mcp enable-stack developer_core --apply
+agentit mcp disable playwright --apply
+```
+
+Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter: **agentit-manager + Context7 + GitHub + Playwright**.
 
 ---
 

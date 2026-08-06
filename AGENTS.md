@@ -21,6 +21,12 @@ Agentit es el meta-harness por defecto en esta máquina (Claude Code, Codex, Gro
   - `agentit context dedup "..." --session <id>`
   - `agentit artifact get|read|grep agentit://...`
 - Scout/incubator solo cuando el usuario pida evaluar ideas, repos o herramientas del ecosistema: `agentit scout ...`
+- MCP runtime multi-proveedor (Claude, Cursor, Codex, Grok, Antigravity, project): el agente **puede y debe** ver y conmutar MCPs en sesión:
+  - `agentit mcp status` / `available` / `active`
+  - `agentit mcp enable <id> --apply` · `disable <id> --apply` · `enable-stack developer_core --apply`
+  - `agentit mcp install-gateway --apply` una vez → tools MCP `mcp_status|mcp_enable|mcp_disable|…` (servidor `agentit-manager`)
+  - RISK_3/4 exige `--force`. Plan-first sin `--apply`. Tras enable, si faltan tools del backend: reconectar MCP o nueva sesión (las meta-tools del gateway sí son inmediatas).
+  - Catálogo: `mcp/catalog.yaml` · docs: `docs/MCP_CATALOG.md`.
 - Tras `install.sh`/`update.sh`, no reviertas guías ni skills gestionados sin motivo; el harness se mantiene con `bash ~/code/agentit/update.sh`.
 
 ## Reglas operativas

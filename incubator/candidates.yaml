@@ -39,3 +39,21 @@ candidates:
   type: evaluated_idea
   status: incubating
   decision: pending_evaluation
+- id: mcp-community-core-2026
+  source: https://www.reddit.com/r/mcp/
+  claim: Consensus coding MCP stack Context7 + GitHub + Playwright (+ Figma/Supabase situational)
+  type: mcp_catalog
+  status: validated
+  integration_mode: optional_external
+  benefits:
+  - Live docs reduce hallucinated APIs
+  - Repo/PR context without copy-paste
+  - Browser verification for UI work
+  costs:
+  - Token/tool surface growth per server
+  - Secrets and OAuth management per client
+  risks:
+  - Write-capable MCP against production data or repos
+  - Supply-chain risk of unpinned npx packages
+  decision: integrate_as_catalog
+  evidence: Curated into mcp/catalog.yaml; CLI agentit mcp; docs/MCP_CATALOG.md; no auto-activate

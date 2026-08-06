@@ -415,7 +415,9 @@ def _is_file_safe(path_str: str | None) -> bool:
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage bounded Agentit skill profiles, context engines, and incubator scout.")
+    parser = argparse.ArgumentParser(
+        description="Manage bounded Agentit skill profiles, context engines, incubator scout, and MCP catalog."
+    )
     parser.add_argument(
         "command",
         nargs="?",
@@ -428,6 +430,7 @@ def _parser() -> argparse.ArgumentParser:
             "context",
             "scout",
             "worker",
+            "mcp",
         ),
     )
     parser.add_argument("subcommand", nargs="?")
@@ -443,6 +446,36 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--description", default="CLI context artifact")
     parser.add_argument("--lines", help="Line range N:M for artifact read")
     parser.add_argument("--reason", default="Rejected during evaluation")
+    parser.add_argument(
+        "--provider",
+        choices=("claude", "cursor", "codex", "json"),
+        default="json",
+        help="MCP snippet provider format (mcp command only)",
+    )
+    parser.add_argument(
+        "--tier",
+        choices=("core", "recommended", "situational"),
+        help="Filter MCP catalog by tier",
+    )
+    parser.add_argument(
+        "--category",
+        help="Filter MCP catalog by category (e.g. browser, documentation)",
+    )
+    parser.add_argument(
+        "--max-risk",
+        dest="max_risk",
+        choices=("RISK_1", "RISK_2", "RISK_3", "RISK_4"),
+        help="Filter MCP servers at or below this risk level",
+    )
+    parser.add_argument(
+        "--providers",
+        help="Comma-separated MCP providers (claude,cursor,codex,grok,antigravity,project) or all",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Allow RISK_3/RISK_4 MCP enable",
+    )
     return parser
 
 
@@ -614,6 +647,215 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(json.dumps(payload, ensure_ascii=False, indent=2))
             return 0
+
+        if args.command == "mcp":
+            # Catalog + runtime toggle across Claude/Cursor/Codex/Grok/Antigravity.
+            try:
+                from router.mcp_catalog import (
+                    McpCatalogError,
+                    catalog_summary,
+                    get_server,
+                    list_servers,
+                    list_stacks,
+                    load_catalog as load_mcp_catalog,
+                    plan_stack,
+                    recommend_for_task,
+                    recommend_stack,
+                    snippet_for_server,
+                )
+                from router.mcp_runtime import (
+                    McpRuntimeError,
+                    bootstrap_gateway,
+                    disable_server,
+                    enable_server,
+                    enable_stack,
+                    resolve_providers_arg,
+                    runtime_status,
+                )
+            except ImportError:
+                from mcp_catalog import (
+                    McpCatalogError,
+                    catalog_summary,
+                    get_server,
+                    list_servers,
+                    list_stacks,
+                    load_catalog as load_mcp_catalog,
+                    plan_stack,
+                    recommend_for_task,
+                    recommend_stack,
+                    snippet_for_server,
+                )
+                from mcp_runtime import (
+                    McpRuntimeError,
+                    bootstrap_gateway,
+                    disable_server,
+                    enable_server,
+                    enable_stack,
+                    resolve_providers_arg,
+                    runtime_status,
+                )
+
+            sub = args.subcommand or "status"
+            try:
+                mcp_catalog = load_mcp_catalog(repo_root / "mcp" / "catalog.yaml")
+                provs = resolve_providers_arg(args.providers)
+
+                if sub in {"status", "available", "active"}:
+                    payload = runtime_status(project_root=project_root, providers=provs)
+                    if sub == "available":
+                        print(json.dumps({"servers": payload["available"]}, ensure_ascii=False, indent=2))
+                    elif sub == "active":
+                        print(
+                            json.dumps(
+                                {
+                                    "desired_enabled": payload["desired_enabled"],
+                                    "active_union": payload["active_union"],
+                                },
+                                ensure_ascii=False,
+                                indent=2,
+                            )
+                        )
+                    else:
+                        print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "list":
+                    if args.format == "text":
+                        rows = list_servers(
+                            mcp_catalog,
+                            tier=args.tier,
+                            category=args.category,
+                            max_risk=args.max_risk,
+                        )
+                        for row in rows:
+                            print(
+                                f"{row['id']}\t{row['tier']}\t{row['risk']}\t"
+                                f"{row['category']}\t{row['summary']}"
+                            )
+                    else:
+                        print(
+                            json.dumps(
+                                catalog_summary(mcp_catalog)
+                                if not any((args.tier, args.category, args.max_risk))
+                                else {
+                                    "servers": list_servers(
+                                        mcp_catalog,
+                                        tier=args.tier,
+                                        category=args.category,
+                                        max_risk=args.max_risk,
+                                    )
+                                },
+                                ensure_ascii=False,
+                                indent=2,
+                            )
+                        )
+                    return 0
+
+                if sub == "stacks":
+                    print(json.dumps(list_stacks(mcp_catalog), ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "show":
+                    server_id = args.target
+                    if not server_id:
+                        parser.error("mcp show requiere un id de servidor")
+                    print(json.dumps(get_server(server_id, mcp_catalog), ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "recommend":
+                    target = args.target or "developer_core"
+                    stacks = list_stacks(mcp_catalog)
+                    if target in stacks:
+                        payload = recommend_stack(target, mcp_catalog)
+                    else:
+                        payload = recommend_for_task(target, mcp_catalog)
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "snippet":
+                    server_id = args.target
+                    if not server_id:
+                        parser.error("mcp snippet requiere un id de servidor")
+                    payload = snippet_for_server(
+                        server_id,
+                        provider=args.provider,
+                        catalog=mcp_catalog,
+                        project_root=str(project_root),
+                    )
+                    if args.format == "text" and payload.get("command"):
+                        print(payload["command"])
+                    elif args.format == "text" and payload.get("snippet"):
+                        print(payload["snippet"])
+                    else:
+                        print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "plan":
+                    stack_name = args.target or "developer_core"
+                    payload = plan_stack(
+                        stack_name,
+                        provider=args.provider,
+                        catalog=mcp_catalog,
+                        project_root=str(project_root),
+                    )
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "enable":
+                    server_id = args.target
+                    if not server_id:
+                        parser.error("mcp enable requiere un id (o stack con enable-stack)")
+                    payload = enable_server(
+                        server_id,
+                        project_root=project_root,
+                        providers=provs,
+                        apply=args.apply,
+                        force=args.force,
+                    )
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub == "disable":
+                    server_id = args.target
+                    if not server_id:
+                        parser.error("mcp disable requiere un id de servidor")
+                    payload = disable_server(
+                        server_id,
+                        project_root=project_root,
+                        providers=provs,
+                        apply=args.apply,
+                    )
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub in {"enable-stack", "stack-enable"}:
+                    stack_name = args.target or "developer_core"
+                    payload = enable_stack(
+                        stack_name,
+                        project_root=project_root,
+                        providers=provs,
+                        apply=args.apply,
+                        force=args.force,
+                    )
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                if sub in {"install-gateway", "gateway"}:
+                    payload = bootstrap_gateway(
+                        project_root=project_root,
+                        repo_root=repo_root,
+                        providers=provs,
+                        apply=args.apply,
+                    )
+                    print(json.dumps(payload, ensure_ascii=False, indent=2))
+                    return 0
+
+                parser.error(
+                    "mcp: status|available|active|list|stacks|show|recommend|snippet|plan|"
+                    "enable|disable|enable-stack|install-gateway"
+                )
+            except (McpCatalogError, McpRuntimeError) as exc:
+                raise ProfileError(str(exc)) from exc
 
         if args.command == "scout":
             try:

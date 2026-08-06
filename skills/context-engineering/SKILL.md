@@ -179,15 +179,32 @@ Load only the relevant section when working on a specific area.
 
 ## MCP Integrations
 
-For richer context, use Model Context Protocol servers:
+For richer context, use Model Context Protocol servers. Agentit ships a curated catalog **and** a runtime toggle so the agent can enable/disable servers mid-session (Claude, Cursor, Codex, Grok, Antigravity).
 
-| MCP Server | What It Provides |
-|-----------|-----------------|
-| **Context7** | Auto-fetches relevant documentation for libraries |
-| **Chrome DevTools** | Live browser state, DOM, console, network |
-| **PostgreSQL** | Direct database schema and query results |
-| **Filesystem** | Project file access and search |
-| **GitHub** | Issue, PR, and repository context |
+```bash
+agentit mcp status
+agentit mcp enable context7 --apply
+agentit mcp disable playwright --apply
+agentit mcp enable-stack developer_core --apply
+agentit mcp install-gateway --apply   # once: MCP tools mcp_status / mcp_enable / …
+```
+
+See `docs/MCP_CATALOG.md`. RISK_3+ needs `--force`.
+
+| MCP Server | What It Provides | Risk |
+|-----------|-----------------|------|
+| **Context7** | Version-specific library docs (most-recommended community default) | RISK_1 |
+| **GitHub** | Issues, PRs, repo and CI context (prefer OAuth remote) | RISK_2 |
+| **Playwright** | Browser automation and UI smoke checks | RISK_2 |
+| **Chrome DevTools** | Live DOM, console, network, performance | RISK_2 |
+| **Brave Search / Exa / Firecrawl** | Live web research and scrape-to-markdown | RISK_1 |
+| **PostgreSQL / Supabase** | Schema and query context (staging / read-only) | RISK_3 |
+| **Figma** | Structured design context for design-to-code | RISK_2 |
+| **Linear / Notion / Slack** | Tickets, docs, team context | RISK_2 |
+| **Sentry** | Production error triage context | RISK_2 |
+| **Filesystem** | Allowlisted local file access (often redundant with native tools) | RISK_2 |
+
+Starter stack most recommended on Reddit/X for coding agents: **Context7 + GitHub + Playwright**.
 
 ## Confusion Management
 

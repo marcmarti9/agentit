@@ -1,0 +1,418 @@
+# Agentit MCP catalog — curated; agents may toggle via agentit mcp / agentit-manager.
+# Sources: community consensus (Reddit r/mcp, r/ClaudeAI, r/ClaudeCode, X) + vendor docs 2026.
+schema_version: 1
+policy:
+  auto_activate: false
+  agent_may_toggle: true
+  install_default: dry_run_then_apply
+  require_human_review_for_risk_3: true
+  secrets_in_repo: false
+  prefer_official: true
+  providers:
+    - claude
+    - cursor
+    - codex
+    - grok
+    - antigravity
+    - project
+  notes: |
+    Agents should call `agentit mcp status` then `enable`/`disable` (or agentit-manager MCP tools).
+    Default is plan-first; pass --apply (CLI) or apply=true (MCP tool) to write client configs.
+    RISK_3/4 needs --force. Prefer least privilege and staging credentials.
+
+stacks:
+  developer_core:
+    description: "Starter stack most recommended for coding agents (manager + docs + repo + browser)."
+    servers: [agentit-manager, context7, github, playwright]
+  frontend:
+    description: "UI implementation and runtime verification."
+    servers: [context7, figma, playwright, chrome-devtools]
+  backend_data:
+    description: "Schema/query context. Use staging or read-only credentials only."
+    servers: [context7, postgres, supabase, github]
+  product_ops:
+    description: "Tickets, docs, and team context for product/engineering coordination."
+    servers: [linear, notion, slack, github]
+  research:
+    description: "Live web + docs research without write access to production systems."
+    servers: [context7, brave-search, exa, firecrawl]
+  incident:
+    description: "Error triage and repo context. High care with write scopes."
+    servers: [sentry, github, linear]
+
+servers:
+  - id: agentit-manager
+    name: Agentit MCP Manager
+    tier: core
+    category: harness
+    risk: RISK_1
+    trust: first_party
+    summary: "Always-on meta MCP: list/enable/disable catalog servers mid-session for all providers."
+    homepage: https://github.com/marcmarti9/agentit
+    package: null
+    requires_secret: false
+    write_capable: true
+    evidence:
+      - "First-party Agentit gateway (mcp/gateway.py)"
+    claude_add: "agentit mcp install-gateway --apply"
+    mcp_json:
+      command: python3
+      args: ["${AGENTIT_ROOT}/mcp/gateway.py"]
+    safety_notes:
+      - "Enable this first so agents can self-manage other MCPs."
+      - "Writes client configs only when enable/disable is applied."
+
+  - id: context7
+    name: Context7
+    tier: core
+    category: documentation
+    risk: RISK_1
+    trust: official_vendor
+    summary: "Version-specific library docs injected into context (most-cited 'must install' on Reddit/X)."
+    homepage: https://github.com/upstash/context7
+    package: "@upstash/context7-mcp"
+    requires_secret: false
+    write_capable: false
+    evidence:
+      - "DeployHQ / UI Bakery 2026 must-have lists"
+      - "Reddit r/mcp, r/ClaudeAI: Context7 as day-to-day essential"
+    claude_add: "claude mcp add context7 -- npx -y @upstash/context7-mcp@latest"
+    mcp_json:
+      command: npx
+      args: ["-y", "@upstash/context7-mcp@latest"]
+    codex_toml: |
+      [mcp_servers.context7]
+      command = "npx"
+      args = ["-y", "@upstash/context7-mcp@latest"]
+
+  - id: github
+    name: GitHub MCP (official)
+    tier: core
+    category: source_control
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Issues, PRs, repo search, CI context. Prefer remote OAuth over PAT in config files."
+    homepage: https://github.com/github/github-mcp-server
+    package: null
+    remote_url: https://api.githubcopilot.com/mcp/
+    docker_image: ghcr.io/github/github-mcp-server
+    requires_secret: true
+    secret_env: GITHUB_PERSONAL_ACCESS_TOKEN
+    write_capable: true
+    evidence:
+      - "Official GitHub MCP; top of X/Reddit coding stacks"
+      - "DeployHQ starter set: GitHub + Context7 + Playwright"
+    claude_add: "claude mcp add --transport http github https://api.githubcopilot.com/mcp/"
+    mcp_json:
+      command: docker
+      args:
+        - run
+        - -i
+        - --rm
+        - -e
+        - GITHUB_PERSONAL_ACCESS_TOKEN
+        - ghcr.io/github/github-mcp-server
+      env:
+        GITHUB_PERSONAL_ACCESS_TOKEN: "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+    codex_toml: |
+      [mcp_servers.github]
+      command = "docker"
+      args = ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"]
+      # Prefer remote/OAuth clients when available; do not commit tokens.
+      env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+    safety_notes:
+      - "Start with least-privilege scopes; avoid org-admin tokens."
+      - "Review before write actions on protected branches."
+
+  - id: playwright
+    name: Playwright MCP
+    tier: core
+    category: browser
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Browser automation via accessibility snapshots for UI tests and smoke checks."
+    homepage: https://github.com/microsoft/playwright-mcp
+    package: "@playwright/mcp"
+    requires_secret: false
+    write_capable: true
+    evidence:
+      - "Microsoft Playwright MCP; Reddit daily-use with Context7"
+      - "Replaces archived Puppeteer reference servers in many 2026 guides"
+    claude_add: "claude mcp add playwright -s user -- npx -y @playwright/mcp@latest"
+    mcp_json:
+      command: npx
+      args: ["-y", "@playwright/mcp@latest"]
+    codex_toml: |
+      [mcp_servers.playwright]
+      command = "npx"
+      args = ["-y", "@playwright/mcp@latest"]
+    safety_notes:
+      - "Do not attach to logged-in production admin sessions."
+      - "Prefer staging URLs and test accounts."
+
+  - id: chrome-devtools
+    name: Chrome DevTools MCP
+    tier: recommended
+    category: browser
+    risk: RISK_2
+    trust: community_maintained
+    summary: "DOM, console, network, and performance inspection; used by Agentit browser-testing skill."
+    homepage: https://www.npmjs.com/package/chrome-devtools-mcp
+    package: chrome-devtools-mcp
+    requires_secret: false
+    write_capable: true
+    evidence:
+      - "Agentit skills/browser-testing-with-devtools"
+      - "Runtime verification pattern for frontend tasks"
+    claude_add: "claude mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest --isolated"
+    mcp_json:
+      command: npx
+      args: ["-y", "chrome-devtools-mcp@latest", "--isolated"]
+    codex_toml: |
+      [mcp_servers.chrome-devtools]
+      command = "npx"
+      args = ["-y", "chrome-devtools-mcp@latest", "--isolated"]
+    safety_notes:
+      - "Prefer --isolated temporary profiles over personal browser profiles."
+      - "Avoid --autoConnect to a daily browser with banking/email sessions."
+
+  - id: filesystem
+    name: Filesystem MCP
+    tier: recommended
+    category: local
+    risk: RISK_2
+    trust: official_reference
+    summary: "Allowlisted local file read/write. Many agents already have native FS tools; use only when needed."
+    homepage: https://github.com/modelcontextprotocol/servers
+    package: "@modelcontextprotocol/server-filesystem"
+    requires_secret: false
+    write_capable: true
+    evidence:
+      - "Official MCP reference server; DeployHQ starter set"
+    claude_add: "claude mcp add filesystem -s user -- npx -y @modelcontextprotocol/server-filesystem \"${PROJECT_ROOT}\""
+    mcp_json:
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-filesystem", "${PROJECT_ROOT}"]
+    codex_toml: |
+      [mcp_servers.filesystem]
+      command = "npx"
+      args = ["-y", "@modelcontextprotocol/server-filesystem", "${PROJECT_ROOT}"]
+    safety_notes:
+      - "Allowlist only project directories; never $HOME unrestricted."
+      - "Native agent FS tools may make this redundant."
+
+  - id: brave-search
+    name: Brave Search MCP
+    tier: recommended
+    category: search
+    risk: RISK_1
+    trust: official_vendor
+    summary: "Live web search without CAPTCHA noise; good for errors, changelogs, and fact checks."
+    homepage: https://github.com/brave/brave-search-mcp-server
+    package: "@brave/brave-search-mcp-server"
+    requires_secret: true
+    secret_env: BRAVE_API_KEY
+    write_capable: false
+    evidence:
+      - "DeployHQ must-have list 2026"
+      - "Official Brave package replaces deprecated Anthropic reference"
+    claude_add: "claude mcp add brave-search -- env BRAVE_API_KEY=\"${BRAVE_API_KEY}\" npx -y @brave/brave-search-mcp-server"
+    mcp_json:
+      command: npx
+      args: ["-y", "@brave/brave-search-mcp-server"]
+      env:
+        BRAVE_API_KEY: "${BRAVE_API_KEY}"
+    codex_toml: |
+      [mcp_servers.brave-search]
+      command = "npx"
+      args = ["-y", "@brave/brave-search-mcp-server"]
+      env = { BRAVE_API_KEY = "${BRAVE_API_KEY}" }
+
+  - id: postgres
+    name: PostgreSQL / DBHub
+    tier: recommended
+    category: database
+    risk: RISK_3
+    trust: community_maintained
+    summary: "Schema exploration and SQL assistance. Staging or read-only roles only."
+    homepage: https://github.com/bytebase/dbhub
+    package: "@bytebase/dbhub"
+    requires_secret: true
+    secret_env: DATABASE_URL
+    write_capable: true
+    evidence:
+      - "DeployHQ / UI Bakery data stack recommendations"
+    claude_add: "claude mcp add db --transport stdio -- npx -y @bytebase/dbhub --dsn \"${DATABASE_URL}\""
+    mcp_json:
+      command: npx
+      args: ["-y", "@bytebase/dbhub", "--dsn", "${DATABASE_URL}"]
+    codex_toml: |
+      [mcp_servers.postgres]
+      command = "npx"
+      args = ["-y", "@bytebase/dbhub", "--dsn", "${DATABASE_URL}"]
+    safety_notes:
+      - "Never point at production with a write-capable user."
+      - "Prefer read-only DB roles and replicas."
+
+  - id: supabase
+    name: Supabase MCP
+    tier: recommended
+    category: database
+    risk: RISK_3
+    trust: official_vendor
+    summary: "Supabase projects, SQL, Auth, Storage, Edge Functions context."
+    homepage: https://supabase.com/docs/guides/ai-tools/mcp
+    package: null
+    requires_secret: true
+    secret_env: SUPABASE_ACCESS_TOKEN
+    write_capable: true
+    evidence:
+      - "Reddit Cursor/Claude threads; UI Bakery data stack"
+      - "Official Supabase AI tools docs"
+    claude_add: "claude mcp add --transport http supabase https://mcp.supabase.com/mcp"
+    mcp_json_remote:
+      url: https://mcp.supabase.com/mcp
+    codex_note: "Configure remote Supabase MCP per current Codex docs; use project-scoped tokens."
+    safety_notes:
+      - "Separate personal/dev projects from production."
+      - "Disable write tool groups until reviewed."
+
+  - id: figma
+    name: Figma MCP
+    tier: recommended
+    category: design
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Structured design context for design-to-code (layout, tokens, components)."
+    homepage: https://developers.figma.com/docs/figma-mcp-server/
+    package: null
+    requires_secret: true
+    secret_env: FIGMA_ACCESS_TOKEN
+    write_capable: true
+    evidence:
+      - "X lists (Nav Toor, Tw93); UI Bakery design-to-code pick"
+    claude_add: "claude mcp add --transport http figma https://mcp.figma.com/mcp"
+    mcp_json_remote:
+      url: https://mcp.figma.com/mcp
+    safety_notes:
+      - "Prefer read access; review any write-back to shared files."
+
+  - id: linear
+    name: Linear MCP
+    tier: situational
+    category: product
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Issues, projects, milestones for engineering planning."
+    homepage: https://linear.app/docs/mcp
+    package: null
+    requires_secret: true
+    write_capable: true
+    evidence:
+      - "UI Bakery / product workflow stacks 2026"
+    claude_add: "claude mcp add --transport http linear https://mcp.linear.app/mcp"
+    mcp_json_remote:
+      url: https://mcp.linear.app/mcp
+    safety_notes:
+      - "Avoid unsupervised status/priority/assignee changes."
+
+  - id: notion
+    name: Notion MCP
+    tier: situational
+    category: knowledge
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Workspace docs and knowledge base access for agents."
+    homepage: https://developers.notion.com/docs/mcp
+    package: null
+    requires_secret: true
+    write_capable: true
+    evidence:
+      - "X essential MCP lists; UI Bakery business stack"
+    claude_add: "claude mcp add --transport http notion https://mcp.notion.com/mcp"
+    mcp_json_remote:
+      url: https://mcp.notion.com/mcp
+    safety_notes:
+      - "Scope to non-sensitive workspaces first."
+
+  - id: slack
+    name: Slack MCP
+    tier: situational
+    category: communication
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Search and message context for team/incident workflows."
+    homepage: https://docs.slack.dev/ai/slack-mcp-server
+    package: null
+    requires_secret: true
+    write_capable: true
+    evidence:
+      - "UI Bakery business stack; LinkedIn/X operator lists"
+    claude_add: "claude mcp add --transport http slack https://mcp.slack.com/mcp"
+    mcp_json_remote:
+      url: https://mcp.slack.com/mcp
+    safety_notes:
+      - "Beware private channels and send-message permissions."
+
+  - id: sentry
+    name: Sentry MCP
+    tier: situational
+    category: observability
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Error triage and production exception context for coding agents."
+    homepage: https://docs.sentry.io/product/sentry-mcp/
+    package: null
+    requires_secret: true
+    write_capable: false
+    evidence:
+      - "UI Bakery incident stack recommendations"
+    claude_add: "claude mcp add --transport http sentry https://mcp.sentry.dev/mcp"
+    mcp_json_remote:
+      url: https://mcp.sentry.dev/mcp
+
+  - id: firecrawl
+    name: Firecrawl MCP
+    tier: situational
+    category: search
+    risk: RISK_1
+    trust: official_vendor
+    summary: "Web crawl/scrape to clean markdown for research agents."
+    homepage: https://docs.firecrawl.dev/mcp-server
+    package: "firecrawl-mcp"
+    requires_secret: true
+    secret_env: FIRECRAWL_API_KEY
+    write_capable: false
+    evidence:
+      - "X 2026 Claude Code MCP lists (Firecrawl + Exa)"
+    claude_add: "claude mcp add firecrawl -- env FIRECRAWL_API_KEY=\"${FIRECRAWL_API_KEY}\" npx -y firecrawl-mcp"
+    mcp_json:
+      command: npx
+      args: ["-y", "firecrawl-mcp"]
+      env:
+        FIRECRAWL_API_KEY: "${FIRECRAWL_API_KEY}"
+    codex_toml: |
+      [mcp_servers.firecrawl]
+      command = "npx"
+      args = ["-y", "firecrawl-mcp"]
+      env = { FIRECRAWL_API_KEY = "${FIRECRAWL_API_KEY}" }
+
+  - id: exa
+    name: Exa MCP
+    tier: situational
+    category: search
+    risk: RISK_1
+    trust: official_vendor
+    summary: "Neural/web search optimized for agents and research."
+    homepage: https://docs.exa.ai/reference/exa-mcp
+    package: null
+    requires_secret: true
+    secret_env: EXA_API_KEY
+    write_capable: false
+    evidence:
+      - "X essential MCP lists alongside Firecrawl"
+    claude_add: "claude mcp add --transport http exa https://mcp.exa.ai/mcp"
+    mcp_json_remote:
+      url: https://mcp.exa.ai/mcp
+    safety_notes:
+      - "Confirm current Exa MCP auth path in vendor docs before use."

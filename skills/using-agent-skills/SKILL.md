@@ -9,6 +9,8 @@ description: Discover and invoke the right skills. Use when choosing reusable wo
 
 Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
 
+**Harness bootstrap:** if the user says `usa agentit` / `use agentit` (or equivalent), load `using-agentit` first and follow its playbook (route → JIT profiles → load recommended skills → execute → verify).
+
 ## Skill Discovery
 
 When a task arrives, identify the development phase and apply the corresponding skill:
@@ -22,6 +24,8 @@ Task arrives
     ├── Have a spec, need tasks? ──────→ planning-and-task-breakdown
     ├── Implementing code? ────────────→ incremental-implementation
     │   ├── UI work? ─────────────────→ frontend-ui-engineering
+    │   │   ├── Landing / portfolio / redesign? → design-taste-frontend
+    │   │   └── Light anti-slop pass only? → anti-ai-slop-design
     │   ├── API work? ────────────────→ api-and-interface-design
     │   ├── Need better context? ─────→ context-engineering
     │   ├── Need doc-verified code? ───→ source-driven-development
@@ -191,6 +195,8 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 | Build | doubt-driven-development | Adversarial fresh-context review of every non-trivial decision |
 | Build | context-engineering | Right context at the right time |
 | Build | frontend-ui-engineering | Production-quality UI with accessibility |
+| Build | design-taste-frontend | Landings/portfolios without AI visual slop |
+| Build | anti-ai-slop-design | Short brand-authentic anti-cliché checklist |
 | Build | api-and-interface-design | Stable interfaces with clear contracts |
 | Verify | test-driven-development | Failing test first, then make it pass |
 | Verify | verification-before-completion | Fresh command evidence before any done claim |

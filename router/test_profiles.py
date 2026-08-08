@@ -32,7 +32,8 @@ class ProfileCatalogTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         core = json.loads(completed.stdout)
-        self.assertEqual(10, len(core))
+        self.assertEqual(11, len(core))
+        self.assertIn("using-agentit", core)
         self.assertIn("task-router", core)
         self.assertIn("using-agent-skills", core)
 
@@ -122,6 +123,16 @@ class ProjectProfileCliTests(unittest.TestCase):
         self.assertEqual(["supabase"], payload["profiles"])
         self.assertTrue(
             (self.project / ".agents" / "skills" / "supabase-postgres-best-practices" / "SKILL.md").is_file()
+        )
+        self.assertTrue(
+            (
+                self.project
+                / ".agents"
+                / "skills"
+                / "supabase-postgres-best-practices"
+                / "references"
+                / "_sections.md"
+            ).is_file()
         )
 
     def test_activate_is_an_enable_alias(self):

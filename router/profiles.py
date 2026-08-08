@@ -164,6 +164,30 @@ def _project_skill_path(project_root: Path, skill_id: str) -> Path:
     return project_root / ".agents" / "skills" / skill_id / "SKILL.md"
 
 
+def _skill_source_dir(repo_root: Path, skill_id: str) -> Path:
+    return Path(repo_root) / "skills" / skill_id
+
+
+def _list_skill_package_files(skill_dir: Path) -> list[str]:
+    """Relative paths under a skill dir: SKILL.md plus references/** regular files."""
+    if not skill_dir.is_dir() or skill_dir.is_symlink():
+        raise ProfileError(f"skill directory is not a regular directory: {skill_dir}")
+    skill_md = skill_dir / "SKILL.md"
+    if not skill_md.is_file() or skill_md.is_symlink():
+        raise ProfileError(f"source skill is not a regular file: {skill_md}")
+    files = ["SKILL.md"]
+    references = skill_dir / "references"
+    if references.exists():
+        if not references.is_dir() or references.is_symlink():
+            raise ProfileError(f"skill references must be a regular directory: {references}")
+        for path in sorted(references.rglob("*")):
+            if path.is_symlink():
+                raise ProfileError(f"skill package rejects symlinks: {path}")
+            if path.is_file():
+                files.append(path.relative_to(skill_dir).as_posix())
+    return files
+
+
 def _manifest_payload(
     profiles: list[str],
     skill_ids: list[str],
@@ -171,28 +195,64 @@ def _manifest_payload(
     repo_root: Path,
     existing_manifest: dict[str, Any] | None = None,
     managed_overrides: dict[str, bool] | None = None,
+    file_managed_overrides: dict[str, dict[str, bool]] | None = None,
 ) -> dict[str, Any]:
     skills: dict[str, Any] = {}
     existing_skills = existing_manifest.get("skills", {}) if existing_manifest else {}
     managed_overrides = managed_overrides or {}
+    file_managed_overrides = file_managed_overrides or {}
     for skill_id in skill_ids:
-        source = repo_root / "skills" / skill_id / "SKILL.md"
+        source_dir = _skill_source_dir(repo_root, skill_id)
+        package_files = _list_skill_package_files(source_dir)
+        source = source_dir / "SKILL.md"
         destination = _project_skill_path(Path("."), skill_id).as_posix()
         previous = existing_skills.get(skill_id, {})
         if not isinstance(previous, dict):
             raise ProfileError(f"invalid manifest entry for {skill_id}")
-        installed_sha256 = (
-            previous.get("installed_sha256")
-            if isinstance(previous.get("installed_sha256"), str)
-            else _sha256(source)
+        previous_files = previous.get("files")
+        if not isinstance(previous_files, dict):
+            previous_files = {}
+        per_file_managed = file_managed_overrides.get(skill_id, {})
+        file_entries: dict[str, dict[str, Any]] = {}
+        for relative in package_files:
+            source_file = source_dir / relative
+            prev_entry = previous_files.get(relative)
+            if (
+                isinstance(prev_entry, dict)
+                and isinstance(prev_entry.get("installed_sha256"), str)
+            ):
+                installed = prev_entry["installed_sha256"]
+            else:
+                installed = _sha256(source_file)
+            if relative in per_file_managed:
+                file_managed = per_file_managed[relative]
+            elif isinstance(prev_entry, dict) and isinstance(
+                prev_entry.get("managed"), bool
+            ):
+                file_managed = bool(prev_entry["managed"])
+            elif relative == "SKILL.md" and previous and "managed" in previous:
+                # Legacy skill-level flag applies to SKILL.md only.
+                file_managed = bool(previous.get("managed", True))
+            else:
+                file_managed = True
+            file_entries[relative] = {
+                "source_sha256": _sha256(source_file),
+                "installed_sha256": installed,
+                "managed": file_managed,
+            }
+        installed_sha256 = file_entries["SKILL.md"]["installed_sha256"]
+        skill_managed = managed_overrides.get(
+            skill_id,
+            any(entry["managed"] for entry in file_entries.values())
+            if file_entries
+            else bool(previous.get("managed", True)),
         )
         skills[skill_id] = {
             "destination": destination,
             "source_sha256": _sha256(source),
             "installed_sha256": installed_sha256,
-            "managed": managed_overrides.get(
-                skill_id, bool(previous.get("managed", True))
-            ),
+            "managed": skill_managed,
+            "files": file_entries,
         }
     return {
         "schema_version": 1,
@@ -219,7 +279,7 @@ def _write_manifest(path: Path, payload: dict[str, Any], *, project_root: Path) 
         temporary_path.unlink(missing_ok=True)
 
 
-def _copy_skill(source: Path, destination: Path, *, project_root: Path) -> None:
+def _copy_skill_file(source: Path, destination: Path, *, project_root: Path) -> None:
     _assert_safe_path(destination, root=project_root)
     destination.parent.mkdir(parents=True, exist_ok=True)
     _assert_safe_path(destination.parent, root=project_root)
@@ -233,6 +293,46 @@ def _copy_skill(source: Path, destination: Path, *, project_root: Path) -> None:
         os.replace(temporary_path, destination)
     finally:
         temporary_path.unlink(missing_ok=True)
+
+
+def _copy_skill(source: Path, destination: Path, *, project_root: Path) -> None:
+    """Backward-compatible single-file skill copy."""
+    _copy_skill_file(source, destination, project_root=project_root)
+
+
+def _package_files(metadata: dict[str, Any]) -> list[str]:
+    files = metadata.get("files")
+    if isinstance(files, dict) and files:
+        return sorted(str(key) for key in files)
+    return ["SKILL.md"]
+
+
+def _managed_package_files(metadata: dict[str, Any]) -> list[str]:
+    files = metadata.get("files")
+    if isinstance(files, dict) and files:
+        managed: list[str] = []
+        for relative, entry in files.items():
+            if isinstance(entry, dict) and entry.get("managed") is False:
+                continue
+            managed.append(str(relative))
+        if managed:
+            return sorted(managed)
+        return []
+    # Legacy manifests: skill-level managed flag applies to SKILL.md only.
+    if metadata.get("managed", True):
+        return ["SKILL.md"]
+    return []
+
+
+def _skill_file_installed_hash(metadata: dict[str, Any], relative: str) -> str | None:
+    files = metadata.get("files")
+    if isinstance(files, dict):
+        entry = files.get(relative)
+        if isinstance(entry, dict) and isinstance(entry.get("installed_sha256"), str):
+            return entry["installed_sha256"]
+    if relative == "SKILL.md" and isinstance(metadata.get("installed_sha256"), str):
+        return metadata["installed_sha256"]
+    return None
 
 
 def _active_skill_ids(
@@ -266,24 +366,57 @@ def _check_enable(
     skill_ids = _active_skill_ids(profiles, catalog, repo_root=repo_root)
     operations: list[str] = []
     managed_overrides: dict[str, bool] = {}
+    file_managed_overrides: dict[str, dict[str, bool]] = {}
     for skill_id in skill_ids:
-        source = repo_root / "skills" / skill_id / "SKILL.md"
-        destination = _project_skill_path(project_root, skill_id)
-        _assert_safe_path(source, root=repo_root)
-        if not source.is_file() or source.is_symlink():
-            raise ProfileError(f"source skill is not a regular file: {source}")
-        _assert_safe_path(destination, root=project_root)
-        if destination.exists():
-            if _sha256(destination) != _sha256(source):
-                raise ProfileError(f"refusing to overwrite existing skill: {destination}")
-            previous = manifest.get("skills", {}).get(skill_id) if manifest else None
-            managed_overrides[skill_id] = (
-                bool(previous.get("managed", True)) if isinstance(previous, dict) else False
-            )
-            operations.append(f"keep: {destination}")
-        else:
-            managed_overrides[skill_id] = True
-            operations.append(f"install: {destination}")
+        source_dir = _skill_source_dir(repo_root, skill_id)
+        package_files = _list_skill_package_files(source_dir)
+        skill_destination = _project_skill_path(project_root, skill_id)
+        skill_root = skill_destination.parent
+        _assert_safe_path(skill_destination, root=project_root)
+        previous = manifest.get("skills", {}).get(skill_id) if manifest else None
+        previous_files = (
+            previous.get("files")
+            if isinstance(previous, dict) and isinstance(previous.get("files"), dict)
+            else {}
+        )
+        per_file: dict[str, bool] = {}
+        for path in skill_root.rglob("*") if skill_root.exists() else []:
+            if not path.is_file():
+                continue
+            relative = path.relative_to(skill_root).as_posix()
+            if relative not in package_files:
+                raise ProfileError(
+                    f"refusing to install into skill directory with extra files: {path}"
+                )
+            if _sha256(path) != _sha256(source_dir / relative):
+                raise ProfileError(
+                    f"refusing to overwrite modified skill package file: {path}"
+                )
+        for relative in package_files:
+            dest = skill_root / relative
+            if dest.exists():
+                operations.append(f"keep: {dest}")
+                prev_entry = previous_files.get(relative)
+                if isinstance(prev_entry, dict) and isinstance(
+                    prev_entry.get("managed"), bool
+                ):
+                    per_file[relative] = bool(prev_entry["managed"])
+                elif (
+                    relative == "SKILL.md"
+                    and isinstance(previous, dict)
+                    and "managed" in previous
+                ):
+                    per_file[relative] = bool(previous.get("managed", True))
+                elif previous is None:
+                    # Exact pre-existing file not from Agentit: do not adopt.
+                    per_file[relative] = False
+                else:
+                    per_file[relative] = True
+            else:
+                operations.append(f"install: {dest}")
+                per_file[relative] = True
+        file_managed_overrides[skill_id] = per_file
+        managed_overrides[skill_id] = any(per_file.values())
     return (
         _manifest_payload(
             profiles,
@@ -291,6 +424,7 @@ def _check_enable(
             repo_root=repo_root,
             existing_manifest=manifest,
             managed_overrides=managed_overrides,
+            file_managed_overrides=file_managed_overrides,
         ),
         operations,
     )
@@ -319,18 +453,32 @@ def _check_disable(
             metadata.get("destination"), str
         ):
             raise ProfileError(f"invalid manifest entry for {skill_id}")
-        if not metadata.get("managed", True):
+        managed_files = _managed_package_files(metadata)
+        if not managed_files:
             continue
-        destination = project_root / metadata["destination"]
-        _assert_safe_path(destination, root=project_root)
-        if not destination.is_file() or destination.is_symlink():
-            raise ProfileError(f"managed skill destination is not a regular file: {destination}")
-        if metadata.get("installed_sha256") != _sha256(destination):
-            raise ProfileError(f"refusing to remove modified managed skill: {destination}")
-        remaining = [item for item in destination.parent.iterdir() if item.name != "SKILL.md"]
-        if remaining:
-            raise ProfileError(f"refusing to remove skill directory with extra files: {destination.parent}")
-        operations.append(f"remove: {destination}")
+        skill_root = (project_root / metadata["destination"]).parent
+        _assert_safe_path(skill_root, root=project_root)
+        known_files = set(_package_files(metadata))
+        for relative in managed_files:
+            destination = skill_root / relative
+            _assert_safe_path(destination, root=project_root)
+            if not destination.is_file() or destination.is_symlink():
+                raise ProfileError(
+                    f"managed skill destination is not a regular file: {destination}"
+                )
+            expected = _skill_file_installed_hash(metadata, relative)
+            if expected is None or expected != _sha256(destination):
+                raise ProfileError(
+                    f"refusing to remove modified managed skill: {destination}"
+                )
+            operations.append(f"remove: {destination}")
+        for path in skill_root.rglob("*"):
+            if path.is_file():
+                relative = path.relative_to(skill_root).as_posix()
+                if relative not in known_files:
+                    raise ProfileError(
+                        f"refusing to remove skill directory with extra files: {path}"
+                    )
     return (
         _manifest_payload(
             profiles,
@@ -356,11 +504,30 @@ def enable_profile(
     )
     if not apply:
         return ["MODO PLAN: no se escribirán archivos.", *operations]
-    for skill_id in payload["skills"]:
-        source = repo_root / "skills" / skill_id / "SKILL.md"
-        destination = project_root / payload["skills"][skill_id]["destination"]
-        if not destination.exists():
-            _copy_skill(source, destination, project_root=project_root)
+    for skill_id, metadata in payload["skills"].items():
+        source_dir = _skill_source_dir(repo_root, skill_id)
+        skill_root = (project_root / metadata["destination"]).parent
+        for relative in _package_files(metadata):
+            destination = skill_root / relative
+            if not destination.exists():
+                _copy_skill_file(
+                    source_dir / relative, destination, project_root=project_root
+                )
+    # Refresh installed hashes to the files just written / kept.
+    for skill_id, metadata in payload["skills"].items():
+        skill_root = (project_root / metadata["destination"]).parent
+        files = metadata.get("files")
+        if not isinstance(files, dict):
+            continue
+        for relative, file_meta in files.items():
+            if not isinstance(file_meta, dict):
+                continue
+            path = skill_root / relative
+            if path.is_file() and not path.is_symlink():
+                digest = _sha256(path)
+                file_meta["installed_sha256"] = digest
+                if relative == "SKILL.md":
+                    metadata["installed_sha256"] = digest
     _write_manifest(_manifest_path(project_root), payload, project_root=project_root)
     return ["Perfil activado.", *operations]
 

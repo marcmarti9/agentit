@@ -33,8 +33,8 @@ Agentit is an opinionated, safety-first meta-harness (v0.3.2) designed for devel
   - **Antigravity & Open Skills**: Native `~/.agents/skills` repository discovery. (Compatible via Open Skills)
   - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
 - **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
-- **📦 31 Curated Shared Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, anti-AI-slop writing & design, and marketing & growth.
-- **📉 Bounded Skill Discovery**: Only the 10-skill `core` profile is installed globally by default. Opt-in project profiles (`product`, `writing`, `design`, `supabase`, `frontend`, `backend`, `release`, `research`) remain on-demand to stay within Codex context budgets.
+- **📦 33 Curated Shared Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, design-taste landings, anti-AI-slop writing & design, and marketing & growth. Say **usa agentit** / **use agentit** to activate the harness playbook.
+- **📉 Bounded Skill Discovery**: Only the 11-skill `core` profile is installed globally by default. Opt-in project profiles (`product`, `writing`, `design`, `supabase`, `frontend`, `backend`, `release`, `research`) remain on-demand to stay within Codex context budgets.
 - **🛡️ Reversible & Safe Automation**: All scripts run in **dry-run plan mode by default** with strict `0700`/`0600` permissions, atomic `mkstemp` IO, symlink component rejection, and sidecar SHA-256 integrity validation.
 
 ---
@@ -63,11 +63,11 @@ Rather than forcing a rigid top-down pyramid (Architect → Orchestrator → Wor
 
 ---
 
-## 🧰 Shared Skills Catalog (31 Skills)
+## 🧰 Shared Skills Catalog (33 Skills)
 
 `profiles.yaml` defines the installation visibility policy:
 
-- `core`: 10 general skills installed globally by `install.sh`.
+- `core`: 11 general skills installed globally by `install.sh` (includes `using-agentit` bootstrap).
 - `frontend`, `backend`, `supabase`, `product`, `writing`, `design`, `release`, and `research`: opt-in project profiles.
 - `all`: explicit escape hatch for experiments.
 
@@ -84,6 +84,7 @@ skills/
 ├── context-engineering           # Context optimization & memory
 ├── debugging-and-error-recovery  # Root-cause debugging workflow
 ├── deprecation-and-migration     # Legacy sunsetting & migrations
+├── design-taste-frontend         # Landings/portfolios: dials, AI tells, pre-flight taste
 ├── documentation-and-adrs        # ADRs & technical specs
 ├── doubt-driven-development      # Adversarial review before commit
 ├── find-skills                   # Skill discovery helper
@@ -103,7 +104,8 @@ skills/
 ├── supabase-postgres-best-practices # Postgres query & schema rules
 ├── task-router                   # Heuristic task classifier
 ├── test-driven-development       # TDD & test-first implementation
-└── using-agent-skills            # Meta-skill for skill discovery
+├── using-agent-skills            # Meta-skill for lifecycle skill discovery
+└── using-agentit                 # Session bootstrap: "usa/use agentit" playbook
 ```
 
 ---

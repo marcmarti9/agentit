@@ -253,16 +253,19 @@ class RouterSafetyTests(unittest.TestCase):
         result = self.route("Audita el CRO y el copy de la landing.")
 
         self.assertEqual(result["category"], "marketing")
-        self.assertEqual(result["skills_available"], [])
+        self.assertEqual(result["skills_available"], ["design-taste-frontend"])
         self.assertEqual(result["skills_recommended_missing"], ["marketingskills"])
         self.assert_skill_compatibility(result)
 
-    def test_visual_redesign_reports_unavailable_hallmark_recommendation(self):
+    def test_visual_redesign_selects_design_taste_with_frontend_ui(self):
         result = self.route("Rediseña visualmente esta interfaz.")
 
         self.assertEqual(result["category"], "design")
-        self.assertEqual(result["skills_available"], ["frontend-ui-engineering"])
-        self.assertEqual(result["skills_recommended_missing"], ["hallmark"])
+        self.assertEqual(
+            result["skills_available"],
+            ["frontend-ui-engineering", "design-taste-frontend"],
+        )
+        self.assertEqual(result["skills_recommended_missing"], [])
         self.assert_skill_compatibility(result)
 
     def test_sqlite_does_not_select_postgres_specific_guidance(self):

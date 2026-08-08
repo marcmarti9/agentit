@@ -48,9 +48,9 @@ The JSON result is a proposal. The active provider, project instructions, explic
 ## Skill visibility profiles
 
 The repository keeps all skill bodies in `skills/`, but `install.sh` copies only
-the 10-skill `core` profile to provider-global directories. Use the plan-first
-helper to add an opt-in profile to a project without overwriting or removing
-unmanaged files:
+the 11-skill `core` profile (includes `using-agentit`) to provider-global
+directories. Use the plan-first helper to add an opt-in profile to a project
+without overwriting or removing unmanaged files:
 
 ```bash
 ./agentit enable supabase --project .

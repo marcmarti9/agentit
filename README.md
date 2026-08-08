@@ -12,36 +12,62 @@
 
 ---
 
-> 💡 **Core Philosophy**: Most multi-agent frameworks start by adding agents. **Agentit starts by asking if delegation is actually required.**
+> **Core philosophy:** Most multi-agent frameworks start by adding agents. **Agentit starts by asking if delegation is actually required.**
 
-Agentit is an opinionated, safety-first meta-harness (v0.3.2) designed for developers and AI engineers who want predictable, reproducible, and vendor-neutral agent orchestration across **Claude Code**, **OpenAI Codex**, **Google Antigravity / Open Skills**, and **Grok Build**.
-
----
-
-## 🌟 Highlights
-
-- **🎯 Single-Agent-First Architecture**: Avoids unnecessary agent hierarchies. Simple tasks execute directly; multi-agent topologies (Probe, Fan-Out, Pipeline, Writer-Reviewer, Audit) spawn strictly when context isolation, parallel execution, or independent verification is required.
-- **⚡ Native Context Engine Pipeline**:
-  - **Tool Output Filtering (`router/tool_filter.py`)**: Format-aware adapters (`pytest`, `unittest`, `jest`, `cargo`, `generic`) prune noisy build/test output while preserving 100% of stack traces and failure evidence.
-  - **Artifact References & CCR (`router/artifact_ref.py`)**: Archives text blocks (>150 lines or >10KB) into `.agentit/artifacts/` with sidecar SHA-256 metadata (`ref-<hash>.json`) and a secure `agentit://` URI resolver.
-  - **Session Deduplication (`router/dedup.py`)**: Persists SHA-256 context hashes across CLI executions in `.agentit/sessions/<id>/dedup.json` with strict `0600` permissions and symlink protection.
-- **🔬 Scout & Incubator Meta-Harness (`router/scout.py`)**: Ingests, evaluates, and classifies ecosystem ideas, repos, papers, and tweets (e.g. NanoNets Graft, Claude Company profiles) into a structured incubator (`incubator/candidates.yaml`) before promoting them to core architecture.
-- **🔌 MCP Runtime (`agentit mcp` + `agentit-manager`)**: Curated catalog plus **mid-session enable/disable** across Claude, Cursor, Codex, Grok, and Antigravity. Agents call `status` / `enable` / `disable` (CLI or MCP tools).
-- **🔌 Provider-Isolated Deployment**: Cleanly separates configurations across runtimes:
-  - **Claude Code**: Adaptive agents (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks, and skills. (Fully Supported)
-  - **OpenAI Codex**: Global `AGENTS.md`, isolated worker profiles (`terra_worker`, `luna_worker`), and shared skills. (Fully Supported)
-  - **Antigravity & Open Skills**: Native `~/.agents/skills` repository discovery. (Compatible via Open Skills)
-  - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
-- **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
-- **📦 33 Curated Shared Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, design-taste landings, anti-AI-slop writing & design, and marketing & growth. Say **usa agentit** / **use agentit** to activate the harness playbook.
-- **📉 Bounded Skill Discovery**: Only the 11-skill `core` profile is installed globally by default. Opt-in project profiles (`product`, `writing`, `design`, `supabase`, `frontend`, `backend`, `release`, `research`) remain on-demand to stay within Codex context budgets.
-- **🛡️ Reversible & Safe Automation**: All scripts run in **dry-run plan mode by default** with strict `0700`/`0600` permissions, atomic `mkstemp` IO, symlink component rejection, and sidecar SHA-256 integrity validation.
+Agentit is an opinionated, safety-first meta-harness (v0.3.2) for predictable, vendor-neutral work across **Claude Code**, **OpenAI Codex**, **Google Antigravity / Open Skills**, and **Grok Build**.
 
 ---
 
-## 🏗️ Adaptive Architecture
+## Session usage (one phrase)
 
-Rather than forcing a rigid top-down pyramid (Architect → Orchestrator → Worker), Agentit dynamically selects the minimal viable topology based on task independence, context budget, and risk:
+After install, tell the agent:
+
+```text
+usa agentit
+```
+
+or:
+
+```text
+use agentit
+```
+
+Or pair it with the task:
+
+```text
+usa agentit y haz una landing premium para X
+use agentit and implement the auth fix with tests
+```
+
+That loads the **`using-agentit`** skill and runs the playbook:
+
+1. **Route** — `python3 ~/code/agentit/router/route.py "task"`
+2. **JIT profiles** — `agentit enable <profile> --project . --apply` when skills are missing
+3. **Load only recommended skills** (progressive disclosure; references on demand)
+4. **Execute** single-agent-first; subagents only with a real topology + Worker Context Contract
+5. **Verify** — no done/fixed/passing without fresh command evidence
+
+Global policy: [`AGENTS.md`](AGENTS.md). Bootstrap skill: [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md).
+
+---
+
+## Highlights
+
+| Area | What you get |
+|------|----------------|
+| **Single-agent-first** | Direct work by default; Probe / Fan-Out / Pipeline / Writer-Reviewer / Audit only when isolation or risk justifies it |
+| **Router** | Risk, topology, skills, preferences, verification flags — plan only, never permission to destroy |
+| **Core + profiles** | 11-skill global `core`; opt-in project profiles (`frontend`, `design`, `backend`, `supabase`, …) |
+| **Design taste** | `design-taste-frontend` for landings/portfolios: dials, AI tells, pre-flight, **agent-fetchable inspiration sources** (no user screenshots required) |
+| **Worker contracts** | `agentit worker build` / `router/worker_context.py` projects project instructions + task skills into subagents |
+| **Context engines** | Tool-output filter, artifact refs (`agentit://`), session dedup |
+| **MCP runtime** | Mid-session enable/disable via `agentit mcp` and optional `agentit-manager` gateway |
+| **Scout / incubator** | Evaluate ecosystem ideas before promoting them |
+| **Safe install** | Plan-first scripts, backups, SHA-256 sidecars, symlink rejection |
+
+---
+
+## Adaptive architecture
 
 ```
                   ┌─────────────────────────────────────┐
@@ -63,18 +89,22 @@ Rather than forcing a rigid top-down pyramid (Architect → Orchestrator → Wor
 
 ---
 
-## 🧰 Shared Skills Catalog (33 Skills)
+## Shared skills (34)
 
-`profiles.yaml` defines the installation visibility policy:
+`profiles.yaml` controls discovery cost:
 
-- `core`: 11 general skills installed globally by `install.sh` (includes `using-agentit` bootstrap).
-- `frontend`, `backend`, `supabase`, `product`, `writing`, `design`, `release`, and `research`: opt-in project profiles.
-- `all`: explicit escape hatch for experiments.
+| Profile | Role |
+|---------|------|
+| **`core`** (11, global install) | `using-agentit`, `task-router`, `architect-orchestrator`, debugging, review, TDD, security, source-driven, frontend UI, planning, `using-agent-skills` |
+| **`frontend` / `design`** | Browser, performance, anti-slop design, **`design-taste-frontend`** |
+| **`backend` / `supabase`** | API, observability, Postgres/Supabase practices |
+| **`product` / `writing` / `release` / `research`** | Specs, marketing, launch, adversarial review |
+| **`all`** | Escape hatch only |
 
 ```
 skills/
-├── anti-ai-slop-design           # Brand-authentic visual identity & UI anti-slop rules
-├── anti-ai-slop-writing          # Purges 20+ AI writing buzzwords & empty filler
+├── anti-ai-slop-design           # Short brand-authentic anti-cliché checklist
+├── anti-ai-slop-writing          # Purges AI writing buzzwords & filler
 ├── api-and-interface-design      # API contracts & module boundaries
 ├── architect-orchestrator        # Adaptive multi-agent routing
 ├── browser-testing-with-devtools # Browser & DOM verification
@@ -84,7 +114,7 @@ skills/
 ├── context-engineering           # Context optimization & memory
 ├── debugging-and-error-recovery  # Root-cause debugging workflow
 ├── deprecation-and-migration     # Legacy sunsetting & migrations
-├── design-taste-frontend         # Landings/portfolios: dials, AI tells, pre-flight taste
+├── design-taste-frontend         # Landings/portfolios: dials, AI tells, agent refs
 ├── documentation-and-adrs        # ADRs & technical specs
 ├── doubt-driven-development      # Adversarial review before commit
 ├── find-skills                   # Skill discovery helper
@@ -104,15 +134,33 @@ skills/
 ├── supabase-postgres-best-practices # Postgres query & schema rules
 ├── task-router                   # Heuristic task classifier
 ├── test-driven-development       # TDD & test-first implementation
-├── using-agent-skills            # Meta-skill for lifecycle skill discovery
-└── using-agentit                 # Session bootstrap: "usa/use agentit" playbook
+├── using-agent-skills            # Lifecycle skill discovery map
+├── using-agentit                 # Session bootstrap: "usa/use agentit"
+└── verification-before-completion # Fresh evidence before done claims
+```
+
+### Design taste (landings without screenshots)
+
+`design-taste-frontend` (profiles **`design`** / **`frontend`**) is a slim Agentit adaptation of [taste-skill](https://github.com/Leonxlnx/taste-skill) ideas:
+
+- Design read + variance / motion / density dials  
+- Layout hard rules and production AI-tells  
+- **`references/inspiration-sources.md`**: galleries and docs that **agents can fetch as text** (Supahero, Minimal/mnmm, shadcn, 21st.dev, Fonts In Use, …) — no user screenshots required  
+- Progressive disclosure: short `SKILL.md`, deep refs only when needed  
+
+Enable on a project:
+
+```bash
+./agentit enable design --project . --apply
+# or
+./agentit enable frontend --project . --apply
 ```
 
 ---
 
-## 🔌 MCP Catalog & Runtime
+## MCP catalog & runtime
 
-Agents can **see and toggle** curated MCPs in-session (all major clients):
+Agents can list and toggle curated MCPs mid-session:
 
 ```bash
 agentit mcp install-gateway --apply   # once: agentit-manager meta MCP
@@ -122,67 +170,115 @@ agentit mcp enable-stack developer_core --apply
 agentit mcp disable playwright --apply
 ```
 
-Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter: **agentit-manager + Context7 + GitHub + Playwright**.
+Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter stack: **agentit-manager + Context7 + GitHub + Playwright**.
 
 ---
 
-## 🚀 Quick Start
+## Quick start
 
-### Installation
+### Install
 
 ```bash
-git clone https://github.com/marcmarti9/agentit.git ~/agentit
-cd ~/agentit
+git clone https://github.com/marcmarti9/agentit.git ~/code/agentit
+cd ~/code/agentit
 
-# 1. Preview installation plan (Dry-Run by default)
-bash install.sh
+# Dry-run plan (default)
+bash install.sh --provider all --with-guides
 
-# 2. Apply installation to all providers with global guides
-bash install.sh --apply --with-guides
+# Apply: core skills + AGENTS.md / CLAUDE.md / CODEX.md
+bash install.sh --provider all --with-guides --apply
+
+# Optional: CLI on PATH
+ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
 ```
 
-### CLI Commands
+Default skill install path for Open Skills / Grok: `~/.agents/skills/`.  
+Claude: `~/.claude/skills/`. Codex: `~/.codex/skills/`.
+
+### Route a task
 
 ```bash
-# Manage project skill profiles
-./agentit enable supabase --project . --apply
-./agentit status --project .
-./agentit disable supabase --project . --apply
+python3 ~/code/agentit/router/route.py "Rediseña la landing de un SaaS B2B"
+# → skills_available may include design-taste-frontend; topology usually direct
+```
 
-# Context engine commands
+### Project profiles & context
+
+```bash
+./agentit enable design --project . --apply
+./agentit status --project .
+./agentit disable design --project . --apply
+
 ./agentit context filter build.log
 ./agentit context archive migration.sql --description "DB Schema"
 ./agentit context dedup "context block" --session session-123
 
-# Artifact retrieval & verification
 ./agentit artifact get agentit://artifacts/ref-a1b2c3d4.txt
 ./agentit artifact read agentit://artifacts/ref-a1b2c3d4.txt --lines 1:50
 ./agentit artifact grep agentit://artifacts/ref-a1b2c3d4.txt "AssertionError"
+```
 
-# Scout & Incubator pipeline
+Profile enable copies **`SKILL.md` + `references/`** when present (safe managed files only).
+
+### Scout & incubator
+
+```bash
 ./agentit scout status
-./agentit scout add "https://github.com/NanoNets/Graft"
-./agentit scout inspect nanonets-graft
-./agentit scout reject caveman-lossy-prose --reason "Syntax truncation risk"
+./agentit scout add "https://github.com/example/repo"
+./agentit scout inspect <candidate-id>
 ```
 
 ---
 
-## 🧪 Testing & Verification
+## Providers
+
+| Provider | What install configures |
+|----------|-------------------------|
+| **Claude Code** | Adaptive agents + core skills + optional settings/hooks |
+| **Codex** | Core skills + portable workers (`terra_worker`, `luna_worker`) + guides |
+| **Antigravity / Open Skills / Grok** | Core skills under `~/.agents/skills` |
+
+See [`CODEX.md`](CODEX.md), [`CLAUDE.md`](CLAUDE.md), [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md).
+
+---
+
+## Testing
 
 ```bash
-# Run router unit tests (76 tests)
+# Router + profiles + MCP + worker context (~122 tests)
 python3 -m unittest discover -s router -p "test_*.py"
 
-# Run full harness and installer tests (17 tests)
+# Installer / harness scripts (~17 tests)
 python3 -m unittest discover -s tests
 
-# Run deterministic evaluation cases (10 cases)
+# Deterministic eval cases
 python3 evals/run.py
 ```
 
 ---
 
-## 📄 License
+## Safety defaults
+
+- Scripts are **plan-first**; write only with `--apply`
+- Install creates a backup under `~/backups/` (or `--backup-dir`)
+- RISK_3 / RISK_4: full fidelity + human review; router never lowers inferred risk
+- No commits, push, deploy, or remote mutations without an explicit user request (session policy in `AGENTS.md`)
+
+---
+
+## Docs map
+
+| Doc | Purpose |
+|-----|---------|
+| [`AGENTS.md`](AGENTS.md) | Global agent playbook (trigger phrases + compact harness) |
+| [`ABOUT.md`](ABOUT.md) | Product / philosophy deep dive |
+| [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog & runtime |
+| [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | Topologies & contracts |
+| [`incubator/candidates.yaml`](incubator/candidates.yaml) | Scout pipeline decisions |
+| [`skills/design-taste-frontend/references/inspiration-sources.md`](skills/design-taste-frontend/references/inspiration-sources.md) | Agent-fetchable design refs |
+
+---
+
+## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).

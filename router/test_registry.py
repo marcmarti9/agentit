@@ -46,16 +46,25 @@ class RegistryRouteTests(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def write_registry(self, entries):
-        # Marketing and design routes also recommend design-taste-frontend; keep fixtures complete.
+        # Marketing/design routes recommend companion skill ids; keep fixtures complete.
         normalized = list(entries)
-        if not any(entry.get("id") == "design-taste-frontend" for entry in normalized):
-            normalized.append(
-                self.entry(
-                    skill_id="design-taste-frontend",
-                    state="NOT_INSTALLED",
-                    paths=[],
+        known = {entry.get("id") for entry in normalized}
+        for skill_id in (
+            "design-taste-frontend",
+            "marketing-and-growth",
+            "verification-before-completion",
+            "test-driven-development",
+            "anti-ai-slop-writing",
+            "using-agentit",
+        ):
+            if skill_id not in known:
+                normalized.append(
+                    self.entry(
+                        skill_id=skill_id,
+                        state="NOT_INSTALLED",
+                        paths=[],
+                    )
                 )
-            )
         payload = {"schema_version": 1, "entries": normalized}
         self.registry_path.write_text(json.dumps(payload), encoding="utf-8")
 
@@ -99,15 +108,17 @@ class RegistryRouteTests(unittest.TestCase):
 
     def assert_available(self, result):
         self.assertEqual(result["skills_available"], ["marketingskills"])
-        self.assertEqual(result["skills_recommended_missing"], ["design-taste-frontend"])
+        missing = set(result["skills_recommended_missing"])
+        self.assertIn("design-taste-frontend", missing)
+        self.assertIn("marketing-and-growth", missing)
         self.assertEqual(result["skills"], result["skills_available"])
 
     def assert_missing(self, result):
         self.assertEqual(result["skills_available"], [])
-        self.assertEqual(
-            result["skills_recommended_missing"],
-            ["marketingskills", "design-taste-frontend"],
-        )
+        missing = set(result["skills_recommended_missing"])
+        self.assertIn("marketingskills", missing)
+        self.assertIn("design-taste-frontend", missing)
+        self.assertIn("marketing-and-growth", missing)
         self.assertEqual(result["skills"], result["skills_available"])
 
     def test_registry_error_is_public_exception_type(self):

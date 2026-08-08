@@ -32,17 +32,32 @@ If global `AGENTS.md` already marks Agentit as the default harness, still follow
 
 Prefer harness skill paths when provider copies are stale or missing.
 
+## Craft bar (why this harness exists)
+
+When Agentit is active, **raise the bar** vs a casual agent session:
+
+- Prefer the boring correct solution over vibes and half-finished UI/API surface.
+- Default to tests for behavior changes (`test-driven-development` when logic changes).
+- For landings/visual work, run design read + dials (`design-taste-frontend`) — not purple-template defaults.
+- Never claim done without fresh command evidence (`verification-before-completion`).
+- Touch only the requested scope; no drive-by refactors.
+- If something is ambiguous and expensive to reverse, stop and ask **one** sharp question.
+
+This is the practical meaning of “usa agentit”: more discipline, not more agents.
+
 ## Playbook (every non-trivial task)
 
-### 1. Route
+### 1. Route (+ optional local trace)
 
 ```bash
 python3 ~/code/agentit/router/route.py "short task description in the user language"
+# or persist a trail for yourself:
+agentit trace "short task description" --project <project_root>
 ```
 
 Read at least: `risk`, `topology`, `skills_available`, `skills_recommended_missing`, `applied_preferences`, `verification`, `jit_profile_recommendations`, `reasons`.
 
-The JSON is a **plan**, not permission to run destructive ops.
+The JSON is a **plan**, not permission to run destructive ops. Traces land in `.agentit/traces/` for debugging the harness on real work — not as public metrics theatre.
 
 ### 2. Activate missing profiles (JIT)
 
@@ -110,6 +125,8 @@ Plan-first without `--apply`. RISK_3/4 needs `--force` where required. Prefer `c
 - No **done / fixed / passing** claim without **fresh command evidence** from this turn after the last relevant edit (`verification-before-completion`).
 - Honor router `verification` flags (tests, dry-run, backup, independent review).
 - RISK_3/RISK_4: full fidelity, human review for critical ops; do not lower inferred risk.
+- If `verification-before-completion` is in `skills_available`, treat it as mandatory for the close-out message.
+- Close-out shape: what changed · commands run + exit status · residual risk / follow-ups.
 
 ## Session bootstrap reply (first turn after trigger)
 

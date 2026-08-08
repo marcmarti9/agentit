@@ -180,7 +180,10 @@ entries:
     category: testing
     provenance: local-addy-skill
     paths:
+      - "${REPO_ROOT}/skills/test-driven-development/SKILL.md"
       - "${HOME}/.agents/skills/test-driven-development/SKILL.md"
+      - "${HOME}/.claude/skills/test-driven-development/SKILL.md"
+      - "${HOME}/.codex/skills/test-driven-development/SKILL.md"
     trigger: "new logic, behavior change, bug fix, or regression test"
     avoid_when: "explanation or no testable behavior"
     context_cost: medium
@@ -623,6 +626,7 @@ entries:
     provenance: repo-curated
     paths:
       - "${REPO_ROOT}/skills/marketing-and-growth/SKILL.md"
+      - "${HOME}/.agents/skills/marketing-and-growth/SKILL.md"
     trigger: "marketing, CRO, SEO, copywriting, landing page, conversion, or analytics"
     avoid_when: "ordinary backend/frontend implementation without product marketing goals"
     context_cost: medium
@@ -635,7 +639,7 @@ entries:
     required_tools: []
     compression_applied: none
     reversibility: high
-    state: AVAILABLE_ON_DEMAND
+    state: ACTIVE_GLOBAL
     priority: on_demand
 
   - id: anti-ai-slop-writing

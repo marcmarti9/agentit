@@ -598,6 +598,8 @@ def _parser() -> argparse.ArgumentParser:
             "scout",
             "worker",
             "mcp",
+            "trace",
+            "route",
         ),
     )
     parser.add_argument("subcommand", nargs="?")
@@ -664,6 +666,39 @@ def main(argv: list[str] | None = None) -> int:
         project_root = args.project.absolute()
         if project_root.is_symlink():
             raise ProfileError(f"project root symlink rejected: {project_root}")
+
+        if args.command in {"trace", "route"}:
+            # Local routing trail for daily harness use (not a public benchmark).
+            prompt_parts = [
+                part
+                for part in (args.subcommand, args.target, args.extra_arg)
+                if part
+            ]
+            prompt = " ".join(prompt_parts).strip()
+            if not prompt:
+                parser.error(
+                    'trace/route requiere un prompt, p.ej. agentit trace "implement auth"'
+                )
+            try:
+                from router.route import RegistryError as RouteRegistryError
+                from router.trace import TraceError, format_trace_summary, write_trace
+            except ImportError:
+                from route import RegistryError as RouteRegistryError
+                from trace import TraceError, format_trace_summary, write_trace
+            try:
+                payload = write_trace(
+                    prompt,
+                    project_root=project_root,
+                    registry_path=repo_root / "registry.yaml",
+                    home=Path.home(),
+                )
+            except (TraceError, RouteRegistryError) as exc:
+                raise ProfileError(str(exc)) from exc
+            if args.format == "json":
+                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+            else:
+                print(format_trace_summary(payload))
+            return 0
 
         if args.command == "artifact":
             sub = args.subcommand

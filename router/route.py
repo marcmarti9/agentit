@@ -30,6 +30,8 @@ SKILL_PROFILE_MAP = {
     "anti-ai-slop-design": "design",
     "design-taste-frontend": "design",
     "using-agentit": "core",
+    "test-driven-development": "core",
+    "verification-before-completion": "core",
     "api-and-interface-design": "backend",
     "observability-and-instrumentation": "backend",
     "marketing-and-growth": "product",
@@ -403,13 +405,22 @@ def _infer_risk(text: str) -> tuple[str, list[str]]:
 def _category(text: str, risk: str) -> str:
     if risk == "RISK_0" and _explanatory_requested(text):
         return "explanation"
+    # Order matters: testing/marketing/design beat generic database keyword collisions
+    # (e.g. "TDD for the backup service" is testing, not a restore operation).
     patterns = (
         ("marketing", r"marketing|cro|seo|copy|landing|conversion|analytics|analítica|growth"),
         ("design", r"design|diseño|visual|screenshot|captura|ui estética|redesign"),
-        ("database", r"database|base de datos|sql|schema|esquema|migration|migración|backup|restore"),
-        ("security", r"auth|login|security|seguridad|secret|credential|permission|autorización"),
+        ("testing", r"\btdd\b|test-driven|tests?\s+first|red-green|coverage|cobertura|\btests?\b|\bpruebas?\b|eval|benchmark"),
         ("bug", r"bug|fix|error|falla|fallo|debug|depura"),
-        ("testing", r"test|prueba|coverage|cobertura|eval|benchmark"),
+        ("security", r"auth|login|security|seguridad|secret|credential|permission|autorización"),
+        (
+            "database",
+            r"database|base de datos|\bsql\b|schema|esquema|migration|migración|"
+            r"\btablas?\b|\btables?\b|"
+            r"\b(restore|restaura|restaurar|restoring)\b.{0,40}\b(backup|copia|backups?)|"
+            r"\b(backup|backups?|copia de seguridad)\b.{0,40}\b(restore|restaura|restaurar|delete|elimina|eliminar|drop)|"
+            r"\b(postgres|postgresql|psql|supabase|sqlite)\b",
+        ),
         ("frontend", r"frontend|ui|css|react|component|web|browser"),
         ("documentation", r"document|readme|docs|texto|copy|writing|escritura"),
         ("explanation", r"explain|explica|qué es|what is|how to|cómo|question|pregunta"),
@@ -457,25 +468,56 @@ def _recommended_skill_ids(text: str, category: str, risk: str) -> list[str]:
     if risk in {"RISK_3", "RISK_4"}:
         selected.extend(["security-hardening", "architect-orchestrator"])
     if category == "marketing":
-        selected.extend(["marketingskills", "design-taste-frontend"])
-        return list(dict.fromkeys(selected))
-    if category == "design":
+        # Curated in-repo skill first; external marketingskills remains optional.
+        selected.extend(
+            ["marketing-and-growth", "design-taste-frontend", "marketingskills"]
+        )
+    elif category == "design":
         selected.extend(["frontend-ui-engineering", "design-taste-frontend"])
-        return list(dict.fromkeys(selected))
-    if category == "documentation" and _matches(text, (r"public|público|copy|writing|texto",)):
+    elif category == "documentation" and _matches(
+        text, (r"public|público|copy|writing|texto",)
+    ):
         selected.append("no-ai-slop")
-        return list(dict.fromkeys(selected))
+        selected.append("anti-ai-slop-writing")
+    else:
+        if category == "bug":
+            selected.append("debugging-and-error-recovery")
+        if category == "testing":
+            selected.append("test-driven-development")
+        if category == "database":
+            selected.append("supabase-postgres-best-practices")
+        if category == "frontend":
+            selected.append("frontend-ui-engineering")
 
-    if category == "bug":
-        selected.append("debugging-and-error-recovery")
-    if category == "testing":
+    # Cross-cutting signals (stack; do not early-return away from these).
+    if _matches(
+        text,
+        (
+            r"\btdd\b",
+            r"test-driven",
+            r"tests?\s+first",
+            r"red-green",
+            r"pruebas?\s+primero",
+            r"\b(unittest|pytest|jest|vitest)\b",
+        ),
+    ):
         selected.append("test-driven-development")
-    if category == "database":
-        selected.append("supabase-postgres-best-practices")
-    if category == "frontend":
-        selected.append("frontend-ui-engineering")
+    if _matches(text, (r"landing|portfolio|hero section|rediseño visual|visual redesign",)):
+        selected.append("design-taste-frontend")
     if _matches(text, (r"context|contexto|token|compresión|compression|memory|memoria",)):
         selected.append("context-engineering")
+    if (
+        risk != "RISK_0"
+        and not _explanatory_requested(text)
+        and (
+            _implementation_requested(text)
+            or category in {"bug", "testing", "frontend", "database", "security", "marketing", "design"}
+            or _matches(text, (r"\b(implement|arregla|fix|añade|agrega|refactor|ship|deploy)\b",))
+        )
+    ):
+        selected.append("verification-before-completion")
+    if _matches(text, (r"\busa agentit\b|\buse agentit\b|\bagentit mode\b|\bmodo agentit\b",)):
+        selected.append("using-agentit")
     return list(dict.fromkeys(selected))
 
 
@@ -598,9 +640,13 @@ def _resolve_skill_recommendations(
 
 def _topology(text: str, risk: str) -> str:
     """Choose a minimal execution shape; risk alone never creates agents."""
+    # Avoid bare "trace" — matches product names like `agentit trace`.
     if _matches(
         text,
-        (r"probe|investiga|reproduce|localiza|trace|root cause|causa raíz",),
+        (
+            r"\b(probe|investiga|reproduce|localiza|root cause|causa raíz)\b",
+            r"\b(trace the|trace this|trazar|rastrear|diagnos[ea])\b",
+        ),
     ):
         return "probe"
     if _delegation_requested(text):

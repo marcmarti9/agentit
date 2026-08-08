@@ -253,18 +253,20 @@ class RouterSafetyTests(unittest.TestCase):
         result = self.route("Audita el CRO y el copy de la landing.")
 
         self.assertEqual(result["category"], "marketing")
-        self.assertEqual(result["skills_available"], ["design-taste-frontend"])
-        self.assertEqual(result["skills_recommended_missing"], ["marketingskills"])
+        available = result["skills_available"]
+        self.assertIn("design-taste-frontend", available)
+        self.assertIn("marketing-and-growth", available)
+        self.assertIn("marketingskills", result["skills_recommended_missing"])
         self.assert_skill_compatibility(result)
 
     def test_visual_redesign_selects_design_taste_with_frontend_ui(self):
         result = self.route("Rediseña visualmente esta interfaz.")
 
         self.assertEqual(result["category"], "design")
-        self.assertEqual(
-            result["skills_available"],
-            ["frontend-ui-engineering", "design-taste-frontend"],
-        )
+        available = result["skills_available"]
+        self.assertIn("frontend-ui-engineering", available)
+        self.assertIn("design-taste-frontend", available)
+        self.assertIn("verification-before-completion", available)
         self.assertEqual(result["skills_recommended_missing"], [])
         self.assert_skill_compatibility(result)
 
@@ -292,9 +294,10 @@ class RouterSafetyTests(unittest.TestCase):
         result = self.route("Optimiza esta consulta PostgreSQL en Supabase.")
 
         self.assertEqual(result["category"], "database")
-        self.assertEqual(
-            result["skills_available"], ["supabase-postgres-best-practices"]
+        self.assertIn(
+            "supabase-postgres-best-practices", result["skills_available"]
         )
+        self.assertIn("verification-before-completion", result["skills_available"])
         self.assertEqual(result["skills_recommended_missing"], [])
         self.assert_skill_compatibility(result)
 
@@ -321,6 +324,38 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertEqual(result["topology"], "probe")
         self.assertEqual(result["subagents"]["max"], 3)
         self.assertTrue(result["subagents"]["requires_justification"])
+
+    def test_tdd_for_backup_service_is_testing_not_database_ops(self):
+        result = self.route(
+            "Implementa tests TDD para el servicio de backups de Digitem"
+        )
+
+        self.assertEqual(result["category"], "testing")
+        self.assertIn("test-driven-development", result["skills_available"])
+        self.assertNotIn(
+            "supabase-postgres-best-practices",
+            set(result["skills_available"]) | set(result["skills_recommended_missing"]),
+        )
+        self.assert_skill_compatibility(result)
+
+    def test_implement_feature_recommends_verification_skill(self):
+        result = self.route("Implementa una feature de perfiles con tests")
+
+        self.assertEqual(result["topology"], "direct")
+        available = set(result["skills_available"]) | set(
+            result["skills_recommended_missing"]
+        )
+        self.assertIn("test-driven-development", available)
+        self.assertIn("verification-before-completion", available)
+        self.assert_skill_compatibility(result)
+
+    def test_agentit_trace_feature_work_is_not_probe_topology(self):
+        result = self.route(
+            "Añade el comando agentit trace y tests para el router"
+        )
+
+        self.assertEqual(result["topology"], "direct")
+        self.assertNotEqual(result["topology"], "probe")
 
 
 if __name__ == "__main__":

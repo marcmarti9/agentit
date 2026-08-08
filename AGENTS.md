@@ -20,13 +20,15 @@ En esta máquina Agentit es el meta-harness canónico (Claude Code, Codex, Grok 
 
 | Paso | Acción |
 |------|--------|
-| 1. Route | `python3 ~/code/agentit/router/route.py "tarea"` → lee `risk`, `topology`, `skills_available`, `skills_recommended_missing`, `applied_preferences`, `verification`, `jit_profile_recommendations` |
-| 2. Profiles JIT | `agentit enable <profile> --project <ruta> --apply` si faltan skills de un perfil (`frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release`, `research`) |
+| 1. Route | `python3 ~/code/agentit/router/route.py "tarea"` o `agentit trace "tarea" --project .` (persiste en `.agentit/traces/`) |
+| 2. Profiles JIT | `agentit enable <profile> --project <ruta> --apply` si faltan skills (`frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release`, `research`) |
 | 3. Skills | Carga solo los `SKILL.md` recomendados (preferir `~/code/agentit/skills/<id>/`). References solo bajo demanda |
 | 4. Ejecuta | Single-agent-first (`direct`). Subagentes solo si la topología lo justifica + Worker Context Contract |
 | 5. Contexto | `agentit context filter|archive|dedup` y `agentit artifact …` si hay ruido o salidas grandes |
 | 6. MCP | `agentit mcp status|enable|disable` (plan-first; `--apply` para escribir) |
-| 7. Cierre | Sin done/fixed/passing sin **evidencia fresca de comando** en este turno |
+| 7. Cierre | Sin done/fixed/passing sin **evidencia fresca de comando**; barra alta de calidad (tests, design taste, sin chapuzas) |
+
+Barra de craft con Agentit activo: solución aburrida y correcta > vibes; TDD en cambios de comportamiento; landings con design read; alcance solo lo pedido.
 
 CLI: `agentit` → `~/.local/bin/agentit`. Raíz: `~/code/agentit`.
 

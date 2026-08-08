@@ -195,11 +195,15 @@ ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
 Default skill install path for Open Skills / Grok: `~/.agents/skills/`.  
 Claude: `~/.claude/skills/`. Codex: `~/.codex/skills/`.
 
-### Route a task
+### Route / trace a task
 
 ```bash
 python3 ~/code/agentit/router/route.py "Rediseña la landing de un SaaS B2B"
 # → skills_available may include design-taste-frontend; topology usually direct
+
+# Persist a local trail under .agentit/traces/ (for you, not a public benchmark)
+./agentit trace "Implementa tests TDD para el servicio de backups" --project .
+./agentit trace "…" --project . --format json
 ```
 
 ### Project profiles & context

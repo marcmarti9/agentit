@@ -21,6 +21,14 @@ Write a failing test before writing the code that makes it pass. For bug fixes, 
 
 **Related:** For browser-based changes, combine TDD with runtime verification using Chrome DevTools MCP — see the Browser Testing section below.
 
+## Iron Law
+
+```
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+```
+
+If you did not watch the test fail, you do not know it tests the right thing. "I'll add tests after" is a process failure, not a schedule optimization.
+
 ## The TDD Cycle
 
 ```
@@ -34,8 +42,7 @@ Write a failing test before writing the code that makes it pass. For bug fixes, 
 
 ### Step 1: RED — Write a Failing Test
 
-Write the test first. It must fail. A test that passes immediately proves nothing.
-
+Write the test first. It must fail. A test that passes immediately proves nothing. **Run it and observe the red** before writing implementation.
 ```typescript
 // RED: This test fails because createTask doesn't exist yet
 describe('TaskService', () => {

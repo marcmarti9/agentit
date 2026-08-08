@@ -29,14 +29,20 @@ No delegues para separar artificialmente análisis, código y tests del mismo ca
 
 # Contrato de Worker
 
-Cuando delegues, pasa exclusivamente:
+Cuando delegues, **genera primero** el Worker Context Contract
+(`agentit worker build` / `router/worker_context.py`) y pásalo al Worker.
+Sin proyección de `AGENTS.md`/instrucciones locales y skills activas de la
+tarea, no spawnees.
 
-- tarea exacta y criterio de terminado;
+El contrato incluye:
+
+- tarea exacta, alcance y criterio de terminado;
+- instrucciones de proyecto proyectadas;
+- skills de la tarea (no el catálogo global);
+- preferencias aplicables y constraints de riesgo;
 - archivos de entrada y escritura permitidos;
-- invariantes relevantes;
-- salida esperada;
-- comando de verificación;
-- stop condition y qué debe reportar como bloqueo.
+- artefactos referenciados;
+- salida esperada, verificación y stop condition.
 
 Autoriza como máximo una generación de Workers. No les pases la conversación completa ni memoria de dominio no relacionada.
 

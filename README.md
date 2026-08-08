@@ -26,14 +26,15 @@ Agentit is an opinionated, safety-first meta-harness (v0.3.2) designed for devel
   - **Artifact References & CCR (`router/artifact_ref.py`)**: Archives text blocks (>150 lines or >10KB) into `.agentit/artifacts/` with sidecar SHA-256 metadata (`ref-<hash>.json`) and a secure `agentit://` URI resolver.
   - **Session Deduplication (`router/dedup.py`)**: Persists SHA-256 context hashes across CLI executions in `.agentit/sessions/<id>/dedup.json` with strict `0600` permissions and symlink protection.
 - **🔬 Scout & Incubator Meta-Harness (`router/scout.py`)**: Ingests, evaluates, and classifies ecosystem ideas, repos, papers, and tweets (e.g. NanoNets Graft, Claude Company profiles) into a structured incubator (`incubator/candidates.yaml`) before promoting them to core architecture.
+- **🔌 MCP Runtime (`agentit mcp` + `agentit-manager`)**: Curated catalog plus **mid-session enable/disable** across Claude, Cursor, Codex, Grok, and Antigravity. Agents call `status` / `enable` / `disable` (CLI or MCP tools).
 - **🔌 Provider-Isolated Deployment**: Cleanly separates configurations across runtimes:
   - **Claude Code**: Adaptive agents (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`), hooks, and skills. (Fully Supported)
   - **OpenAI Codex**: Global `AGENTS.md`, isolated worker profiles (`terra_worker`, `luna_worker`), and shared skills. (Fully Supported)
   - **Antigravity & Open Skills**: Native `~/.agents/skills` repository discovery. (Compatible via Open Skills)
   - **Grok Build & Others**: Standardized Open Skills discovery. (Compatible via Open Skills)
 - **🧠 Heuristic Task Router**: Evaluates tasks by risk level, complexity, required context, database signals, and skill dependencies without loading heavy skill bodies or executing commands.
-- **📦 31 Curated Shared Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, anti-AI-slop writing & design, and marketing & growth.
-- **📉 Bounded Skill Discovery**: Only the 10-skill `core` profile is installed globally by default. Opt-in project profiles (`product`, `writing`, `design`, `supabase`, `frontend`, `backend`, `release`, `research`) remain on-demand to stay within Codex context budgets.
+- **📦 33 Curated Shared Skills**: Out-of-the-box skills covering TDD, systematic debugging, security hardening, API design, frontend UI engineering, design-taste landings, anti-AI-slop writing & design, and marketing & growth. Say **usa agentit** / **use agentit** to activate the harness playbook.
+- **📉 Bounded Skill Discovery**: Only the 11-skill `core` profile is installed globally by default. Opt-in project profiles (`product`, `writing`, `design`, `supabase`, `frontend`, `backend`, `release`, `research`) remain on-demand to stay within Codex context budgets.
 - **🛡️ Reversible & Safe Automation**: All scripts run in **dry-run plan mode by default** with strict `0700`/`0600` permissions, atomic `mkstemp` IO, symlink component rejection, and sidecar SHA-256 integrity validation.
 
 ---
@@ -62,11 +63,11 @@ Rather than forcing a rigid top-down pyramid (Architect → Orchestrator → Wor
 
 ---
 
-## 🧰 Shared Skills Catalog (31 Skills)
+## 🧰 Shared Skills Catalog (33 Skills)
 
 `profiles.yaml` defines the installation visibility policy:
 
-- `core`: 10 general skills installed globally by `install.sh`.
+- `core`: 11 general skills installed globally by `install.sh` (includes `using-agentit` bootstrap).
 - `frontend`, `backend`, `supabase`, `product`, `writing`, `design`, `release`, and `research`: opt-in project profiles.
 - `all`: explicit escape hatch for experiments.
 
@@ -83,6 +84,7 @@ skills/
 ├── context-engineering           # Context optimization & memory
 ├── debugging-and-error-recovery  # Root-cause debugging workflow
 ├── deprecation-and-migration     # Legacy sunsetting & migrations
+├── design-taste-frontend         # Landings/portfolios: dials, AI tells, pre-flight taste
 ├── documentation-and-adrs        # ADRs & technical specs
 ├── doubt-driven-development      # Adversarial review before commit
 ├── find-skills                   # Skill discovery helper
@@ -102,8 +104,25 @@ skills/
 ├── supabase-postgres-best-practices # Postgres query & schema rules
 ├── task-router                   # Heuristic task classifier
 ├── test-driven-development       # TDD & test-first implementation
-└── using-agent-skills            # Meta-skill for skill discovery
+├── using-agent-skills            # Meta-skill for lifecycle skill discovery
+└── using-agentit                 # Session bootstrap: "usa/use agentit" playbook
 ```
+
+---
+
+## 🔌 MCP Catalog & Runtime
+
+Agents can **see and toggle** curated MCPs in-session (all major clients):
+
+```bash
+agentit mcp install-gateway --apply   # once: agentit-manager meta MCP
+agentit mcp status
+agentit mcp enable context7 --apply
+agentit mcp enable-stack developer_core --apply
+agentit mcp disable playwright --apply
+```
+
+Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter: **agentit-manager + Context7 + GitHub + Playwright**.
 
 ---
 

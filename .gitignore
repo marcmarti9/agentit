@@ -13,3 +13,8 @@ __pycache__/
 reports/local/
 backups/local/
 .agentit/
+
+# Machine-local MCP runtime artifacts
+.mcp.json
+*.agentit-bak-*
+..mcp.json.agentit-bak-*

@@ -6,6 +6,7 @@ profiles:
   core:
     description: "Small global discovery set for common engineering work."
     skills:
+      - using-agentit
       - task-router
       - architect-orchestrator
       - debugging-and-error-recovery
@@ -25,6 +26,7 @@ profiles:
       - performance-optimization
       - code-simplification
       - anti-ai-slop-design
+      - design-taste-frontend
   backend:
     description: "Core plus API boundaries, observability, and service maintenance."
     extends:
@@ -50,6 +52,7 @@ profiles:
       - documentation-and-adrs
       - spec-driven-development
       - marketing-and-growth
+      - verification-before-completion
   writing:
     description: "Technical writing, documentation, and anti-AI-slop editing."
     extends:
@@ -58,11 +61,12 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Frontend engineering plus anti-AI-slop visual design system."
+    description: "Frontend engineering plus anti-slop visual design and landing/portfolio taste."
     extends:
       - frontend
     skills:
       - anti-ai-slop-design
+      - design-taste-frontend
   release:
     description: "Core plus CI, migration, launch, and operational readiness."
     extends:
@@ -72,6 +76,7 @@ profiles:
       - deprecation-and-migration
       - shipping-and-launch
       - documentation-and-adrs
+      - verification-before-completion
   research:
     description: "Core plus context, specifications, and adversarial review."
     extends:
@@ -80,6 +85,7 @@ profiles:
       - context-engineering
       - doubt-driven-development
       - spec-driven-development
+      - verification-before-completion
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:
@@ -94,6 +100,7 @@ profiles:
       - context-engineering
       - debugging-and-error-recovery
       - deprecation-and-migration
+      - design-taste-frontend
       - documentation-and-adrs
       - doubt-driven-development
       - find-skills
@@ -114,3 +121,5 @@ profiles:
       - task-router
       - test-driven-development
       - using-agent-skills
+      - using-agentit
+      - verification-before-completion

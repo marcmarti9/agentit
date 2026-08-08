@@ -39,3 +39,39 @@ candidates:
   type: evaluated_idea
   status: incubating
   decision: pending_evaluation
+- id: mcp-community-core-2026
+  source: https://www.reddit.com/r/mcp/
+  claim: Consensus coding MCP stack Context7 + GitHub + Playwright (+ Figma/Supabase situational)
+  type: mcp_catalog
+  status: validated
+  integration_mode: optional_external
+  benefits:
+  - Live docs reduce hallucinated APIs
+  - Repo/PR context without copy-paste
+  - Browser verification for UI work
+  costs:
+  - Token/tool surface growth per server
+  - Secrets and OAuth management per client
+  risks:
+  - Write-capable MCP against production data or repos
+  - Supply-chain risk of unpinned npx packages
+  decision: integrate_as_catalog
+  evidence: Curated into mcp/catalog.yaml; CLI agentit mcp; docs/MCP_CATALOG.md; no auto-activate
+- id: taste-skill-design-frontend
+  source: https://github.com/Leonxlnx/taste-skill
+  claim: Dense anti-slop frontend skill for landings, portfolios, redesigns (dials, AI tells, pre-flight)
+  type: skill
+  status: validated
+  integration_mode: on_demand_profiles
+  benefits:
+  - Brief inference + variance/motion/density dials before code
+  - Production-tested AI visual tells beyond short anti-slop checklists
+  - Progressive disclosure fit for Agentit token budgets
+  costs:
+  - Upstream SKILL.md is huge if imported raw (~80k+ chars)
+  - Opinionated stack/motion defaults need local adaptation
+  risks:
+  - Over-application to dashboards or product chrome
+  - Context noise if promoted to core profile
+  decision: integrate_as_curated_skill
+  evidence: Slim skill skills/design-taste-frontend with references/; design+frontend profiles; router recommends for design/marketing; hallmark placeholder archived

@@ -28,6 +28,8 @@ SKILL_PROFILE_MAP = {
     "supabase-postgres-best-practices": "supabase",
     "browser-testing-with-devtools": "frontend",
     "anti-ai-slop-design": "design",
+    "design-taste-frontend": "design",
+    "using-agentit": "core",
     "api-and-interface-design": "backend",
     "observability-and-instrumentation": "backend",
     "marketing-and-growth": "product",
@@ -455,10 +457,10 @@ def _recommended_skill_ids(text: str, category: str, risk: str) -> list[str]:
     if risk in {"RISK_3", "RISK_4"}:
         selected.extend(["security-hardening", "architect-orchestrator"])
     if category == "marketing":
-        selected.append("marketingskills")
+        selected.extend(["marketingskills", "design-taste-frontend"])
         return list(dict.fromkeys(selected))
     if category == "design":
-        selected.extend(["frontend-ui-engineering", "hallmark"])
+        selected.extend(["frontend-ui-engineering", "design-taste-frontend"])
         return list(dict.fromkeys(selected))
     if category == "documentation" and _matches(text, (r"public|público|copy|writing|texto",)):
         selected.append("no-ai-slop")

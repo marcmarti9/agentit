@@ -27,13 +27,41 @@ Every framework-specific code decision must be backed by official documentation.
 ## The Process
 
 ```
-DETECT ──→ FETCH ──→ IMPLEMENT ──→ CITE
-  │          │           │            │
-  ▼          ▼           ▼            ▼
- What       Get the    Follow the   Show your
- stack?     relevant   documented   sources
-            docs       patterns
+NEED ──→ SEARCH ──→ DECIDE ──→ DETECT ──→ FETCH ──→ IMPLEMENT ──→ CITE
+  │         │          │          │          │           │            │
+  ▼         ▼          ▼          ▼          ▼           ▼            ▼
+ What     Packages   Adopt /    Stack &    Official   Follow      Show
+ is        skills     extend /   versions  docs       documented  sources
+ needed?   APIs       build
 ```
+
+### Step 0: Search-First Gate (before writing greenfield helpers)
+
+When the ask is "add X functionality", a new utility, integration, or dependency — **search before you code**.
+
+1. **Need analysis** — name the capability and language/framework constraints.
+2. **Parallel search** — package registries (npm/PyPI/crates…), existing project modules, installed/agent skills, official docs, GitHub.
+3. **Evaluate** — maintenance, license, API fit, dependency cost, docs quality.
+4. **Decide** with an explicit matrix:
+
+| Signal | Action |
+|--------|--------|
+| Exact match, maintained, acceptable license | **Adopt** — install/use as-is |
+| Partial match, solid base | **Extend** — thin wrapper around existing tool |
+| Weak scattered matches | **Compose** — small existing pieces |
+| Nothing suitable after search | **Build** — minimal custom code, document why |
+
+State the decision before implementation:
+
+```
+SEARCH-FIRST:
+- need: retry with backoff for HTTP client
+- candidates: tenacity (PyPI), existing utils/retry.py
+- decision: ADOPT tenacity — maintained, used in sibling service
+- sources: https://...
+```
+
+Skipping Step 0 to "just write a helper" is a failure mode unless the user forbade search or the change is a one-line local pure function.
 
 ### Step 1: Detect Stack and Versions
 
@@ -171,6 +199,7 @@ Honesty about what you couldn't verify is more valuable than false confidence.
 
 ## Red Flags
 
+- Reinventing a utility without a search-first decision (adopt/extend/build)
 - Writing framework-specific code without checking the docs for that version
 - Using "I believe" or "I think" about an API instead of citing the source
 - Implementing a pattern without knowing which version it applies to
@@ -184,6 +213,7 @@ Honesty about what you couldn't verify is more valuable than false confidence.
 
 After implementing with source-driven development:
 
+- [ ] Search-first decision recorded when adding capabilities (adopt/extend/compose/build)
 - [ ] Framework and library versions were identified from the dependency file
 - [ ] Official documentation was fetched for framework-specific patterns
 - [ ] All sources are official documentation, not blog posts or training data

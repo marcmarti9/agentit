@@ -46,7 +46,17 @@ class RegistryRouteTests(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def write_registry(self, entries):
-        payload = {"schema_version": 1, "entries": entries}
+        # Marketing and design routes also recommend design-taste-frontend; keep fixtures complete.
+        normalized = list(entries)
+        if not any(entry.get("id") == "design-taste-frontend" for entry in normalized):
+            normalized.append(
+                self.entry(
+                    skill_id="design-taste-frontend",
+                    state="NOT_INSTALLED",
+                    paths=[],
+                )
+            )
+        payload = {"schema_version": 1, "entries": normalized}
         self.registry_path.write_text(json.dumps(payload), encoding="utf-8")
 
     def install_skill(self, relative="skill"):
@@ -89,12 +99,15 @@ class RegistryRouteTests(unittest.TestCase):
 
     def assert_available(self, result):
         self.assertEqual(result["skills_available"], ["marketingskills"])
-        self.assertEqual(result["skills_recommended_missing"], [])
+        self.assertEqual(result["skills_recommended_missing"], ["design-taste-frontend"])
         self.assertEqual(result["skills"], result["skills_available"])
 
     def assert_missing(self, result):
         self.assertEqual(result["skills_available"], [])
-        self.assertEqual(result["skills_recommended_missing"], ["marketingskills"])
+        self.assertEqual(
+            result["skills_recommended_missing"],
+            ["marketingskills", "design-taste-frontend"],
+        )
         self.assertEqual(result["skills"], result["skills_available"])
 
     def test_registry_error_is_public_exception_type(self):
@@ -239,20 +252,20 @@ class RegistryRouteTests(unittest.TestCase):
             self.route_marketing()
 
     def test_registry_conflict_suppresses_lower_priority_available_skill(self):
-        for relative in ("frontend", "hallmark"):
+        for relative in ("frontend", "taste"):
             self.install_skill(relative)
         frontend = self.entry(
             skill_id="frontend-ui-engineering",
             paths=["${HOME}/frontend"],
         )
         frontend["priority"] = "on_demand"
-        hallmark = self.entry(
-            skill_id="hallmark",
-            paths=["${HOME}/hallmark"],
+        taste = self.entry(
+            skill_id="design-taste-frontend",
+            paths=["${HOME}/taste"],
         )
-        hallmark["priority"] = "specialized"
-        hallmark["conflicts_with"] = ["frontend-ui-engineering"]
-        self.write_registry([frontend, hallmark])
+        taste["priority"] = "specialized"
+        taste["conflicts_with"] = ["frontend-ui-engineering"]
+        self.write_registry([frontend, taste])
 
         result = route_task(
             "Rediseña visualmente esta interfaz.",
@@ -261,17 +274,19 @@ class RegistryRouteTests(unittest.TestCase):
         )
 
         self.assertEqual(result["skills_available"], ["frontend-ui-engineering"])
-        self.assertEqual(result["skills_suppressed_conflicts"], ["hallmark"])
+        self.assertEqual(
+            result["skills_suppressed_conflicts"], ["design-taste-frontend"]
+        )
 
         frontend["priority"] = "specialized"
-        hallmark["priority"] = "core"
-        self.write_registry([frontend, hallmark])
+        taste["priority"] = "core"
+        self.write_registry([frontend, taste])
         inverse = route_task(
             "Rediseña visualmente esta interfaz.",
             registry_path=self.registry_path,
             home=self.home,
         )
-        self.assertEqual(inverse["skills_available"], ["hallmark"])
+        self.assertEqual(inverse["skills_available"], ["design-taste-frontend"])
         self.assertEqual(
             inverse["skills_suppressed_conflicts"], ["frontend-ui-engineering"]
         )

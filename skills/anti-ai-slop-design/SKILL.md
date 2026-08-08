@@ -31,3 +31,7 @@ Reject cookie-cutter AI aesthetic tropes. Design UIs that reflect the specific b
 - [ ] **Color Contrast**: Is WCAG AA contrast satisfied across light and dark modes?
 - [ ] **Visual Hierarchy**: Is the primary call-to-action distinct from secondary controls?
 - [ ] **Micro-Interactions**: Do interactive elements provide instant tactile feedback?
+
+## See Also
+
+For landings, portfolios, redesign audits, motion dials, and full pre-flight taste discipline, use `design-taste-frontend` instead of stretching this short checklist.

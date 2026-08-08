@@ -296,6 +296,8 @@ function useToggleTask() {
 
 For detailed accessibility requirements and testing tools, see `references/accessibility-checklist.md`.
 
+For marketing landings, portfolios, and visual redesigns (design read, dials, AI tells, pre-flight), use `design-taste-frontend`.
+
 ## Common Rationalizations
 
 | Rationalization | Reality |

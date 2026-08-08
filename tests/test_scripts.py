@@ -144,6 +144,7 @@ class ScriptRegressionTests(unittest.TestCase):
             }
             self.assertEqual(
                 {
+                    "using-agentit",
                     "task-router",
                     "architect-orchestrator",
                     "debugging-and-error-recovery",

@@ -116,17 +116,48 @@ Edges in the graph represent verified artifact dependencies or completion signal
 
 ## Delegation Contract
 
-When delegating work to a subagent, the prompt payload must contain **only**:
+Every delegated spawn **must** pass through the Worker Context Contract runtime
+(`router/worker_context.py` / `agentit worker build|render`). Fresh context
+without projecting project instructions is **fresh negligence** (see GSD #671
+class failures).
 
-1. Objective and explicit completion criteria.
-2. Targeted inputs and file paths.
-3. Strict read/write boundaries.
-4. Key architectural invariants.
-5. Expected output artifact format or schema.
-6. Verification command or test recipe.
-7. Stop condition and escalation triggers.
+### Required projection (auditable)
 
-*Subagents do NOT receive full conversation history or unrelated documentation.* Large logs or outputs are persisted to disk and passed via file references.
+Before spawning a worker, produce an auditable `worker_context` object:
+
+1. Objective and explicit scope / completion criteria.
+2. Project instruction files discovered at the repo root (and optional work subdir):
+   `AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`.
+3. Task-scoped active skills only — never the full global catalog.
+4. Applied user preferences (safe style keys only; no secrets).
+5. Risk classification and mandatory constraints (`no commits` / `no pushes` /
+   `no external changes` unless explicitly authorized).
+6. Allowed read/write paths and recoverable artifact URIs.
+7. Expected output format, verification command, stop / escalation conditions.
+
+Precedence when directives conflict:
+
+```text
+safety > explicit user instruction > project instruction > preferences > defaults
+```
+
+### Forbidden
+
+- Silently dropping project instructions for a “clean” subagent.
+- Dumping every global skill into the worker.
+- Forwarding secrets unrelated to the task.
+- Commits, pushes, or external changes unless the contract authorizes them.
+
+*Subagents do NOT receive full conversation history or unrelated documentation.*
+Large logs or outputs are persisted to disk and passed via file references.
+
+Build / inspect:
+
+```bash
+agentit worker build "Add settings page" security-and-hardening,frontend-ui-engineering
+agentit worker render "Review auth diff"
+python3 router/worker_context.py build --project . --objective "..." --skill security-and-hardening
+```
 
 ---
 

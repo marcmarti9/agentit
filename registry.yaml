@@ -196,6 +196,29 @@ entries:
     state: ACTIVE_GLOBAL
     priority: on_demand
 
+  - id: verification-before-completion
+    name: "Fresh evidence before completion claims"
+    kind: skill
+    category: verification
+    provenance: local-superpowers-pattern
+    paths:
+      - "${HOME}/.agents/skills/verification-before-completion/SKILL.md"
+      - "${REPO_ROOT}/skills/verification-before-completion/SKILL.md"
+    trigger: "before done/fixed/passing claims, commits, PRs, or accepting worker success"
+    avoid_when: "pure explanation with no completion claim"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: medium
+    conflicts: ["success claims without command output"]
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
   - id: frontend-ui-engineering
     name: "Accessible responsive frontend engineering"
     kind: skill
@@ -329,26 +352,76 @@ entries:
     priority: specialized
 
   - id: hallmark
-    name: "Visual design audit and implementation guidance"
+    name: "Visual design audit and implementation guidance (archived placeholder)"
     kind: external-repository
     category: design
     provenance: not-installed
     paths: []
-    trigger: "visual design, screenshot audit, redesign, or frontend aesthetic work"
-    avoid_when: "backend-only task"
+    trigger: "do not select; replaced by design-taste-frontend"
+    avoid_when: "always — use design-taste-frontend instead"
     context_cost: medium
     execution_cost: medium
     depth: specialized
     risk: low_to_medium
-    conflicts: ["frontend-ui-engineering overlap"]
-    conflicts_with: [frontend-ui-engineering]
-    dependencies: ["browser or visual verification when claims depend on rendering"]
+    conflicts: ["superseded by design-taste-frontend"]
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ARCHIVED
+    priority: specialized
+
+  - id: design-taste-frontend
+    name: "Design taste for landings, portfolios, and redesigns"
+    kind: skill
+    category: design
+    provenance: curated-from-leonxlnx-taste-skill
+    source_ref: "https://github.com/Leonxlnx/taste-skill (MIT; slim Agentit adaptation)"
+    paths:
+      - "${REPO_ROOT}/skills/design-taste-frontend/SKILL.md"
+      - "${HOME}/.agents/skills/design-taste-frontend/SKILL.md"
+      - "${HOME}/.claude/skills/design-taste-frontend/SKILL.md"
+      - "${HOME}/.codex/skills/design-taste-frontend/SKILL.md"
+    trigger: "landing page, portfolio, marketing UI, visual redesign, anti-AI aesthetic, motion direction"
+    avoid_when: "dense dashboards, data tables, multi-step product chrome, or backend-only tasks"
+    context_cost: medium
+    execution_cost: medium
+    depth: specialized
+    risk: low_to_medium
+    conflicts: ["raw upstream taste-skill monologue", "dashboard patterns forced onto landings"]
+    dependencies: ["browser verification when visual claims depend on rendering"]
     essential_dependencies: []
     required_tools: ["browser-testing-with-devtools when browser behavior is in scope"]
     compression_applied: none
     reversibility: high
-    state: AVAILABLE_ON_DEMAND
+    state: ACTIVE_GLOBAL
     priority: specialized
+
+  - id: using-agentit
+    name: "Agentit session bootstrap and playbook"
+    kind: skill
+    category: orchestration
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/using-agentit/SKILL.md"
+      - "${HOME}/.agents/skills/using-agentit/SKILL.md"
+      - "${HOME}/.claude/skills/using-agentit/SKILL.md"
+      - "${HOME}/.codex/skills/using-agentit/SKILL.md"
+    trigger: "use agentit, usa agentit, with agentit, agentit mode, or harness activation"
+    avoid_when: "pure chat with no work under Agentit"
+    context_cost: low
+    execution_cost: low
+    depth: shallow
+    risk: low
+    conflicts: []
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
 
   - id: no-ai-slop
     name: "Public writing cleanup"

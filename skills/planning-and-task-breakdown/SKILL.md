@@ -76,33 +76,48 @@ Task 4: User can view task list (query + API + UI for list view)
 
 Each vertical slice delivers working, testable functionality.
 
-### Step 4: Write Tasks
+### Step 4: Write Tasks (junior-proof)
+
+Write for an implementer with **zero project chat history**, mediocre taste, and a bias against testing. If a fresh worker with only this task card cannot finish safely, the task is under-specified.
 
 Each task follows this structure:
 
 ```markdown
 ## Task [N]: [Short descriptive title]
 
-**Description:** One paragraph explaining what this task accomplishes.
+**Description:** One paragraph explaining what this task accomplishes and where it sits in the feature.
 
 **Acceptance criteria:**
 - [ ] [Specific, testable condition]
 - [ ] [Specific, testable condition]
 
-**Verification:**
-- [ ] Tests pass: `npm test -- --grep "feature-name"`
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: [description of what to verify]
+**Verification (exact commands):**
+- [ ] `npm test -- --grep "feature-name"` — expect 0 failures
+- [ ] `npm run build` — expect exit 0
+- [ ] Manual check: [exact steps]
 
 **Dependencies:** [Task numbers this depends on, or "None"]
 
-**Files likely touched:**
-- `src/path/to/file.ts`
-- `tests/path/to/test.ts`
+**Files to create/modify (ownership):**
+- write: `src/path/to/file.ts`
+- write: `tests/path/to/test.ts`
+- read-only context: `docs/spec.md`
 
-**Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
+**Invariants / do not:**
+- [e.g. do not change public API of X]
+- [e.g. no new dependencies]
+
+**TDD:** yes | no (if yes: failing test first at seam [name])
+
+**Escalate when (NEEDS_CONTEXT / BLOCKED):**
+- architectural choice between A and B is required
+- required file/API is missing or contradicts the plan
+- acceptance criteria cannot be met without expanding scope
+
+**Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files — split if Large]
 ```
 
+YAGNI / DRY: each task builds only what its acceptance criteria require. No drive-by refactors.
 ### Step 5: Order and Checkpoint
 
 Arrange tasks so that:
@@ -223,7 +238,9 @@ When multiple agents or sessions are available:
 Before starting implementation, confirm:
 
 - [ ] Every task has acceptance criteria
-- [ ] Every task has a verification step
+- [ ] Every task has exact verification commands (not "tests pass" alone)
+- [ ] Every task lists write ownership, invariants, and escalate-when conditions
+- [ ] A fresh worker could execute a task card without chat history
 - [ ] Task dependencies are identified and ordered correctly
 - [ ] No task touches more than ~5 files
 - [ ] Checkpoints exist between major phases

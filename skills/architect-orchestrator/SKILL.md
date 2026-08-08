@@ -46,15 +46,25 @@ If there is no specific advantage, stay single-agent.
 
 ## Minimal subagent contract
 
-Every delegated task declares:
+Every delegated spawn **must** go through the Worker Context Contract runtime
+(`router/worker_context.py`, `agentit worker build|render`). This is topology
+runtime, not a skill. Fresh context without project-instruction projection is
+fresh negligence.
 
-- exact objective and done condition;
-- allowed inputs;
-- read/write ownership;
-- relevant invariants only;
+Every delegated task declares an auditable `worker_context` with:
+
+- exact objective, scope, and done condition;
+- projected project instructions (`AGENTS.md` / `CLAUDE.md` / … at root and work subdir);
+- task-scoped active skills only (never the full catalog);
+- safe applied preferences (no secrets);
+- risk classification and constraints (no commits/pushes/external by default);
+- allowed inputs and read/write ownership;
+- artifact URIs when needed;
 - expected artifact or output schema;
 - verification command;
 - stop condition and escalation boundary.
+
+Precedence: `safety > explicit user instruction > project instruction > preferences > defaults`.
 
 Never copy the full parent conversation or broad project documentation. Store large outputs as filesystem artifacts and return references plus a compact receipt.
 

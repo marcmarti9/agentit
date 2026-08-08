@@ -11,7 +11,9 @@ What people ask for and what they actually want are different things. They ask f
 
 The cheapest moment to find this gap is before any plan, spec, or code exists. Once you've started building, switching costs are real, and the user will rationalize the wrong thing into a "good enough" thing. The misfit gets locked in.
 
-This skill closes the gap before it costs anything. The other Define-phase skills assume you already know roughly what you want: `idea-refine` generates variations from an idea, `spec-driven-development` writes the requirements down, `doubt-driven-development` stress-tests a plan after you've drafted one. Interview-me is the part before all of those, where you ask one question at a time, with your best guess attached, until you can predict what the user is going to say before they say it.
+This skill closes the gap before it costs anything. The other Define-phase skills assume you already know roughly what you want: `idea-refine` generates variations from an idea, `spec-driven-development` writes the requirements down, `doubt-driven-development` stress-tests a plan after you've drafted one. Interview-me is the part before all of those: map the design as a decision tree, work the frontier in rounds (with a recommended answer on each question), and stop only when shared understanding is real.
+
+Default cadence is still one question at a time when confidence is climbing and questions chain. Use **frontier rounds** when confidence is below ~70% and two or more independent decisions are already unblocked (see Step 2).
 
 ## When to Use
 
@@ -50,9 +52,11 @@ The number forces honesty. If you wrote down a high number but can't actually pr
 
 When confidence is below ~70%, append a brief reason on the same line — what's still unresolved or missing. This tells the user exactly what the interview needs to surface, and prevents the number from being a vague signal.
 
-### Step 2: Ask one question at a time, each with a guess attached
+### Step 2: Work the design tree (single question or frontier round)
 
-Format:
+Treat the problem as a **design tree**: every settled decision unlocks the decisions that hang off it. The **frontier** is the set of decisions whose prerequisites are already settled — questions you can ask *now* without guessing answers you have not heard.
+
+**Mode A — One question (default when questions chain):**
 
 ```
 Q: <one focused question>
@@ -61,20 +65,44 @@ GUESS: <your hypothesis for the answer, with the reasoning that produced it>
 
 Wait for the user to react before asking the next question.
 
-**Why one at a time, not a batch:**
+Use Mode A when the next question depends on the previous answer, or when confidence is already ≥70% and you only need to close a small gap.
 
-- The user can't react to your hypotheses if you bury them in a list
-- Batches encourage skim-reading and surface answers
-- The third question often depends on the answer to the first; asking them all at once locks in the wrong framing
-- The user's energy for thinking carefully is finite; spend it one question at a time
+**Mode B — Frontier round (when confidence &lt; ~70% and ≥2 independent frontier questions exist):**
 
-**Why attach a guess:**
+Ask the whole independent frontier in one round. Number each question and attach a recommended answer. Do not include questions that still depend on an unsettled answer in this same round.
+
+```
+FRONTIER ROUND (confidence ~40% — missing: user, success metric, constraint)
+
+❓ **Q1** - **Who is this for?**: <body>
+➡️ engineering team in standup (default guess)
+
+❓ **Q2** - **What does done look like?**: <body>
+➡️ a single list of experiments with status, not charts
+
+❓ **Q3** - **What must we not build?**: <body>
+➡️ no real-time dashboards, no multi-tenant admin
+```
+
+Wait for answers to the whole round, then recompute the frontier. A question whose answer depends on another still-open question belongs to a *later* round.
+
+**Facts vs decisions:** Finding facts (repo layout, existing APIs, file names) is your job — look them up or dispatch a read-only probe. Do not ask the user for anything you can verify in the environment. Decisions stay with the user.
+
+**Why attach a guess / recommendation:**
 
 - The user reacts faster to a wrong guess than they generate an answer from scratch
 - It commits you to a hypothesis you can be visibly wrong about, which keeps you honest
 - It surfaces *your* assumptions, which is what the interview is meant to expose
 
-The risk here is a polite user agreeing with your guess to be agreeable. Mitigate by being visibly willing to be wrong, and occasionally guess in a direction you expect the user to push back on.
+**Why not always batch:**
+
+- Dependent questions asked together lock in the wrong framing
+- Polite users skim long lists and agree by default
+- Energy for careful thinking is finite
+
+Mitigate sycophancy by being visibly willing to be wrong, and occasionally guess in a direction you expect the user to push back on.
+
+Session is not done while the frontier still has open decision nodes.
 
 ### Step 3: Listen for "want vs. should want"
 
@@ -200,8 +228,9 @@ Two questions in, the agent has discovered the actual ask isn't "a dashboard." I
 
 ## Red Flags
 
-- Three or more questions in a single message: that's batching, not interviewing
-- A question without your hypothesis attached: that's surveying, not committing
+- Dumping dependent questions in one batch (not a true independent frontier)
+- A question without your hypothesis / recommended answer: that's surveying, not committing
+- Asking the user for facts you could look up in the repo or tools
 - Accepting "whatever you think is best" as a terminal answer
 - Producing a spec, plan, or task list before the user has explicitly confirmed your restate
 - Questions framed as "what would be best practice?" instead of "what do you actually want?"
@@ -210,6 +239,7 @@ Two questions in, the agent has discovered the actual ask isn't "a dashboard." I
 - A confidence number below ~70% with no reason attached: the user can't help close the gap if they don't know what's missing
 - Saving the intent doc before the user has confirmed (the doc itself implies a yes the user didn't give)
 - Skipping the "Out of scope" line in the restate (silent disagreement about non-goals is half of misalignment)
+- Declaring done while independent frontier nodes remain unasked
 
 ## Verification
 
@@ -217,9 +247,11 @@ After applying interview-me:
 
 - [ ] An explicit hypothesis with a confidence number was stated in the first turn
 - [ ] Every confidence number below ~70% was accompanied by a one-line reason (what's still unresolved or missing)
-- [ ] Questions were asked one at a time, each with the agent's guess attached
+- [ ] Questions used Mode A (one-at-a-time) or Mode B (independent frontier round) correctly — never dependent multi-asks
+- [ ] Every question carried a GUESS / recommended answer
+- [ ] Facts were looked up or probed; only decisions went to the user
 - [ ] At least one "what would you actually want if you didn't have to justify it?" probe ran when the user gave a sophistication-signaling or convention-signaling answer
 - [ ] A concrete restate (Outcome / User / Why now / Success / Constraint / Out of scope) was written back to the user
 - [ ] The user confirmed the restate with an explicit yes (not "whatever you think," not "sounds good," not silence)
-- [ ] At the stop point, the agent could predict reactions to the next three questions it would ask
+- [ ] At the stop point, the agent could predict reactions to the next three questions it would ask and the frontier was empty
 - [ ] Any handoff to a downstream skill (`idea-refine`, `spec-driven-development`) was framed in terms of the confirmed intent, not the original underspecified ask

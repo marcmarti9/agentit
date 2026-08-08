@@ -17,6 +17,7 @@ profiles:
       - frontend-ui-engineering
       - planning-and-task-breakdown
       - using-agent-skills
+      - verification-gauntlet
   frontend:
     description: "Core plus browser, performance, and UI maintenance guidance."
     extends:
@@ -123,3 +124,4 @@ profiles:
       - using-agent-skills
       - using-agentit
       - verification-before-completion
+      - verification-gauntlet

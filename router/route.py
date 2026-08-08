@@ -32,6 +32,7 @@ SKILL_PROFILE_MAP = {
     "using-agentit": "core",
     "test-driven-development": "core",
     "verification-before-completion": "core",
+    "verification-gauntlet": "core",
     "api-and-interface-design": "backend",
     "observability-and-instrumentation": "backend",
     "marketing-and-growth": "product",
@@ -516,8 +517,20 @@ def _recommended_skill_ids(text: str, category: str, risk: str) -> list[str]:
         )
     ):
         selected.append("verification-before-completion")
+        selected.append("verification-gauntlet")
     if _matches(text, (r"\busa agentit\b|\buse agentit\b|\bagentit mode\b|\bmodo agentit\b",)):
         selected.append("using-agentit")
+    if _matches(
+        text,
+        (
+            r"\bgauntlet\b",
+            r"\bagentit verify\b",
+            r"verification gauntlet",
+            r"anti-greenwash",
+            r"mutation test",
+        ),
+    ):
+        selected.append("verification-gauntlet")
     return list(dict.fromkeys(selected))
 
 

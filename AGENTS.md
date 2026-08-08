@@ -26,9 +26,9 @@ En esta máquina Agentit es el meta-harness canónico (Claude Code, Codex, Grok 
 | 4. Ejecuta | Single-agent-first (`direct`). Subagentes solo si la topología lo justifica + Worker Context Contract |
 | 5. Contexto | `agentit context filter|archive|dedup` y `agentit artifact …` si hay ruido o salidas grandes |
 | 6. MCP | `agentit mcp status|enable|disable` (plan-first; `--apply` para escribir) |
-| 7. Cierre | Sin done/fixed/passing sin **evidencia fresca de comando**; barra alta de calidad (tests, design taste, sin chapuzas) |
+| 7. Cierre | `agentit verify "tarea" --project .` (+ `--apply`); sin done sin **evidencia fresca** + receipt del gauntlet |
 
-Barra de craft con Agentit activo: solución aburrida y correcta > vibes; TDD en cambios de comportamiento; landings con design read; alcance solo lo pedido.
+Barra de craft con Agentit activo: solución aburrida y correcta > vibes; TDD en cambios de comportamiento; landings con design read; **gauntlet de verificación** (probes por stack, no autoexamen débil); alcance solo lo pedido.
 
 CLI: `agentit` → `~/.local/bin/agentit`. Raíz: `~/code/agentit`.
 

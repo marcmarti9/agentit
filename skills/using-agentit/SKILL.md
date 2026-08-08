@@ -92,6 +92,7 @@ High-value specialized skills (examples):
 | Security boundary | `security-and-hardening` |
 | Postgres / Supabase | `supabase-postgres-best-practices` |
 | Done claims | `verification-before-completion` |
+| Hard external gates | `verification-gauntlet` (`agentit verify`) |
 
 If a skill is in `skills_recommended_missing`, either enable the profile that provides it, load it from `~/code/agentit/skills/…` if present, or state that it is unavailable.
 
@@ -120,13 +121,21 @@ agentit mcp enable-stack developer_core --apply
 
 Plan-first without `--apply`. RISK_3/4 needs `--force` where required. Prefer `context7` for live library docs, `github` for PRs, `playwright` for browser proof.
 
-### 7. Verify before done
+### 7. Verify before done (gauntlet)
 
 - No **done / fixed / passing** claim without **fresh command evidence** from this turn after the last relevant edit (`verification-before-completion`).
+- For implementation work, run the signal-gated gauntlet:
+
+```bash
+agentit verify "task summary" --project <project_root>
+agentit verify "task summary" --project <project_root> --apply
+```
+
 - Honor router `verification` flags (tests, dry-run, backup, independent review).
 - RISK_3/RISK_4: full fidelity, human review for critical ops; do not lower inferred risk.
-- If `verification-before-completion` is in `skills_available`, treat it as mandatory for the close-out message.
-- Close-out shape: what changed · commands run + exit status · residual risk / follow-ups.
+- If `verification-before-completion` or `verification-gauntlet` is in `skills_available`, treat them as mandatory for close-out.
+- Close-out shape: what changed · verify receipt path · blocking probe statuses · checklist evidence · residual risk.
+- **Anti-greenwash:** agent-authored “200 tests passed” without gauntlet receipt is not completion.
 
 ## Session bootstrap reply (first turn after trigger)
 

@@ -222,6 +222,31 @@ entries:
     state: ACTIVE_GLOBAL
     priority: on_demand
 
+  - id: verification-gauntlet
+    name: "Signal-gated verification gauntlet and anti-greenwash"
+    kind: skill
+    category: verification
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/verification-gauntlet/SKILL.md"
+      - "${HOME}/.agents/skills/verification-gauntlet/SKILL.md"
+      - "${HOME}/.claude/skills/verification-gauntlet/SKILL.md"
+      - "${HOME}/.codex/skills/verification-gauntlet/SKILL.md"
+    trigger: "implementation close-out, hard verification, anti-greenwash, agentit verify, stack probes"
+    avoid_when: "pure explanation with no working-tree claim"
+    context_cost: medium
+    execution_cost: medium
+    depth: standard
+    risk: medium
+    conflicts: ["claiming done from agent-authored tests alone"]
+    dependencies: ["verification-before-completion"]
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
   - id: frontend-ui-engineering
     name: "Accessible responsive frontend engineering"
     kind: skill

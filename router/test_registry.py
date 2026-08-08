@@ -53,6 +53,7 @@ class RegistryRouteTests(unittest.TestCase):
             "design-taste-frontend",
             "marketing-and-growth",
             "verification-before-completion",
+            "verification-gauntlet",
             "test-driven-development",
             "anti-ai-slop-writing",
             "using-agentit",

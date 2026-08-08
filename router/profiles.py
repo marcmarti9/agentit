@@ -600,6 +600,7 @@ def _parser() -> argparse.ArgumentParser:
             "mcp",
             "trace",
             "route",
+            "verify",
         ),
     )
     parser.add_argument("subcommand", nargs="?")
@@ -698,6 +699,36 @@ def main(argv: list[str] | None = None) -> int:
                 print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             else:
                 print(format_trace_summary(payload))
+            return 0
+
+        if args.command == "verify":
+            prompt_parts = [
+                part
+                for part in (args.subcommand, args.target, args.extra_arg)
+                if part
+            ]
+            task_text = " ".join(prompt_parts).strip()
+            try:
+                from router.verify import VerifyError, apply_verification, format_plan, plan_verification
+            except ImportError:
+                from verify import VerifyError, apply_verification, format_plan, plan_verification
+            try:
+                if args.apply:
+                    payload = apply_verification(
+                        project_root,
+                        task_text=task_text,
+                    )
+                else:
+                    payload = plan_verification(
+                        project_root,
+                        task_text=task_text,
+                    )
+            except VerifyError as exc:
+                raise ProfileError(str(exc)) from exc
+            if args.format == "json":
+                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+            else:
+                print(format_plan(payload))
             return 0
 
         if args.command == "artifact":

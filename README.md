@@ -59,6 +59,7 @@ Global policy: [`AGENTS.md`](AGENTS.md). Bootstrap skill: [`skills/using-agentit
 | **Router** | Risk, topology, skills, preferences, verification flags — plan only, never permission to destroy |
 | **Core + profiles** | 11-skill global `core`; opt-in project profiles (`frontend`, `design`, `backend`, `supabase`, …) |
 | **Design taste** | `design-taste-frontend` for landings/portfolios: dials, AI tells, pre-flight, **agent-fetchable inspiration sources** (no user screenshots required) |
+| **Verification gauntlet** | Signal-gated probes + anti-greenwash (`agentit verify`) so “200 tests passed” is not enough alone |
 | **Worker contracts** | `agentit worker build` / `router/worker_context.py` projects project instructions + task skills into subagents |
 | **Context engines** | Tool-output filter, artifact refs (`agentit://`), session dedup |
 | **MCP runtime** | Mid-session enable/disable via `agentit mcp` and optional `agentit-manager` gateway |
@@ -89,13 +90,13 @@ Global policy: [`AGENTS.md`](AGENTS.md). Bootstrap skill: [`skills/using-agentit
 
 ---
 
-## Shared skills (34)
+## Shared skills (35)
 
 `profiles.yaml` controls discovery cost:
 
 | Profile | Role |
 |---------|------|
-| **`core`** (11, global install) | `using-agentit`, `task-router`, `architect-orchestrator`, debugging, review, TDD, security, source-driven, frontend UI, planning, `using-agent-skills` |
+| **`core`** (12, global install) | `using-agentit`, `verification-gauntlet`, `task-router`, orchestration, debugging, review, TDD, security, source-driven, frontend UI, planning, `using-agent-skills` |
 | **`frontend` / `design`** | Browser, performance, anti-slop design, **`design-taste-frontend`** |
 | **`backend` / `supabase`** | API, observability, Postgres/Supabase practices |
 | **`product` / `writing` / `release` / `research`** | Specs, marketing, launch, adversarial review |
@@ -136,8 +137,26 @@ skills/
 ├── test-driven-development       # TDD & test-first implementation
 ├── using-agent-skills            # Lifecycle skill discovery map
 ├── using-agentit                 # Session bootstrap: "usa/use agentit"
-└── verification-before-completion # Fresh evidence before done claims
+├── verification-before-completion # Fresh evidence before done claims
+└── verification-gauntlet         # Signal-gated probes + anti-greenwash
 ```
+
+### Verification gauntlet (hard gates, not universal fake suite)
+
+Agents write tests — and can greenwash them. Agentit adds an **external gauntlet**:
+
+```bash
+# Plan which probes apply (stack signals + task text)
+./agentit verify "Add Supabase RLS for profiles" --project .
+
+# Run runnable probes; checklists stay pending for agent evidence
+./agentit verify "Add Supabase RLS for profiles" --project . --apply
+# → receipt under .agentit/verify/
+```
+
+Catalog: [`probes/catalog.yaml`](probes/catalog.yaml). Skill: [`skills/verification-gauntlet/SKILL.md`](skills/verification-gauntlet/SKILL.md).
+
+Layers: project tests → change contract (red→green + acceptance) → stack probes (secrets, RLS, auth, …) → human RISK_3/4.
 
 ### Design taste (landings without screenshots)
 
@@ -204,6 +223,10 @@ python3 ~/code/agentit/router/route.py "Rediseña la landing de un SaaS B2B"
 # Persist a local trail under .agentit/traces/ (for you, not a public benchmark)
 ./agentit trace "Implementa tests TDD para el servicio de backups" --project .
 ./agentit trace "…" --project . --format json
+
+# Verification gauntlet
+./agentit verify "Implementa tests TDD para el servicio de backups" --project .
+./agentit verify "…" --project . --apply
 ```
 
 ### Project profiles & context

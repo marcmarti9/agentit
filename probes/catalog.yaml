@@ -1,0 +1,136 @@
+# Verification probes — signal-gated, not a universal suite for every repo.
+# Agents must not invent skip reasons. Plan with agentit verify; run with --apply.
+schema_version: 1
+probes:
+  - id: no-secrets-in-diff
+    name: "No secrets in unstaged/staged diff"
+    severity: blocking
+    signals_any: [git, any]
+    kind: script
+    script: probes/scripts/no_secrets_in_diff.py
+    description: "Fail if the working tree diff looks like it introduces secrets or .env contents."
+    evidence: "script stdout + exit code"
+
+  - id: project-test-suite
+    name: "Project native test suite"
+    severity: blocking
+    signals_any: [python, node, dart, rust, go, any]
+    kind: detect_command
+    description: "Run the project's own test command when detectible (pytest, npm test, flutter test, cargo test, go test)."
+    evidence: "full test command output, 0 failures"
+    detectors:
+      - when: ["pubspec.yaml"]
+        command: ["flutter", "test"]
+      - when: ["pytest.ini", "pyproject.toml", "setup.cfg", "tests"]
+        prefer_files: ["pytest.ini", "pyproject.toml"]
+        command: ["python3", "-m", "pytest", "-q"]
+      - when: ["package.json"]
+        command: ["npm", "test", "--silent"]
+      - when: ["Cargo.toml"]
+        command: ["cargo", "test", "--quiet"]
+      - when: ["go.mod"]
+        command: ["go", "test", "./..."]
+
+  - id: project-build
+    name: "Project build / typecheck"
+    severity: blocking
+    signals_any: [python, node, dart, rust, typescript, any]
+    kind: detect_command
+    description: "Run a cheap build or typecheck when detectible."
+    evidence: "build/typecheck exit 0"
+    detectors:
+      - when: ["pubspec.yaml"]
+        command: ["dart", "analyze"]
+      - when: ["tsconfig.json"]
+        command: ["npx", "tsc", "--noEmit"]
+      - when: ["Cargo.toml"]
+        command: ["cargo", "check", "--quiet"]
+      - when: ["pyproject.toml", "setup.cfg"]
+        command: ["python3", "-m", "compileall", "-q", "."]
+
+  - id: change-contract-red-green
+    name: "Change contract red→green"
+    severity: blocking
+    signals_any: [any]
+    kind: checklist
+    description: "Behavior changes need a failing test (or repro) observed before the fix, then green after."
+    checks:
+      - "Named the behavior under test or the bug repro command"
+      - "Observed red (fail) before the implementing change, or justified pure-refactor with no behavior claim"
+      - "Observed green after the change with the same command"
+    evidence: "commands + exit codes for red and green (or explicit refactor waiver)"
+
+  - id: acceptance-criteria
+    name: "Task acceptance criteria"
+    severity: blocking
+    signals_any: [any]
+    kind: checklist
+    description: "3–7 concrete acceptance checks for THIS task, not a generic project manifesto."
+    checks:
+      - "Wrote 3–7 acceptance checks derived from the user request"
+      - "Each check marked pass/fail with evidence or remaining gap"
+      - "No done claim while any blocking acceptance check is fail/unknown"
+    evidence: "checklist with evidence pointers"
+
+  - id: secrets-scan-tree
+    name: "No committed secret files in tree scan"
+    severity: blocking
+    signals_any: [git, any]
+    kind: script
+    script: probes/scripts/no_secret_files.py
+    description: "Fail if .env, credential files, or private keys are tracked or present as regular files at repo root patterns."
+    evidence: "script stdout + exit code"
+
+  - id: postgres-rls-discipline
+    name: "Postgres / Supabase RLS discipline"
+    severity: blocking
+    signals_any: [postgres, postgresql, supabase, psql]
+    kind: checklist
+    description: "When the task touches Postgres/Supabase, prove RLS / privilege boundaries were considered."
+    checks:
+      - "Identified tables/views exposed to clients (or stated none)"
+      - "RLS enabled or explicit documented exception for each public table touched"
+      - "No service_role / bypass key used in client-side or shipped code"
+      - "Migrations reviewed for privilege grants"
+    evidence: "notes + migration paths or SQL evidence"
+
+  - id: auth-boundary
+    name: "Auth boundary smoke"
+    severity: blocking
+    signals_any: [auth, login, session, jwt, oauth]
+    kind: checklist
+    description: "Auth-related changes must prove unauthenticated access is denied where required."
+    checks:
+      - "Named the protected route/endpoint/resource"
+      - "Showed unauthenticated request fails closed (401/403/redirect) or equivalent test"
+      - "Did not weaken auth to make tests pass"
+    evidence: "test or HTTP/repro command output"
+
+  - id: http-smoke
+    name: "HTTP endpoint smoke"
+    severity: advisory
+    signals_any: [api, http, endpoint, fastapi, express, flask, django]
+    kind: checklist
+    description: "If an HTTP surface was changed, smoke the happy path and one error path."
+    checks:
+      - "Happy-path request or test for the changed endpoint"
+      - "At least one failure/validation path covered"
+    evidence: "command/test output"
+
+  - id: browser-smoke
+    name: "Browser path smoke"
+    severity: advisory
+    signals_any: [frontend, ui, css, react, browser, landing]
+    kind: checklist
+    description: "UI claims need runtime evidence when browser tools exist; otherwise document residual risk."
+    checks:
+      - "Built or served the UI path changed"
+      - "Checked the primary user path manually or via browser tooling"
+      - "If no browser tool: stated residual visual risk explicitly"
+    evidence: "build/serve log and/or browser tool notes"
+
+anti_greenwash:
+  - "Passing only agent-authored unit tests is not sufficient when probes apply"
+  - "Do not delete, skip, or weaken probes to claim green"
+  - "Checklist probes require written evidence, not 'looks good'"
+  - "Subagent success is not a receipt; owner re-runs blocking probes when risk >= RISK_2"

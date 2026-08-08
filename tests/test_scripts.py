@@ -155,6 +155,7 @@ class ScriptRegressionTests(unittest.TestCase):
                     "frontend-ui-engineering",
                     "planning-and-task-breakdown",
                     "using-agent-skills",
+                    "verification-gauntlet",
                 },
                 installed,
             )

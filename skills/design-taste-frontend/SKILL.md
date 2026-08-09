@@ -1,115 +1,242 @@
 ---
 name: design-taste-frontend
-description: Ship brand-authentic landing pages, portfolios, and redesigns without AI visual slop. Use for marketing sites, heroes, motion direction, and visual redesigns; not for dense dashboards, data tables, or backend-only work.
+description: Full-fat art direction for landing pages, portfolios, marketing sites, visual redesigns, and expressive frontend work. Reads the brief, selects a coherent visual world, fights AI defaults, and drives typography, composition, imagery, motion, and production craft. Quality is prioritized over token minimization.
+license: MIT
+source: https://github.com/Leonxlnx/taste-skill
 ---
 
-# Design Taste Frontend
+# Design Taste Frontend — Full Craft Mode
 
-Curated adaptation of [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) (`design-taste-frontend` v2 ideas) for Agentit: progressive disclosure, on-demand profile, no 80k monologue in every turn.
+This is Agentit's quality-first adaptation of Leonxlnx's MIT-licensed Taste Skill. The previous Agentit version intentionally compressed the upstream methodology to save context. **That constraint is removed for design work.** Load and use the depth required to make the interface excellent.
 
-**Scope:** landing pages, portfolios, marketing sections, and visual redesigns.  
-**Out of scope:** dense product dashboards, admin tables, multi-step app shells — use `frontend-ui-engineering` there. For a light anti-cliché pass without full design direction, use `anti-ai-slop-design`.
+Scope: marketing sites, landing pages, portfolios, showcases, editorial surfaces, creative frontend, and visual redesigns. Product UI can use this for art direction, but `impeccable-design` + `emil-design-eng` own repeated-use interaction craft.
 
-## When to Use
+Every rule is contextual. The brief and existing brand truth win.
 
-- Greenfield landing / marketing / portfolio UI
-- Redesign of an existing public-facing page (audit first)
-- User asks for premium / Linear / Awwwards / "not AI-looking" aesthetics
-- Motion, typography, spacing, and layout hierarchy matter more than app chrome
+## 0. Read the room before touching code
 
-## Process
+Infer:
 
-### 1. Design read (before any code)
+1. **Surface kind** — SaaS landing, consumer product, agency, portfolio, editorial, event, product UI, redesign.
+2. **Audience** — technical buyer, mainstream consumer, recruiter, creator, existing power user, regulated/public audience.
+3. **Vibe words** — minimal, warm, technical, editorial, brutalist, cinematic, luxury, playful, utilitarian, Apple-like, industrial, etc.
+4. **References** — URLs, screenshots, Figma files, competitors, named products/studios.
+5. **Existing truth** — logo, type, palette, design tokens, product screenshots, photography, UI components, Figma systems.
+6. **Constraints** — accessibility, brand rules, performance, platform, content volume, regulated/trust-first context.
 
-Infer from brief, vibe words, references, audience, existing brand assets, and hard constraints (a11y, public-sector, regulated).
+State one compact design read before implementation:
 
-Output one line:
+> Reading this as: **<surface>** for **<audience>**, with a **<visual language>**, centered on **<one visual thesis>**.
 
-> Reading this as: **\<page kind\>** for **\<audience\>**, with a **\<vibe\>** language, leaning toward **\<system or aesthetic family\>**.
+Ask at most one design-direction question only when two materially different interpretations remain. Otherwise commit to a direction.
 
-If the read genuinely diverges, ask **one** clarifying question. Do not dump a questionnaire.
+## 1. Anti-default discipline
 
-Anti-default: do not auto-pick purple gradients, centered hero + dark mesh, three equal feature cards, Inter + slate-900, or infinite micro-loops.
+Never autopilot into the recurrent AI bundle:
 
-### 1b. Agent-usable references (no user screenshots)
+- purple/blue glow because “tech”;
+- centered hero over a dark radial mesh;
+- logo cloud → three equal cards → testimonials → CTA;
+- generic glass cards on every section;
+- Inter + slate palette regardless of brand;
+- random gradient text;
+- giant rounded rectangles wrapping everything;
+- fake product screenshots built from decorative `div`s;
+- endless floating blobs/marquees;
+- every section using an eyebrow label;
+- serif/italic accent word inserted only to look premium;
+- motion attached to everything because the user asked for “animations.”
 
-When the brief is thin, asks for “premium / not AI-looking”, or you need concrete patterns:
+A familiar structure is allowed when it is actually right. The failure is unexamined defaulting.
 
-1. Open `references/inspiration-sources.md`.
-2. Fetch **1–3** sources that match the design read (prefer **Supahero / Minimal or mnmm / shadcn / Fonts In Use**; SaaSpo/Awwwards only if open).
-3. Extract **text signals only** (site names, section types, component APIs, font names). Map them to dials and layout choices.
-4. Record a short `REFERENCES USED` note (source → decision). Skip sources that 403 / timeout / return empty shells.
+## 2. Set design dials
 
-Do not wait for the user to paste captures. Do not bulk-fetch the whole list.
+Use three explicit dials to keep decisions coherent:
 
-### 2. Set three dials
+- `DESIGN_VARIANCE` 1–10 — strict/systematic → asymmetric/experimental.
+- `MOTION_INTENSITY` 1–10 — static → cinematic/physics/scrollytelling.
+- `VISUAL_DENSITY` 1–10 — gallery-airy → cockpit-dense.
 
-| Dial | Range | Meaning |
-|------|-------|---------|
-| `DESIGN_VARIANCE` | 1–10 | 1 = strict symmetry · 10 = asymmetric / experimental |
-| `MOTION_INTENSITY` | 1–10 | 1 = static · 10 = cinematic / physics |
-| `VISUAL_DENSITY` | 1–10 | 1 = gallery airy · 10 = cockpit dense |
+Typical starting points:
 
-**Baseline:** `8 / 6 / 4` for landings. Override from the design read (see `references/dials-and-systems.md`). State the chosen triple before building.
+| Read | Variance | Motion | Density |
+| --- | ---: | ---: | ---: |
+| Calm B2B / Linear-like | 5–6 | 3–4 | 3–5 |
+| Premium consumer | 7–8 | 5–7 | 3–4 |
+| Creative agency / Awwwards | 9–10 | 8–10 | 3–4 |
+| Developer portfolio | 6–8 | 5–7 | 3–4 |
+| Editorial | 6–8 | 3–6 | 2–4 |
+| Public / regulated | 3–4 | 1–3 | 4–6 |
 
-### 3. Foundation
+The user can override these conversationally. Do not make them edit a skill file.
 
-- Prefer an **official design system** when the brief matches one (Fluent, Carbon, Primer, GOV.UK, USWDS, Polaris, shadcn with customization, etc.).
-- One system per project. Do not hand-roll a full DS that already exists as a package.
-- Stack defaults when no DS fits: project stack first; otherwise React/Next + Tailwind + Motion (`motion/react`) + self-hosted or `next/font` fonts.
-- Verify dependencies in `package.json` before importing. Output install commands when missing.
+## 3. Choose the foundation honestly
 
-Full map: `references/dials-and-systems.md`.
+When the product clearly belongs to an existing design-system ecosystem, prefer the official system rather than reimplementing it cosmetically: Fluent, Material, Carbon, Polaris, Atlaskit, Primer, GOV.UK, USWDS, Radix, etc.
 
-### 4. Build with hard layout discipline
+For owned SaaS/product surfaces, shadcn/Radix or an existing internal system can be a foundation, but never ship the library's default visual state as the final brand.
 
-Load when implementing sections:
+For expressive marketing/editorial work, native CSS/Tailwind plus carefully selected primitives is often better than forcing a product design system onto the page.
 
-- `references/inspiration-sources.md` — agent-fetchable galleries/docs (no screenshots required)
-- `references/layout-hard-rules.md` — hero, nav, eyebrows, zigzag/bento, CTAs, theme lock
-- `references/ai-tells.md` — production-tested forbidden patterns
-- `references/motion-and-a11y.md` — motion motivation, reduced motion, CWV
+**One system per surface.** Do not mix component languages casually.
 
-Redesigns: `references/redesign-audit.md` before visual overhaul.
+Verify dependencies before importing them.
 
-### 5. Pre-flight (must pass before claiming done)
+## 4. One visual thesis
 
-- [ ] Design read + dial triple stated
-- [ ] If references were needed: 1–3 agent-fetchable sources used (or noted as skipped) per `inspiration-sources.md`
-- [ ] No banned AI tells from `references/ai-tells.md` without brief override
-- [ ] Hero fits first viewport; primary CTA visible without scroll
-- [ ] One accent family; one corner-radius system; page theme locked (light **or** dark, not random section flips)
-- [ ] Eyebrow count ≤ ceil(sections / 3)
-- [ ] Interactive states: hover / focus / active / loading / empty / error where relevant
-- [ ] `prefers-reduced-motion` honored when `MOTION_INTENSITY > 3`
-- [ ] WCAG AA contrast on text and CTAs
-- [ ] Real or clearly labeled image slots — no div-fake product screenshots
-- [ ] Copy self-audit: no filler verbs, no broken cute phrases, one CTA intent per label
+Exceptional pages usually have a dominant idea that everything else supports. Examples:
 
-Browser evidence when visual claims matter: `browser-testing-with-devtools`.
+- the product physically decomposes as the story explains each subsystem;
+- typography behaves like an editorial poster system;
+- the product UI itself becomes the hero canvas;
+- a photographic crop system creates a recognizable rhythm;
+- a single material metaphor (paper, machined aluminum, translucent polymer, terminal, blueprint) drives the interface.
 
-## Rationalizations
+Write the thesis in one sentence. If a visual decision does not support it, the default answer is to remove it.
 
-| Excuse | Reality |
-|--------|---------|
-| "Ship the template, polish later" | First visual impression is the product for landings. |
-| "Purple is modern" | Unprompted AI-purple is a brand tell. Match the brief. |
-| "Three cards are fine" | Equal triple feature cards are the #1 layout cliché. Vary structure. |
-| "Motion can wait" | If the dial claims motion, ship working motion or lower the dial. |
-| "Dashboard rules apply" | This skill is not for dense app chrome; switch to `frontend-ui-engineering`. |
+## 5. Composition
 
-## Red Flags
+### Hero
 
-- Design read missing or identical for every project
-- Inter + indigo glow with no brand rationale
-- Fake screenshots built from nested `div`s
-- Em-dash decoration, section-number eyebrows, multi-marquee pages
-- Static page while claiming high `MOTION_INTENSITY`
-- Mixing two design systems or icon families
+The first viewport must establish identity and meaning immediately. A strong hero is not synonymous with centered copy.
 
-## See Also
+Choose composition from the content:
 
-- `anti-ai-slop-design` — short checklist only
-- `frontend-ui-engineering` — product UI, a11y, component architecture
-- `browser-testing-with-devtools` — runtime visual verification
-- Upstream research: https://github.com/Leonxlnx/taste-skill (MIT); Agentit keeps a slim, profile-gated fork for token budget
+- split product + statement;
+- editorial oversized type;
+- edge-to-edge artifact;
+- asymmetric product stage;
+- cinematic scene;
+- dense proof/utility hero for technical products;
+- quiet premium composition with strong negative space.
+
+The primary action should be discoverable without hunting. Do not hide all useful information below a theatrical empty viewport.
+
+### Section rhythm
+
+Alternate structural modes deliberately. Avoid a page made from the same 3-column card component twelve times.
+
+Use contrast in scale: full-bleed moments, narrow reading columns, artifact-led sections, dense evidence, quiet whitespace, sticky/scrollytelling stages.
+
+Do not zigzag purely for variety; build rhythm around the story.
+
+### Grid
+
+Use a real alignment system even when the result feels freeform. Experimental layouts still need anchors. Break the grid locally, not accidentally.
+
+## 6. Typography
+
+Typography carries more identity than most decoration.
+
+- Pick typefaces appropriate to the brand and content.
+- Defaulting to Inter is not neutral when every generated site does it.
+- A display face needs a reason and must still survive real content.
+- Establish display/body/meta roles and a disciplined scale.
+- Tune line-height, tracking, line breaks, measure, and weight.
+- Avoid overly narrow body measure and giant display text that wraps into accidental four-line slogans.
+- Same-family italic/bold emphasis is usually stronger than injecting a second random font.
+- Serif is a design choice, not a universal premium switch.
+- Test descenders/italics and clipping at actual line heights.
+
+Use self-hosted/`next/font`/project-approved font delivery rather than casually adding blocking external font requests.
+
+## 7. Color and material
+
+Start with roles and hierarchy, then effects.
+
+- Neutral canvas + one decisive accent often beats five accent families.
+- Build enough tonal steps for text/surfaces/states instead of using opacity hacks everywhere.
+- Treat gradients, glass, blur, noise, grain, scanlines, chrome, bloom, and shadows as materials with a conceptual and performance cost.
+- Lock the page into a coherent light/dark/material world unless a deliberate narrative transition justifies a change.
+- Meet contrast requirements in real component states.
+
+## 8. Imagery and artifacts
+
+Real imagery wins over fake placeholders when imagery is central to the concept.
+
+- Use actual product screenshots, photos, illustrations, diagrams, video, or 3D assets when available.
+- Preserve crop/focal point intentionally across responsive breakpoints.
+- Do not fabricate screenshots out of nested generic cards and call them product imagery.
+- If the asset is missing, use an explicit asset slot and design around the truth of what exists.
+
+If Figma is the source, use `figma-design-workflow` rather than manually approximating frame measurements.
+
+## 9. Motion direction
+
+Motion is part of the design read, not an afterthought.
+
+At low motion intensity, use tiny state transitions and restrained entrances. At medium intensity, use purposeful section reveals, product transitions, and spatial continuity. At high intensity, consider cinematic storytelling, pinned scenes, kinetic type, image sequences, or real 3D — but only if they support the thesis.
+
+For repeated product UI, defer to `emil-design-eng`: frequent actions should be fast and often static.
+
+For high-intensity landing pages, route to:
+
+- `scrollytelling-web` for narrative architecture;
+- `gsap-scrolltrigger` for pinned/scrubbed mechanics;
+- `gsap-performance` for runtime discipline;
+- `threejs-product-storytelling` for genuine product 3D.
+
+Honor `prefers-reduced-motion` with a meaningful alternate composition.
+
+## 10. Scrollytelling design rules
+
+When scroll is the timeline:
+
+- every chapter must communicate something;
+- movement should resolve into readable holds;
+- pinned stages need designed start/end handoffs;
+- visual hierarchy still applies during intermediate frames;
+- reverse scroll must remain coherent;
+- mobile may use a different storytelling strategy;
+- never stretch 10 seconds of visual content into a minute of scroll merely to feel cinematic.
+
+A product explosion should reflect conceptual assemblies, not random particles flying apart.
+
+## 11. Redesign audit
+
+Before redesigning an existing public-facing page, inventory:
+
+- what is recognizable/valuable in the current identity;
+- what is fact/content/function and must survive;
+- design tokens/assets worth preserving;
+- hierarchy problems;
+- structural repetition;
+- type/color/material problems;
+- interaction/motion problems;
+- credibility/trust signals;
+- responsive failures;
+- accessibility/performance constraints.
+
+Then explicitly decide **preserve**, **evolve**, or **replace** the visual world. Do not produce a timid half-redesign by accident.
+
+## 12. Anti-slop production checks
+
+Before completion:
+
+- [ ] Design read and one visual thesis are explicit.
+- [ ] Dial values match the actual implementation.
+- [ ] The page does not depend on unprompted AI clichés.
+- [ ] Typography, spacing, color, radii, iconography, and imagery form one system.
+- [ ] Responsive layout is recomposed, not simply shrunk.
+- [ ] Interactive states are complete where relevant.
+- [ ] Motion has purpose and reduced-motion behavior.
+- [ ] High-motion pages have been tested through the complete sequence.
+- [ ] No fake screenshots/assets are presented as real product visuals.
+- [ ] Accessibility and performance are part of the final design, not TODOs.
+- [ ] Browser evidence exists before visual-success claims when browser tooling is available.
+
+## 13. Quality-first pairing
+
+For serious design work Agentit should normally combine this skill with:
+
+- `impeccable-design` — design-director craft floor and critique;
+- `emil-design-eng` — interaction/motion precision;
+- `frontend-ui-engineering` — production frontend/a11y;
+- `browser-testing-with-devtools` — rendered evidence;
+- `figma-design-workflow` — when Figma is relevant.
+
+Then add specialist motion/3D skills when the brief signals them.
+
+## Attribution / modification note
+
+Based on and substantially reworked from Leonxlnx's MIT-licensed `taste-skill`. This Agentit version deliberately restores a deep, quality-first art-direction layer and adds Agentit-specific routing, Figma, scrollytelling, verification, and specialist-skill integration. Preserve attribution when redistributing substantial portions.

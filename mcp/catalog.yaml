@@ -25,8 +25,11 @@ stacks:
     description: "Starter stack most recommended for coding agents (manager + docs + repo + browser)."
     servers: [agentit-manager, context7, github, playwright]
   frontend:
-    description: "UI implementation and runtime verification."
+    description: "Design + UI implementation stack: current docs, official Figma context, browser automation, and DevTools verification."
     servers: [context7, figma, playwright, chrome-devtools]
+  design_studio:
+    description: "Craft-first visual workflow with official Figma MCP plus browser verification; pair with the Agentit design skill profile."
+    servers: [figma, context7, playwright, chrome-devtools]
   backend_data:
     description: "Schema/query context. Use staging or read-only credentials only."
     servers: [context7, postgres, supabase, github]
@@ -278,24 +281,32 @@ servers:
       - "Disable write tool groups until reviewed."
 
   - id: figma
-    name: Figma MCP
+    name: Figma MCP (official remote)
     tier: recommended
     category: design
     risk: RISK_2
     trust: official_vendor
-    summary: "Structured design context for design-to-code (layout, tokens, components)."
+    summary: "Official remote Figma MCP: structured design context, variables/components/assets, Code Connect, design-to-code and supported write/capture workflows."
     homepage: https://developers.figma.com/docs/figma-mcp-server/
     package: null
-    requires_secret: true
-    secret_env: FIGMA_ACCESS_TOKEN
+    requires_secret: false
     write_capable: true
     evidence:
-      - "X lists (Nav Toor, Tw93); UI Bakery design-to-code pick"
+      - "Official Figma MCP developer documentation (remote server recommended)"
+      - "Official Figma MCP client setup documentation for Claude Code and Codex CLI"
+      - "Official Figma MCP tools documentation including Code Connect and supported write/capture tools"
     claude_add: "claude mcp add --transport http figma https://mcp.figma.com/mcp"
     mcp_json_remote:
       url: https://mcp.figma.com/mcp
+    codex_toml: |
+      # Preferred setup command: codex mcp add figma --url https://mcp.figma.com/mcp
+      [mcp_servers.figma]
+      url = "https://mcp.figma.com/mcp"
     safety_notes:
-      - "Prefer read access; review any write-back to shared files."
+      - "The official remote server authenticates through Figma OAuth; do not commit Figma credentials/tokens."
+      - "Available read/write tools depend on Figma seat, permissions, and current client support."
+      - "Use Code Connect/component mappings when available instead of regenerating existing components."
+      - "Review write-back to shared files and design-system libraries before applying broad changes."
 
   - id: linear
     name: Linear MCP

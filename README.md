@@ -8,7 +8,7 @@
 
 > **Agentit is a portable, provider-neutral meta-harness for safe AI coding-agent orchestration, skill routing, persistent context management, and ecosystem tool incubation.**
 >
-> *Configure, route, compress context, and coordinate coding agents without locking yourself to one provider.*
+> *Configure, route, coordinate, and verify coding agents without locking yourself to one provider.*
 
 ---
 
@@ -43,7 +43,7 @@ That loads the **`using-agentit`** skill and runs the playbook:
 
 1. **Route** — `python3 ~/code/agentit/router/route.py "task"`
 2. **JIT profiles** — `agentit enable <profile> --project . --apply` when skills are missing
-3. **Load only recommended skills** (progressive disclosure; references on demand)
+3. **Load the skills the work actually needs**; deep design work is explicitly allowed to spend context on craft
 4. **Execute** single-agent-first; subagents only with a real topology + Worker Context Contract
 5. **Verify** — no done/fixed/passing without fresh command evidence
 
@@ -57,8 +57,8 @@ Global policy: [`AGENTS.md`](AGENTS.md). Bootstrap skill: [`skills/using-agentit
 |------|----------------|
 | **Single-agent-first** | Direct work by default; Probe / Fan-Out / Pipeline / Writer-Reviewer / Audit only when isolation or risk justifies it |
 | **Router** | Risk, topology, skills, preferences, verification flags — plan only, never permission to destroy |
-| **Core + profiles** | 11-skill global `core`; opt-in project profiles (`frontend`, `design`, `backend`, `supabase`, …) |
-| **Design taste** | `design-taste-frontend` for landings/portfolios: dials, AI tells, pre-flight, **agent-fetchable inspiration sources** (no user screenshots required) |
+| **Core + profiles** | 12-skill global `core`; opt-in project profiles (`frontend`, `design`, `backend`, `supabase`, …) |
+| **Design studio** | Full-fat Taste + Impeccable + Emil design engineering + Figma MCP workflow + cinematic scrollytelling + GSAP + Three.js product storytelling |
 | **Verification gauntlet** | Signal-gated probes + anti-greenwash (`agentit verify`) so “200 tests passed” is not enough alone |
 | **Worker contracts** | `agentit worker build` / `router/worker_context.py` projects project instructions + task skills into subagents |
 | **Context engines** | Tool-output filter, artifact refs (`agentit://`), session dedup |
@@ -90,89 +90,85 @@ Global policy: [`AGENTS.md`](AGENTS.md). Bootstrap skill: [`skills/using-agentit
 
 ---
 
-## Shared skills (35)
+## Shared skills (42)
 
-`profiles.yaml` controls discovery cost:
+`profiles.yaml` controls what is exposed per project. The engineering core remains bounded; the **design profile is intentionally craft-heavy**.
 
 | Profile | Role |
 |---------|------|
 | **`core`** (12, global install) | `using-agentit`, `verification-gauntlet`, `task-router`, orchestration, debugging, review, TDD, security, source-driven, frontend UI, planning, `using-agent-skills` |
-| **`frontend` / `design`** | Browser, performance, anti-slop design, **`design-taste-frontend`** |
+| **`frontend`** | Browser, performance, anti-slop design, Taste art direction |
+| **`design`** | Frontend + full Taste + Impeccable + Emil + Figma + scrollytelling + GSAP + premium Three.js product storytelling |
 | **`backend` / `supabase`** | API, observability, Postgres/Supabase practices |
 | **`product` / `writing` / `release` / `research`** | Specs, marketing, launch, adversarial review |
 | **`all`** | Escape hatch only |
 
-```
+Notable design skills:
+
+```text
 skills/
-├── anti-ai-slop-design           # Short brand-authentic anti-cliché checklist
-├── anti-ai-slop-writing          # Purges AI writing buzzwords & filler
-├── api-and-interface-design      # API contracts & module boundaries
-├── architect-orchestrator        # Adaptive multi-agent routing
-├── browser-testing-with-devtools # Browser & DOM verification
-├── ci-cd-and-automation          # Pipeline automation & quality gates
-├── code-review-and-quality       # Multi-axis code review
-├── code-simplification           # Refactoring for readability
-├── context-engineering           # Context optimization & memory
-├── debugging-and-error-recovery  # Root-cause debugging workflow
-├── deprecation-and-migration     # Legacy sunsetting & migrations
-├── design-taste-frontend         # Landings/portfolios: dials, AI tells, agent refs
-├── documentation-and-adrs        # ADRs & technical specs
-├── doubt-driven-development      # Adversarial review before commit
-├── find-skills                   # Skill discovery helper
-├── frontend-ui-engineering       # Production-quality accessible UI
-├── git-workflow-and-versioning   # Semantic versioning & git flows
-├── idea-refine                   # Idea stress-testing & convergence
-├── incremental-implementation    # Small step-by-step deliveries
-├── interview-me                  # Requirement clarification
-├── marketing-and-growth          # Technical SEO, CRO & copywriting
-├── observability-and-instrumentation # Logging, metrics, tracing
-├── performance-optimization      # Profiling & bottleneck fixing
-├── planning-and-task-breakdown   # Work breakdown structures
-├── security-and-hardening        # Vulnerability mitigation & audit
-├── shipping-and-launch           # Pre-launch checklists & rollouts
-├── source-driven-development     # Official documentation grounding
-├── spec-driven-development       # Spec creation before coding
-├── supabase-postgres-best-practices # Postgres query & schema rules
-├── task-router                   # Heuristic task classifier
-├── test-driven-development       # TDD & test-first implementation
-├── using-agent-skills            # Lifecycle skill discovery map
-├── using-agentit                 # Session bootstrap: "usa/use agentit"
-├── verification-before-completion # Fresh evidence before done claims
-└── verification-gauntlet         # Signal-gated probes + anti-greenwash
+├── design-taste-frontend          # Full-fat art direction; quality over token minimization
+├── impeccable-design              # Design-director craft floor, critique, polish, responsiveness
+├── emil-design-eng                # Emil Kowalski-inspired interaction and motion craft
+├── figma-design-workflow          # Official Figma MCP / design-system / Code Connect workflow
+├── scrollytelling-web             # Narrative scroll architecture and engine selection
+├── gsap-scrolltrigger             # Pin/scrub/timeline mechanics
+├── gsap-performance               # High-motion runtime performance discipline
+└── threejs-product-storytelling   # GLB/glTF, exploded products, camera/light/material direction
 ```
 
-### Verification gauntlet (hard gates, not universal fake suite)
+The remaining engineering/product skills continue to live under `skills/` and are included by `all`.
+
+### Verification gauntlet
 
 Agents write tests — and can greenwash them. Agentit adds an **external gauntlet**:
 
 ```bash
-# Plan which probes apply (stack signals + task text)
 ./agentit verify "Add Supabase RLS for profiles" --project .
-
-# Run runnable probes; checklists stay pending for agent evidence
 ./agentit verify "Add Supabase RLS for profiles" --project . --apply
 # → receipt under .agentit/verify/
 ```
 
 Catalog: [`probes/catalog.yaml`](probes/catalog.yaml). Skill: [`skills/verification-gauntlet/SKILL.md`](skills/verification-gauntlet/SKILL.md).
 
-Layers: project tests → change contract (red→green + acceptance) → stack probes (secrets, RLS, auth, …) → human RISK_3/4.
+### Design studio: quality first
 
-### Design taste (landings without screenshots)
+The `design` profile no longer optimizes the design methodology around minimizing tokens. It keeps the engineering core bounded, then deliberately spends context where visual craft needs it.
 
-`design-taste-frontend` (profiles **`design`** / **`frontend`**) is a slim Agentit adaptation of [taste-skill](https://github.com/Leonxlnx/taste-skill) ideas:
+The stack has clear ownership rather than one giant contradictory prompt:
 
-- Design read + variance / motion / density dials  
-- Layout hard rules and production AI-tells  
-- **`references/inspiration-sources.md`**: galleries and docs that **agents can fetch as text** (Supahero, Minimal/mnmm, shadcn, 21st.dev, Fonts In Use, …) — no user screenshots required  
-- Progressive disclosure: short `SKILL.md`, deep refs only when needed  
+- **Taste** chooses the art direction, visual thesis, composition, type, material, and motion intensity.
+- **Impeccable** acts as craft director across Persuade / Operate / Read / Experience surfaces and owns critique/polish/hardening.
+- **Emil design engineering** owns interaction feel, easing, perceived performance, micro-interactions, and repeated-use motion restraint.
+- **Figma workflow** uses the official MCP as structured design/design-system context rather than treating frames as screenshots.
+- **Scrollytelling + GSAP** owns pinned, scrubbed, timeline-driven narrative work.
+- **Three.js product storytelling** enters only when real spatial product work is justified: exploded assemblies, camera direction, materials, lighting, and depth.
 
-Enable on a project:
+For a cinematic product landing, a typical project setup is:
 
 ```bash
 ./agentit enable design --project . --apply
-# or
-./agentit enable frontend --project . --apply
+agentit mcp enable-stack frontend --apply
+```
+
+The existing `frontend` MCP stack includes **Context7 + Figma + Playwright + Chrome DevTools**. Figma should use the official remote MCP/OAuth flow; no Figma token belongs in the repository.
+
+### Scrollytelling / product decomposition
+
+`scrollytelling-web` deliberately chooses the smallest engine that can express the idea well:
+
+- native CSS / scroll-driven animation for simple work;
+- Motion for local React interaction;
+- **GSAP ScrollTrigger** for serious pin/scrub/timeline choreography;
+- image sequences for photorealistic pre-rendered transformation;
+- **Three.js / React Three Fiber** for genuine 3D product decomposition and camera work.
+
+Every cinematic sequence must have a reduced-motion path, a mobile strategy, reverse-scroll correctness, and end-to-end browser verification. A hero screenshot is not proof that a scroll narrative works.
+
+Enable the full design profile:
+
+```bash
+./agentit enable design --project . --apply
 ```
 
 ---
@@ -182,14 +178,15 @@ Enable on a project:
 Agents can list and toggle curated MCPs mid-session:
 
 ```bash
-agentit mcp install-gateway --apply   # once: agentit-manager meta MCP
+agentit mcp install-gateway --apply
 agentit mcp status
 agentit mcp enable context7 --apply
 agentit mcp enable-stack developer_core --apply
+agentit mcp enable-stack frontend --apply   # includes Figma + browser tooling
 agentit mcp disable playwright --apply
 ```
 
-Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter stack: **agentit-manager + Context7 + GitHub + Playwright**.
+Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter engineering stack: **agentit-manager + Context7 + GitHub + Playwright**.
 
 ---
 
@@ -201,13 +198,8 @@ Docs: [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md). Starter stack: **agentit-man
 git clone https://github.com/marcmarti9/agentit.git ~/code/agentit
 cd ~/code/agentit
 
-# Dry-run plan (default)
 bash install.sh --provider all --with-guides
-
-# Apply: core skills + AGENTS.md / CLAUDE.md / CODEX.md
 bash install.sh --provider all --with-guides --apply
-
-# Optional: CLI on PATH
 ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
 ```
 
@@ -218,15 +210,8 @@ Claude: `~/.claude/skills/`. Codex: `~/.codex/skills/`.
 
 ```bash
 python3 ~/code/agentit/router/route.py "Rediseña la landing de un SaaS B2B"
-# → skills_available may include design-taste-frontend; topology usually direct
-
-# Persist a local trail under .agentit/traces/ (for you, not a public benchmark)
 ./agentit trace "Implementa tests TDD para el servicio de backups" --project .
-./agentit trace "…" --project . --format json
-
-# Verification gauntlet
-./agentit verify "Implementa tests TDD para el servicio de backups" --project .
-./agentit verify "…" --project . --apply
+./agentit verify "Implementa tests TDD para el servicio de backups" --project . --apply
 ```
 
 ### Project profiles & context
@@ -272,13 +257,8 @@ See [`CODEX.md`](CODEX.md), [`CLAUDE.md`](CLAUDE.md), [`docs/ADAPTIVE_AGENT_ARCH
 ## Testing
 
 ```bash
-# Router + profiles + MCP + worker context (~122 tests)
 python3 -m unittest discover -s router -p "test_*.py"
-
-# Installer / harness scripts (~17 tests)
 python3 -m unittest discover -s tests
-
-# Deterministic eval cases
 python3 evals/run.py
 ```
 
@@ -297,15 +277,15 @@ python3 evals/run.py
 
 | Doc | Purpose |
 |-----|---------|
-| [`AGENTS.md`](AGENTS.md) | Global agent playbook (trigger phrases + compact harness) |
+| [`AGENTS.md`](AGENTS.md) | Global agent playbook |
 | [`ABOUT.md`](ABOUT.md) | Product / philosophy deep dive |
 | [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog & runtime |
 | [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | Topologies & contracts |
 | [`incubator/candidates.yaml`](incubator/candidates.yaml) | Scout pipeline decisions |
-| [`skills/design-taste-frontend/references/inspiration-sources.md`](skills/design-taste-frontend/references/inspiration-sources.md) | Agent-fetchable design refs |
+| [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | Design-skill upstream attribution and modification notices |
 
 ---
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE).
+Licensed under the [Apache License, Version 2.0](LICENSE). See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for third-party material and attributions.

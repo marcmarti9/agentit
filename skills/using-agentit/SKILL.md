@@ -38,12 +38,33 @@ When Agentit is active, **raise the bar** vs a casual agent session:
 
 - Prefer the boring correct solution over vibes and half-finished UI/API surface.
 - Default to tests for behavior changes (`test-driven-development` when logic changes).
-- For landings/visual work, run design read + dials (`design-taste-frontend`) — not purple-template defaults.
+- For visual work, use the craft-first design stack rather than purple-template defaults.
 - Never claim done without fresh command evidence (`verification-before-completion`).
 - Touch only the requested scope; no drive-by refactors.
 - If something is ambiguous and expensive to reverse, stop and ask **one** sharp question.
 
 This is the practical meaning of “usa agentit”: more discipline, not more agents.
+
+## Design exception: quality over context thrift
+
+General engineering work still uses progressive disclosure. **Serious design work is the explicit exception to token thrift.** Do not weaken art direction, motion analysis, visual QA, or design-system inspection merely to minimize context.
+
+When the `design` profile is active, load the foundational trio for non-trivial visual work:
+
+1. `design-taste-frontend` — art direction, visual thesis, composition, type/material/motion intensity;
+2. `impeccable-design` — craft director, critique/polish/hardening, responsive and state completeness;
+3. `emil-design-eng` — interaction feel, animation decisions, perceived performance, invisible detail.
+
+Then load specialists by signal:
+
+| Signal | Add |
+|---|---|
+| Figma link/frame/design system/Code Connect | `figma-design-workflow` + official `figma` MCP |
+| scroll-driven / scrollytelling / pinned / scrub / parallax / image sequence | `scrollytelling-web` + `gsap-scrolltrigger` + `gsap-performance` |
+| product explodes/decomposes/disassembles, GLB/glTF, true 3D camera/material work | previous scroll stack + `threejs-product-storytelling` |
+| ordinary micro-interaction / component motion | keep `emil-design-eng`; do not escalate to cinematic tooling without cause |
+
+This is intentional context spending. Avoid loading every specialist for a simple button, but when the task is a cinematic landing, the complete relevant stack should be in context.
 
 ## Playbook (every non-trivial task)
 
@@ -70,23 +91,32 @@ agentit status --project <project_root>
 
 Common profiles: `frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release`, `research`.
 
+For any non-trivial request whose main success criterion is visual design, motion direction, landing-page craft, visual redesign, scrollytelling, or product presentation, prefer activating **`design`** instead of stopping at `frontend`.
+
 Do **not** enable `all` unless the user asks.
 
-### 3. Load only recommended skills
+### 3. Load task-relevant skills
 
-For each id in `skills_available` (and project-active skills that match the task):
+For each id in `skills_available` and project-active skills that match the task:
 
 1. Open `SKILL.md` (harness path first).
-2. Follow its process; load `references/*` only when a step needs them.
-3. Never dump the full skill catalog into context.
+2. Follow its process; load references when a step needs them.
+3. For general engineering, avoid dumping unrelated skills into context.
+4. For design, apply the quality-first exception above: foundational design skills can be loaded together and specialist stacks should be loaded when their signal is present.
 
-High-value specialized skills (examples):
+High-value specialized skills:
 
 | Need | Skill |
 |------|--------|
-| Landing / portfolio / visual redesign | `design-taste-frontend` |
-| Product UI / a11y | `frontend-ui-engineering` |
-| Light anti-slop checklist | `anti-ai-slop-design` |
+| Art direction / landing / portfolio / visual redesign | `design-taste-frontend` |
+| Design critique / polish / responsive craft | `impeccable-design` |
+| Product UI interaction / motion feel | `emil-design-eng` |
+| Figma design-to-code / design-system context | `figma-design-workflow` |
+| Cinematic scroll narrative | `scrollytelling-web` |
+| Pin/scrub ScrollTrigger mechanics | `gsap-scrolltrigger` |
+| Animation runtime performance | `gsap-performance` |
+| Exploded/3D product storytelling | `threejs-product-storytelling` |
+| Product UI / a11y engineering | `frontend-ui-engineering` |
 | Tests first | `test-driven-development` |
 | Debug | `debugging-and-error-recovery` |
 | Security boundary | `security-and-hardening` |
@@ -111,15 +141,20 @@ agentit context dedup "…" --session <id>
 agentit artifact get|read|grep agentit://…
 ```
 
+Do not use context compression as a reason to strip design references that materially affect the requested visual result.
+
 ### 6. MCP (when tools are needed)
 
 ```bash
 agentit mcp status
 agentit mcp enable <id> --apply
 agentit mcp enable-stack developer_core --apply
+agentit mcp enable-stack design_studio --apply
 ```
 
-Plan-first without `--apply`. RISK_3/4 needs `--force` where required. Prefer `context7` for live library docs, `github` for PRs, `playwright` for browser proof.
+Plan-first without `--apply`. RISK_3/4 needs `--force` where required. Prefer `context7` for live library docs, `github` for PRs, and Playwright/DevTools for browser proof.
+
+For Figma-driven work, use the **official remote Figma MCP** and OAuth. The `design_studio` MCP stack combines Figma, Context7, Playwright, and Chrome DevTools. Never put a Figma credential/token in the repository.
 
 ### 7. Verify before done (gauntlet)
 
@@ -134,6 +169,7 @@ agentit verify "task summary" --project <project_root> --apply
 - Honor router `verification` flags (tests, dry-run, backup, independent review).
 - RISK_3/RISK_4: full fidelity, human review for critical ops; do not lower inferred risk.
 - If `verification-before-completion` or `verification-gauntlet` is in `skills_available`, treat them as mandatory for close-out.
+- Design completion additionally needs rendered evidence when browser tooling is available; scrollytelling needs the full sequence tested, not a hero screenshot.
 - Close-out shape: what changed · verify receipt path · blocking probe statuses · checklist evidence · residual risk.
 - **Anti-greenwash:** agent-authored “200 tests passed” without gauntlet receipt is not completion.
 

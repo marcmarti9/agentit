@@ -7,6 +7,7 @@ import yaml
 REPOSITORY = Path(__file__).resolve().parents[1]
 CATALOG_PATH = REPOSITORY / "agents" / "catalog.yaml"
 SKILLS_DIR = REPOSITORY / "skills"
+POLICY_DOC = REPOSITORY / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md"
 
 
 class SpecialistAgentCatalogTests(unittest.TestCase):
@@ -57,6 +58,17 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         self.assertTrue(policy["one_writer_per_file"])
         self.assertTrue(policy["architect_integrates"])
         self.assertLessEqual(policy["max_design_competition_concepts"], 3)
+
+    def test_policy_is_provider_neutral_and_degrades_gracefully(self):
+        policy = self.catalog["policy"]
+        self.assertTrue(policy["provider_neutral"])
+        self.assertTrue(policy["graceful_degradation_to_parent"])
+        self.assertTrue(policy["interview_before_material_assumptions"])
+        self.assertTrue(POLICY_DOC.is_file())
+        text = POLICY_DOC.read_text(encoding="utf-8").lower()
+        for provider in ("openai", "anthropic", "google", "xai"):
+            self.assertIn(provider, text)
+        self.assertIn("multi-agent execution is an optimization", text)
 
 
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Craft-first design studio: full art direction, Impeccable + Emil design engineering, Figma MCP workflow, cinematic scrollytelling, GSAP, and premium 3D product storytelling. Quality over token minimization."
+    description: "Craft-first design studio: art direction, creative concepting, current inspiration research, Impeccable + Emil design engineering, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D product storytelling. Quality over token minimization."
     extends:
       - frontend
     skills:
@@ -70,10 +70,13 @@ profiles:
       - design-taste-frontend
       - impeccable-design
       - emil-design-eng
+      - design-inspiration-research
+      - creative-web-experiences
       - figma-design-workflow
       - scrollytelling-web
       - gsap-scrolltrigger
       - gsap-performance
+      - threejs-spatial-experiences
       - threejs-product-storytelling
   release:
     description: "Core plus CI, migration, launch, and operational readiness."
@@ -106,8 +109,10 @@ profiles:
       - code-review-and-quality
       - code-simplification
       - context-engineering
+      - creative-web-experiences
       - debugging-and-error-recovery
       - deprecation-and-migration
+      - design-inspiration-research
       - design-taste-frontend
       - documentation-and-adrs
       - doubt-driven-development
@@ -135,6 +140,7 @@ profiles:
       - task-router
       - test-driven-development
       - threejs-product-storytelling
+      - threejs-spatial-experiences
       - using-agent-skills
       - using-agentit
       - verification-before-completion

@@ -31,7 +31,7 @@ levels:
   standard:
     label: Standard
     intent: Efficient production-quality execution for ordinary work.
-    result_expectation: Correct, clean, maintainable, tested where relevant, but without broad exploration or premium polish passes.
+    result_expectation: "Correct, clean, maintainable, tested where relevant, but without broad exploration or premium polish passes."
     typical_total_token_range: "15k-80k"
     relative_cost: "1x"
     research: only when facts or current information are needed
@@ -49,7 +49,7 @@ levels:
   polished:
     label: Polished
     intent: Deliberately higher-quality work where extra review, research, and iteration have visible value.
-    result_expectation: More considered architecture/design, stronger edge-case coverage, better visual/interaction polish, and broader QA than Standard.
+    result_expectation: "More considered architecture/design, stronger edge-case coverage, better visual/interaction polish, and broader QA than Standard."
     typical_total_token_range: "50k-250k"
     relative_cost: "2-5x Standard"
     research: targeted research when it can improve decisions
@@ -67,7 +67,7 @@ levels:
   studio:
     label: Studio
     intent: Quality-first, high-ambition execution where additional context, research, specialists, and iteration are worth the cost.
-    result_expectation: Best reasonable result under the constraints: deep discovery, stronger concept work, independent critique, extensive polish, and deliberate technical execution.
+    result_expectation: "Best reasonable result under the constraints: deep discovery, stronger concept work, independent critique, extensive polish, and deliberate technical execution."
     typical_total_token_range: "150k-800k+"
     relative_cost: "5-15x+ Standard"
     research: broad and current research when relevant, including references and tool scouting

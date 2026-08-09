@@ -9,7 +9,6 @@ profiles:
       - using-agentit
       - task-router
       - architect-orchestrator
-      - specialist-agent-routing
       - debugging-and-error-recovery
       - code-review-and-quality
       - test-driven-development

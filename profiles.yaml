@@ -4,7 +4,7 @@ global_profiles:
   - core
 profiles:
   core:
-    description: "Small global discovery set for common engineering work."
+    description: "Small global discovery set for common engineering work with optional specialist delegation."
     skills:
       - using-agentit
       - task-router
@@ -62,7 +62,7 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Craft-first design studio: art direction, creative concepting, current inspiration research, Impeccable + Emil design engineering, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D product storytelling. Quality over token minimization."
+    description: "Craft-first design studio: research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Quality over token minimization."
     extends:
       - frontend
     skills:
@@ -71,7 +71,11 @@ profiles:
       - impeccable-design
       - emil-design-eng
       - design-inspiration-research
+      - design-trend-researcher
       - creative-web-experiences
+      - visual-storytelling-director
+      - creative-tool-scout
+      - delight-and-whimsy
       - figma-design-workflow
       - scrollytelling-web
       - gsap-scrolltrigger
@@ -109,11 +113,14 @@ profiles:
       - code-review-and-quality
       - code-simplification
       - context-engineering
+      - creative-tool-scout
       - creative-web-experiences
       - debugging-and-error-recovery
+      - delight-and-whimsy
       - deprecation-and-migration
       - design-inspiration-research
       - design-taste-frontend
+      - design-trend-researcher
       - documentation-and-adrs
       - doubt-driven-development
       - emil-design-eng
@@ -135,6 +142,7 @@ profiles:
       - security-and-hardening
       - shipping-and-launch
       - source-driven-development
+      - specialist-agent-routing
       - spec-driven-development
       - supabase-postgres-best-practices
       - task-router
@@ -145,3 +153,4 @@ profiles:
       - using-agentit
       - verification-before-completion
       - verification-gauntlet
+      - visual-storytelling-director

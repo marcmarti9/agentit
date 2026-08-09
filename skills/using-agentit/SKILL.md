@@ -24,6 +24,7 @@ If global `AGENTS.md` already marks Agentit as the default harness, still follow
 | Harness root | `~/code/agentit` |
 | CLI | `agentit` (`~/.local/bin/agentit` → harness) |
 | Router | `python3 ~/code/agentit/router/route.py "…"` |
+| Specialist catalog | `~/code/agentit/agents/catalog.yaml` |
 | Skill bodies (source of truth) | `~/code/agentit/skills/<id>/SKILL.md` |
 | Skill references | `~/code/agentit/skills/<id>/references/` |
 | Global Open Skills | `~/.agents/skills/` |
@@ -45,9 +46,40 @@ When Agentit is active, **raise the bar** vs a casual agent session:
 
 This is the practical meaning of “usa agentit”: more discipline, not more agents.
 
+## Specialist agents: skills can become temporary experts
+
+Agentit has reusable specialist roles in `agents/catalog.yaml`. A specialist combines a role, a small skill bundle, an output contract, and a bounded worker context. This lets the parent agent either use a skill directly **or** delegate that skill set to a fresh subagent when specialization or isolation is worth the overhead.
+
+Before spawning, load `specialist-agent-routing` and ask:
+
+- would fresh context materially improve this branch?
+- is independent research/review valuable?
+- does the task benefit from a different model or toolset?
+- can the specialist work without fighting over shared files/state?
+- is the output independently consumable by the parent?
+
+If not, keep the work in the parent. Do not build a fake company for a small task.
+
+Examples:
+
+| Need | Optional specialist |
+|---|---|
+| current visual/UI references | `ui-researcher` |
+| current design/creative trends | `trend-researcher` |
+| choose libraries/tools for an unusual concept | `creative-tool-scout` |
+| direct narrative/pacing for an immersive page | `visual-storytelling-director` |
+| design a store/museum/showroom journey | `spatial-experience-designer` |
+| add memorable micro-moments late in polish | `delight-and-whimsy` |
+| independent premium visual critique | `design-critic` |
+| animation/WebGL/mobile performance review | `performance-benchmarker` |
+| API edge-case review | `api-tester` |
+| backend architecture probe | `backend-architect` |
+
+All delegated specialists still go through the Worker Context Contract. The parent/Architect integrates and verifies; specialist reports are inputs, not final truth.
+
 ## Design exception: quality over context thrift
 
-General engineering work still uses progressive disclosure. **Serious design work is the explicit exception to token thrift.** Do not weaken art direction, motion analysis, visual QA, or design-system inspection merely to minimize context.
+General engineering work still uses progressive disclosure. **Serious design work is the explicit exception to token thrift.** Do not weaken research, art direction, motion analysis, visual QA, design-system inspection, or concept exploration merely to minimize context.
 
 When the `design` profile is active, load the foundational trio for non-trivial visual work:
 
@@ -55,16 +87,35 @@ When the `design` profile is active, load the foundational trio for non-trivial 
 2. `impeccable-design` — craft director, critique/polish/hardening, responsive and state completeness;
 3. `emil-design-eng` — interaction feel, animation decisions, perceived performance, invisible detail.
 
-Then load specialists by signal:
+Then load or delegate specialists by signal:
 
-| Signal | Add |
+| Signal | Add / delegate |
 |---|---|
+| current inspiration / references | `design-inspiration-research`; optionally `ui-researcher` |
+| trend-sensitive / “what is cutting edge now?” | `design-trend-researcher`; optionally `trend-researcher` |
+| open-ended “invent a memorable web experience” | `creative-web-experiences` |
+| narrative/cinematic pacing matters | `visual-storytelling-director`; optionally specialist role of same name |
+| unusual implementation / choose best creative library | `creative-tool-scout` skill or specialist |
 | Figma link/frame/design system/Code Connect | `figma-design-workflow` + official `figma` MCP |
-| scroll-driven / scrollytelling / pinned / scrub / parallax / image sequence | `scrollytelling-web` + `gsap-scrolltrigger` + `gsap-performance` |
-| product explodes/decomposes/disassembles, GLB/glTF, true 3D camera/material work | previous scroll stack + `threejs-product-storytelling` |
+| scroll-driven / pinned / scrub / parallax / image sequence | `scrollytelling-web` + `gsap-scrolltrigger` + `gsap-performance` |
+| virtual store / room / museum / environment / walkthrough | `threejs-spatial-experiences`; optionally `spatial-experience-designer` |
+| product explodes/decomposes/disassembles, GLB/glTF, true 3D camera/material work | relevant scroll stack + `threejs-product-storytelling` |
+| late-stage memorable micro-moments | `delight-and-whimsy`; optionally its reviewer specialist |
 | ordinary micro-interaction / component motion | keep `emil-design-eng`; do not escalate to cinematic tooling without cause |
 
-This is intentional context spending. Avoid loading every specialist for a simple button, but when the task is a cinematic landing, the complete relevant stack should be in context.
+### Design competition
+
+When the user explicitly asks to “go all out”, create a premium/award-level redesign, or otherwise makes concept quality a major success criterion, the Architect may choose the `design competition` topology:
+
+1. create one shared research/reference brief;
+2. ask 2-3 independent concept agents for **different** directions;
+3. optionally use different capable model families or deliberate creative constraints;
+4. judge proposals with explicit criteria: brand fit, originality, clarity, usability, technical feasibility, performance, and memorability;
+5. choose one winner or a justified hybrid;
+6. only then implement;
+7. after implementation, run an independent `design-critic` and browser/performance pass.
+
+Do not use this topology for routine UI maintenance.
 
 ## Playbook (every non-trivial task)
 
@@ -91,7 +142,7 @@ agentit status --project <project_root>
 
 Common profiles: `frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release`, `research`.
 
-For any non-trivial request whose main success criterion is visual design, motion direction, landing-page craft, visual redesign, scrollytelling, or product presentation, prefer activating **`design`** instead of stopping at `frontend`.
+For any non-trivial request whose main success criterion is visual design, motion direction, landing-page craft, visual redesign, scrollytelling, spatial experience, or product presentation, prefer activating **`design`** instead of stopping at `frontend`.
 
 Do **not** enable `all` unless the user asks.
 
@@ -103,18 +154,27 @@ For each id in `skills_available` and project-active skills that match the task:
 2. Follow its process; load references when a step needs them.
 3. For general engineering, avoid dumping unrelated skills into context.
 4. For design, apply the quality-first exception above: foundational design skills can be loaded together and specialist stacks should be loaded when their signal is present.
+5. If a branch of work would benefit from isolation or independent expertise, inspect `agents/catalog.yaml` and use `specialist-agent-routing` rather than stuffing every role into the parent.
 
 High-value specialized skills:
 
 | Need | Skill |
 |------|--------|
+| Specialist selection/delegation | `specialist-agent-routing` |
 | Art direction / landing / portfolio / visual redesign | `design-taste-frontend` |
 | Design critique / polish / responsive craft | `impeccable-design` |
 | Product UI interaction / motion feel | `emil-design-eng` |
+| Current project inspiration | `design-inspiration-research` |
+| Current trend mapping | `design-trend-researcher` |
+| Invent creative web concepts | `creative-web-experiences` |
+| Visual narrative / scene pacing | `visual-storytelling-director` |
+| Choose current creative tooling | `creative-tool-scout` |
+| Delight / whimsy pass | `delight-and-whimsy` |
 | Figma design-to-code / design-system context | `figma-design-workflow` |
 | Cinematic scroll narrative | `scrollytelling-web` |
 | Pin/scrub ScrollTrigger mechanics | `gsap-scrolltrigger` |
 | Animation runtime performance | `gsap-performance` |
+| Spatial environments / walkthroughs | `threejs-spatial-experiences` |
 | Exploded/3D product storytelling | `threejs-product-storytelling` |
 | Product UI / a11y engineering | `frontend-ui-engineering` |
 | Tests first | `test-driven-development` |
@@ -126,11 +186,14 @@ High-value specialized skills:
 
 If a skill is in `skills_recommended_missing`, either enable the profile that provides it, load it from `~/code/agentit/skills/…` if present, or state that it is unavailable.
 
-### 4. Execute with single-agent-first
+### 4. Execute with single-agent-first + specialist escalation
 
 - Default topology: `direct` (you do the work).
-- Spawn subagents only if topology is `probe` / `fan_out` / `pipeline` / `writer_reviewer` / `audit` **and** independence or isolation is real.
+- If a matching skill is enough, load it directly.
+- If specialization, context isolation, independent review, or creative diversity materially helps, select a role from `agents/catalog.yaml` and delegate with `specialist-agent-routing`.
+- Use `design competition` only for genuinely high-ambition concept work.
 - Any subagent must go through the Worker Context Contract (`agentit worker build` / `router/worker_context.py`): project instructions, task skills, preferences, risk, I/O, verifier. Precedence: `safety > user > project > preferences > defaults`.
+- One writer owns each file/shared state. Proposal/research/review specialists should normally be read-only.
 
 ### 5. Context engines (when noisy)
 
@@ -156,6 +219,8 @@ Plan-first without `--apply`. RISK_3/4 needs `--force` where required. Prefer `c
 
 For Figma-driven work, use the **official remote Figma MCP** and OAuth. The `design_studio` MCP stack combines Figma, Context7, Playwright, and Chrome DevTools. Never put a Figma credential/token in the repository.
 
+For inspiration/tool research, use live web/browser access when available. Social sources such as TikTok are browser-first and may require an isolated authenticated profile; never bypass access controls. Treat catalogs such as `designengineer.tools` as discovery surfaces, then verify implementation choices against current primary documentation.
+
 ### 7. Verify before done (gauntlet)
 
 - No **done / fixed / passing** claim without **fresh command evidence** from this turn after the last relevant edit (`verification-before-completion`).
@@ -169,7 +234,8 @@ agentit verify "task summary" --project <project_root> --apply
 - Honor router `verification` flags (tests, dry-run, backup, independent review).
 - RISK_3/RISK_4: full fidelity, human review for critical ops; do not lower inferred risk.
 - If `verification-before-completion` or `verification-gauntlet` is in `skills_available`, treat them as mandatory for close-out.
-- Design completion additionally needs rendered evidence when browser tooling is available; scrollytelling needs the full sequence tested, not a hero screenshot.
+- Design completion additionally needs rendered evidence when browser tooling is available; scrollytelling/spatial experiences need the full sequence tested, not a hero screenshot.
+- Premium/high-ambition design should receive independent visual critique after implementation.
 - Close-out shape: what changed · verify receipt path · blocking probe statuses · checklist evidence · residual risk.
 - **Anti-greenwash:** agent-authored “200 tests passed” without gauntlet receipt is not completion.
 
@@ -185,8 +251,9 @@ When the user pairs the trigger with a task (“usa agentit y haz X”):
 
 1. Route immediately.
 2. Enable profiles / load skills.
-3. Execute and verify.
-4. Report: what changed, evidence, residual risks.
+3. Decide direct vs specialist topology.
+4. Execute and verify.
+5. Report: what changed, evidence, residual risks.
 
 ## Safety (non-negotiable)
 
@@ -197,6 +264,7 @@ When the user pairs the trigger with a task (“usa agentit y haz X”):
 
 ## See also
 
+- Specialist role catalog: `~/code/agentit/agents/catalog.yaml`
 - Global policy: `~/AGENTS.md` and `~/code/agentit/AGENTS.md`
 - Skill discovery map: `using-agent-skills`
 - Router skill detail: `task-router`

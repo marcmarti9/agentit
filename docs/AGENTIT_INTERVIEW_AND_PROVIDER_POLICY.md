@@ -1,52 +1,126 @@
-# Agentit interview + provider-neutral execution policy
+# Agentit interview, effort, and provider-neutral execution policy
 
 Agentit owns the work protocol. Providers own only the execution primitive used to satisfy that protocol.
 
-## Interview gate
+## 1. Product work interviews by default
 
-For any non-trivial task, the parent agent must decide whether the request is sufficiently specified before planning or implementation.
+For Agentit, any task that **creates or changes product behavior or a meaningful implementation decision** must pass `interview-me` before planning or implementation.
 
-Use `interview-me` when missing decisions could materially change architecture, scope, UX, visual direction, success criteria, constraints, audience, risk, or cost. The goal is not to ask questions by habit; the goal is to avoid silently committing to expensive assumptions.
+This includes features, pages, components, UX, visual design, architecture, APIs, data models, workflows, copy, positioning, automations, and refactors where more than one materially different outcome is possible.
 
-Rules:
+The interview can be tiny. A clear low-complexity change may need only one confirmation. The requirement is alignment, not ceremony.
 
-- Look up facts in the repo/tools instead of asking the user.
-- Ask the user for decisions, preferences, and tradeoffs that cannot be inferred safely.
-- Interview as much as needed for a high-confidence result when the task is expensive to reverse or the user explicitly asks for the best possible outcome.
-- Prefer one sharp question at a time when answers are dependent; use a frontier round for several independent unresolved decisions.
-- Attach a recommended/default answer so the user can react instead of inventing from scratch.
-- Stop when further questions are unlikely to change the implementation materially.
-- Do not block trivial/mechanical work with ceremonial interviews.
+### Mechanical bypass
 
-For high-ambition design work, interview dimensions should include when relevant: brand personality, audience, conversion/information goal, desired emotional effect, references to embrace/avoid, content/assets, appetite for unusual interaction, performance/device constraints, accessibility expectations, and how much visual risk is acceptable.
+Interview may be skipped only for exact mechanical chores whose purpose is to save time and which do not encode a product decision, for example:
 
-## Provider-neutral specialist contract
+- create explicitly named directories/files;
+- exact move/rename operations;
+- run a specified command or test;
+- deterministic formatting;
+- copy exact content to a known destination.
 
-A specialist in `agents/catalog.yaml` is a logical capability bundle, not a Claude-specific subagent or a Codex-specific worker.
+If unsure whether the task is mechanical, treat it as product-affecting and interview.
 
-The parent agent chooses the best available execution mode in this order:
+Facts belong to the agent: inspect the repo, docs, runtime, connected tools, or live sources. Decisions/preferences belong in the interview.
 
-1. native subagent/worker capability offered by the current provider/client;
-2. an isolated delegated model/tool call available through the host environment;
-3. a separate fresh-context invocation if the environment supports it;
-4. direct execution in the parent with the specialist's skill bundle loaded.
+## 2. Every product interview selects an effort level
 
-The specialist contract remains the same regardless of provider:
+Canonical machine-readable catalog: `effort/levels.yaml`.
+
+The user must explicitly confirm one of three levels before implementation:
+
+### Standard
+
+Efficient production-quality execution. Minimal research, one agent by default, focused implementation, proportional testing/browser checks, and strong context discipline.
+
+Typical rough total model-token envelope: **15k-80k**.
+
+### Polished
+
+Higher-quality execution with targeted research, stronger edge-case coverage, more visual/interaction polish, more iterations, and 0-2 specialists when they provide concrete value.
+
+Typical rough total model-token envelope: **50k-250k**.
+
+### Studio
+
+Quality-first execution for flagship/high-ambition work. Deep discovery, broad relevant research, multiple concepts when useful, specialists/model diversity, independent critique, performance/browser loops, and extensive polish.
+
+Typical rough total model-token envelope: **150k-800k+**.
+
+These ranges are estimates across the parent plus delegated calls, not precise billing forecasts. Actual usage depends on task size, provider, model, tool output, context, retries, and implementation complexity.
+
+### Recommendation requirement
+
+The agent does not ask `Standard, Polished or Studio?` without guidance. It recommends one and explains:
+
+- why it fits the task;
+- what the result should look like at each relevant level;
+- rough token envelope / relative cost;
+- expected research, specialist, and iteration depth;
+- what is gained or lost by moving up/down.
+
+The user may override the recommendation.
+
+Studio is not automatically recommended for design. Standard is not automatically recommended for cheap/simple work. The criterion is marginal value from additional effort.
+
+## 3. Adaptive interview depth
+
+Mandatory interview does not mean mandatory long interview.
+
+- clear small product change: one short confirmation may be enough;
+- one material unknown: ask it plus effort level;
+- several independent unknowns: one frontier round;
+- open-ended product/design/architecture task: deeper interview until the material frontier is closed.
+
+Questions should carry a recommendation/default so the user can react quickly.
+
+Stop when meaningful decisions are resolved, the effort level is confirmed, and further answers are unlikely to change the result materially.
+
+## 4. Effort controls spend, not correctness
+
+Standard/Polished/Studio control how much research, context, delegation, concept exploration, iteration, and review Agentit spends.
+
+They do not lower the correctness or safety floor.
+
+If the work becomes more complex than expected and materially exceeding the selected level would be useful, ask before escalating. Explain the expected added token/time cost and specific benefit.
+
+Do not silently turn Standard into Studio. Do not knowingly ship unsafe or incorrect work merely to preserve the selected budget.
+
+## 5. Provider-neutral specialist contract
+
+A specialist in `agents/catalog.yaml` is a logical capability bundle, not a Claude-specific subagent or Codex-specific worker.
+
+The parent chooses the best available execution mode:
+
+1. native subagent/worker from the current provider/client;
+2. isolated delegated model/tool call;
+3. separate fresh-context invocation;
+4. direct execution in the parent with the specialist skill bundle.
+
+The specialist contract remains equivalent:
 
 - objective and done condition;
 - role (`implementer`, `probe`, `reviewer`);
+- confirmed effort level;
 - task-scoped skills;
-- allowed inputs and write ownership;
-- constraints and risk;
+- allowed inputs/write ownership;
+- constraints/risk;
 - expected output schema;
 - verification and stop condition.
 
-Do not assume provider-specific names such as Claude subagents, Codex workers, Gemini agents, Grok workers, or any particular tool API in shared Agentit policy. Provider-specific adapters may map these concepts locally, but shared skills and catalogs should describe capabilities semantically.
+Do not assume provider-specific names or APIs in shared Agentit policy.
 
-## Cross-provider compatibility target
+## 6. Cross-provider compatibility target
 
-Agentit should remain usable with model families and clients from OpenAI, Anthropic, Google, xAI, and other providers that can read repository instructions and execute normal coding-agent workflows.
+Agentit should remain usable with OpenAI, Anthropic, Google, xAI, and other compatible coding-agent environments.
 
-Graceful degradation is required: if a provider cannot spawn a specialist, the parent must still be able to apply the same specialist skill bundle directly. Multi-agent execution is an optimization, never a correctness dependency.
+Graceful degradation is required. If native delegation is unavailable, the parent applies the same specialist capability directly. Multi-agent execution is an optimization, never a correctness dependency.
 
-Likewise, MCP/tool references are optional capabilities. A task must either use an equivalent available tool or explicitly report the missing capability; shared reasoning and skill selection must not fail merely because one provider lacks a particular integration.
+Likewise, MCP/tool integrations are optional capabilities. Use an equivalent available tool or report the missing capability explicitly rather than breaking shared orchestration.
+
+## 7. Non-interactive execution
+
+CI, scheduled runs, autonomous loops, and other non-interactive contexts cannot fabricate user confirmation.
+
+If a task qualifies only for mechanical bypass, proceed. If product-affecting work requires intent/effort confirmation that is not already explicitly supplied, report a blocker instead of guessing.

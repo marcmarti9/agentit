@@ -87,7 +87,7 @@ specialists:
   - id: visual-storytelling-director
     domain: design
     mode: probe
-    description: Turn content and brand intent into a paced visual narrative: opening, reveals, transitions, rests, climax, and interaction rhythm.
+    description: "Turn content and brand intent into a paced visual narrative: opening, reveals, transitions, rests, climax, and interaction rhythm."
     triggers: [storytelling, cinematic, narrative, campaign, immersive landing, brand experience]
     skills: [visual-storytelling-director, creative-web-experiences, design-taste-frontend]
     output: beat sheet, scene/state map, interaction grammar, and rationale

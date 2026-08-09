@@ -4,7 +4,9 @@ policy:
   specialist_spawn_requires_benefit: true
   provider_neutral: true
   graceful_degradation_to_parent: true
-  interview_before_material_assumptions: true
+  interview_for_all_product_work: true
+  effort_level_required_for_product_work: true
+  effort_catalog: effort/levels.yaml
   max_normal_specialists: 3
   max_design_competition_concepts: 3
   one_writer_per_file: true
@@ -14,7 +16,7 @@ policy:
     The parent agent stays responsible for decomposition, integration, verification, and the user-facing answer.
     Spawn only when expertise, independent exploration, context isolation, or review quality materially improves the result.
     If the current provider/client cannot spawn a specialist, load the same specialist skill bundle into the parent and continue.
-    Before planning non-trivial work, interview the user when unresolved decisions could materially change the result.
+    Product-affecting work must pass interview and confirm Standard/Polished/Studio before planning; purely mechanical chores may bypass.
 
 specialists:
   - id: frontend-developer

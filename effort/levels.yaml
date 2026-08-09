@@ -1,0 +1,98 @@
+schema_version: 1
+policy:
+  default_level: standard
+  interview_required_for_product_work: true
+  mechanical_bypass_allowed: true
+  token_estimates_are_rough: true
+  provider_neutral: true
+  notes: |
+    Effort level controls how much research, context, delegation, iteration, and verification Agentit should spend.
+    The selected level is a user decision for product-affecting work and must be confirmed during interview.
+    Token estimates are rough total-session envelopes across parent + delegated model calls; actual usage varies by task,
+    provider, model, context size, retries, tools, and implementation complexity.
+
+mechanical_bypass:
+  description: Purely mechanical work that saves user time without making or changing a product decision.
+  examples:
+    - create explicitly named directories or files
+    - move or rename files exactly as instructed
+    - run an explicitly requested command or test
+    - apply deterministic formatting
+    - copy exact content between known locations
+  never_bypass_when:
+    - choosing UX or visual behavior
+    - changing product functionality
+    - making architecture or API decisions
+    - choosing wording, positioning, or content strategy
+    - choosing implementation tradeoffs with user-visible consequences
+    - creating a new product, feature, page, workflow, or design
+
+levels:
+  standard:
+    label: Standard
+    intent: Efficient production-quality execution for ordinary work.
+    result_expectation: "Correct, clean, maintainable, tested where relevant, but without broad exploration or premium polish passes."
+    typical_total_token_range: "15k-80k"
+    relative_cost: "1x"
+    research: only when facts or current information are needed
+    interview: shortest interview that confirms intent and effort level
+    specialists: "0 by default; usually at most 1 when clearly beneficial"
+    concept_exploration: "none or one direct approach"
+    implementation_iterations: "focused; usually 1-2 verification/fix cycles"
+    visual_qa: "basic rendered check when UI changes"
+    recommended_for:
+      - ordinary features and fixes
+      - internal tools
+      - straightforward pages and components
+      - clear backend/API work
+
+  polished:
+    label: Polished
+    intent: Deliberately higher-quality work where extra review, research, and iteration have visible value.
+    result_expectation: "More considered architecture/design, stronger edge-case coverage, better visual/interaction polish, and broader QA than Standard."
+    typical_total_token_range: "50k-250k"
+    relative_cost: "2-5x Standard"
+    research: targeted research when it can improve decisions
+    interview: moderate depth; resolve meaningful taste, tradeoff, and success questions
+    specialists: "0-2 normally; independent review or specialist probe when useful"
+    concept_exploration: "compare 1-3 approaches when the choice matters"
+    implementation_iterations: "multiple critique/fix cycles until acceptance criteria are solid"
+    visual_qa: "desktop + mobile + interaction/state review for meaningful UI work"
+    recommended_for:
+      - public-facing product features
+      - portfolio-worthy projects
+      - important refactors or architecture changes
+      - client work where polish matters
+
+  studio:
+    label: Studio
+    intent: Quality-first, high-ambition execution where additional context, research, specialists, and iteration are worth the cost.
+    result_expectation: "Best reasonable result under the constraints: deep discovery, stronger concept work, independent critique, extensive polish, and deliberate technical execution."
+    typical_total_token_range: "150k-800k+"
+    relative_cost: "5-15x+ Standard"
+    research: broad and current research when relevant, including references and tool scouting
+    interview: deep enough to remove material ambiguity before committing
+    specialists: "2-5 when they add real value; still never spawn by ceremony"
+    concept_exploration: "multiple distinct directions; competition/fan-out allowed when concept quality matters"
+    implementation_iterations: "iterate until remaining improvements are marginal relative to cost"
+    visual_qa: "full desktop/mobile/responsive/motion/accessibility/performance critique for visual work"
+    recommended_for:
+      - flagship personal or company websites
+      - high-stakes launches
+      - premium creative experiences
+      - difficult architecture/research tasks where quality dominates token cost
+
+selection_protocol:
+  required_interview_question: true
+  recommendation_required: true
+  must_explain:
+    - why the recommended level fits the task
+    - how the expected result differs at each relevant level
+    - rough total token envelope and relative cost
+    - likely research, specialist, and iteration depth
+  user_must_confirm_level: true
+  explicit_user_override_allowed: true
+  do_not_pretend_precision: true
+  escalation_during_execution:
+    rule: Ask before materially exceeding the confirmed level unless safety/correctness requires extra work.
+    example: "This is uncovering more complexity than expected. Staying Standard will mean X; moving to Polished will likely cost roughly Y more tokens and adds Z. Which do you want?"

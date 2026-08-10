@@ -62,11 +62,12 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Craft-first design studio: research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Quality over token minimization."
+    description: "Craft-first design studio: JIT UI/UX intelligence, research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Effort depth follows Standard/Polished/Studio."
     extends:
       - frontend
     skills:
       - anti-ai-slop-design
+      - ui-ux-pro-max-intelligence
       - design-taste-frontend
       - impeccable-design
       - emil-design-eng
@@ -149,6 +150,7 @@ profiles:
       - test-driven-development
       - threejs-product-storytelling
       - threejs-spatial-experiences
+      - ui-ux-pro-max-intelligence
       - using-agent-skills
       - using-agentit
       - verification-before-completion

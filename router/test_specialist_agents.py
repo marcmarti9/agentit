@@ -8,7 +8,11 @@ REPOSITORY = Path(__file__).resolve().parents[1]
 CATALOG_PATH = REPOSITORY / "agents" / "catalog.yaml"
 SKILLS_DIR = REPOSITORY / "skills"
 POLICY_DOC = REPOSITORY / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md"
+CONTINUITY_DOC = REPOSITORY / "docs" / "PROJECT_CONTINUITY.md"
 EFFORT_PATH = REPOSITORY / "effort" / "levels.yaml"
+PROFILES_PATH = REPOSITORY / "profiles.yaml"
+INTERVIEW_SKILL = SKILLS_DIR / "interview-me" / "SKILL.md"
+UIUX_SKILL = SKILLS_DIR / "ui-ux-pro-max-intelligence" / "SKILL.md"
 
 
 class SpecialistAgentCatalogTests(unittest.TestCase):
@@ -17,6 +21,7 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         cls.catalog = yaml.safe_load(CATALOG_PATH.read_text(encoding="utf-8"))
         cls.specialists = cls.catalog["specialists"]
         cls.effort = yaml.safe_load(EFFORT_PATH.read_text(encoding="utf-8"))
+        cls.profiles = yaml.safe_load(PROFILES_PATH.read_text(encoding="utf-8"))
 
     def test_catalog_has_unique_specialist_ids(self):
         ids = [item["id"] for item in self.specialists]
@@ -40,9 +45,10 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
                     missing.append((item["id"], skill_id))
         self.assertEqual([], missing)
 
-    def test_design_specialists_cover_research_direction_tools_delight_and_spatial(self):
+    def test_design_specialists_cover_research_intelligence_direction_tools_delight_and_spatial(self):
         ids = {item["id"] for item in self.specialists}
         required = {
+            "design-system-researcher",
             "ui-researcher",
             "creative-tool-scout",
             "visual-storytelling-director",
@@ -73,6 +79,43 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         for provider in ("openai", "anthropic", "google", "xai"):
             self.assertIn(provider, text)
         self.assertIn("multi-agent execution is an optimization", text)
+
+    def test_interview_batches_all_current_material_questions(self):
+        policy = self.catalog["policy"]
+        self.assertTrue(policy["interview_batch_all_current_questions"])
+        text = INTERVIEW_SKILL.read_text(encoding="utf-8").lower()
+        self.assertIn("all material questions", text)
+        self.assertIn("one numbered batch", text)
+        self.assertIn("follow-up batch", text)
+        self.assertIn("genuinely new material decisions", text)
+
+    def test_continuity_is_required_and_resumable(self):
+        policy = self.catalog["policy"]
+        self.assertTrue(policy["continuity_required_for_product_work"])
+        self.assertEqual("docs/PROJECT_CONTINUITY.md", policy["continuity_policy"])
+        self.assertTrue(CONTINUITY_DOC.is_file())
+        text = CONTINUITY_DOC.read_text(encoding="utf-8").lower()
+        self.assertIn("docs/agentit/state.md", text)
+        self.assertIn("token exhaustion", text)
+        self.assertIn("machine switch", text)
+        self.assertIn("resume protocol", text)
+
+    def test_pr_first_is_default_but_explicit_override_is_allowed(self):
+        policy = self.catalog["policy"]
+        self.assertTrue(policy["pr_first_repository_changes"])
+        self.assertTrue(policy["direct_default_branch_requires_explicit_override"])
+        text = CONTINUITY_DOC.read_text(encoding="utf-8").lower()
+        self.assertIn("branch + pull request workflow by default", text)
+        self.assertIn("unless the user explicitly asks", text)
+
+    def test_ui_ux_pro_max_intelligence_is_jit_and_in_design_profile(self):
+        self.assertTrue(UIUX_SKILL.is_file())
+        text = UIUX_SKILL.read_text(encoding="utf-8").lower()
+        self.assertIn("nextlevelbuilder/ui-ux-pro-max-skill", text)
+        self.assertIn("searchable design-intelligence source", text)
+        self.assertIn("do not dump the full database", text)
+        design_skills = self.profiles["profiles"]["design"]["skills"]
+        self.assertIn("ui-ux-pro-max-intelligence", design_skills)
 
     def test_effort_catalog_has_three_ordered_levels_and_budget_metadata(self):
         self.assertTrue(EFFORT_PATH.is_file())

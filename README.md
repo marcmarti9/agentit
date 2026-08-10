@@ -4,128 +4,131 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/version-v0.3.2--stable-green.svg)](https://github.com/marcmarti9/agentit/releases)
 
-> **Agentit is a portable, provider-neutral meta-harness for interviewing, routing, coordinating, and verifying AI coding agents.**
->
-> Efficient by default. Quality-first when the user explicitly chooses to spend more effort.
+> **Agentit is a portable, provider-neutral meta-harness for AI coding agents: interview first, choose an explicit effort level, route skills/specialists, keep work resumable, verify, and deliver through PRs by default.**
 
-Agentit keeps shared behavior semantic and portable across **OpenAI, Anthropic, Google, xAI, and other compatible coding-agent environments**. Provider-specific subagents/workers are optional execution primitives, not correctness dependencies.
+Agentit is designed to work across **OpenAI, Anthropic, Google, xAI**, and compatible future coding-agent environments. Provider-specific subagents/workers are optional execution primitives; the shared Agentit protocol is semantic and portable.
 
----
+## Use it
 
-## One-phrase usage
-
-Tell the coding agent:
+Tell the agent:
 
 ```text
 usa agentit
 ```
 
-or pair it with work:
+or combine it with a task:
 
 ```text
-usa agentit y haz mi portfolio personal
+usa agentit y crea mi portfolio personal
 ```
 
-For product-affecting work Agentit does **not** immediately start coding. The flow is:
+For product-affecting work Agentit follows roughly:
 
 ```text
-request
-  ↓
-mechanical chore? ── yes → execute directly
-  │ no
-  ↓
-interview
-  ↓
-recommend + confirm effort level
-(Standard / Polished / Studio)
-  ↓
-route + skills + optional specialists
-  ↓
-implement
-  ↓
-verify
+inspect facts
+   ↓
+one comprehensive interview batch
+   ↓
+confirm Standard / Polished / Studio
+   ↓
+persist resumable project state
+   ↓
+route skills + optional specialists
+   ↓
+implement on work branch
+   ↓
+continuous documentation + verification
+   ↓
+PR by default
 ```
 
-The interview can be one short confirmation for a tiny clear change, or a deeper discovery process for an open-ended product/design/architecture task.
+Purely mechanical chores such as exact `mkdir`, file moves/renames, formatting, copying known content, or running a specified command can bypass the interview.
 
 ---
 
-## Adaptive effort levels
+## Interview-first, but not one-question-at-a-time
 
-Canonical policy: [`effort/levels.yaml`](effort/levels.yaml).
+Agentit interviews **every product-affecting task**, not only ambiguous ones.
 
-Every product-affecting task chooses an effort level during the interview. The agent must **recommend** a level, explain what the result will look like, give a rough token estimate, and let the user confirm or override it.
+Before asking, the agent inspects repo/docs/tools so it does not ask discoverable facts. Then it asks **all currently identifiable material user decisions in one numbered batch**, with a recommended/default answer on every question.
 
-| Level | What it optimizes for | Rough total model tokens* | Typical behavior |
-|---|---|---:|---|
-| **Standard** | efficiency + production quality | **~15k-80k** | one agent by default, minimal research, focused implementation, proportional QA |
-| **Polished** | visibly stronger quality | **~50k-250k** | targeted research, approach comparison when useful, 0-2 specialists, more edge-case/visual polish and iteration |
-| **Studio** | best reasonable result | **~150k-800k+** | deep discovery, broad relevant research, concept exploration, specialists/model diversity, independent critique, extensive polish |
+The preferred flow is one interview message, one user reply, then work. A second batch is allowed only when the first answers reveal genuinely new decisions that could not reasonably have been known before.
 
-\* Rough total-session envelopes across parent + delegated model calls. They are not billing guarantees; provider, model, context, retries, tools, and task size can move them substantially.
+Every product interview also recommends and confirms an effort level.
 
-### What the interview should say
+| Level | Typical total model tokens* | Intent |
+|---|---:|---|
+| **Standard** | ~15k-80k | efficient production-quality execution |
+| **Polished** | ~50k-250k | targeted research, stronger polish/QA, selective specialists |
+| **Studio** | ~150k-800k+ | quality-first flagship work, deeper research/concepting/review |
 
-A good effort question looks like this:
+\* Rough total-session envelopes across parent + delegated calls, not billing guarantees.
+
+Standard is not lower correctness. Studio is not automatically “design mode”. The agent recommends by marginal value, explains what changes between levels, and asks before materially escalating later.
+
+Canonical files: [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md), [`effort/levels.yaml`](effort/levels.yaml), [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md).
+
+---
+
+## Continuity: sessions are disposable
+
+Agentit assumes any chat can disappear because of context/token exhaustion, provider/model switch, app crash, machine switch, or a long pause.
+
+For every product-affecting task, maintain a compact project state document at:
 
 ```text
-EFFORT RECOMMENDATION: Polished
-
-Why: this is public-facing and worth extra craft, but the concept is already clear enough that a full Studio exploration is probably wasteful.
-
-Standard (~15k-80k): clean/correct, limited exploration and polish.
-Polished (~50k-250k): targeted research, stronger responsive/edge-case QA, more iteration. <- recommended
-Studio (~150k-800k+): multiple concepts/specialists and much deeper critique; probably overkill here.
-
-Which level do you want?
+docs/agentit/STATE.md
 ```
 
-The agent should not silently turn Standard into a 400k-token multi-agent research session. If new complexity materially changes the budget/value tradeoff, it asks before escalating.
+If the project already has an equivalent canonical state file, reuse it instead.
 
-**Correctness and safety are never downgraded by effort level.**
+The state must let a completely fresh agent recover:
 
----
+- what is being built and why;
+- confirmed intent, audience, success criteria, constraints, and non-goals;
+- selected Standard/Polished/Studio level;
+- what is done / in progress / blocked / not started;
+- durable product, architecture, API, data, and design decisions;
+- important files/artifacts;
+- branch + PR;
+- verification commands/results;
+- next executable actions;
+- open user questions/blockers.
 
-## Interview-first product work
+Update it after interview confirmation, expensive-to-rediscover decisions, meaningful milestones, before handoff/context exhaustion/pause, and before completion.
 
-[`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md) is now the normal gate for any task that creates or changes a meaningful product decision: features, pages, components, UX, visual design, architecture, APIs, data models, workflows, copy, positioning, automations, or refactors with materially different valid outcomes.
+Do not persist secrets, credentials, raw chain-of-thought, full chat transcripts, or giant tool dumps.
 
-The interview is adaptive:
-
-- clear tiny product change → one short confirmation may be enough;
-- one unresolved decision → ask it + effort level;
-- several independent decisions → one frontier round;
-- open-ended product/design/architecture → interview until the meaningful decision frontier is closed.
-
-Facts are the agent's job: inspect repo/docs/tools/live sources. The user should be asked for decisions, preferences, tradeoffs, and success criteria.
-
-### Mechanical bypass
-
-Interview may be skipped only for exact chores that save time **without choosing product behavior**, for example:
-
-- create explicitly named directories/files;
-- exact move/rename;
-- run an explicitly requested test/command;
-- deterministic formatting;
-- copy exact content to a known destination.
-
-`Add a settings page`, `change navbar behavior`, `add an endpoint`, or `rewrite the CTA` are product-affecting even if easy, so they still get a short interview + effort confirmation.
+Canonical policy: [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md).
 
 ---
 
-## Single-agent-first specialist layer
+## Git: branch + PR by default
 
-Agentit does not simulate a fake company for every task. Direct work is the default.
+For repository changes Agentit defaults to:
 
-[`agents/catalog.yaml`](agents/catalog.yaml) defines temporary semantic specialists such as:
+```text
+work branch → commits → verification → pull request → review/user merge decision
+```
+
+It should **not** commit/fast-forward directly onto `main`/`master` and should **not** auto-merge PRs unless the user explicitly authorizes that exception for the task or project instructions require another workflow.
+
+Continuity/docs updates travel in the same branch/PR as implementation.
+
+---
+
+## Provider-neutral specialist layer
+
+`agents/catalog.yaml` defines semantic roles with small skill bundles and output contracts. Examples include:
 
 ```text
 frontend-developer
 backend-architect
 ai-engineer
 devops-automator
-trend-researcher
+design-system-researcher
 ui-researcher
+trend-researcher
 creative-tool-scout
 visual-storytelling-director
 spatial-experience-designer
@@ -136,21 +139,9 @@ api-tester
 workflow-optimizer
 ```
 
-A specialist is a role + small skill bundle + output contract. The parent remains responsible for decomposition, integration, verification, and user communication.
+Agentit remains single-agent-first. A specialist is spawned only when fresh context, true parallelism, domain expertise, different tooling/model capability, creative diversity, or independent review outweighs coordination overhead.
 
-Effort level changes how much delegation is reasonable:
-
-- **Standard:** 0 specialists by default; usually at most 1 when clearly valuable.
-- **Polished:** usually 0-2.
-- **Studio:** 2-5 can make sense, but only when they add real value.
-
-Even Studio may stay single-agent if delegation buys nothing.
-
----
-
-## Provider-neutral execution
-
-The same specialist works regardless of provider. Agentit chooses the best primitive available:
+Execution fallback:
 
 ```text
 native provider subagent/worker
@@ -162,98 +153,110 @@ separate fresh-context invocation
 parent + exact specialist skill bundle
 ```
 
-The **objective, skills, constraints, allowed I/O, output contract, verification, effort level, and stop condition stay equivalent**.
+Multi-agent execution is an optimization, never a correctness dependency.
 
-Multi-agent execution is an optimization for isolation, diversity, and parallelism. Agentit must remain usable with OpenAI, Anthropic, Google, xAI, and future providers even if they expose different orchestration features.
+---
 
-Canonical policy: [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md).
+## UI/UX Pro Max intelligence
+
+Agentit's design profile includes `ui-ux-pro-max-intelligence`, a provider-neutral JIT adapter for the MIT-licensed upstream [`nextlevelbuilder/ui-ux-pro-max-skill`](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill).
+
+The upstream project provides searchable product-aware intelligence for style families, palettes, typography, UX/accessibility rules, icons, charts, GSAP/motion patterns, landing structures, and many implementation stacks.
+
+Agentit deliberately treats it as an **intelligence source, not the creative director**:
+
+```text
+UI UX Pro Max lookup
+       ↓
+compact product/design baseline
+       ↓
+Taste / creative direction / research
+       ↓
+implementation
+       ↓
+Impeccable / Emil / critic
+```
+
+The database should be queried JIT. Do not dump it wholesale into model context and do not let a preset style automatically become the art direction.
+
+Effort behavior:
+
+- **Standard:** narrow lookup only when it prevents a mistake or answers a concrete design question.
+- **Polished:** targeted product/style/color/type/UX intelligence when useful.
+- **Studio:** one evidence source among live inspiration research, concept exploration, creative direction, and independent critique.
+
+See [`skills/ui-ux-pro-max-intelligence/SKILL.md`](skills/ui-ux-pro-max-intelligence/SKILL.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ---
 
 ## Design studio
 
-The `design` profile contains a craft-first stack for serious visual work:
+The `design` profile contains a broad but JIT-routed craft stack:
 
 ```text
-design-inspiration-research
-design-trend-researcher
-creative-web-experiences
-design-taste-frontend
-impeccable-design
-emil-design-eng
-visual-storytelling-director
-creative-tool-scout
-delight-and-whimsy
-figma-design-workflow
-scrollytelling-web
-gsap-scrolltrigger
-gsap-performance
-threejs-spatial-experiences
-threejs-product-storytelling
+ui-ux-pro-max-intelligence       structured UI/UX design intelligence
+design-inspiration-research      live project-specific references
+design-trend-researcher          emerging / maturing / saturated patterns
+creative-web-experiences         concept generation
+design-taste-frontend            art direction / visual thesis
+impeccable-design                critique / polish / responsive craft
+emil-design-eng                  interaction and motion feel
+visual-storytelling-director     narrative beats and pacing
+creative-tool-scout              current implementation tooling
+figma-design-workflow            official Figma MCP workflow
+scrollytelling-web               narrative scroll architecture
+gsap-scrolltrigger               pin/scrub/timeline mechanics
+gsap-performance                 motion runtime performance
+threejs-spatial-experiences      rooms/stores/museums/worlds
+threejs-product-storytelling     GLB/glTF product storytelling
+delight-and-whimsy               restrained memorable details
 ```
 
-But **design no longer means unlimited token spend by default**.
+Do not load the whole stack just because design is active. Effort level and task signals control depth.
 
-- Standard design → minimum relevant craft skills + rendered browser check.
-- Polished design → targeted research/specialists + stronger responsive/state/interaction QA.
-- Studio design → full relevant craft stack, broad reference/tool research, multiple concepts when valuable, independent critique, performance/browser loops.
-
-A premium site also does not automatically mean product decomposition or scrollytelling. Agentit can choose editorial, spatial, kinetic, 2D/3D, image-led, restrained static, or other interaction models based on the actual brand/content.
-
-### Design competition
-
-Normally a **Studio** topology:
-
-```text
-shared research brief
-  ↓
-2-3 independent concepts
-  ↓
-explicit jury
-(brand fit / originality / clarity / usability / feasibility / performance / memorability)
-  ↓
-winner or justified hybrid
-  ↓
-implementation
-  ↓
-independent design + performance critique
-```
-
-If native subagents are unavailable, the same method can run sequentially in fresh/direct contexts.
+For genuinely high-ambition Studio work, Agentit may use a **design competition**: shared evidence brief → 2-3 independent concepts → explicit jury by brand fit/originality/clarity/usability/feasibility/performance/memorability → winner or justified hybrid → implementation → independent critique.
 
 ---
 
-## Shared skills and profiles
+## Profiles
 
-`profiles.yaml` keeps the global engineering core bounded and activates heavier skills JIT.
+`profiles.yaml` keeps the global install bounded and activates deeper capabilities JIT.
 
-| Profile | Role |
+| Profile | Purpose |
 |---|---|
-| `core` | routing, orchestration, debugging, review, TDD, security, source-driven work, frontend UI, planning, verification |
-| `frontend` | browser/performance/UI design engineering |
-| `design` | research + art direction + motion + Figma + creative tooling + scrollytelling + spatial/product 3D |
-| `backend` / `supabase` | APIs, observability, Postgres/Supabase |
-| `product` / `writing` / `release` / `research` | discovery, specs, marketing, launch, adversarial review |
-| `all` | explicit escape hatch only |
-
----
-
-## Verification gauntlet
-
-No `done`, `fixed`, or `passing` claim should rely solely on the implementing agent's own assertion.
+| `core` | bounded everyday engineering harness |
+| `frontend` | browser/performance/UI maintenance |
+| `design` | full craft studio + UI/UX intelligence |
+| `backend` | API/service/observability |
+| `supabase` | Postgres/Supabase guidance |
+| `product` | discovery/spec/marketing |
+| `writing` | documentation/writing |
+| `release` | CI/migration/launch |
+| `research` | context/spec/adversarial review |
+| `all` | escape hatch only |
 
 ```bash
-./agentit verify "Add Supabase RLS for profiles" --project .
-./agentit verify "Add Supabase RLS for profiles" --project . --apply
+agentit enable design --project . --apply
+agentit status --project .
+agentit disable design --project . --apply
 ```
-
-Receipts live under `.agentit/verify/`. Catalog: [`probes/catalog.yaml`](probes/catalog.yaml).
-
-Verification depth can increase with effort, but risk/correctness gates do not decrease at Standard.
 
 ---
 
-## MCP and live tools
+## Verification
+
+Agentit separates model claims from verification evidence.
+
+```bash
+agentit verify "task summary" --project .
+agentit verify "task summary" --project . --apply
+```
+
+No `done`, `fixed`, or `passing` claim without fresh evidence after the last relevant edit. Design work needs rendered evidence when browser tooling is available; high-ambition work should normally get independent critique/performance review.
+
+---
+
+## MCP runtime
 
 ```bash
 agentit mcp status
@@ -262,65 +265,20 @@ agentit mcp enable-stack developer_core --apply
 agentit mcp enable-stack design_studio --apply
 ```
 
-The `design_studio` stack combines Figma, Context7, Playwright, and Chrome DevTools. Inspiration/tool research may use live browser sources such as showcases, studios, social/video platforms where access permits, and catalogs such as `designengineer.tools`, then verify technical choices against primary docs.
-
-MCPs are capabilities, not portability requirements; unavailable integrations should degrade to equivalent tools or be reported explicitly.
+The design studio stack can combine Figma, Context7, Playwright, and Chrome DevTools. MCPs are optional capabilities, not portability requirements.
 
 ---
 
-## Quick start
+## Install
 
 ```bash
 git clone https://github.com/marcmarti9/agentit.git ~/code/agentit
 cd ~/code/agentit
-
-bash install.sh --provider all --with-guides
 bash install.sh --provider all --with-guides --apply
 ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
 ```
 
-Default Open Skills / Grok path: `~/.agents/skills/`. Claude: `~/.claude/skills/`. Codex: `~/.codex/skills/`.
-
-Enable a project profile:
-
-```bash
-./agentit enable design --project . --apply
-./agentit status --project .
-```
-
-Route / trace / verify:
-
-```bash
-python3 ~/code/agentit/router/route.py "confirmed task"
-./agentit trace "confirmed task" --project .
-./agentit verify "confirmed task" --project . --apply
-```
-
----
-
-## Safety defaults
-
-- plan-first scripts; writes require `--apply` where designed;
-- RISK_3 / RISK_4 retain full safety/human-review gates;
-- no commits, push, deploy, or remote mutations without explicit authorization;
-- one writer per shared file/state in parallel work;
-- missing provider multi-agent features must degrade gracefully;
-- safety/correctness outrank effort/token budget.
-
----
-
-## Docs map
-
-| Doc | Purpose |
-|---|---|
-| [`AGENTS.md`](AGENTS.md) | Global agent playbook |
-| [`ABOUT.md`](ABOUT.md) | Product philosophy |
-| [`effort/levels.yaml`](effort/levels.yaml) | Standard / Polished / Studio behavior and token envelopes |
-| [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md) | Interview + effort + provider-neutral policy |
-| [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | Topologies and contracts |
-| [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog/runtime |
-| [`agents/catalog.yaml`](agents/catalog.yaml) | Specialist roles |
-| [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | Third-party attribution |
+Open Skills / compatible clients typically use `~/.agents/skills/`; Claude can use `~/.claude/skills/`; Codex can use `~/.codex/skills/`. Shared Agentit semantics remain provider-neutral.
 
 ---
 
@@ -334,6 +292,19 @@ python3 evals/run.py
 
 ---
 
+## Docs map
+
+| Doc | Purpose |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | global agent playbook |
+| [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md) | batched interview + effort + provider semantics |
+| [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) | resumable project-state contract + PR-first workflow |
+| [`agents/catalog.yaml`](agents/catalog.yaml) | reusable specialist roles |
+| [`effort/levels.yaml`](effort/levels.yaml) | Standard / Polished / Studio budgets |
+| [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog/runtime |
+| [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | orchestration topologies/contracts |
+| [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | upstream design-skill attribution |
+
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE). See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for third-party material and attributions.
+Licensed under the [Apache License, Version 2.0](LICENSE). Third-party adaptations/integrations retain their applicable notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

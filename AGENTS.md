@@ -10,61 +10,95 @@ Estas reglas son comunes a cualquier repositorio. Las instrucciones locales del 
 
 Cuando el usuario diga cualquiera de ellas (o Agentit ya sea el harness por defecto de la sesión):
 
-1. Carga el skill `using-agentit` (`~/code/agentit/skills/using-agentit/SKILL.md` o copia en `~/.agents/skills/using-agentit/`).
+1. Carga `using-agentit` (`~/code/agentit/skills/using-agentit/SKILL.md` o copia del proveedor).
 2. Sigue su playbook para el resto de la sesión.
-3. No improvises otra orquestación multi-agente.
+3. No improvises otra metodología incompatible.
 
-En esta máquina Agentit es el meta-harness canónico (Claude Code, Codex, Grok Build, Open Skills). Si el usuario no nombra Agentit pero la tarea es no trivial, aplica el mismo playbook.
+Agentit es provider-neutral: OpenAI, Anthropic, Google, xAI y clientes compatibles deben preservar las mismas semantics aunque cambie la primitiva de agentes/subagentes.
 
 ### Playbook compacto
 
 | Paso | Acción |
-|------|--------|
-| 1. Route | `python3 ~/code/agentit/router/route.py "tarea"` o `agentit trace "tarea" --project .` (persiste en `.agentit/traces/`) |
-| 2. Profiles JIT | `agentit enable <profile> --project <ruta> --apply` si faltan skills (`frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release`, `research`) |
-| 3. Skills | Carga solo los `SKILL.md` recomendados (preferir `~/code/agentit/skills/<id>/`). References solo bajo demanda |
-| 4. Ejecuta | Single-agent-first (`direct`). Subagentes solo si la topología lo justifica + Worker Context Contract |
-| 5. Contexto | `agentit context filter|archive|dedup` y `agentit artifact …` si hay ruido o salidas grandes |
-| 6. MCP | `agentit mcp status|enable|disable` (plan-first; `--apply` para escribir) |
-| 7. Cierre | `agentit verify "tarea" --project .` (+ `--apply`); sin done sin **evidencia fresca** + receipt del gauntlet |
+|---|---|
+| 0. Interview | Si afecta producto, inspecciona hechos y pregunta **todas las decisiones materiales identificables en una sola ronda**, incluyendo Standard/Polished/Studio. Solo bypass mecánico exacto. |
+| 1. Persist | Tras confirmar entrevista, actualiza `docs/agentit/STATE.md` (o equivalente canónico) para poder reanudar sin el chat. |
+| 2. Route | `python3 ~/code/agentit/router/route.py "tarea"` o `agentit trace "tarea" --project .` |
+| 3. Profiles JIT | `agentit enable <profile> --project <ruta> --apply` si faltan skills. |
+| 4. Skills | Carga solo skills relevantes; UI/UX Pro Max se consulta JIT, no se vuelca entero en contexto. |
+| 5. Ejecuta | Single-agent-first. Especialistas solo si aportan valor y respetan el nivel de esfuerzo. |
+| 6. Documenta | Mantén el estado actualizado tras decisiones/milestones y antes de cualquier corte/handoff. |
+| 7. Verify | `agentit verify "tarea" --project . --apply`; no `done` sin evidencia fresca. |
+| 8. Git | Branch + PR por defecto. No escribir/mergear directo a `main`/`master` salvo excepción explícita del usuario/proyecto. |
 
-Barra de craft con Agentit activo: solución aburrida y correcta > vibes; TDD en cambios de comportamiento; landings con design read; **gauntlet de verificación** (probes por stack, no autoexamen débil); alcance solo lo pedido.
+### Entrevista
 
-CLI: `agentit` → `~/.local/bin/agentit`. Raíz: `~/code/agentit`.
+Para trabajo de producto, no hagas goteo de preguntas. Tras inspeccionar repo/docs/tools, formula de golpe todas las preguntas materiales que ya puedas identificar. Cada pregunta incluye recomendación/default. Una segunda ronda solo se justifica si las respuestas revelan decisiones nuevas que no podían conocerse antes.
 
-### Skills de diseño (recordatorio)
+La entrevista debe recomendar y confirmar Standard / Polished / Studio con consecuencias y rango aproximado de tokens.
 
-- Landings / portfolios / rediseño visual → `design-taste-frontend` (perfil `design` o `frontend`, o cuerpo en el harness)
-- UI de producto / a11y → `frontend-ui-engineering`
-- Checklist anti-slop corta → `anti-ai-slop-design`
+### Continuidad obligatoria
+
+El chat es contexto desechable. Todo lo necesario para continuar una tarea significativa debe quedar en el repositorio.
+
+Política canónica: `docs/PROJECT_CONTINUITY.md`.
+
+Estado por defecto del proyecto: `docs/agentit/STATE.md` salvo equivalente existente.
+
+Debe permitir a otro agente/máquina/proveedor saber: objetivo, intención confirmada, nivel de esfuerzo, estado actual, decisiones, archivos/artefactos, branch/PR, verificación, blockers y siguientes acciones.
+
+Actualiza el estado:
+
+- justo después de confirmar entrevista/esfuerzo;
+- tras decisiones caras de redescubrir;
+- tras milestones significativos;
+- antes de cambiar de sesión/modelo/proveedor/máquina o quedarse sin contexto/tokens;
+- antes de parar por error/límite/pausa;
+- antes de cerrar la tarea.
+
+Nunca persistir secretos, credenciales, chain-of-thought, transcripts completos o dumps enormes.
+
+### Git / PR-first
+
+Cambios de repositorio usan por defecto:
+
+`branch de trabajo -> commits -> verificación -> PR -> decisión de merge`.
+
+- No commitear directamente a la rama por defecto salvo instrucción explícita.
+- No mergear automáticamente un PR salvo instrucción explícita.
+- La documentación de continuidad viaja en el mismo branch/PR.
+- Una excepción `directo a main` vale solo para la tarea concreta donde fue autorizada.
+
+### Skills de diseño
+
+- Inteligencia UI/UX estructurada → `ui-ux-pro-max-intelligence` (consulta JIT al upstream MIT; evidence/candidates, no dirección creativa automática).
+- Art direction / landings / portfolios → `design-taste-frontend`.
+- Critique/polish → `impeccable-design`.
+- Interaction/motion → `emil-design-eng`.
+- UI/a11y → `frontend-ui-engineering`.
+- Research/trends → `design-inspiration-research`, `design-trend-researcher`.
+
+El nivel de esfuerzo controla profundidad: Standard eficiente, Polished selectivo, Studio quality-first.
 
 ### Mantenimiento
 
-- Tras cambios del harness: `bash ~/code/agentit/install.sh --provider all --with-guides --apply`
-- No reviertas guías ni skills gestionados sin motivo
+- Tras cambios del harness: `bash ~/code/agentit/install.sh --provider all --with-guides --apply`.
+- No reviertas guías/skills gestionados sin motivo.
 
 ## Reglas operativas
 
 - Trabaja solo sobre el alcance solicitado.
-- Inspecciona primero los archivos directamente afectados.
-- No leas toda la documentación del repositorio al comenzar.
-- Consulta documentación adicional únicamente cuando exista una duda concreta o una instrucción local la señale.
-- Resuelve directamente las tareas pequeñas y medianas. Usa subagentes solo cuando haya trabajo realmente independiente y paralelizable.
-- Evita repetir contexto completo al delegar: transmite objetivo, restricciones, rutas y criterio de aceptación.
-- Busca la causa raíz; no ocultes errores ni añadas fallbacks falsos.
-- Aplica las preferencias del usuario (`applied_preferences` del router) salvo conflicto con requisitos del proyecto o seguridad.
-- Ejecuta las verificaciones relevantes antes de cerrar la tarea. Si no puedes, indícalo. **No declares done/fixed/passing sin evidencia fresca de comando en este turno** (`verification-before-completion`).
-- No hagas commits, push, despliegues, migraciones remotas ni cambios externos sin petición expresa.
-- Prioriza simplicidad, mantenibilidad y coherencia con el código existente.
-- Estilo conciso y directo: resultado, cambios, verificaciones, riesgos. Sin relleno.
-- Sin emojis decorativos salvo contenido del usuario, UI, marca o petición explícita.
+- Inspecciona primero archivos directamente afectados; no leas todo el repo por ceremonia.
+- Busca causa raíz; no ocultes errores ni añadas fallbacks falsos.
+- Aplica preferencias del usuario salvo conflicto con seguridad/proyecto.
+- Ejecuta verificaciones relevantes antes de cerrar.
+- No deploys, migraciones remotas ni cambios externos sin autorización.
+- Prioriza simplicidad, mantenibilidad y coherencia.
+- Estilo conciso y directo.
 
 ## Política de delegación adaptativa
 
-Al inicio de cada tarea, decide si conviene trabajar directamente o delegar (preferir la topología del router). Trabaja directamente en tareas pequeñas, acopladas o con un único conjunto de cambios. Usa `terra_worker` como worker predeterminado para trabajo independiente, acotado y verificable. Reserva `luna_worker` solo cuando el backend confirme Luna.
+El agente principal conserva requisitos, arquitectura, integración, documentación y revisión final. Toda delegación debe proyectar instrucciones del proyecto, skills de la tarea, preferencias seguras, riesgo, I/O, verificación y stop condition mediante el Worker Context Contract.
 
-El agente principal conserva requisitos, arquitectura, integración y revisión final. Toda creación de subagente debe pasar por el Worker Context Contract (`router/worker_context.py` / `agentit worker build`): proyectar instrucciones de proyecto, skills de la tarea (no el catálogo completo), preferencias seguras, riesgo, entradas/salidas y verificación. Precedencia: `safety > user > project > preferences > defaults`.
+Precedencia: `safety > user > project > preferences > defaults`.
 
-No conviertas esta política en una cadena fija. Si la superficie multiagente no permite seleccionar el modelo del hijo, dilo y no afirmes un modelo incorrecto.
-
-Claude Code: ver también `CLAUDE.md` y `agents/`. Codex: este archivo como guía principal. Grok Build / Open Skills: este `AGENTS.md` + `~/.agents/skills` (core global; resto on-demand).
+No conviertas la arquitectura en una cadena fija. Si el proveedor no soporta subagentes, ejecuta el mismo rol/skill bundle en contexto aislado o en el parent. Multi-agent es optimización, no dependencia.

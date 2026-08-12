@@ -1,10 +1,10 @@
 # Agentit project state
 
 **Updated:** 2026-08-12  
-**Status:** implementing on branch feat/intelligent-orchestration-v1 — push + PR next  
+**Status:** implementation landed on branch; PR open  
 **Branch:** feat/intelligent-orchestration-v1  
-**PR:** pending  
-**Mode:** Agentit active; local implementation in progress
+**PR:** see GitHub (feat/intelligent-orchestration-v1)  
+**Mode:** Agentit active; awaiting review/merge
 
 ## Goal (revised)
 

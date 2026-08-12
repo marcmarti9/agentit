@@ -147,12 +147,30 @@ def _detector_matches(project_root: Path, when: list[str]) -> bool:
     return False
 
 
+def _file_mentions_any(path: Path, needles: list[str]) -> bool:
+    try:
+        text = path.read_text(encoding="utf-8", errors="ignore").lower()
+    except OSError:
+        return False
+    return any(needle.lower() in text for needle in needles)
+
+
 def resolve_detect_command(probe: dict[str, Any], project_root: Path) -> list[str] | None:
     for detector in probe.get("detectors") or []:
         if not isinstance(detector, dict):
             continue
         when = detector.get("when") or []
         if not isinstance(when, list) or not _detector_matches(project_root, [str(x) for x in when]):
+            continue
+        prefer_files = detector.get("prefer_files") or []
+        if prefer_files and not any((project_root / str(name)).exists() for name in prefer_files):
+            continue
+        content_markers = detector.get("content_markers") or []
+        marker_files = detector.get("marker_files") or []
+        if content_markers and not any(
+            _file_mentions_any(project_root / str(name), [str(item) for item in content_markers])
+            for name in marker_files
+        ):
             continue
         command = detector.get("command")
         if isinstance(command, list) and command:

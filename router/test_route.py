@@ -363,6 +363,60 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertIn("token_estimate", result)
         self.assertTrue(result["token_estimate"]["not_a_bill"])
 
+    def test_agentit_activation_requires_affirmative_intent(self):
+        for prompt in (
+            "Do not use Agentit, just explain hashing",
+            "No uses Agentit; explícame qué es un hash",
+            "Explain what Agentit is without enabling it",
+            "Agentit is a portable orchestration harness",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertFalse(result["activation"]["requested"])
+                self.assertNotIn(
+                    "using-agentit",
+                    set(result["skills_available"])
+                    | set(result["skills_recommended_missing"]),
+                )
+
+    def test_natural_multilingual_agentit_activation_is_recognized(self):
+        for prompt in (
+            "Use Agentit to implement this endpoint",
+            "Usa Agentit para implementar este endpoint",
+            "Utilise Agentit pour implémenter cet endpoint",
+            "Activa el modo Agentit",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertTrue(result["activation"]["requested"])
+                self.assertIn(
+                    "using-agentit",
+                    set(result["skills_available"])
+                    | set(result["skills_recommended_missing"]),
+                )
+
+    def test_vendor_specific_database_tasks_do_not_activate_supabase_profile(self):
+        for prompt in (
+            "Implement a database schema for a MySQL service",
+            "Optimiza esta consulta SQLite",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertEqual(result["domain_pack"], "data")
+                self.assertNotIn("supabase", result["jit_profile_recommendations"])
+                self.assertIn("backend", result["jit_profile_recommendations"])
+
+    def test_postgres_task_activates_supabase_profile(self):
+        result = self.route("Optimiza esta consulta PostgreSQL en Supabase")
+
+        self.assertIn("supabase", result["jit_profile_recommendations"])
+
+    def test_generic_database_task_keeps_stack_probe_and_neutral_profile(self):
+        result = self.route("Optimiza esta consulta de base de datos")
+
+        self.assertIn("inspect_database_stack", result["routing_advice"])
+        self.assertEqual(result["jit_profile_recommendations"], ["backend"])
+
     def test_structural_architecture_plan_requires_critic(self):
         result = self.route("Plantea la arquitectura del sistema de notificaciones")
 

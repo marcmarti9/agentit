@@ -28,22 +28,22 @@ agentit continuity checkpoint milestone-name --project .
 
 ## When to checkpoint
 
-1. After interview confirmation  
-2. After expensive decisions  
-3. After meaningful milestones  
-4. Before provider/model/session handoff  
-5. Before token/context limits or pause  
-6. Before final completion  
+1. After interview confirmation
+2. After expensive decisions
+3. After meaningful milestones
+4. Before provider/model/session handoff
+5. Before token/context limits or pause
+6. Before final completion
 
 Also write `.agentit/checkpoints/*.json` for machine-readable snapshots when useful.
 
 ## Resume protocol
 
-1. `agentit continuity status` / read STATE.md **before** re-asking the user  
-2. Inspect branch/PR/diff referenced  
-3. Verify assumptions still true  
-4. Repair stale state  
-5. Continue from Next actions  
+1. `agentit continuity status` / read STATE.md **before** re-asking the user
+2. Inspect branch/PR/diff referenced
+3. Verify assumptions still true
+4. Repair stale state
+5. Continue from Next actions
 
 ## Mid-task re-route
 
@@ -57,14 +57,14 @@ If `critic_required`, re-run independent critic before more implementation.
 
 ## Anti-patterns
 
-- re-interviewing decisions already in STATE  
-- trusting chat memory over STATE  
-- finishing without updating Next actions / Verification  
-- storing secrets in STATE or checkpoints  
+- re-interviewing decisions already in STATE
+- trusting chat memory over STATE
+- finishing without updating Next actions / Verification
+- storing secrets in STATE or checkpoints
 
 ## Verification
 
-- [ ] STATE.md exists and has required sections  
-- [ ] Next actions are executable by a fresh agent  
-- [ ] Latest verification results recorded  
-- [ ] Checkpoint taken before handoff  
+- [ ] STATE.md exists and has required sections
+- [ ] Next actions are executable by a fresh agent
+- [ ] Latest verification results recorded
+- [ ] Checkpoint taken before handoff

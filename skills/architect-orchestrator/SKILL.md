@@ -45,15 +45,15 @@ Run `mcp-tooling-fit` when tools matter: inventory, fit, disable noise, discover
 
 ## Topologies
 
-1. **Direct** — coupled single-thread work  
-2. **Plan + direct** — broad but sequential  
-3. **Probe** — read-only investigation  
-4. **Fan-out** — independent packages/files/domains  
-5. **Pipeline** — ordered stages (e.g. research → implement)  
-6. **Writer + reviewers** — one writer, independent review  
-7. **Design competition** — multiple concepts (usually studio craft)  
-8. **Orchestrated DAG** — multi-package dependencies  
-9. **Audit** — high-risk independent review  
+1. **Direct** — coupled single-thread work
+2. **Plan + direct** — broad but sequential
+3. **Probe** — read-only investigation
+4. **Fan-out** — independent packages/files/domains
+5. **Pipeline** — ordered stages (e.g. research → implement)
+6. **Writer + reviewers** — one writer, independent review
+7. **Design competition** — multiple concepts (usually studio craft)
+8. **Orchestrated DAG** — multi-package dependencies
+9. **Audit** — high-risk independent review
 
 Router JSON fields: `topology`, `subagents`, `parallelism`, `critic_required`, `domain_pack`, `skill_budget`, `token_estimate`.
 
@@ -88,10 +88,10 @@ Do not self-grade as a substitute when isolation is available.
 
 ## Provider-neutral execution
 
-1. native subagent/worker  
-2. isolated delegated model call  
-3. fresh-context invocation  
-4. parent + same skill bundle  
+1. native subagent/worker
+2. isolated delegated model call
+3. fresh-context invocation
+4. parent + same skill bundle
 
 Multi-agent is never a correctness dependency.
 
@@ -107,11 +107,11 @@ Correctness floor is independent of craft depth. RISK_3/4: fuller tests + indepe
 
 ## Anti-patterns
 
-- Studio/Polished for non-design tasks  
-- fixed token bills  
-- powerwords  
-- loading full skill catalogs  
-- forced multi-agent or forced single-agent  
-- skipping critic on large structural plans  
-- multiple writers on shared state  
-- unbounded correction loops  
+- Studio/Polished for non-design tasks
+- fixed token bills
+- powerwords
+- loading full skill catalogs
+- forced multi-agent or forced single-agent
+- skipping critic on large structural plans
+- multiple writers on shared state
+- unbounded correction loops

@@ -329,14 +329,32 @@ def _presentation_only(text: str) -> bool:
     )
 
 
+def _agentit_mentioned(text: str) -> bool:
+    return bool(re.search(r"\bagentit\b", text, re.IGNORECASE))
+
+
 def _agentit_activation_requested(text: str) -> bool:
-    """Natural harness activation in any language: mention of agentit + use verb optional."""
-    return bool(
-        re.search(
-            r"\bagentit\b",
-            text,
-            re.IGNORECASE,
-        )
+    """Recognize affirmative natural-language activation, not a bare mention."""
+    if not _agentit_mentioned(text):
+        return False
+    if _matches(
+        text,
+        (
+            r"\b(?:do not|don't|dont|never)\b.{0,40}\b(?:use|enable|activate)\b.{0,20}\bagentit\b",
+            r"\b(?:no|nunca)\b.{0,40}\b(?:uses?|usar|actives?|activar|habilites?|habilitar)\b.{0,20}\bagentit\b",
+            r"\b(?:without|sin)\b.{0,20}\b(?:using|enabling|activating|usar|habilitar|activar)\b.{0,20}\bagentit\b",
+            r"\bagentit\b.{0,30}\b(?:without|sin)\b.{0,20}\b(?:enabling|activating|habilitar|activar)\b",
+        ),
+    ):
+        return False
+    return _matches(
+        text,
+        (
+            r"\b(?:use|using|enable|activate)\b.{0,20}\bagentit\b",
+            r"\b(?:usa|usar|usando|utiliza|utilizar|utilizando|activa|activar|habilita|habilitar)\b.{0,20}\bagentit\b",
+            r"\b(?:utilise|utiliser|utilisant|active|activer)\b.{0,20}\bagentit\b",
+            r"\b(?:modo\s+agentit|agentit\s+mode)\b",
+        ),
     )
 
 
@@ -1578,11 +1596,15 @@ def route_task(
     unmapped_skills: list[str] = []
     if auto_jit_enabled:
         mapped_set = set()
+        postgres_stack = _matches(
+            lowered,
+            (r"\b(postgres(?:ql)?|psql|supabase|cockroachdb)\b",),
+        ) or "supabase" in markers
         pack_profile = {
             "design": "design",
             "frontend": "frontend",
             "backend": "backend",
-            "data": "supabase",
+            "data": "supabase" if postgres_stack else "backend",
             "product": "product",
             "writing": "writing",
             "release": "release",
@@ -1660,9 +1682,10 @@ def route_task(
         "unmapped_skills": unmapped_skills,
         "applied_preferences": applied_prefs,
         "activation": {
-            "agentit_mentioned": _agentit_activation_requested(lowered),
+            "requested": _agentit_activation_requested(lowered),
+            "agentit_mentioned": _agentit_mentioned(lowered),
             "powerwords_required": False,
-            "notes": "Only natural Agentit activation is special-cased; task routing uses ordinary language.",
+            "notes": "Only affirmative natural Agentit activation is special-cased; bare or negated mentions do not activate it.",
         },
         "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
         "recovery": (

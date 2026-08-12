@@ -44,11 +44,11 @@ Router output includes `models.parent|worker|critic` with local endpoint matches
 
 ## Rules
 
-1. Match **tier**, not brand names.  
-2. Role needs tools → endpoint must support tools/function calling.  
-3. Context must fit Worker Context Contract + files.  
-4. RISK_3/4 critic must not silently use a weak unproven local model — disclose or escalate.  
-5. Prefer a **different** model family for critic vs writer when possible.  
+1. Match **tier**, not brand names.
+2. Role needs tools → endpoint must support tools/function calling.
+3. Context must fit Worker Context Contract + files.
+4. RISK_3/4 critic must not silently use a weak unproven local model — disclose or escalate.
+5. Prefer a **different** model family for critic vs writer when possible.
 6. If local fails capability check, fall back with explicit note; never fake parity.
 
 ## Capability check (per machine)
@@ -63,13 +63,13 @@ Record results in STATE or a checkpoint — do not assume yesterday’s model st
 
 ## Anti-patterns
 
-- “local always” regardless of tier  
-- sending architecture arbitration to a 3B toy model silently  
-- assuming Ollama OpenAI compat equals full tool parity  
-- different machines without re-checking endpoints  
+- “local always” regardless of tier
+- sending architecture arbitration to a 3B toy model silently
+- assuming Ollama OpenAI compat equals full tool parity
+- different machines without re-checking endpoints
 
 ## Verification
 
-- [ ] `models` block present in route when local_models.enabled  
-- [ ] endpoint tiers cover needed roles or gaps disclosed  
-- [ ] critic independence preserved  
+- [ ] `models` block present in route when local_models.enabled
+- [ ] endpoint tiers cover needed roles or gaps disclosed
+- [ ] critic independence preserved

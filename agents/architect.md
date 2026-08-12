@@ -28,14 +28,14 @@ Standard / Polished / Studio **only for design/visual**. Elsewhere use soft spen
 
 # Modes
 
-1. Direct  
-2. Plan + direct  
-3. Probe  
-4. Fan-out (independent units)  
-5. Pipeline  
-6. Writer + reviewers  
-7. Orchestrated DAG  
-8. Audit  
+1. Direct
+2. Plan + direct
+3. Probe
+4. Fan-out (independent units)
+5. Pipeline
+6. Writer + reviewers
+7. Orchestrated DAG
+8. Audit
 
 # Critic gate
 

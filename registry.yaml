@@ -476,6 +476,56 @@ entries:
     state: ACTIVE_GLOBAL
     priority: core
 
+  - id: long-horizon-recovery
+    name: "Long-horizon continuity, checkpoints, and resume"
+    kind: skill
+    category: orchestration
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/long-horizon-recovery/SKILL.md"
+      - "${HOME}/.agents/skills/long-horizon-recovery/SKILL.md"
+      - "${HOME}/.claude/skills/long-horizon-recovery/SKILL.md"
+      - "${HOME}/.codex/skills/long-horizon-recovery/SKILL.md"
+    trigger: "long task, resume, handoff, checkpoint, context limit, continuity, STATE.md"
+    avoid_when: "single-turn pure explanation"
+    context_cost: low
+    execution_cost: low
+    depth: standard
+    risk: low
+    conflicts: []
+    dependencies: []
+    essential_dependencies: []
+    required_tools: ["agentit continuity"]
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
+  - id: local-model-routing
+    name: "Local and remote model capability routing"
+    kind: skill
+    category: models
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/local-model-routing/SKILL.md"
+      - "${HOME}/.agents/skills/local-model-routing/SKILL.md"
+      - "${HOME}/.claude/skills/local-model-routing/SKILL.md"
+      - "${HOME}/.codex/skills/local-model-routing/SKILL.md"
+    trigger: "local model, ollama, llama.cpp, vLLM, LM Studio, model tier, local-first"
+    avoid_when: "no model selection decision"
+    context_cost: low
+    execution_cost: low
+    depth: standard
+    risk: medium
+    conflicts: ["silent downgrade of critic/judgment roles"]
+    dependencies: []
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: on_demand
+
   - id: no-ai-slop
     name: "Public writing cleanup"
     kind: external-repository

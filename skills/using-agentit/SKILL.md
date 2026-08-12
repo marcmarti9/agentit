@@ -97,8 +97,10 @@ Discover beyond local catalog with `mcp-tooling-fit` (marketplace + web). Instal
 | 3 | Route + skill_budget + MCP fit |
 | 4 | Plan; critic if structural/large |
 | 5 | Implement with specialists only when useful |
-| 6 | Verify evidence; update state |
-| 7 | Branch + PR by default |
+| 6 | Verify evidence (`agentit verify --apply`); no done without receipt |
+| 7 | Continuity: `agentit continuity status|checkpoint`; keep STATE.md current |
+| 8 | Local models: prefer `models` plan from route when `local_models.enabled` |
+| 9 | Branch + PR by default |
 
 ## Safety
 

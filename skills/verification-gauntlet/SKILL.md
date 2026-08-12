@@ -65,6 +65,9 @@ Do **not** mark pass without a command, path, or observed behavior.
 - Do not treat agent-authored unit tests as the whole gauntlet when other probes apply
 - Do not accept subagent “success” as a receipt for RISK_2+; re-run blocking probes
 - “200 tests passed” without receipt path / probe statuses is not completion
+- If the working tree changed after tests, re-run verification on the **final** tree
+- Router field `verification.claims_without_evidence: forbidden` applies to all done/fixed/passing claims
+- Programmatic gate (optional): `router.verify.evaluate_done_claims(claims, receipt=…)`
 
 ### 5. Close-out shape
 

@@ -103,6 +103,13 @@ class WorkerTaskSpec:
     # When True, merge project-manifest active skills then intersect with
     # task skills if task skills are non-empty; never the full catalog.
     include_manifest_skills: bool = False
+    domain_pack: str = ""
+    craft_depth: str | None = None
+    spend: str = ""
+    critic_required: bool = False
+    specialist_id: str = ""
+    model_tier: str = ""
+    parent_topology: str = ""
 
 
 def _sha256_prefix(text: str, n: int = 12) -> str:
@@ -297,6 +304,8 @@ def build_constraints(
     if spec.role == "probe":
         add("read-only investigation")
         add("do not modify source files")
+    if spec.critic_required and spec.role in {"reviewer", "probe"}:
+        add("independent critic: challenge assumptions; do not rubber-stamp the parent plan")
 
     return constraints
 
@@ -491,6 +500,16 @@ def build_worker_context(
             "skip_project_instructions": bool(skip_project_instructions),
             "skills_count": len(skills_projected),
             "manifest_skills_available": list(manifest_skills),
+            "full_catalog_forbidden": True,
+        },
+        "orchestration": {
+            "domain_pack": (spec.domain_pack or "").strip(),
+            "craft_depth": spec.craft_depth,
+            "spend": (spec.spend or "").strip(),
+            "critic_required": bool(spec.critic_required),
+            "specialist_id": (spec.specialist_id or "").strip(),
+            "model_tier": (spec.model_tier or "").strip(),
+            "parent_topology": (spec.parent_topology or "").strip(),
         },
     }
     return {"worker_context": worker_context}
@@ -604,6 +623,26 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
     ]
     if ctx.get("scope"):
         lines.append(f"## Scope\n{ctx['scope']}")
+
+    orch = ctx.get("orchestration") or {}
+    if any(orch.get(k) for k in ("domain_pack", "specialist_id", "model_tier", "parent_topology")) or orch.get(
+        "critic_required"
+    ):
+        lines.append("## Orchestration context")
+        if orch.get("domain_pack"):
+            lines.append(f"- domain_pack: {orch['domain_pack']}")
+        if orch.get("craft_depth"):
+            lines.append(f"- craft_depth: {orch['craft_depth']}")
+        if orch.get("spend"):
+            lines.append(f"- spend: {orch['spend']}")
+        if orch.get("specialist_id"):
+            lines.append(f"- specialist_id: {orch['specialist_id']}")
+        if orch.get("model_tier"):
+            lines.append(f"- model_tier: {orch['model_tier']}")
+        if orch.get("parent_topology"):
+            lines.append(f"- parent_topology: {orch['parent_topology']}")
+        if orch.get("critic_required"):
+            lines.append("- critic_required: true (challenge the plan; do not rubber-stamp)")
 
     lines.append("## Constraints (mandatory)")
     for item in ctx["constraints"]:

@@ -151,7 +151,7 @@ class ScriptRegressionTests(unittest.TestCase):
                     "code-review-and-quality",
                     "test-driven-development",
                     "security-and-hardening",
-                    "source-driven-development",
+                    "long-horizon-recovery",
                     "mcp-tooling-fit",
                     "planning-and-task-breakdown",
                     "using-agent-skills",

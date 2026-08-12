@@ -78,6 +78,8 @@ ALWAYS_CORE_SKILLS = (
     "architect-orchestrator",
     "using-agent-skills",
     "task-router",
+    "long-horizon-recovery",
+    "mcp-tooling-fit",
     "verification-before-completion",
     "verification-gauntlet",
 )
@@ -1274,12 +1276,79 @@ def _heuristic_confidence(risk: str, signals: list[str]) -> float:
     return 0.62 if len(signals) <= 1 else 0.70
 
 
+def _model_plan(
+    *,
+    topology: str,
+    critic_required: bool,
+    risk: str,
+    local_prefs: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Capability-tier plan; local models are first-class when configured."""
+    local_prefs = local_prefs or {}
+    local_enabled = bool(local_prefs.get("enabled", False))
+    endpoints = local_prefs.get("endpoints") or []
+    if not isinstance(endpoints, list):
+        endpoints = []
+
+    def pick(tier: str) -> dict[str, Any]:
+        for endpoint in endpoints:
+            if not isinstance(endpoint, dict):
+                continue
+            if str(endpoint.get("tier")) == tier:
+                return {
+                    "tier": tier,
+                    "endpoint_id": endpoint.get("id"),
+                    "model": endpoint.get("model"),
+                    "base_url": endpoint.get("base_url"),
+                    "local": True,
+                    "tools": bool(endpoint.get("tools", True)),
+                    "context_tokens": endpoint.get("context_tokens"),
+                }
+        return {
+            "tier": tier,
+            "endpoint_id": None,
+            "model": None,
+            "local": False,
+            "notes": "no matching local endpoint; use provider default for tier",
+        }
+
+    parent_tier = "judgment" if risk in {"RISK_3", "RISK_4"} or critic_required else "coding"
+    worker_tier = "fast" if topology in {"probe", "fan_out"} else "coding"
+    critic_tier = "critic"
+    plan = {
+        "catalog": "models/capabilities.yaml",
+        "local_enabled": local_enabled,
+        "parent": pick(parent_tier) if local_enabled else {"tier": parent_tier, "local": False},
+        "worker": pick(worker_tier) if local_enabled else {"tier": worker_tier, "local": False},
+        "critic": pick(critic_tier) if local_enabled else {"tier": critic_tier, "local": False},
+        "rules": [
+            "Local endpoints may be used when they meet the role tier and tool needs.",
+            "Do not silently assign RISK_3/4 critic work to an unproven weak local model.",
+            "Disclose when falling back from local to cloud or parent execution.",
+        ],
+    }
+    if risk in {"RISK_3", "RISK_4"} and local_enabled:
+        critic = plan["critic"]
+        if critic.get("local") and not critic.get("tools", True):
+            plan["critic"] = {
+                "tier": "critic",
+                "local": False,
+                "notes": "local critic lacks tools; prefer stronger/cloud critic for RISK_3/4",
+            }
+    return plan
+
+
 def route_task(
     prompt: str,
     explicit_risk: str | None = None,
     *,
     registry_path: Path | None = None,
     home: Path | None = None,
+    project_root: Path | None = None,
+    craft_depth_override: str | None = None,
+    spend_override: str | None = None,
+    parallelism_override: str | None = None,
+    topology_override: str | None = None,
 ) -> dict[str, Any]:
     resolved_registry_path = (
         Path(registry_path) if registry_path is not None else DEFAULT_REGISTRY_PATH
@@ -1300,6 +1369,12 @@ def route_task(
     complexity = _complexity(text.lower(), risk)
     content_types = _content_types(text.lower())
     routing_advice: list[str] = []
+
+    try:
+        from router.project_signals import collect_project_signals
+    except ImportError:
+        from project_signals import collect_project_signals  # type: ignore
+    project_signals = collect_project_signals(project_root)
     if category == "database" and not _matches(
         text,
         (
@@ -1386,11 +1461,29 @@ def route_task(
         text=lowered,
     )
     topology = _topology(lowered, risk, parallelism)
+    if topology_override in TOPOLOGIES:
+        topology = topology_override
+        reasons.append(f"topology override applied: {topology_override}")
     subagents = _subagent_budget(lowered, risk, topology, parallelism)
     domain_pack = _domain_pack(category, lowered)
+    # Prefer stack markers from the real project when present.
+    markers = set(project_signals.get("stack_markers") or [])
+    if "supabase" in markers and domain_pack == "engineering":
+        domain_pack = "data"
+    elif "typescript" in markers or "node" in markers:
+        if category == "frontend":
+            domain_pack = "frontend"
     craft_applies = _craft_depth_applies(domain_pack, category, lowered)
     craft_depth = _recommend_craft_depth(lowered, risk) if craft_applies else None
+    if craft_depth_override in {"standard", "polished", "studio"}:
+        if craft_applies or craft_depth_override:
+            craft_depth = craft_depth_override
+            craft_applies = True
+            reasons.append(f"craft_depth override: {craft_depth_override}")
     spend = _recommend_spend(risk, complexity, parallelism)
+    if spend_override in {"lean", "normal", "thorough"}:
+        spend = spend_override
+        reasons.append(f"spend override: {spend_override}")
     critic_required = _critic_required(lowered, risk, topology, parallelism)
     # Large structural plans always get an independent critic slot in the advisory budget.
     if critic_required and int(subagents.get("recommended") or 0) < 1:
@@ -1412,6 +1505,7 @@ def route_task(
         subagents=subagents,
         craft_depth=craft_depth,
         spend=spend,
+        project_signals=project_signals,
     )
     multi_agent_pushback = _pushback_on_multi_agent(parallelism, topology)
     signals = _signals(
@@ -1432,7 +1526,53 @@ def route_task(
     prefs = load_preferences(resolved_home / ".agentit" / "preferences.yaml")
     auto_jit_enabled = bool(prefs.get("auto_jit_profiles", True))
     auto_plan_enabled = bool(prefs.get("auto_plan_mode", True))
-    parallelism_preference = prefs.get("parallelism_preference", "medium")
+    parallelism_preference = parallelism_override or prefs.get(
+        "parallelism_preference", "medium"
+    )
+    if parallelism_override:
+        reasons.append(f"parallelism preference override: {parallelism_override}")
+    # Soft threshold shift by preference (still no hard caps).
+    pref_shift = {"low": 0.15, "medium": 0.0, "high": -0.10, "max": -0.20}.get(
+        str(parallelism_preference), 0.0
+    )
+    if pref_shift and topology == "direct" and float(parallelism.get("score") or 0) >= (
+        0.35 + pref_shift
+    ):
+        topology = "fan_out"
+        subagents = _subagent_budget(lowered, risk, topology, parallelism)
+        if critic_required and int(subagents.get("recommended") or 0) < 1:
+            subagents = dict(subagents)
+            subagents["recommended"] = 1
+            subagents["requires_justification"] = True
+        token_estimate = _token_estimate(
+            risk=risk,
+            complexity=complexity,
+            domain_pack=domain_pack,
+            topology=topology,
+            subagents=subagents,
+            craft_depth=craft_depth,
+            spend=spend,
+            project_signals=project_signals,
+        )
+        multi_agent_pushback = _pushback_on_multi_agent(parallelism, topology)
+        reasons.append("parallelism preference raised topology to fan_out")
+    local_models = prefs.get("local_models") if isinstance(prefs.get("local_models"), dict) else {}
+    models = _model_plan(
+        topology=topology,
+        critic_required=critic_required,
+        risk=risk,
+        local_prefs=local_models,
+    )
+    # Evidence-based verification contract attached to the route.
+    verification = {
+        **verification,
+        "evidence_required": risk != "RISK_0",
+        "fresh_command_output": risk != "RISK_0",
+        "critic_before_large_plan": critic_required,
+        "receipt_path_hint": ".agentit/verify/",
+        "anti_greenwash": True,
+        "claims_without_evidence": "forbidden",
+    }
 
     jit_profiles: list[str] = []
     unmapped_skills: list[str] = []
@@ -1492,6 +1632,14 @@ def route_task(
         },
         "critic_required": critic_required,
         "multi_agent_pushback": multi_agent_pushback,
+        "project_signals": project_signals,
+        "models": models,
+        "continuity": {
+            "state_path": "docs/agentit/STATE.md",
+            "checkpoint_dir": ".agentit/checkpoints",
+            "resume_required_before_reinterview": True,
+            "mid_task_reroute": True,
+        },
         "skills": skills_available,
         "skills_available": skills_available,
         "skills_recommended_missing": skills_recommended_missing,
@@ -1527,12 +1675,35 @@ def route_task(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Classify an agent task conservatively.")
+    parser = argparse.ArgumentParser(
+        description="Classify an agent task (intelligent orchestration; no powerwords)."
+    )
     parser.add_argument("prompt", nargs="*", help="task text")
     parser.add_argument("--risk", choices=sorted(RISK_ORDER), dest="explicit_risk")
     parser.add_argument("--file", type=Path, help="read the task text from a UTF-8 file")
     parser.add_argument("--registry", type=Path, help="portable registry path")
     parser.add_argument("--home", type=Path, help="HOME used for bounded path discovery")
+    parser.add_argument("--project", type=Path, help="project root for size/stack signals")
+    parser.add_argument(
+        "--craft-depth",
+        choices=("standard", "polished", "studio"),
+        help="design craft depth override",
+    )
+    parser.add_argument(
+        "--spend",
+        choices=("lean", "normal", "thorough"),
+        help="soft main-agent thoroughness override",
+    )
+    parser.add_argument(
+        "--parallelism",
+        choices=("low", "medium", "high", "max"),
+        help="soft parallelism preference override",
+    )
+    parser.add_argument(
+        "--topology",
+        choices=TOPOLOGIES,
+        help="topology override (never lowers risk floor)",
+    )
     args = parser.parse_args()
     prompt = args.file.read_text(encoding="utf-8") if args.file else " ".join(args.prompt)
     if not prompt.strip():
@@ -1543,6 +1714,11 @@ def main() -> int:
             args.explicit_risk,
             registry_path=args.registry,
             home=args.home,
+            project_root=args.project,
+            craft_depth_override=args.craft_depth,
+            spend_override=args.spend,
+            parallelism_override=args.parallelism,
+            topology_override=args.topology,
         )
     except RegistryError as exc:
         parser.error(str(exc))

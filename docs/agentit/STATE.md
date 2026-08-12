@@ -1,167 +1,71 @@
-# Agentit project state
+# Agentit state
 
 **Updated:** 2026-08-12  
-**Status:** implementation landed on branch; PR open  
+**Status:** in progress on PR  
 **Branch:** feat/intelligent-orchestration-v1  
-**PR:** see GitHub (feat/intelligent-orchestration-v1)  
-**Mode:** Agentit active; awaiting review/merge
+**PR:** https://github.com/marcmarti9/agentit/pull/12  
 
-## Goal (revised)
+## Goal
 
-Make Agentit **intelligent orchestration**, not dogmatic single-agent-first:
+Deliver intelligent orchestration for Agentit: domain skill packs, design-only craft depth, project-aware tokens, smart spawn without hard caps, mandatory critic for large plans, MCP fit, long-horizon recovery, evidence-based verification, and first-class local model routing.
 
-1. Main agent is a strong general organizer (Architect) with a **small always-on skill core**.
-2. Load **only task-relevant skill families**; never dump design/studio stack onto backend work.
-3. **Spawn specialists when useful** — no forced multi, no forced solo, no hard min/max caps.
-4. **Always independent critique** before committing to large structural plans.
-5. **MCP fit**: audit installed + catalog + marketplace/internet; enable/disable/install with plan-first safety.
-6. **Token budgets estimated from real project/task**, not fixed Standard/Polished/Studio envelopes.
-7. Standard/Polished/Studio return to **design craft depth only** (frontend/visual), not universal effort.
+## Confirmed intent
 
-## User direction (confirmed intent)
+- Audience: Agentit users and agents across providers  
+- Success: single vs multi decision is intelligent; no Studio tax on non-design; no powerwords except natural Agentit activation; recovery/verify/local models real  
+- Constraints: safety floors, one-writer, PR-first, no multi chaos  
+- Non-goals: multi-agent-by-default framework  
 
-- Profiles/skill families exist so the agent picks the **right family per task** — currently ignored in practice (Studio/Polished asked for every product task).
-- Fixed token ranges (15k–80k etc.) are not realistic; estimate per project.
-- Not full single-agent-first: intelligent spawn when better; if user asks multi-agent, main agent may push back if unnecessary.
-- Subagents = domain specialists with scoped skills (why so many skills exist).
-- User role (“act as finance expert”) → load that domain’s skills + tiny universal core only.
-- Missing skills/MCPs → search marketplace/internet and propose install.
-- Large structural proposals → always a critic subagent so the main agent doesn’t lock onto its own plan.
-- No hard subagent min/max caps; effort-style knobs for design only, not global multi-agent bureaucracy.
+## Domain pack
 
-## Diagnosis add-on (effort / skills / MCP)
+- Pack: engineering (harness/orchestration)  
+- Craft depth: n/a (not design/visual product UI)  
+- Spend: thorough  
+- Token estimate: project-aware via router `--project`  
+- Topology: fan_out / pipeline / writer_reviewer as signals dictate  
+- Critic required: yes for structural plans  
 
-### Why Studio/Polished/Standard leaked everywhere
+## Current status
 
-- `effort/levels.yaml` + `interview-me` + `using-agentit` mandate effort on **all product work**.
-- Profiles already encode families (`frontend`, `backend`, `design`, `product`…) but interview asks craft depth as if every task were a landing page.
-- Design profile description explicitly ties itself to Standard/Polished/Studio; that model was generalized incorrectly.
+- Complete: router intelligence, domain packs, craft-depth design-only, MCP skill, continuity module, local model catalog, verification claim gate, worker orchestration fields, tests/evals  
+- In progress: PR review / merge  
+- Blocked: none  
+- Not started: optional follow-ups after merge (deeper MCP marketplace automation UI)  
 
-### Why too many skills load
+## Decisions
 
-- Policy text encourages “load recommended skills” without a hard **budget of skill bodies**.
-- `core` profile already includes frontend + several engineering skills globally.
-- Router recommends skill **ids** but agents often load whole profiles / design stack by habit.
+- Craft depth Standard/Polished/Studio is design-only  
+- No hard subagent min/max  
+- Natural language only; Agentit activation is the sole special phrase  
+- Project signals feed token estimates  
+- Local models are capability-tier first-class via preferences  
 
-### MCP gap
+## Important files and artifacts
 
-- Runtime exists: `agentit mcp status|available|enable|disable|enable-stack|recommend` + agentit-manager tools.
-- Missing: a **skill playbook** that forces (1) inventory, (2) fit to project, (3) disable unused, (4) search catalog + marketplace + web, (5) dry-run install, (6) human gate for RISK_3+.
+- `router/route.py`, `router/continuity.py`, `router/project_signals.py`, `router/verify.py`, `router/worker_context.py`  
+- `effort/levels.yaml`, `models/capabilities.yaml`  
+- `skills/mcp-tooling-fit`, `long-horizon-recovery`, `local-model-routing`  
+- PR #12  
 
-### Parallelism (from prior diagnosis)
+## Verification
 
-- Router still keyword-only; `recommended: 0` even on fan_out; multi-agent overrides broken; no structural independence score.
+- router unit tests: 158 OK  
+- tests/: 17 OK  
+- evals: 11/11  
+- Manual route smoke: fan_out + project signals + models + claims_without_evidence  
 
-## Target architecture (agreed direction)
+## Next actions
 
-### A. Three orthogonal axes (replace one universal “effort”)
+1. Review/merge PR #12  
+2. After merge, reinstall core profile so `mcp-tooling-fit` + `long-horizon-recovery` are global  
+3. Optional: wire provider-native local endpoint probes  
 
-| Axis | Purpose | Values (proposal) |
-|---|---|---|
-| **Domain pack** | Which skill family + MCP stack | engineering / frontend / design / backend / data / product / writing / release / research / role-custom |
-| **Craft depth** | Only for visual/design tasks | standard \| polished \| studio (or skip if non-design) |
-| **Spend / rigor** | Main-agent thoroughness (optional, soft) | lean \| normal \| thorough — **no token fixed ranges**; estimate from project signals |
+## Open questions / blockers
 
-Interview asks craft depth **only if** the task is visual/design. Non-design product work asks domain intent + constraints, not Studio.
+- None for this PR scope  
 
-### B. Skill loading policy
+## Recovery
 
-```
-always_core (tiny):
-  using-agentit | architect-orchestrator | using-agent-skills | task-router
-  verification-before-completion | verification-gauntlet (when mutating)
-  + planning / code-review only when planning or reviewing
-
-task_family (JIT, 1–N skills):
-  from profiles.yaml + registry category + role hint
-
-never:
-  design_studio stack on pure backend
-  entire catalog into parent or worker
-```
-
-Role override: user says “experto en finanzas” → finance skills (or find/install) + always_core; skip frontend/design.
-
-### C. Delegation policy (no caps)
-
-- Default: intelligent, not “0 subagents”.
-- Spawn when independence, isolation, specialist domain, or independent critique wins.
-- Soft guidance only (suggested count from decomposition), **no hard min/max**.
-- User requests multi-agent → Architect evaluates and may decline with reason.
-- **Critic gate:** any non-trivial structural plan / large work proposal → independent critic subagent before implementation commitment.
-
-### D. Token estimate (project-aware)
-
-Router or a small estimator uses signals:
-
-- repo size / touched modules estimate
-- risk
-- domain pack
-- whether UI browser loops needed
-- planned specialist count (if any)
-
-Output: `token_estimate: { low, high, basis: [...] }` — not the fixed 15k–80k table.
-
-### E. MCP skill (new)
-
-`skills/mcp-tooling-fit/SKILL.md` (name TBD):
-
-1. `agentit mcp status` + list active vs catalog
-2. Infer project stack (package.json, docker, supabase, etc.)
-3. Recommend enable stack / disable unused
-4. Search curated catalog + skills marketplace / web for gaps
-5. Plan install (dry-run); apply only with user consent / --apply; RISK_3+ force
-
-### F. Parallelism decision (keep from prior plan)
-
-- Structural signals + overrides + score
-- No hard caps; recommended is advisory
-- RISK raises verification, does not forbid independent parallel packages
-
-## Implementation phases (revised)
-
-### Phase A — Policy pivot (docs + catalogs)  
-Deprecate universal Standard/Polished/Studio for all product work; craft depth design-only; update interview-me, using-agentit, effort/levels.yaml shape, AGENTIT_INTERVIEW policy, AGENTS.md.
-
-### Phase B — Router: domain pack + skill budget + token estimate  
-Extend `route_task` with domain_pack, skill_budget, token_estimate, craft_depth (optional), delegation_advice without hard caps.
-
-### Phase C — Parallelism intelligence  
-Signals, overrides, recommended≠0 when useful, critic_required flag for large plans.
-
-### Phase D — MCP tooling fit skill + wire into playbook  
-New skill + registry + profile hook (core or research) + tests.
-
-### Phase E — Architect core strengthening  
-Ensure architect-orchestrator + specialist-agent-routing encode: smart spawn, critic gate, skill family projection, pushback on unnecessary multi-agent.
-
-### Phase F — Evals/tests  
-Cases for: backend without design skills; design craft depth; critic_required; multi-agent pushback; MCP recommend; multi-path fan_out; role-scoped skills.
-
-## Open decisions for user
-
-1. Name for non-design thoroughness: **lean/normal/thorough** vs drop named tiers and only estimate tokens?
-2. Critic gate threshold: always on “structural plan with large work” — OK as qualitative rule?
-3. MCP skill may propose install from internet — always require explicit user approve before `--apply`? (recommend yes)
-4. Keep profile names (`frontend`, `design`, …) as the domain packs?
-
-## Defaults if user says “procede”
-
-- lean/normal/thorough as soft spend (optional interview only when ambiguous)
-- craft depth design-only
-- critic gate on large structural plans
-- MCP install always plan-first + user confirm
-- profiles as domain packs
-- soft delegation guidance, no hard caps
-- implement on `feat/intelligent-orchestration-v1` local branch
-
-## Verification so far
-
-- Prior router probes (parallelism too conservative).
-- Confirmed effort policy is universal; design profile owns Studio language.
-- MCP runtime + catalog exist; skill playbook missing.
-- No implementation commits yet.
-
-## Next
-
-User confirms revised plan → branch → Phase A+B first slice.
+- Last checkpoint: PR #12 branch  
+- Resume: read this file → `git checkout feat/intelligent-orchestration-v1` → continue Next actions  
+- Mid-task re-route: `agentit trace "<goal>" --project .`  

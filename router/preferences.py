@@ -29,10 +29,17 @@ DEFAULT_PREFERENCES: dict[str, Any] = {
     "auto_plan_mode": True,
     # Soft preference only — does not force multi-agent. Values: low|medium|high|max
     "parallelism_preference": "medium",
+    "local_models": {
+        "enabled": False,
+        "endpoints": [],
+        # Example endpoint:
+        # {"id": "local-coding", "base_url": "http://127.0.0.1:11434/v1",
+        #  "model": "qwen2.5-coder", "tier": "coding", "tools": True, "context_tokens": 32768}
+    },
     "preferred_skills": [
-        "frontend-ui-engineering",
         "test-driven-development",
         "security-and-hardening",
+        "mcp-tooling-fit",
     ],
     "project_history": {},
 }

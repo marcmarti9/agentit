@@ -77,6 +77,8 @@ always_core_skills:
   - architect-orchestrator
   - using-agent-skills
   - task-router
+  - long-horizon-recovery
+  - mcp-tooling-fit
   - verification-before-completion
   - verification-gauntlet
 

@@ -310,10 +310,60 @@ def apply_verification(
         "pending_checklists": [
             p["id"] for p in results if p.get("status") == "pending_agent_evidence"
         ],
+        "evidence_policy": {
+            "claims_without_fresh_output": "forbidden",
+            "agent_authored_tests_alone": "insufficient",
+            "require_receipt_for_done": True,
+        },
     }
     path = _write_receipt(root, receipt)
     receipt["receipt_path"] = str(path)
     return receipt
+
+
+def evaluate_done_claims(
+    claims: list[str],
+    *,
+    receipt: dict[str, Any] | None,
+    working_tree_dirty_after_tests: bool | None = None,
+) -> dict[str, Any]:
+    """Anti-greenwash gate: done/fixed/passing claims need fresh evidence."""
+    claim_text = " ".join(claims).lower()
+    done_like = bool(
+        re.search(r"\b(done|fixed|passing|complete|listo|arreglado|completo)\b", claim_text)
+    )
+    violations: list[str] = []
+    if not done_like:
+        return {
+            "applicable": False,
+            "allowed": True,
+            "violations": [],
+            "notes": "no done-like claim detected",
+        }
+    if receipt is None:
+        violations.append("no verification receipt provided")
+    else:
+        if receipt.get("mode") != "apply":
+            violations.append("receipt is plan-only; run agentit verify --apply")
+        if receipt.get("blocking_failed"):
+            violations.append("blocking probes failed")
+        if not receipt.get("passed"):
+            violations.append("receipt.passed is false")
+        if not receipt.get("receipt_path") and not receipt.get("created_at"):
+            violations.append("receipt missing path/timestamp")
+        pending = receipt.get("pending_checklists") or []
+        if pending:
+            violations.append(f"pending checklists still open: {', '.join(map(str, pending))}")
+    if working_tree_dirty_after_tests:
+        violations.append(
+            "working tree changed after tests; re-run verification on the final tree"
+        )
+    return {
+        "applicable": True,
+        "allowed": not violations,
+        "violations": violations,
+        "notes": "fresh command evidence required after last relevant edit",
+    }
 
 
 def _write_receipt(project_root: Path, receipt: dict[str, Any]) -> Path:

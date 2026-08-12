@@ -11,11 +11,11 @@ profiles:
       - architect-orchestrator
       - using-agent-skills
       - mcp-tooling-fit
+      - long-horizon-recovery
       - debugging-and-error-recovery
       - code-review-and-quality
       - test-driven-development
       - security-and-hardening
-      - source-driven-development
       - planning-and-task-breakdown
       - verification-gauntlet
   frontend:
@@ -138,6 +138,8 @@ profiles:
       - impeccable-design
       - incremental-implementation
       - interview-me
+      - local-model-routing
+      - long-horizon-recovery
       - marketing-and-growth
       - observability-and-instrumentation
       - performance-optimization

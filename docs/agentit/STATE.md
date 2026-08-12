@@ -1,8 +1,8 @@
 # Agentit state
 
 **Updated:** 2026-08-12
-**Status:** review fixes implemented; verification in progress
-**Branch:** feat/intelligent-orchestration-v1
+**Status:** complete and merged
+**Branch:** main
 **PR:** https://github.com/marcmarti9/agentit/pull/12
 
 ## Goal
@@ -28,7 +28,7 @@ Deliver intelligent orchestration for Agentit: domain skill packs, design-only c
 ## Current status
 
 - Complete: router intelligence, domain packs, craft-depth design-only, MCP skill, continuity module, local model catalog, verification claim gate, worker orchestration fields, tests/evals; affirmative Agentit activation; vendor-neutral data profile routing
-- In progress: final verification / PR update / merge
+- In progress: none
 - Blocked: none
 - Not started: optional follow-ups after merge (deeper MCP marketplace automation UI)
 
@@ -45,7 +45,7 @@ Deliver intelligent orchestration for Agentit: domain skill packs, design-only c
 - `router/route.py`, `router/continuity.py`, `router/project_signals.py`, `router/verify.py`, `router/worker_context.py`
 - `effort/levels.yaml`, `models/capabilities.yaml`
 - `skills/mcp-tooling-fit`, `long-horizon-recovery`, `local-model-routing`
-- PR #12
+- PR #12, squash merge `16848dc0a8faebb8cb6e6fe73bbcd9e8a0377674`
 
 ## Verification
 
@@ -53,12 +53,13 @@ Deliver intelligent orchestration for Agentit: domain skill packs, design-only c
 - tests/: 17 OK
 - evals: 14/14 after adversarial activation and MySQL profile cases
 - Manual route smoke: fan_out + project signals + models + claims_without_evidence
+- GitHub Actions CI run #58: success
+- `git diff --check`: pass
 
 ## Next actions
 
-1. Review/merge PR #12
-2. After merge, reinstall core profile so `mcp-tooling-fit` + `long-horizon-recovery` are global
-3. Optional: wire provider-native local endpoint probes
+1. Reinstall the core profile when local provider copies should pick up `mcp-tooling-fit` and `long-horizon-recovery`
+2. Optional: wire provider-native local endpoint probes
 
 ## Open questions / blockers
 
@@ -66,6 +67,6 @@ Deliver intelligent orchestration for Agentit: domain skill packs, design-only c
 
 ## Recovery
 
-- Last checkpoint: PR #12 branch
-- Resume: read this file → `git checkout feat/intelligent-orchestration-v1` → continue Next actions
+- Last checkpoint: PR #12 merged into `main`
+- Resume: read this file on `main` → verify assumptions → continue Next actions
 - Mid-task re-route: `agentit trace "<goal>" --project .`

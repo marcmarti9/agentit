@@ -601,6 +601,7 @@ def _parser() -> argparse.ArgumentParser:
             "trace",
             "route",
             "verify",
+            "continuity",
         ),
     )
     parser.add_argument("subcommand", nargs="?")
@@ -729,6 +730,63 @@ def main(argv: list[str] | None = None) -> int:
                 print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             else:
                 print(format_plan(payload))
+            return 0
+
+        if args.command == "continuity":
+            sub = args.subcommand or "status"
+            try:
+                from router.continuity import (
+                    ContinuityError,
+                    ensure_state_file,
+                    list_checkpoints,
+                    resume_report,
+                    write_checkpoint,
+                )
+                from router.route import route_task as _route_task
+            except ImportError:
+                from continuity import (  # type: ignore
+                    ContinuityError,
+                    ensure_state_file,
+                    list_checkpoints,
+                    resume_report,
+                    write_checkpoint,
+                )
+                from route import route_task as _route_task  # type: ignore
+            try:
+                if sub == "init":
+                    goal = " ".join(
+                        p for p in (args.target, args.extra_arg) if p
+                    ).strip()
+                    route = (
+                        _route_task(goal, project_root=project_root)
+                        if goal
+                        else {}
+                    )
+                    path = ensure_state_file(
+                        project_root, goal=goal, route=route, overwrite=bool(args.apply)
+                    )
+                    payload = {"action": "init", "path": str(path), "route": route or None}
+                elif sub == "status":
+                    payload = resume_report(project_root)
+                    payload["checkpoints"] = list_checkpoints(project_root)
+                elif sub == "checkpoint":
+                    label = args.target or "manual"
+                    note = args.extra_arg or ""
+                    path = write_checkpoint(
+                        project_root,
+                        label=label,
+                        payload={"note": note, "project": str(project_root)},
+                    )
+                    payload = {"action": "checkpoint", "path": str(path)}
+                else:
+                    parser.error("continuity subcomando: init|status|checkpoint")
+                    return 2
+            except ContinuityError as exc:
+                raise ProfileError(str(exc)) from exc
+            if args.format == "json":
+                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+            else:
+                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
 
         if args.command == "artifact":

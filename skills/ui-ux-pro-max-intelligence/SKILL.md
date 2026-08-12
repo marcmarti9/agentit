@@ -9,7 +9,7 @@ description: Provider-neutral JIT UI/UX design intelligence adapter for the upst
 
 Use the upstream `nextlevelbuilder/ui-ux-pro-max-skill` project as a **searchable design-intelligence source**, not as a replacement for Agentit's art direction, research, critique, or implementation skills.
 
-Upstream is MIT-licensed. Agentit does not need to dump the full database into model context. Query only the dimensions needed for the current task and synthesize the results into a compact artifact.
+Upstream is MIT-licensed. Do not dump the full database into model context. Query only the dimensions needed for the current task and synthesize the results into a compact artifact.
 
 Canonical upstream: `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill`.
 

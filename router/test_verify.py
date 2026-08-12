@@ -9,6 +9,58 @@ REPOSITORY = Path(__file__).resolve().parents[1]
 
 
 class VerifyPlannerTests(unittest.TestCase):
+    def test_unittest_project_does_not_invent_pytest_dependency(self):
+        from router.verify import plan_verification
+
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            tests = project / "tests"
+            tests.mkdir()
+            (tests / "test_example.py").write_text(
+                "import unittest\n\nclass Example(unittest.TestCase):\n    pass\n",
+                encoding="utf-8",
+            )
+
+            plan = plan_verification(project, task_text="fix router behavior")
+            probe = next(p for p in plan["probes"] if p["id"] == "project-test-suite")
+
+            self.assertEqual(
+                ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"],
+                probe["command"],
+            )
+
+    def test_pytest_config_takes_precedence_over_unittest_fallback(self):
+        from router.verify import plan_verification
+
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            (project / "tests").mkdir()
+            (project / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
+
+            plan = plan_verification(project, task_text="fix router behavior")
+            probe = next(p for p in plan["probes"] if p["id"] == "project-test-suite")
+
+            self.assertEqual(["python3", "-m", "pytest", "-q"], probe["command"])
+
+    def test_plain_pyproject_does_not_imply_pytest(self):
+        from router.verify import plan_verification
+
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            (project / "tests").mkdir()
+            (project / "pyproject.toml").write_text(
+                "[project]\nname = 'unittest-project'\n",
+                encoding="utf-8",
+            )
+
+            plan = plan_verification(project, task_text="fix router behavior")
+            probe = next(p for p in plan["probes"] if p["id"] == "project-test-suite")
+
+            self.assertEqual(
+                ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"],
+                probe["command"],
+            )
+
     def test_detects_python_and_plans_blocking_probes(self):
         from router.verify import plan_verification
 

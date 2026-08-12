@@ -6,7 +6,7 @@
 
 ## 🎯 The Core Philosophy
 
-> *"Most multi-agent frameworks start by adding agents. **Agentit starts by asking if delegation is actually required.**"*
+> *"Most multi-agent frameworks start by adding agents. **Agentit starts by asking whether delegation actually helps — then spawns when it does.**"*
 
 In the modern AI software engineering ecosystem, most agent frameworks default to complex, multi-tiered hierarchies (Architect → Orchestrator → Supervisor → Worker → Auditor) for even simple, 5-line bug fixes. This approach introduces three critical problems:
 
@@ -14,7 +14,7 @@ In the modern AI software engineering ecosystem, most agent frameworks default t
 2. **Latency Overhead**: Unnecessary agent handoffs create round-trip latency for tightly coupled tasks.
 3. **Unsafe Execution**: Blindly running subagents without bounded contracts, file ownership, or verification gates leads to uncoordinated code edits.
 
-**Agentit solves this by enforcing a Single-Agent-First architecture.** A single capable model handles tasks directly by default. Multi-agent topologies (Probe, Fan-Out, Pipeline, Writer-Reviewer, Audit) spawn **strictly when context isolation, parallel execution, or independent risk verification is required.**
+**Agentit uses intelligent orchestration.** A strong main agent (Architect) owns the user relationship and loads only the skill family needed for the task. Multi-agent topologies (Probe, Fan-Out, Pipeline, Writer-Reviewer, Audit) spawn when context isolation, real parallelism, domain specialization, or independent critique improves the result — with no hard subagent quotas and with a mandatory independent critic on large structural plans.
 
 ---
 

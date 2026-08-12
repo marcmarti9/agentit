@@ -1,0 +1,82 @@
+schema_version: 1
+policy:
+  provider_neutral: true
+  local_models_first_class: true
+  notes: |
+    Capability tiers describe what a model endpoint is good for, not brand prestige.
+    Local models are first-class: use them when they meet the role's capability bar.
+    Cloud models are optional. Never silently downgrade a high-judgment role to a
+    weak local model without disclosing the limitation.
+
+tiers:
+  judgment:
+    label: High judgment
+    use_for:
+      - architecture
+      - arbitration
+      - independent critic
+      - security review
+      - hard product tradeoffs
+    local_ok_when: "local model demonstrated strong reasoning on similar tasks; otherwise prefer stronger endpoint"
+  coding:
+    label: Strong coding
+    use_for:
+      - primary implementation
+      - multi-file refactors
+      - integration
+    local_ok_when: "local coding model handles repo tools and multi-file edits reliably"
+  fast:
+    label: Fast / cheap capable
+    use_for:
+      - bounded workers
+      - extraction
+      - variants
+      - repetitive QA loops
+      - browser iteration
+    local_ok_when: "ideal local use-case when latency/cost matter and task is bounded"
+  critic:
+    label: Adversarial / diverse critic
+    use_for:
+      - independent plan critique
+      - design competition jury
+      - security second opinion
+    local_ok_when: "prefer a different model family than the writer when available (local or cloud)"
+
+roles_default_tier:
+  architect: judgment
+  implementer: coding
+  probe: fast
+  reviewer: critic
+  critic: critic
+  auditor: critic
+
+local:
+  enabled_preference_key: local_models.enabled
+  endpoints_preference_key: local_models.endpoints
+  default_enabled: false
+  discovery:
+    - "OpenAI-compatible base_url (llama.cpp, ollama openai compat, vLLM, LM Studio)"
+    - "Provider-native local runners when configured"
+  requirements:
+    - tools/function-calling if the role needs tools
+    - sufficient context window for projected worker contract
+    - deterministic stop on verifier failure
+  routing_rules:
+    - "If local endpoint meets tier for the role, it may be preferred for cost/latency."
+    - "If local endpoint lacks tools or context, fall back or keep work in parent with disclosure."
+    - "RISK_3/4 critic/auditor should not silently use an unproven weak local model."
+    - "Never claim local parity without a fresh capability check on the current machine."
+
+endpoints_schema_example:
+  - id: local-coding
+    base_url: "http://127.0.0.1:11434/v1"
+    model: "qwen2.5-coder"
+    tier: coding
+    tools: true
+    context_tokens: 32768
+  - id: local-fast
+    base_url: "http://127.0.0.1:11434/v1"
+    model: "llama3.2"
+    tier: fast
+    tools: true
+    context_tokens: 16000

@@ -4,30 +4,32 @@ global_profiles:
   - core
 profiles:
   core:
-    description: "Small global discovery set for common engineering work with optional specialist delegation."
+    description: "Small global discovery set for intelligent orchestration; domain packs load extra families JIT."
     skills:
       - using-agentit
       - task-router
       - architect-orchestrator
+      - using-agent-skills
+      - mcp-tooling-fit
+      - long-horizon-recovery
       - debugging-and-error-recovery
       - code-review-and-quality
       - test-driven-development
       - security-and-hardening
-      - source-driven-development
-      - frontend-ui-engineering
       - planning-and-task-breakdown
-      - using-agent-skills
       - verification-gauntlet
   frontend:
     description: "Core plus browser, performance, and UI maintenance guidance."
     extends:
       - core
     skills:
+      - frontend-ui-engineering
       - browser-testing-with-devtools
       - performance-optimization
       - code-simplification
       - anti-ai-slop-design
       - design-taste-frontend
+      - specialist-agent-routing
   backend:
     description: "Core plus API boundaries, observability, and service maintenance."
     extends:
@@ -62,7 +64,7 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Craft-first design studio: JIT UI/UX intelligence, research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Effort depth follows Standard/Polished/Studio."
+    description: "Craft-first design studio: JIT UI/UX intelligence, research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Craft depth (Standard/Polished/Studio) applies only to visual/design work."
     extends:
       - frontend
     skills:
@@ -118,6 +120,7 @@ profiles:
       - creative-web-experiences
       - debugging-and-error-recovery
       - delight-and-whimsy
+      - mcp-tooling-fit
       - deprecation-and-migration
       - design-inspiration-research
       - design-taste-frontend
@@ -135,6 +138,8 @@ profiles:
       - impeccable-design
       - incremental-implementation
       - interview-me
+      - local-model-routing
+      - long-horizon-recovery
       - marketing-and-growth
       - observability-and-instrumentation
       - performance-optimization

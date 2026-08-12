@@ -1,71 +1,72 @@
 ---
 name: specialist-agent-routing
-description: Select and spawn bounded specialist subagents from Agentit's agent catalog when specialization, independent exploration, context isolation, or review materially improves the result.
+description: Select and spawn domain specialists with scoped skills. Intelligent spawn, no hard caps, critic for large plans, natural language only.
 ---
 
 # Specialist Agent Routing
 
-Agentit may create temporary specialists for a task. Specialists are not a permanent team and are not spawned just because a matching job title exists.
+Specialists are temporary domain experts, not a permanent org chart. Spawn when they improve the result; never by ceremony and never because a job title exists.
 
 ## Source of truth
 
-Read `agents/catalog.yaml` when a task contains a strong domain signal or when the parent agent is considering delegation. Match the task against specialist `triggers`, then project only the listed `skills` plus the exact task context required.
+Read `agents/catalog.yaml`. Match triggers and domain. Project only listed skills + task context via Worker Context Contract.
 
 ## Spawn decision
 
-Create a specialist only when at least one is true:
+Create a specialist when at least one is true:
 
-- the task needs expertise that is meaningfully distinct from the parent agent's current context;
-- an independent proposal/review has real value;
-- a research branch can run without touching shared mutable state;
-- the specialist can use different tools or a different model efficiently;
-- context isolation prevents a large research/design/diagnostic branch from polluting implementation context;
-- parallel alternatives are intentionally desired.
+- distinct expertise vs current parent context;
+- independent proposal or review (including **critic**);
+- research branch without shared mutable state;
+- different tools/model efficiency;
+- context isolation for large research/design/diagnostics;
+- real parallel independent packages.
 
-Do not spawn for a small, tightly coupled change that the parent can complete directly.
+Do **not** require powerwords. Ordinary language (“frontend and backend”, two file paths, “at the same time”, “several agents”) is enough. If the user asks for agents without independence, push back.
+
+## No hard caps
+
+There is no mandatory min/max specialist count. Use router `subagents.recommended` as soft guidance. Stop when ownership or integration cost exceeds benefit.
+
+## Critic specialists
+
+For large structural plans / architecture / high-impact proposals, spawn a read-only critic (design-critic, code-review, or auditor-class role) **before** committing to implementation. Fresh context; no shared rationalization thread.
 
 ## Specialist contract
 
-Every specialist receives:
+1. role id from catalog (or ad-hoc domain name if catalog lacks a fit);
+2. objective and scope;
+3. only that specialist’s skills;
+4. allowed I/O and write ownership;
+5. output contract;
+6. risk/safety;
+7. verification;
+8. stop/escalation.
 
-1. a single role id from `agents/catalog.yaml`;
-2. exact objective and scope;
-3. only the specialist's relevant skills;
-4. allowed inputs and write ownership;
-5. expected output schema from the catalog;
-6. risk and safety constraints;
-7. verification or evidence requirements;
-8. stop/escalation condition.
-
-Use the Worker Context Contract (`agentit worker build|render`) for the actual delegated package. Map catalog `mode` to runtime role: `implementer`, `reviewer`, or `probe`.
+Use `agentit worker build|render`. Modes: implementer, reviewer, probe.
 
 ## Parent responsibilities
 
-The parent/Architect owns decomposition, chooses the specialist, decides whether to accept its result, resolves conflicts between specialists, integrates changes, and performs final verification. Worker claims are not evidence by themselves.
+Architect owns decomposition, acceptance, conflict resolution, integration, final verification, and the user-facing answer. Worker claims are not evidence.
+
+## Missing skills
+
+If the domain is missing:
+
+1. check local skills / profiles;
+2. `find-skills` / skills.sh marketplace;
+3. propose install;
+4. only then load.
 
 ## Design competition
 
-For explicitly ambitious creative work, a special fan-out is allowed:
-
-- one shared research brief;
-- 2-3 independent concept specialists, preferably with different models or deliberate creative constraints;
-- each returns a concept, visual thesis, interaction model, technical feasibility notes, and risks;
-- a design critic / creative director evaluates them against the same criteria;
-- select one winner or a clearly justified hybrid before implementation.
-
-Do not run design competition for routine UI maintenance. Diversity is useful only when concept choice is a major part of the value.
-
-## Model selection
-
-Model choice is capability-based, not status-based. Use stronger reasoning/judgment models for architecture, creative direction, arbitration, and difficult reviews. Use cheaper/faster models for bounded implementation, research extraction, variant generation, browser loops, and repetitive QA when quality remains acceptable.
+Usually for studio-level visual craft: 2–3 independent concepts → explicit jury → implement → critique. Not for routine UI maintenance.
 
 ## Anti-patterns
 
-- one subagent per file or conventional job title;
-- permanent fake-company org charts;
-- more than 2-3 specialists without a real DAG;
-- multiple writers touching the same files;
-- asking five agents the same question and majority-voting without criteria;
-- delegating integration or final responsibility away from the parent;
-- loading the full skill catalog into every worker;
-- spawning a specialist when a skill alone would suffice.
+- one subagent per job title;
+- hard quotas for show;
+- multiple writers on the same files;
+- dumping the full skill catalog into workers;
+- spawning when a single skill in the parent would suffice;
+- skipping critic on large structural plans.

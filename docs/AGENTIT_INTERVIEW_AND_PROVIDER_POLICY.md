@@ -1,123 +1,71 @@
-# Agentit interview, effort, continuity, and provider-neutral execution policy
+# Agentit interview, domain packs, craft depth, and provider-neutral execution
 
-Agentit owns the work protocol. Providers own only the execution primitive used to satisfy that protocol.
+Agentit owns the work protocol. Providers own only the execution primitive.
 
 ## 1. Product work interviews by default
 
 Any task that creates or changes product behavior or a meaningful implementation decision must pass `interview-me` before planning or implementation.
 
-This includes features, pages, components, UX, visual design, architecture, APIs, data models, workflows, copy, positioning, automations, and refactors where more than one materially different outcome is possible.
-
-Interview may be skipped only for exact mechanical chores whose purpose is to save time and which do not encode a product decision: exact file/directory creation, moves/renames, specified command/test execution, deterministic formatting, or exact copying.
-
-If unsure, interview.
-
-Facts belong to the agent: inspect repo, docs, runtime, tools, and live sources. Decisions/preferences belong in the interview.
+Mechanical bypass only for exact chores with no product decision.
 
 ## 2. Batch every currently identifiable material question
 
-Agentit optimizes for low conversational latency. After inspecting discoverable facts, the agent must assemble **all material user decisions it can currently identify** and ask them in one numbered batch.
+After inspecting facts, ask **all material user decisions** in one numbered batch with recommendations. Follow-up only for genuinely new decisions.
 
-Each question carries a recommendation/default. The Standard/Polished/Studio recommendation belongs in the same batch.
+## 3. Domain packs replace universal Studio tax
 
-Preferred flow:
+Machine catalog: `effort/levels.yaml` + `profiles.yaml`.
 
-`inspect facts -> one comprehensive interview batch -> user answers -> persist confirmed state -> plan/build`.
+The agent recommends a **domain pack** (skill family): engineering, frontend, design, backend, data, product, writing, release, research, or a user role.
 
-A follow-up batch is allowed only when answers expose genuinely new material decisions that could not reasonably have been formulated beforehand. Do not drip-feed known questions one message at a time.
+Load only always_core + that family’s task skills. Never load the design studio stack for pure backend work.
 
-For tiny product changes, the batch may contain only one or two confirmations.
+## 4. Craft depth is design/visual only
 
-## 3. Every product interview selects an effort level
+Standard / Polished / Studio apply **only** when the task is visual/design craft.
 
-Canonical machine-readable catalog: `effort/levels.yaml`.
+They do **not** gate ordinary APIs, infra, pure logic, or docs.
 
-### Standard
+Optional soft spend for non-design: lean / normal / thorough (thoroughness, not multi-agent quotas).
 
-Efficient production-quality execution. Minimal research, one agent by default, focused implementation, proportional testing/browser checks, and strong context discipline.
+## 5. Project-aware token estimates
 
-Typical rough total model-token envelope: **15k-80k**.
+Do not present fixed 15k–80k / 50k–250k / 150k–800k tables as authoritative bills.
 
-### Polished
+Use router `token_estimate` (risk, complexity, domain, topology, specialists/critic, craft depth, project signals). Always label as rough.
 
-Higher-quality execution with targeted research, stronger edge-case coverage, more visual/interaction polish, more iterations, and 0-2 specialists when they provide concrete value.
+## 6. No powerwords
 
-Typical rough total model-token envelope: **50k-250k**.
+Only natural Agentit activation in the user’s language is special. Task routing uses ordinary language. Multi-agent requests may be declined with reason if they lack independence.
 
-### Studio
+## 7. Intelligent delegation and critic
 
-Quality-first execution for flagship/high-ambition work. Deep discovery, broad relevant research, multiple concepts when useful, specialists/model diversity, independent critique, performance/browser loops, and extensive polish.
+- Spawn specialists when beneficial; no hard min/max caps.
+- Large structural plans require an independent critic before implementation commitment.
+- Multi-agent execution is an optimization, never a correctness dependency.
 
-Typical rough total model-token envelope: **150k-800k+**.
+## 8. Continuity
 
-These ranges are estimates across parent + delegated calls, not billing forecasts.
+Chat is disposable. Persist `docs/agentit/STATE.md` (or equivalent) per `docs/PROJECT_CONTINUITY.md`.
 
-The agent must recommend a level and explain why, what lower/higher levels change, rough token envelope/relative cost, likely research/specialist/iteration depth, and what is gained/lost. The user may override.
+Include domain pack, craft depth if any, spend, token estimate, critic/specialist plan, branch/PR, verification, next actions.
 
-## 4. Effort controls spend, not correctness
+## 9. PR-first
 
-Standard/Polished/Studio control research, context, delegation, concept exploration, iteration, and review. They do not lower the correctness or safety floor.
+`work branch → commits → verification → PR → user merge` unless explicitly overridden for that task.
 
-If work becomes more complex than expected and materially exceeding the selected level would help, ask before escalating. Do not silently turn Standard into Studio.
+## 10. Provider-neutral specialist contract
 
-## 5. Continuity is mandatory for product work
+Catalog roles are logical bundles. Fallback: native subagent → isolated call → fresh context → parent + same skills.
 
-Chat/session memory is disposable. Product work must remain resumable after session loss, token/context exhaustion, provider/model switch, machine switch, crash, or long pause.
+## 11. MCP fit
 
-Canonical policy: `docs/PROJECT_CONTINUITY.md`.
+Use `mcp-tooling-fit` and `agentit mcp` to inventory, enable/disable, and discover servers (catalog + marketplace + web). Installs plan-first with user approval; RISK_3+ needs force/consent.
 
-Default project state file: `docs/agentit/STATE.md`, unless the project already has an equivalent canonical state document.
+## 12. Cross-provider compatibility
 
-After interview confirmation and throughout execution, persist enough compact operational state for a fresh agent to recover:
+Shared policy describes semantic capabilities for OpenAI, Anthropic, Google, xAI, and compatible clients — not one vendor’s API.
 
-- objective and rationale;
-- confirmed intent/audience/success/constraints/non-goals;
-- confirmed effort level;
-- current status;
-- durable product/technical/design decisions;
-- important files/artifacts;
-- current branch and PR;
-- verification commands/results;
-- next executable actions;
-- open questions/blockers.
+## 13. Non-interactive execution
 
-Update state after important decisions/milestones and before any handoff or expected/forced stop. Do not persist secrets, credentials, raw chain-of-thought, full transcripts, or giant tool dumps.
-
-Before continuing prior work, read continuity state before asking the user to repeat decisions.
-
-## 6. PR-first repository workflow
-
-Repository mutation defaults to:
-
-`work branch -> commits -> verification -> pull request -> review/user merge decision`.
-
-Do not commit directly to or fast-forward the default branch and do not merge a PR automatically unless the user explicitly authorizes that exception for the task or project instructions explicitly require another workflow.
-
-Continuity/documentation updates belong on the same work branch/PR as implementation.
-
-## 7. Provider-neutral specialist contract
-
-A specialist in `agents/catalog.yaml` is a logical capability bundle, not a Claude-specific subagent or Codex-specific worker.
-
-Execution fallback:
-
-1. native subagent/worker;
-2. isolated delegated model/tool call;
-3. separate fresh-context invocation;
-4. parent executes with the same specialist skill bundle.
-
-The contract remains equivalent: objective/done condition, role, effort level, task-scoped skills, allowed I/O/write ownership, constraints/risk, expected output, verification, stop condition, and continuity handoff where needed.
-
-Multi-agent execution is an optimization, never a correctness dependency.
-
-## 8. Cross-provider compatibility target
-
-Agentit should remain usable with OpenAI, Anthropic, Google, xAI, and other compatible coding-agent environments. Shared policy must describe semantic capabilities, not require one vendor's terminology or API.
-
-MCP/tool integrations are optional capabilities. Use an equivalent tool or report missing capability instead of breaking the shared workflow.
-
-## 9. Non-interactive execution
-
-CI, scheduled runs, autonomous loops, and other non-interactive contexts cannot fabricate user confirmation.
-
-If a task qualifies only for mechanical bypass, proceed. If product-affecting work requires intent/effort confirmation not already supplied/documented, report a blocker instead of guessing.
+Do not fake interviews. Block rather than guess unresolved product decisions or craft depth when design work needs it.

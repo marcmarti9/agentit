@@ -147,12 +147,30 @@ def _detector_matches(project_root: Path, when: list[str]) -> bool:
     return False
 
 
+def _file_mentions_any(path: Path, needles: list[str]) -> bool:
+    try:
+        text = path.read_text(encoding="utf-8", errors="ignore").lower()
+    except OSError:
+        return False
+    return any(needle.lower() in text for needle in needles)
+
+
 def resolve_detect_command(probe: dict[str, Any], project_root: Path) -> list[str] | None:
     for detector in probe.get("detectors") or []:
         if not isinstance(detector, dict):
             continue
         when = detector.get("when") or []
         if not isinstance(when, list) or not _detector_matches(project_root, [str(x) for x in when]):
+            continue
+        prefer_files = detector.get("prefer_files") or []
+        if prefer_files and not any((project_root / str(name)).exists() for name in prefer_files):
+            continue
+        content_markers = detector.get("content_markers") or []
+        marker_files = detector.get("marker_files") or []
+        if content_markers and not any(
+            _file_mentions_any(project_root / str(name), [str(item) for item in content_markers])
+            for name in marker_files
+        ):
             continue
         command = detector.get("command")
         if isinstance(command, list) and command:
@@ -310,10 +328,60 @@ def apply_verification(
         "pending_checklists": [
             p["id"] for p in results if p.get("status") == "pending_agent_evidence"
         ],
+        "evidence_policy": {
+            "claims_without_fresh_output": "forbidden",
+            "agent_authored_tests_alone": "insufficient",
+            "require_receipt_for_done": True,
+        },
     }
     path = _write_receipt(root, receipt)
     receipt["receipt_path"] = str(path)
     return receipt
+
+
+def evaluate_done_claims(
+    claims: list[str],
+    *,
+    receipt: dict[str, Any] | None,
+    working_tree_dirty_after_tests: bool | None = None,
+) -> dict[str, Any]:
+    """Anti-greenwash gate: done/fixed/passing claims need fresh evidence."""
+    claim_text = " ".join(claims).lower()
+    done_like = bool(
+        re.search(r"\b(done|fixed|passing|complete|listo|arreglado|completo)\b", claim_text)
+    )
+    violations: list[str] = []
+    if not done_like:
+        return {
+            "applicable": False,
+            "allowed": True,
+            "violations": [],
+            "notes": "no done-like claim detected",
+        }
+    if receipt is None:
+        violations.append("no verification receipt provided")
+    else:
+        if receipt.get("mode") != "apply":
+            violations.append("receipt is plan-only; run agentit verify --apply")
+        if receipt.get("blocking_failed"):
+            violations.append("blocking probes failed")
+        if not receipt.get("passed"):
+            violations.append("receipt.passed is false")
+        if not receipt.get("receipt_path") and not receipt.get("created_at"):
+            violations.append("receipt missing path/timestamp")
+        pending = receipt.get("pending_checklists") or []
+        if pending:
+            violations.append(f"pending checklists still open: {', '.join(map(str, pending))}")
+    if working_tree_dirty_after_tests:
+        violations.append(
+            "working tree changed after tests; re-run verification on the final tree"
+        )
+    return {
+        "applicable": True,
+        "allowed": not violations,
+        "violations": violations,
+        "notes": "fresh command evidence required after last relevant edit",
+    }
 
 
 def _write_receipt(project_root: Path, receipt: dict[str, Any]) -> Path:

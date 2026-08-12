@@ -1,227 +1,117 @@
 ---
 name: architect-orchestrator
-description: Choose direct work or bounded delegation after interview and effort selection. Use for coupling, parallelism, specialist agents, or independent review.
+description: Intelligent orchestration after interview. Domain packs, skill budgets, specialist spawn without hard caps, mandatory critic for large plans. No powerwords.
 ---
 
 # Adaptive Agent Architecture
 
 ## Core rule
 
-Agentit is **interview-first for product work, efficient by default, and effort-aware**.
+Agentit is **interview-first for product work** and **intelligent about delegation**.
 
-Before choosing topology:
+A capable main agent (Architect) owns the user relationship, decomposition, integration, and final answer. Multi-agent is used when it improves outcomes — not by ceremony, not forbidden by dogma.
 
-1. classify mechanical bypass vs product-affecting work;
-2. product-affecting work must pass `interview-me`;
-3. the user confirms an effort level from `effort/levels.yaml`: `standard`, `polished`, or `studio`;
-4. choose topology and context spending consistent with that level.
+No powerwords. Ordinary task language is enough. Only natural Agentit activation is special-cased.
 
-Use one capable agent by default. Add agents only when context isolation, parallelism, specialization, permissions, creative diversity, or independent verification provide concrete benefit greater than coordination overhead.
+Before topology:
 
-## Effort-aware orchestration
+1. mechanical vs product-affecting;
+2. product work → `interview-me`;
+3. domain pack from router/profiles (not universal Studio);
+4. craft depth only if design/visual;
+5. project-aware token estimate from router.
 
-Effort level controls **how much exploration and coordination is justified**, not whether correctness matters.
+## Axes (not one effort dial)
 
-### Standard
+| Axis | Meaning |
+|---|---|
+| Domain pack | Which skill family + MCP stack |
+| Craft depth | standard/polished/studio — **design only** |
+| Spend | lean/normal/thorough — soft main-agent rigor |
+| Delegation | advisory recommended specialists; **no hard caps** |
 
-- default topology: direct;
-- subagents: zero by default, usually at most one clearly valuable specialist;
-- research: only when facts/current information are needed;
-- concept alternatives: none or one direct approach;
-- verification: focused, proportional;
-- optimize strongly for context/token efficiency.
+## Skill loading
 
-### Polished
+```
+always_core (tiny) + skill_budget.load_now (≤3–4 bodies)
+never full catalog into parent or worker
+```
 
-- direct remains preferred, but 0-2 specialists are normal when useful;
-- targeted research and approach comparison are allowed;
-- independent reviewer/probe can be worthwhile;
-- several critique/fix cycles are reasonable;
-- spend more context where it produces visible quality or risk reduction.
+If the user assigns a role, load that domain only (+ core). Gaps → `find-skills` / marketplace.
 
-### Studio
+## MCP
 
-- quality dominates token thrift;
-- 2-5 specialists/fan-out can be justified, never ceremonial;
-- broad relevant research, model diversity, concept competition, and independent critique are allowed;
-- implementation may run repeated visual/performance/review loops until remaining gains are marginal;
-- still keep one writer per shared file/state and avoid pointless agent chatter.
+Run `mcp-tooling-fit` when tools matter: inventory, fit, disable noise, discover catalog/marketplace/web, plan install with user OK.
 
-Typical rough total model-token envelopes from `effort/levels.yaml`: Standard ~15k-80k, Polished ~50k-250k, Studio ~150k-800k+. These are estimates, not quotas or guarantees.
+## Topologies
 
-If execution wants to materially exceed the confirmed level, the Architect must ask before escalating unless safety/correctness requires extra work.
+1. **Direct** — coupled single-thread work
+2. **Plan + direct** — broad but sequential
+3. **Probe** — read-only investigation
+4. **Fan-out** — independent packages/files/domains
+5. **Pipeline** — ordered stages (e.g. research → implement)
+6. **Writer + reviewers** — one writer, independent review
+7. **Design competition** — multiple concepts (usually studio craft)
+8. **Orchestrated DAG** — multi-package dependencies
+9. **Audit** — high-risk independent review
 
-## Mechanical bypass
-
-Purely mechanical tasks with no product decision may skip interview and effort selection: exact mkdir/file creation, exact rename/move, deterministic formatting, running explicitly requested commands/tests, copying exact content.
-
-Do not call a task mechanical merely because it is small. Any choice about behavior, UX, architecture, copy, API, data model, or product outcome is product-affecting.
-
-## Provider-neutral execution model
-
-Agentit defines semantic roles and contracts, not branded orchestration primitives. A Specialist is not inherently a Claude subagent, Codex worker, Gemini agent, Grok worker, or any other provider-specific construct.
-
-Use the best execution primitive available:
-
-1. native subagent/worker support;
-2. isolated delegated model/tool invocation;
-3. separate fresh-context invocation;
-4. direct parent execution with the same specialist skill bundle.
-
-Objective, skills, constraints, allowed I/O, expected output, verification, and stop condition remain equivalent. Multi-agent execution is an optimization, never a correctness dependency.
-
-Shared policy must remain usable across OpenAI, Anthropic, Google, xAI, and future compatible coding-agent clients.
-
-## Roles
-
-Roles are capabilities, not a mandatory org chart:
-
-- **Architect**: user-facing owner, router, decision maker, final integrator.
-- **Orchestrator**: coordinates a real DAG when multiple packages genuinely require it.
-- **Worker**: bounded executor with strict context and ownership.
-- **Specialist**: temporary domain expert from `agents/catalog.yaml`.
-- **Auditor/Reviewer**: independent/read-only quality or risk challenge.
-
-## Specialist catalog
-
-When a specialist is useful:
-
-1. choose a role whose domain/triggers fit;
-2. project only its listed skills plus minimum task context;
-3. map its mode to the available provider execution primitive;
-4. require its output contract;
-5. return control to the Architect for integration and verification.
-
-Do not create a specialist when loading the same skill in the parent is cheaper and equally effective.
-
-## Routing modes
-
-1. **Direct** — focused/tightly coupled work.
-2. **Plan + direct** — broad but sequential work.
-3. **Probe** — isolated read-only investigation.
-4. **Specialist probe** — bounded domain expert.
-5. **Fan-out/fan-in** — independent searches/concepts/packages.
-6. **Pipeline** — ordered packages with explicit handoffs.
-7. **Writer + reviewers** — one writer, independent reviews.
-8. **Design competition** — multiple independent creative concepts, explicit jury, then implementation.
-9. **Orchestrated DAG** — several dependent packages with distinct ownership.
-10. **Audit** — high-risk gate/arbitration.
-
-Effort-level constraints:
-
-- Standard: normally Direct / Plan+Direct / one Probe.
-- Polished: any bounded topology when benefit is clear; avoid large fan-out.
-- Studio: full topology set available when justified.
-- Design competition is normally Studio-only unless user explicitly requests equivalent exploration.
+Router JSON fields: `topology`, `subagents`, `parallelism`, `critic_required`, `domain_pack`, `skill_budget`, `token_estimate`.
 
 ## Delegation test
 
-Before spawning, evaluate:
+Spawn when at least one is true:
 
-- independence;
-- coupling/shared mutable state;
-- context-isolation benefit;
-- real parallel speedup;
-- distinct tools/expertise;
+- real independence / parallel speedup;
+- context isolation for large research/logs;
+- distinct expertise or tools;
 - creative diversity;
-- independent risk reduction;
-- coordination/integration cost;
-- whether the confirmed effort level justifies the spend.
+- independent risk reduction or **critique**.
 
-If no concrete advantage, stay single-agent.
+If none, stay single-agent. If the user demands multi-agent without benefit, explain and recommend not spawning.
 
-## Design competition
+## Critic gate (mandatory)
 
-Use when Studio-level creative concept quality is a major success criterion.
+For large structural plans, architecture proposals, multi-module migrations, or high-impact sensitive implementation:
 
-1. interview and confirm intent/effort;
-2. shared evidence/reference brief;
-3. 2-3 independent concepts, ideally genuinely different in thesis/interaction rather than cosmetic variants;
-4. explicit evaluation by brand fit, originality, clarity, usability, feasibility, performance, and memorability;
-5. choose one or a justified hybrid;
-6. implement;
-7. independent visual/performance critique.
+1. Architect drafts the plan/artifact;
+2. **Independent critic subagent** (fresh context, read-only) challenges assumptions, coupling, missing risks, simpler alternatives;
+3. Architect integrates critique before implementation commitment.
 
-Prefer model diversity when available and useful. Do not majority-vote.
+Do not self-grade as a substitute when isolation is available.
+
+## Budgets
+
+- **No hard min/max** subagent counts.
+- `subagents.recommended` is guidance from the router.
+- One writer per file/shared state; parallel writers need worktrees/branches.
+- Default child depth: one generation.
+
+## Provider-neutral execution
+
+1. native subagent/worker
+2. isolated delegated model call
+3. fresh-context invocation
+4. parent + same skill bundle
+
+Multi-agent is never a correctness dependency.
 
 ## Worker Context Contract
 
-Delegated contexts must receive equivalent semantics regardless of provider:
+Every spawn: objective, domain pack, effort/craft if any, projected project instructions, task skills only, risk, I/O ownership, output, verification, stop condition.
 
-- objective, scope, done condition;
-- optional specialist id;
-- confirmed effort level;
-- projected project instructions;
-- task-scoped skills only;
-- safe preferences;
-- risk/constraints;
-- allowed inputs/write ownership;
-- artifact references;
-- expected output;
-- verification;
-- stop/escalation boundary.
+Precedence: `safety > user > project > preferences > defaults`.
 
-Precedence: `safety > explicit user instruction > project instruction > preferences > defaults`.
+## Verification
 
-Never dump the full parent conversation or entire skill catalog into a child. Large outputs should return as artifacts/references plus a compact receipt.
-
-## Concurrency and isolation
-
-- default subagents: zero;
-- Standard: usually 0, maximum 1 specialist unless exceptional;
-- Polished: usually 0-2;
-- Studio: usually 2-5 only where useful;
-- default child depth: one generation;
-- one writer per file/shared state;
-- parallel writers need isolated branches/worktrees;
-- the Architect owns user communication and integration.
-
-## Verification by risk and effort
-
-Correctness floor is independent of effort level.
-
-- Low risk: focused checks.
-- Medium risk: relevant tests + Architect diff review.
-- High risk: mandatory tests plus independent audit where possible; otherwise explicit second-pass audit and disclose limitation.
-- Visual Standard: basic rendered check.
-- Visual Polished: desktop/mobile/states/interactions.
-- Visual Studio: full responsive/motion/accessibility/performance critique and repeated browser loops.
-
-## Mid-task effort escalation
-
-If new complexity makes the confirmed level unrealistic, pause before materially expanding token/agent/research spend.
-
-Explain:
-
-- what staying at the current level means;
-- recommended new level;
-- rough additional token/time cost;
-- specific quality/risk benefit.
-
-Then ask the user to confirm. Safety/correctness may force additional work; disclose that rather than silently cutting corners.
-
-## Model policy
-
-Choose models by capability and role, not provider prestige:
-
-- strongest available judgment: architecture, creative direction, arbitration, hard reviews;
-- strong coding model: primary implementation;
-- fast/cheap capable model: bounded execution, extraction, variants, browser iterations, repetitive QA;
-- different model family: useful for creative diversity/adversarial review.
-
-The effort level controls how often expensive models/context are justified. Standard should not escalate by habit; Studio may use strong models where judgment meaningfully improves the result.
+Correctness floor is independent of craft depth. RISK_3/4: fuller tests + independent review. Visual craft depth controls how deep UI QA goes.
 
 ## Anti-patterns
 
-- starting product work without interview + effort confirmation;
-- treating `design` as automatically Studio;
-- silently turning Standard into a multi-agent research marathon;
-- fixed Architect→Orchestrator→Supervisor→Worker bureaucracy;
-- one agent per job title;
-- spawning the whole specialist catalog;
-- assuming one provider's subagent API is required;
-- several writers on shared state;
-- huge context dumps to workers;
-- unbounded correction loops;
-- expensive models for mechanical work;
-- Studio-level concept competition for routine maintenance.
+- Studio/Polished for non-design tasks
+- fixed token bills
+- powerwords
+- loading full skill catalogs
+- forced multi-agent or forced single-agent
+- skipping critic on large structural plans
+- multiple writers on shared state
+- unbounded correction loops

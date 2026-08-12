@@ -42,6 +42,21 @@ def evaluate_case(
         if field == "routing_advice_contains":
             actual_value = result.get("routing_advice", [])
             passed = expected_value in actual_value
+        elif field == "activation_requested":
+            actual_value = (result.get("activation") or {}).get("requested")
+            passed = actual_value == expected_value
+        elif field == "skills_contains":
+            actual_value = result.get("skills_available", [])
+            passed = expected_value in actual_value
+        elif field == "skills_excludes":
+            actual_value = result.get("skills_available", [])
+            passed = expected_value not in actual_value
+        elif field == "jit_profiles_contains":
+            actual_value = result.get("jit_profile_recommendations", [])
+            passed = expected_value in actual_value
+        elif field == "jit_profiles_excludes":
+            actual_value = result.get("jit_profile_recommendations", [])
+            passed = expected_value not in actual_value
         else:
             actual_value = result.get(field)
             passed = actual_value == expected_value

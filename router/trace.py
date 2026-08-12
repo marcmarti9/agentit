@@ -64,6 +64,7 @@ def write_trace(
         explicit_risk=explicit_risk,
         registry_path=registry_path,
         home=home,
+        project_root=root,
     )
 
     now = datetime.now(timezone.utc)
@@ -84,11 +85,23 @@ def write_trace(
         "summary": {
             "risk": result.get("risk"),
             "category": result.get("category"),
+            "domain_pack": result.get("domain_pack"),
+            "craft_depth": result.get("craft_depth"),
+            "spend": result.get("spend"),
             "topology": result.get("topology"),
+            "critic_required": result.get("critic_required"),
+            "subagents": result.get("subagents"),
+            "token_estimate": result.get("token_estimate"),
             "skills_available": result.get("skills_available"),
             "skills_recommended_missing": result.get("skills_recommended_missing"),
+            "skill_budget": result.get("skill_budget"),
             "verification": result.get("verification"),
             "jit_profile_recommendations": result.get("jit_profile_recommendations"),
+            "models": result.get("models"),
+            "project_signals": {
+                "size_class": (result.get("project_signals") or {}).get("size_class"),
+                "stack_markers": (result.get("project_signals") or {}).get("stack_markers"),
+            },
             "reasons": result.get("reasons"),
         },
     }
@@ -116,10 +129,17 @@ def write_trace(
 
 def format_trace_summary(payload: dict[str, Any]) -> str:
     summary = payload.get("summary") or {}
+    token = summary.get("token_estimate") or {}
     lines = [
         f"risk: {summary.get('risk')}",
         f"category: {summary.get('category')}",
+        f"domain_pack: {summary.get('domain_pack')}",
+        f"craft_depth: {summary.get('craft_depth')}",
+        f"spend: {summary.get('spend')}",
         f"topology: {summary.get('topology')}",
+        f"critic_required: {summary.get('critic_required')}",
+        f"subagents: {summary.get('subagents')}",
+        f"tokens: {token.get('display') or '(n/a)'}",
         f"skills: {', '.join(summary.get('skills_available') or []) or '(none)'}",
         f"missing: {', '.join(summary.get('skills_recommended_missing') or []) or '(none)'}",
         f"jit_profiles: {', '.join(summary.get('jit_profile_recommendations') or []) or '(none)'}",

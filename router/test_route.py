@@ -56,7 +56,8 @@ class RouterSafetyTests(unittest.TestCase):
 
         self.assertEqual(result["risk"], "RISK_1")
         self.assertEqual(result["complexity"], "trivial")
-        self.assertEqual(result["subagents"]["max"], 0)
+        self.assertEqual(result["subagents"]["recommended"], 0)
+        self.assertFalse(result["subagents"]["hard_cap"])
         self.assertNotIn("semantic", result["compression"]["allowed"])
 
     def test_presentation_only_payment_wording_does_not_raise_sensitive_risk(self):
@@ -316,14 +317,112 @@ class RouterSafetyTests(unittest.TestCase):
 
         self.assertEqual(result["topology"], "direct")
         self.assertEqual(result["subagents"]["recommended"], 0)
-        self.assertEqual(result["subagents"]["max"], 0)
+        self.assertFalse(result["subagents"]["hard_cap"])
+        self.assertIsNone(result["subagents"]["max"])
+        self.assertFalse(result["craft_depth_applies"])
 
-    def test_explicit_independent_work_gets_bounded_fan_out_budget(self):
+    def test_natural_parallel_investigation_gets_fan_out_without_powerwords(self):
         result = self.route("Investiga en paralelo dos hipótesis independientes del bug")
 
-        self.assertEqual(result["topology"], "probe")
-        self.assertEqual(result["subagents"]["max"], 3)
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+        self.assertFalse(result["subagents"]["hard_cap"])
+        self.assertIsNone(result["subagents"]["max"])
         self.assertTrue(result["subagents"]["requires_justification"])
+
+    def test_multi_path_bugs_fan_out_without_jargon(self):
+        result = self.route("fix bugs in auth.ts and billing.ts")
+
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+        self.assertIn("parallelism", result)
+        self.assertGreaterEqual(result["parallelism"]["score"], 0.35)
+
+    def test_natural_multi_agent_phrase_is_understood(self):
+        result = self.route("usa varios agentes: implementa frontend y backend del checkout")
+
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+
+    def test_design_gets_craft_depth_backend_does_not(self):
+        design = self.route("Rediseña visualmente esta landing portfolio")
+        backend = self.route("Implementa un endpoint de perfiles con tests")
+
+        self.assertTrue(design["craft_depth_applies"])
+        self.assertIn(design["craft_depth"], {"standard", "polished", "studio"})
+        self.assertEqual(design["domain_pack"], "design")
+        self.assertFalse(backend["craft_depth_applies"])
+        self.assertIsNone(backend["craft_depth"])
+
+    def test_skill_budget_does_not_dump_catalog(self):
+        result = self.route("Implementa un endpoint de perfiles con tests")
+
+        budget = result["skill_budget"]
+        self.assertEqual(budget["do_not_load"], "full_catalog")
+        self.assertLessEqual(len(budget["load_now"]), budget["max_task_skill_bodies"])
+        self.assertIn("token_estimate", result)
+        self.assertTrue(result["token_estimate"]["not_a_bill"])
+
+    def test_agentit_activation_requires_affirmative_intent(self):
+        for prompt in (
+            "Do not use Agentit, just explain hashing",
+            "No uses Agentit; explícame qué es un hash",
+            "Explain what Agentit is without enabling it",
+            "Agentit is a portable orchestration harness",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertFalse(result["activation"]["requested"])
+                self.assertNotIn(
+                    "using-agentit",
+                    set(result["skills_available"])
+                    | set(result["skills_recommended_missing"]),
+                )
+
+    def test_natural_multilingual_agentit_activation_is_recognized(self):
+        for prompt in (
+            "Use Agentit to implement this endpoint",
+            "Usa Agentit para implementar este endpoint",
+            "Utilise Agentit pour implémenter cet endpoint",
+            "Activa el modo Agentit",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertTrue(result["activation"]["requested"])
+                self.assertIn(
+                    "using-agentit",
+                    set(result["skills_available"])
+                    | set(result["skills_recommended_missing"]),
+                )
+
+    def test_vendor_specific_database_tasks_do_not_activate_supabase_profile(self):
+        for prompt in (
+            "Implement a database schema for a MySQL service",
+            "Optimiza esta consulta SQLite",
+        ):
+            with self.subTest(prompt=prompt):
+                result = self.route(prompt)
+                self.assertEqual(result["domain_pack"], "data")
+                self.assertNotIn("supabase", result["jit_profile_recommendations"])
+                self.assertIn("backend", result["jit_profile_recommendations"])
+
+    def test_postgres_task_activates_supabase_profile(self):
+        result = self.route("Optimiza esta consulta PostgreSQL en Supabase")
+
+        self.assertIn("supabase", result["jit_profile_recommendations"])
+
+    def test_generic_database_task_keeps_stack_probe_and_neutral_profile(self):
+        result = self.route("Optimiza esta consulta de base de datos")
+
+        self.assertIn("inspect_database_stack", result["routing_advice"])
+        self.assertEqual(result["jit_profile_recommendations"], ["backend"])
+
+    def test_structural_architecture_plan_requires_critic(self):
+        result = self.route("Plantea la arquitectura del sistema de notificaciones")
+
+        self.assertTrue(result["critic_required"])
+        self.assertGreaterEqual(result["subagents"]["recommended"], 1)
+        self.assertEqual(result["domain_pack"], "engineering")
 
     def test_tdd_for_backup_service_is_testing_not_database_ops(self):
         result = self.route(

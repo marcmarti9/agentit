@@ -41,7 +41,24 @@
     "expected": {
       "risk": "RISK_2",
       "category": "bug",
-      "topology": "probe"
+      "topology": "fan_out"
+    }
+  },
+  {
+    "id": "multi_path_fan_out",
+    "prompt": "fix bugs in auth.ts and billing.ts",
+    "expected": {
+      "risk": "RISK_3",
+      "topology": "fan_out"
+    }
+  },
+  {
+    "id": "architecture_critic",
+    "prompt": "Plantea la arquitectura del sistema de notificaciones",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "engineering",
+      "topology": "direct"
     }
   },
   {
@@ -79,6 +96,31 @@
       "category": "database",
       "topology": "writer_reviewer",
       "routing_advice_contains": "inspect_database_stack"
+    }
+  },
+  {
+    "id": "negated_agentit_activation",
+    "prompt": "Do not use Agentit, just explain hashing",
+    "expected": {
+      "activation_requested": false,
+      "skills_excludes": "using-agentit"
+    }
+  },
+  {
+    "id": "natural_agentit_activation",
+    "prompt": "Usa Agentit para implementar este endpoint",
+    "expected": {
+      "activation_requested": true,
+      "skills_contains": "using-agentit"
+    }
+  },
+  {
+    "id": "mysql_neutral_profile",
+    "prompt": "Implement a database schema for a MySQL service",
+    "expected": {
+      "category": "database",
+      "jit_profiles_contains": "backend",
+      "jit_profiles_excludes": "supabase"
     }
   }
 ]

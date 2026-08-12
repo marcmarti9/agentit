@@ -1,7 +1,12 @@
-"""Conservative, provider-neutral task router.
+"""Provider-neutral task router with intelligent delegation.
 
 The router only classifies and plans. It never executes a command, rewrites
 stdout, loads a skill body, or lowers an inferred risk level.
+
+Single-agent is the default only when multi-agent adds no clear benefit.
+There are no hard subagent min/max caps. Craft depth (standard/polished/studio)
+applies to design/visual work only. No powerwords beyond natural Agentit
+activation ("use/usa/... agentit" in the user's language).
 """
 
 from __future__ import annotations
@@ -68,6 +73,38 @@ KNOWN_REGISTRY_STATES = {
 }
 AVAILABLE_REGISTRY_STATES = {"ACTIVE_GLOBAL", "DUPLICATED"}
 TOPOLOGIES = ("direct", "probe", "fan_out", "pipeline", "writer_reviewer", "audit")
+ALWAYS_CORE_SKILLS = (
+    "using-agentit",
+    "architect-orchestrator",
+    "using-agent-skills",
+    "task-router",
+    "verification-before-completion",
+    "verification-gauntlet",
+)
+DOMAIN_PACK_BY_CATEGORY = {
+    "marketing": "product",
+    "design": "design",
+    "testing": "engineering",
+    "bug": "engineering",
+    "security": "backend",
+    "database": "data",
+    "frontend": "frontend",
+    "documentation": "writing",
+    "explanation": "research",
+    "engineering": "engineering",
+}
+CATEGORY_SKILL_FAMILIES = {
+    "marketing": ["marketing-and-growth", "design-taste-frontend"],
+    "design": ["frontend-ui-engineering", "design-taste-frontend", "impeccable-design"],
+    "testing": ["test-driven-development", "debugging-and-error-recovery"],
+    "bug": ["debugging-and-error-recovery", "test-driven-development"],
+    "security": ["security-hardening", "architect-orchestrator"],
+    "database": ["supabase-postgres-best-practices"],
+    "frontend": ["frontend-ui-engineering"],
+    "documentation": ["anti-ai-slop-writing", "documentation-and-adrs"],
+    "explanation": [],
+    "engineering": ["architect-orchestrator"],
+}
 
 PRESENTATION_PATTERNS = (
     r"\b(css|style|styles|color|colour|font|spacing|shadow|visual|visualmente)\b",
@@ -290,14 +327,152 @@ def _presentation_only(text: str) -> bool:
     )
 
 
-def _delegation_requested(text: str) -> bool:
+def _agentit_activation_requested(text: str) -> bool:
+    """Natural harness activation in any language: mention of agentit + use verb optional."""
+    return bool(
+        re.search(
+            r"\bagentit\b",
+            text,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _file_path_mentions(text: str) -> list[str]:
+    return re.findall(
+        r"\b[\w./-]+\.(?:ts|tsx|js|jsx|py|go|rs|java|rb|php|css|scss|html|vue|svelte|md|sql|yml|yaml|json)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+
+def _domain_pair_signals(text: str) -> list[str]:
+    pairs = (
+        ("frontend", r"\b(frontend|front-end|ui|interfaz|react|next\.?js|css)\b"),
+        ("backend", r"\b(backend|back-end|api|server|servicio|endpoint)\b"),
+        ("tests", r"\b(tests?|pruebas?|e2e|unit(?:arios?)?|pytest|jest|vitest)\b"),
+        ("docs", r"\b(docs?|documentation|documentación|readme)\b"),
+        ("design", r"\b(design|diseño|visual|landing|ui\s*ux)\b"),
+        ("data", r"\b(database|base de datos|sql|schema|migración|migration)\b"),
+        ("infra", r"\b(ci|cd|deploy|infra|docker|kubernetes|pipeline)\b"),
+    )
+    found = [name for name, pattern in pairs if re.search(pattern, text, re.IGNORECASE)]
+    return found
+
+
+def _structural_plan_requested(text: str) -> bool:
     return _matches(
         text,
         (
-            r"parallel|paralel|independent|independiente|fan[- ]out|dag|subagent|subagente",
-            r"multidomain|multidominio|separate packages|paquetes separados",
+            r"\b(architect(?:ure)?|arquitect(?:ura)?|estructura|restructur|rediseño de (?:la )?arquitectura)\b",
+            r"\b(system design|diseño del sistema|plantea(?:miento)?|propuesta de (?:estructura|arquitectura|diseño))\b",
+            r"\b(migrate|migración|refactor (?:global|grande|completo)|large refactor)\b",
+            r"\b(multi[- ]?(?:module|package|service)|varios (?:módulos|paquetes|servicios))\b",
         ),
     )
+
+
+def _parallelism_signals(text: str) -> dict[str, Any]:
+    """Detect real parallel opportunity from ordinary language — no powerwords."""
+    signals: list[str] = []
+    score = 0.0
+
+    paths = _file_path_mentions(text)
+    unique_paths = list(dict.fromkeys(p.lower() for p in paths))
+    if len(unique_paths) >= 2:
+        signals.append(f"multi_path:{len(unique_paths)}")
+        score += 0.35
+
+    domains = _domain_pair_signals(text)
+    if len(domains) >= 2:
+        signals.append("domain_pair:" + "+".join(domains[:4]))
+        score += 0.30
+
+    # Natural concurrency / independence language (ordinary prompts).
+    if _matches(
+        text,
+        (
+            r"\b(en paralelo|at the same time|al mismo tiempo|simult[aá]neamente|meanwhile|mientras)\b",
+            r"\b(independen\w*|por separado|separately|each (?:one|file|module|package)|cada (?:uno|archivo|m[oó]dulo|paquete))\b",
+            r"\b(two|three|2|3|dos|tres)\s+(?:different|distint\w*|separate|hip[oó]tesis|approaches|enfoques|opciones|concepts|conceptos)\b",
+        ),
+    ):
+        signals.append("natural_concurrency")
+        score += 0.40
+
+    # User wants agents — natural phrasing, not jargon.
+    multi_agent_ask = _matches(
+        text,
+        (
+            r"\b(varios|m[uú]ltiples|multiple|several|more than one)\s+agentes?\b",
+            r"\b(agentes?\s+(?:en\s+paralelo|especializad\w*|separad\w*))\b",
+            r"\b(with|con)\s+(?:several|multiple|varios|m[uú]ltiples)\s+agents?\b",
+            r"\b(multi[- ]?agent|multiagente|multi[- ]?agente)s?\b",
+            r"\b(sub-?agents?|subagentes?)\b",
+        ),
+    )
+    if multi_agent_ask:
+        signals.append("user_multi_agent_request")
+        score += 0.45
+
+    research_then_impl = _matches(
+        text,
+        (
+            r"\b(research|investiga|investigar|explora|scout|trends?|tendencias?)\b.{0,80}\b(then|luego|y (?:despu[eé]s|luego)|after that|implement|implementa|build|crea|diseña)\b",
+            r"\b(first|primero)\b.{0,40}\b(research|investiga|explora)\b",
+        ),
+    )
+    if research_then_impl:
+        signals.append("research_then_implement")
+        score += 0.25
+
+    review_and_fix = _matches(
+        text,
+        (
+            r"\b(review|revisa|revisar|audit|audita)\b.{0,80}\b(fix|arregla|arreglar|correct|corrige)\b",
+            r"\b(fix|arregla|arreglar)\b.{0,80}\b(review|revisi[oó]n|feedback|issues?|problemas?)\b",
+        ),
+    )
+    if review_and_fix:
+        signals.append("review_and_fix")
+        score += 0.25
+
+    alternatives = _matches(
+        text,
+        (
+            r"\b(two|2|dos|three|3|tres)\s+(?:architectures?|arquitecturas?|designs?|diseños?|approaches|enfoques|options|opciones)\b",
+            r"\b(compare|compara|compara(?:r)?)\b.{0,40}\b(approaches|enfoques|options|opciones|architectures?)\b",
+        ),
+    )
+    if alternatives:
+        signals.append("alternative_exploration")
+        score += 0.40
+
+    # Soft coupling penalty: single shared contract language.
+    if _matches(
+        text,
+        (
+            r"\b(same (?:file|module|contract)|mismo (?:archivo|m[oó]dulo|contrato)|integrat(?:e|ion)|integrar)\b",
+            r"\b(tightly coupled|fuertemente acoplad\w*)\b",
+        ),
+    ):
+        signals.append("coupling_signal")
+        score -= 0.25
+
+    score = max(0.0, min(1.0, score))
+    return {
+        "score": round(score, 2),
+        "signals": signals,
+        "paths": unique_paths,
+        "domains": domains,
+        "multi_agent_ask": multi_agent_ask,
+    }
+
+
+def _delegation_requested(text: str) -> bool:
+    """True when ordinary language already implies independent or multi-unit work."""
+    info = _parallelism_signals(text)
+    return info["score"] >= 0.35 or info["multi_agent_ask"]
 
 
 def _infer_risk(text: str) -> tuple[str, list[str]]:
@@ -422,9 +597,10 @@ def _category(text: str, risk: str) -> str:
             r"\b(backup|backups?|copia de seguridad)\b.{0,40}\b(restore|restaura|restaurar|delete|elimina|eliminar|drop)|"
             r"\b(postgres|postgresql|psql|supabase|sqlite)\b",
         ),
-        ("frontend", r"frontend|ui|css|react|component|web|browser"),
-        ("documentation", r"document|readme|docs|texto|copy|writing|escritura"),
-        ("explanation", r"explain|explica|qué es|what is|how to|cómo|question|pregunta"),
+        # Word boundaries required: bare "ui" must not match inside "arquitectura".
+        ("frontend", r"\b(frontend|front-end|ui|css|react|component|web|browser)\b"),
+        ("documentation", r"\b(document\w*|readme|docs|texto|copy|writing|escritura)\b"),
+        ("explanation", r"\b(explain|explica|qué es|what is|how to|cómo|question|pregunta)\b"),
     )
     for name, pattern in patterns:
         if _matches(text, (pattern,)):
@@ -518,7 +694,7 @@ def _recommended_skill_ids(text: str, category: str, risk: str) -> list[str]:
     ):
         selected.append("verification-before-completion")
         selected.append("verification-gauntlet")
-    if _matches(text, (r"\busa agentit\b|\buse agentit\b|\bagentit mode\b|\bmodo agentit\b",)):
+    if _agentit_activation_requested(text):
         selected.append("using-agentit")
     if _matches(
         text,
@@ -651,41 +827,341 @@ def _resolve_skill_recommendations(
     return available, missing, suppressed_conflicts, metadata
 
 
-def _topology(text: str, risk: str) -> str:
-    """Choose a minimal execution shape; risk alone never creates agents."""
-    # Avoid bare "trace" — matches product names like `agentit trace`.
-    if _matches(
+def _topology(text: str, risk: str, parallelism: dict[str, Any] | None = None) -> str:
+    """Choose an execution shape from structure and risk, not jargon powerwords."""
+    info = parallelism if parallelism is not None else _parallelism_signals(text)
+    investigation = _matches(
         text,
         (
             r"\b(probe|investiga|reproduce|localiza|root cause|causa raíz)\b",
             r"\b(trace the|trace this|trazar|rastrear|diagnos[ea])\b",
         ),
+    )
+    # Parallel investigation of independent hypotheses → fan_out of probes.
+    if investigation and (
+        "natural_concurrency" in info["signals"]
+        or "alternative_exploration" in info["signals"]
+        or info["score"] >= 0.45
     ):
-        return "probe"
-    if _delegation_requested(text):
         return "fan_out"
-    if _matches(text, (r"pipeline|sequential stages|etapas secuenciales|dag de etapas",)):
-        return "pipeline"
-    if risk in {"RISK_3", "RISK_4"}:
-        if risk == "RISK_4":
-            return "audit"
+    if investigation and not _implementation_requested(text):
+        return "probe"
+    if _matches(
+        text,
+        (
+            r"\b(pipeline|etapas secuenciales|sequential stages)\b",
+            r"\b(then|luego|despu[eé]s)\b.{0,40}\b(then|luego|despu[eé]s)\b",
+        ),
+    ) or "research_then_implement" in info["signals"]:
+        if "research_then_implement" in info["signals"]:
+            return "pipeline"
+        if _matches(text, (r"pipeline|sequential stages|etapas secuenciales",)):
+            return "pipeline"
+    if info["score"] >= 0.35 or info["multi_agent_ask"]:
+        # Independent units win over collapsing into a single writer, even at RISK_3,
+        # unless the work is one coupled sensitive implementation without multi-unit signals.
+        multi_unit = any(
+            s.startswith("multi_path")
+            or s.startswith("domain_pair")
+            or s in {"natural_concurrency", "alternative_exploration", "user_multi_agent_request"}
+            for s in info["signals"]
+        )
+        if multi_unit:
+            return "fan_out"
+    if risk == "RISK_4":
+        return "audit"
+    if risk == "RISK_3":
         if _implementation_requested(text):
             return "writer_reviewer"
         return "audit"
+    if "review_and_fix" in info["signals"]:
+        return "writer_reviewer"
     return "direct"
 
 
-def _subagent_budget(text: str, risk: str, topology: str) -> dict[str, Any]:
-    """Return a budget, not a command to spawn agents."""
-    if topology in {"writer_reviewer", "audit"}:
-        return {"recommended": 1, "max": 1, "requires_justification": True}
-    if not _delegation_requested(text) or risk in {"RISK_0", "RISK_1"}:
-        maximum = 0
-    elif risk == "RISK_2":
-        maximum = 3
-    else:
-        maximum = 5
-    return {"recommended": 0, "max": maximum, "requires_justification": maximum > 0}
+def _subagent_budget(
+    text: str,
+    risk: str,
+    topology: str,
+    parallelism: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Soft advisory budget — no hard min/max caps. recommended is guidance only."""
+    info = parallelism if parallelism is not None else _parallelism_signals(text)
+    score = float(info.get("score") or 0.0)
+
+    if risk in {"RISK_0"} and topology == "direct":
+        return {
+            "recommended": 0,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": False,
+            "hard_cap": False,
+            "rationale": "explanation/conversation; no delegation needed",
+        }
+
+    if topology == "audit":
+        return {
+            "recommended": 1,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": True,
+            "hard_cap": False,
+            "rationale": "independent safety review",
+        }
+
+    if topology == "writer_reviewer":
+        recommended = 1
+        if "review_and_fix" in info["signals"]:
+            recommended = 1
+        return {
+            "recommended": recommended,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": True,
+            "hard_cap": False,
+            "rationale": "one writer plus independent review",
+        }
+
+    if topology == "fan_out":
+        units = 2
+        if any(s.startswith("multi_path:") for s in info["signals"]):
+            for s in info["signals"]:
+                if s.startswith("multi_path:"):
+                    try:
+                        units = max(units, int(s.split(":")[1]))
+                    except ValueError:
+                        pass
+        if any(s.startswith("domain_pair:") for s in info["signals"]):
+            domains = info.get("domains") or []
+            units = max(units, len(domains))
+        if "alternative_exploration" in info["signals"]:
+            units = max(units, 2)
+        recommended = max(2, min(units, 5))
+        return {
+            "recommended": recommended,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": True,
+            "hard_cap": False,
+            "rationale": f"independent units suggested (~{recommended}); spawn only with clear ownership",
+        }
+
+    if topology == "pipeline":
+        return {
+            "recommended": 1,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": True,
+            "hard_cap": False,
+            "rationale": "staged work; optional probe/research stage before implement",
+        }
+
+    if topology == "probe":
+        recommended = 1 if score >= 0.35 else 0
+        return {
+            "recommended": recommended,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": recommended > 0,
+            "hard_cap": False,
+            "rationale": "read-only investigation; isolate when context would pollute implementation",
+        }
+
+    # direct: still allow advisory spawn when score is high but topology stayed direct
+    if score >= 0.55 and risk not in {"RISK_0", "RISK_1"}:
+        return {
+            "recommended": 1,
+            "soft_max_hint": None,
+            "max": None,
+            "requires_justification": True,
+            "hard_cap": False,
+            "rationale": "possible specialist isolation; agent decides",
+        }
+    return {
+        "recommended": 0,
+        "soft_max_hint": None,
+        "max": None,
+        "requires_justification": False,
+        "hard_cap": False,
+        "rationale": "no clear multi-unit benefit; stay single-agent unless new evidence appears",
+    }
+
+
+def _domain_pack(category: str, text: str) -> str:
+    if _matches(text, (r"\b(landing|portfolio|hero|rediseño visual|visual redesign|brand experience)\b",)):
+        return "design"
+    if _matches(text, (r"\b(postgres|postgresql|supabase|sql|schema|migración)\b",)):
+        return "data"
+    if _matches(text, (r"\b(ci|cd|deploy|release|docker|kubernetes)\b",)):
+        return "release"
+    return DOMAIN_PACK_BY_CATEGORY.get(category, "engineering")
+
+
+def _craft_depth_applies(domain_pack: str, category: str, text: str) -> bool:
+    if domain_pack == "design" or category == "design":
+        return True
+    return _matches(
+        text,
+        (
+            r"\b(landing|portfolio|hero|rediseño|redesign|visual|ui\s*ux|diseño visual|art direction)\b",
+        ),
+    )
+
+
+def _recommend_craft_depth(text: str, risk: str) -> str | None:
+    if _matches(text, (r"\b(studio|flagship|premium|ambitious|competition|conceptos? m[uú]ltiples)\b",)):
+        return "studio"
+    if _matches(text, (r"\b(polished|pulido|portfolio|public[- ]facing|landing|hero)\b",)):
+        return "polished"
+    if risk in {"RISK_0", "RISK_1"}:
+        return "standard"
+    return "polished"
+
+
+def _recommend_spend(risk: str, complexity: str, parallelism: dict[str, Any]) -> str:
+    if risk in {"RISK_3", "RISK_4"} or complexity in {"large", "critical"}:
+        return "thorough"
+    if parallelism.get("score", 0) >= 0.45 or complexity == "medium":
+        return "normal"
+    return "lean"
+
+
+def _critic_required(text: str, risk: str, topology: str, parallelism: dict[str, Any]) -> bool:
+    if _structural_plan_requested(text):
+        return True
+    if risk in {"RISK_3", "RISK_4"} and _implementation_requested(text):
+        return True
+    if topology in {"fan_out", "pipeline", "writer_reviewer"} and parallelism.get("score", 0) >= 0.45:
+        return True
+    if _matches(
+        text,
+        (
+            r"\b(plan|propuesta|architecture|arquitectura|estructura|migrate|migración|refactor)\b",
+        ),
+    ) and _matches(
+        text,
+        (
+            r"\b(grande|large|completo|global|sistema|multi|varios|entire|whole)\b",
+        ),
+    ):
+        return True
+    return False
+
+
+def _skill_budget(
+    category: str,
+    risk: str,
+    domain_pack: str,
+    recommended_skills: list[str],
+) -> dict[str, Any]:
+    """Only task-relevant skills plus a tiny always-core set."""
+    family = list(CATEGORY_SKILL_FAMILIES.get(category, []))
+    task_skills = [s for s in recommended_skills if s not in ALWAYS_CORE_SKILLS]
+    # Prefer family order then remaining recommendations.
+    ordered: list[str] = []
+    for skill in family + task_skills:
+        if skill not in ordered and skill in recommended_skills:
+            ordered.append(skill)
+    for skill in recommended_skills:
+        if skill not in ordered and skill not in ALWAYS_CORE_SKILLS:
+            ordered.append(skill)
+    # Cap bodies aggressively: agent loads these, not the whole catalog.
+    max_task_bodies = 4 if risk in {"RISK_3", "RISK_4"} else 3
+    load_now = ordered[:max_task_bodies]
+    core = [s for s in ALWAYS_CORE_SKILLS if risk != "RISK_0" or s in {"using-agentit", "task-router", "using-agent-skills"}]
+    if risk == "RISK_0":
+        core = ["using-agentit", "task-router", "using-agent-skills"]
+    return {
+        "domain_pack": domain_pack,
+        "always_core": core,
+        "load_now": load_now,
+        "do_not_load": "full_catalog",
+        "max_task_skill_bodies": max_task_bodies,
+        "notes": "Load only always_core + load_now skill bodies. Discover more via using-agent-skills/find-skills if gaps appear.",
+    }
+
+
+def _token_estimate(
+    *,
+    risk: str,
+    complexity: str,
+    domain_pack: str,
+    topology: str,
+    subagents: dict[str, Any],
+    craft_depth: str | None,
+    spend: str,
+    project_signals: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Project-aware rough envelope — not a fixed Standard/Polished/Studio bill."""
+    base = {"RISK_0": 3, "RISK_1": 8, "RISK_2": 25, "RISK_3": 45, "RISK_4": 60}.get(risk, 25)
+    complexity_bonus = {"trivial": 0, "small": 5, "medium": 15, "large": 35, "critical": 50}.get(
+        complexity, 15
+    )
+    domain_bonus = {
+        "design": 20,
+        "frontend": 12,
+        "product": 10,
+        "data": 10,
+        "backend": 8,
+        "release": 12,
+        "research": 15,
+        "writing": 5,
+        "engineering": 8,
+    }.get(domain_pack, 8)
+    topo_bonus = {
+        "direct": 0,
+        "probe": 8,
+        "pipeline": 15,
+        "writer_reviewer": 18,
+        "fan_out": 25,
+        "audit": 12,
+    }.get(topology, 0)
+    recommended = int(subagents.get("recommended") or 0)
+    specialist_bonus = recommended * 12
+    craft_bonus = {"standard": 0, "polished": 15, "studio": 40}.get(craft_depth or "", 0)
+    spend_bonus = {"lean": 0, "normal": 8, "thorough": 20}.get(spend, 8)
+    project = project_signals or {}
+    size_bonus = int(project.get("size_bonus") or 0)
+    low = max(5, int((base + complexity_bonus + domain_bonus + topo_bonus + specialist_bonus + craft_bonus + spend_bonus + size_bonus) * 0.6))
+    high = max(low + 10, int((base + complexity_bonus + domain_bonus + topo_bonus + specialist_bonus + craft_bonus + spend_bonus + size_bonus) * 2.2))
+    basis = [
+        f"risk={risk}",
+        f"complexity={complexity}",
+        f"domain_pack={domain_pack}",
+        f"topology={topology}",
+        f"specialists_recommended={recommended}",
+        f"spend={spend}",
+    ]
+    if craft_depth:
+        basis.append(f"craft_depth={craft_depth}")
+    if project.get("basis"):
+        basis.extend(project["basis"])
+    return {
+        "low_k": low,
+        "high_k": high,
+        "unit": "approximate_total_model_tokens_thousands",
+        "display": f"~{low}k-{high}k total model tokens (rough, project-aware)",
+        "basis": basis,
+        "not_a_bill": True,
+    }
+
+
+def _pushback_on_multi_agent(parallelism: dict[str, Any], topology: str) -> dict[str, Any] | None:
+    if not parallelism.get("multi_agent_ask"):
+        return None
+    if parallelism.get("score", 0) < 0.35 and topology == "direct":
+        return {
+            "advise": True,
+            "message": (
+                "You asked for multiple agents, but this task looks tightly coupled or too small "
+                "for coordination overhead. Recommend staying single-agent unless you have "
+                "independent packages or want an independent critic."
+            ),
+        }
+    return {
+        "advise": False,
+        "message": "Multi-agent request aligns with independent units or review needs.",
+    }
 
 
 def _rejected_topologies(selected: str) -> dict[str, str]:
@@ -772,7 +1248,7 @@ def _signals(
     elif risk == "RISK_2" and not signals:
         signals.append("standard development scope with possible regression")
     if _delegation_requested(text):
-        signals.append("independent work explicitly requested")
+        signals.append("independent or multi-unit work indicated by ordinary language")
     if topology == "probe":
         signals.append("read-only investigation or reproduction requested")
     if topology == "writer_reviewer":
@@ -895,34 +1371,86 @@ def route_task(
         "dry_run_required": risk == "RISK_4",
         "post_check_required": risk in {"RISK_3", "RISK_4"},
     }
+    lowered = text.lower()
+    parallelism = _parallelism_signals(lowered)
     (
         skills_available,
         skills_recommended_missing,
         skills_suppressed_conflicts,
         skill_recommendation_metadata,
     ) = _resolve_skill_recommendations(
-        _recommended_skill_ids(text.lower(), category, risk),
+        _recommended_skill_ids(lowered, category, risk),
         registry_entries,
         registry_path=resolved_registry_path,
         home=resolved_home,
-        text=text.lower(),
+        text=lowered,
     )
-    topology = _topology(text.lower(), risk)
+    topology = _topology(lowered, risk, parallelism)
+    subagents = _subagent_budget(lowered, risk, topology, parallelism)
+    domain_pack = _domain_pack(category, lowered)
+    craft_applies = _craft_depth_applies(domain_pack, category, lowered)
+    craft_depth = _recommend_craft_depth(lowered, risk) if craft_applies else None
+    spend = _recommend_spend(risk, complexity, parallelism)
+    critic_required = _critic_required(lowered, risk, topology, parallelism)
+    # Large structural plans always get an independent critic slot in the advisory budget.
+    if critic_required and int(subagents.get("recommended") or 0) < 1:
+        subagents = dict(subagents)
+        subagents["recommended"] = 1
+        subagents["requires_justification"] = True
+        subagents["rationale"] = (
+            (subagents.get("rationale") or "") + "; independent critic required before committing large plan"
+        ).strip("; ").strip()
+    all_skill_ids = list(
+        dict.fromkeys(skills_available + skills_recommended_missing)
+    )
+    skill_budget = _skill_budget(category, risk, domain_pack, all_skill_ids)
+    token_estimate = _token_estimate(
+        risk=risk,
+        complexity=complexity,
+        domain_pack=domain_pack,
+        topology=topology,
+        subagents=subagents,
+        craft_depth=craft_depth,
+        spend=spend,
+    )
+    multi_agent_pushback = _pushback_on_multi_agent(parallelism, topology)
     signals = _signals(
-        text.lower(),
+        lowered,
         risk=risk,
         topology=topology,
         content_types=content_types,
         routing_advice=routing_advice,
     )
+    for item in parallelism.get("signals") or []:
+        signals.append(f"parallelism: {item}")
+    if critic_required:
+        signals.append("critic required for structural/high-impact plan")
+    if craft_depth:
+        signals.append(f"craft depth applies: {craft_depth}")
+    signals = list(dict.fromkeys(signals))
+
     prefs = load_preferences(resolved_home / ".agentit" / "preferences.yaml")
     auto_jit_enabled = bool(prefs.get("auto_jit_profiles", True))
     auto_plan_enabled = bool(prefs.get("auto_plan_mode", True))
+    parallelism_preference = prefs.get("parallelism_preference", "medium")
 
     jit_profiles: list[str] = []
     unmapped_skills: list[str] = []
-    if auto_jit_enabled and skills_recommended_missing:
+    if auto_jit_enabled:
         mapped_set = set()
+        pack_profile = {
+            "design": "design",
+            "frontend": "frontend",
+            "backend": "backend",
+            "data": "supabase",
+            "product": "product",
+            "writing": "writing",
+            "release": "release",
+            "research": "research",
+            "engineering": "core",
+        }.get(domain_pack)
+        if pack_profile and pack_profile != "core":
+            mapped_set.add(pack_profile)
         for skill in skills_recommended_missing:
             if skill in SKILL_PROFILE_MAP:
                 mapped_set.add(SKILL_PROFILE_MAP[skill])
@@ -931,7 +1459,7 @@ def route_task(
         jit_profiles = sorted(mapped_set)
 
     auto_plan_recommended = (
-        (risk in {"RISK_2", "RISK_3", "RISK_4"} or topology != "direct")
+        (risk in {"RISK_2", "RISK_3", "RISK_4"} or topology != "direct" or critic_required)
         if auto_plan_enabled
         else (risk in {"RISK_3", "RISK_4"})
     )
@@ -941,6 +1469,7 @@ def route_task(
         "testing_framework": prefs.get("user_style_preferences", {}).get("testing_framework", "pytest"),
         "ui_styling": prefs.get("user_style_preferences", {}).get("ui_styling", "vanilla_css_oklch"),
         "response_style": response_style,
+        "parallelism_preference": parallelism_preference,
     }
 
     return {
@@ -948,6 +1477,21 @@ def route_task(
         "category": category,
         "complexity": complexity,
         "content_types": content_types,
+        "domain_pack": domain_pack,
+        "craft_depth": craft_depth,
+        "craft_depth_applies": craft_applies,
+        "spend": spend,
+        "skill_budget": skill_budget,
+        "token_estimate": token_estimate,
+        "parallelism": {
+            "score": parallelism.get("score"),
+            "signals": parallelism.get("signals"),
+            "paths": parallelism.get("paths"),
+            "domains": parallelism.get("domains"),
+            "preference": parallelism_preference,
+        },
+        "critic_required": critic_required,
+        "multi_agent_pushback": multi_agent_pushback,
         "skills": skills_available,
         "skills_available": skills_available,
         "skills_recommended_missing": skills_recommended_missing,
@@ -961,12 +1505,17 @@ def route_task(
         "output_profile": output_profile,
         "compression": compression,
         "topology": topology,
-        "subagents": _subagent_budget(text.lower(), risk, topology),
+        "subagents": subagents,
         "verification": verification,
         "auto_plan_mode_recommended": auto_plan_recommended,
         "jit_profile_recommendations": jit_profiles,
         "unmapped_skills": unmapped_skills,
         "applied_preferences": applied_prefs,
+        "activation": {
+            "agentit_mentioned": _agentit_activation_requested(lowered),
+            "powerwords_required": False,
+            "notes": "Only natural Agentit activation is special-cased; task routing uses ordinary language.",
+        },
         "reversible": True if risk in {"RISK_0", "RISK_1", "RISK_2"} else None,
         "recovery": (
             "not proven; retrieve originals before RISK_3/RISK_4 actions"

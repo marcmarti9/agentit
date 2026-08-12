@@ -436,7 +436,7 @@ entries:
       - "${HOME}/.agents/skills/using-agentit/SKILL.md"
       - "${HOME}/.claude/skills/using-agentit/SKILL.md"
       - "${HOME}/.codex/skills/using-agentit/SKILL.md"
-    trigger: "use agentit, usa agentit, with agentit, agentit mode, or harness activation"
+    trigger: "natural use/usa/utilise agentit (any language) or any harness activation mentioning agentit"
     avoid_when: "pure chat with no work under Agentit"
     context_cost: low
     execution_cost: low
@@ -446,6 +446,31 @@ entries:
     dependencies: []
     essential_dependencies: []
     required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: ACTIVE_GLOBAL
+    priority: core
+
+  - id: mcp-tooling-fit
+    name: "MCP inventory, project fit, and marketplace discovery"
+    kind: skill
+    category: tooling
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/mcp-tooling-fit/SKILL.md"
+      - "${HOME}/.agents/skills/mcp-tooling-fit/SKILL.md"
+      - "${HOME}/.claude/skills/mcp-tooling-fit/SKILL.md"
+      - "${HOME}/.codex/skills/mcp-tooling-fit/SKILL.md"
+    trigger: "MCP tools, which servers to enable, disable unused tools, marketplace or web MCP discovery"
+    avoid_when: "pure explanation with no tooling decisions"
+    context_cost: low
+    execution_cost: low_to_medium
+    depth: standard
+    risk: medium
+    conflicts: ["enabling every MCP by ceremony"]
+    dependencies: []
+    essential_dependencies: []
+    required_tools: ["agentit mcp", "optional agentit-manager MCP"]
     compression_applied: none
     reversibility: high
     state: ACTIVE_GLOBAL

@@ -152,7 +152,7 @@ class ScriptRegressionTests(unittest.TestCase):
                     "test-driven-development",
                     "security-and-hardening",
                     "source-driven-development",
-                    "frontend-ui-engineering",
+                    "mcp-tooling-fit",
                     "planning-and-task-breakdown",
                     "using-agent-skills",
                     "verification-gauntlet",

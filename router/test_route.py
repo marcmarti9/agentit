@@ -56,7 +56,8 @@ class RouterSafetyTests(unittest.TestCase):
 
         self.assertEqual(result["risk"], "RISK_1")
         self.assertEqual(result["complexity"], "trivial")
-        self.assertEqual(result["subagents"]["max"], 0)
+        self.assertEqual(result["subagents"]["recommended"], 0)
+        self.assertFalse(result["subagents"]["hard_cap"])
         self.assertNotIn("semantic", result["compression"]["allowed"])
 
     def test_presentation_only_payment_wording_does_not_raise_sensitive_risk(self):
@@ -316,14 +317,58 @@ class RouterSafetyTests(unittest.TestCase):
 
         self.assertEqual(result["topology"], "direct")
         self.assertEqual(result["subagents"]["recommended"], 0)
-        self.assertEqual(result["subagents"]["max"], 0)
+        self.assertFalse(result["subagents"]["hard_cap"])
+        self.assertIsNone(result["subagents"]["max"])
+        self.assertFalse(result["craft_depth_applies"])
 
-    def test_explicit_independent_work_gets_bounded_fan_out_budget(self):
+    def test_natural_parallel_investigation_gets_fan_out_without_powerwords(self):
         result = self.route("Investiga en paralelo dos hipótesis independientes del bug")
 
-        self.assertEqual(result["topology"], "probe")
-        self.assertEqual(result["subagents"]["max"], 3)
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+        self.assertFalse(result["subagents"]["hard_cap"])
+        self.assertIsNone(result["subagents"]["max"])
         self.assertTrue(result["subagents"]["requires_justification"])
+
+    def test_multi_path_bugs_fan_out_without_jargon(self):
+        result = self.route("fix bugs in auth.ts and billing.ts")
+
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+        self.assertIn("parallelism", result)
+        self.assertGreaterEqual(result["parallelism"]["score"], 0.35)
+
+    def test_natural_multi_agent_phrase_is_understood(self):
+        result = self.route("usa varios agentes: implementa frontend y backend del checkout")
+
+        self.assertEqual(result["topology"], "fan_out")
+        self.assertGreaterEqual(result["subagents"]["recommended"], 2)
+
+    def test_design_gets_craft_depth_backend_does_not(self):
+        design = self.route("Rediseña visualmente esta landing portfolio")
+        backend = self.route("Implementa un endpoint de perfiles con tests")
+
+        self.assertTrue(design["craft_depth_applies"])
+        self.assertIn(design["craft_depth"], {"standard", "polished", "studio"})
+        self.assertEqual(design["domain_pack"], "design")
+        self.assertFalse(backend["craft_depth_applies"])
+        self.assertIsNone(backend["craft_depth"])
+
+    def test_skill_budget_does_not_dump_catalog(self):
+        result = self.route("Implementa un endpoint de perfiles con tests")
+
+        budget = result["skill_budget"]
+        self.assertEqual(budget["do_not_load"], "full_catalog")
+        self.assertLessEqual(len(budget["load_now"]), budget["max_task_skill_bodies"])
+        self.assertIn("token_estimate", result)
+        self.assertTrue(result["token_estimate"]["not_a_bill"])
+
+    def test_structural_architecture_plan_requires_critic(self):
+        result = self.route("Plantea la arquitectura del sistema de notificaciones")
+
+        self.assertTrue(result["critic_required"])
+        self.assertGreaterEqual(result["subagents"]["recommended"], 1)
+        self.assertEqual(result["domain_pack"], "engineering")
 
     def test_tdd_for_backup_service_is_testing_not_database_ops(self):
         result = self.route(

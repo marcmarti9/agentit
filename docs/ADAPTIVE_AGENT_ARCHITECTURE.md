@@ -2,7 +2,7 @@
 
 ## Overview & Core Principles
 
-This system departs from rigid, multi-tier hierarchical delegation models (e.g., Architect → Orchestrator → Supervisor → Worker). Instead, it operates on a **Single-Agent-First** foundation: a single capable model handles tasks directly by default and dynamically instantiates multi-agent topologies only when justified by context isolation, parallel execution, independent verification, or strict risk boundaries.
+This system departs from rigid, multi-tier hierarchical delegation models (e.g., Architect → Orchestrator → Supervisor → Worker). Instead, it operates on **intelligent orchestration**: a capable main agent handles tasks directly when that is best, and instantiates multi-agent topologies when justified by context isolation, real parallelism, domain specialization, independent verification/critique, or risk boundaries — without hard min/max subagent quotas and without requiring powerwords.
 
 The historical role names (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`) are preserved for capability scoping, but represent transient functions rather than mandatory pipeline checkpoints.
 
@@ -163,11 +163,14 @@ python3 router/worker_context.py build --project . --objective "..." --skill sec
 
 ## Operational Budgets & Limits
 
-- **Default Subagents**: 0 (Direct execution is the default).
-- **Fan-Out Width**: 2 to 3 workers typically; hard ceiling of 5.
-- **Nesting Depth**: 1 level deep (Subagents do not spawn sub-subagents).
+- **Default posture**: intelligent — stay solo when coupled; spawn when structure shows benefit.
+- **No hard min/max subagent caps**: router `subagents.recommended` is advisory only.
+- **Critic gate**: large structural plans require an independent critic before implementation commitment.
+- **Nesting Depth**: 1 level deep by default (subagents do not spawn sub-subagents).
 - **Single Writer**: 1 writer per file, module, or shared contract.
 - **Failure Escalation**: 1 automatic retry per worker failure before escalating back to coordinator.
+- **Craft depth**: Standard/Polished/Studio applies to design/visual work only.
+- **Skill budget**: always_core + task `load_now` only; never the full catalog.
 
 ---
 

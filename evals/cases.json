@@ -41,7 +41,24 @@
     "expected": {
       "risk": "RISK_2",
       "category": "bug",
-      "topology": "probe"
+      "topology": "fan_out"
+    }
+  },
+  {
+    "id": "multi_path_fan_out",
+    "prompt": "fix bugs in auth.ts and billing.ts",
+    "expected": {
+      "risk": "RISK_3",
+      "topology": "fan_out"
+    }
+  },
+  {
+    "id": "architecture_critic",
+    "prompt": "Plantea la arquitectura del sistema de notificaciones",
+    "expected": {
+      "risk": "RISK_2",
+      "category": "engineering",
+      "topology": "direct"
     }
   },
   {

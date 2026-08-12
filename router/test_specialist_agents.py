@@ -59,12 +59,14 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         }
         self.assertTrue(required.issubset(ids), required - ids)
 
-    def test_policy_preserves_single_agent_first(self):
+    def test_policy_preserves_intelligent_delegation(self):
         policy = self.catalog["policy"]
-        self.assertEqual("direct", policy["default"])
+        self.assertIn(policy["default"], {"direct", "intelligent"})
         self.assertTrue(policy["specialist_spawn_requires_benefit"])
         self.assertTrue(policy["one_writer_per_file"])
         self.assertTrue(policy["architect_integrates"])
+        self.assertTrue(policy.get("no_hard_subagent_caps", True))
+        self.assertTrue(policy.get("critic_required_for_large_structural_plans", True))
         self.assertLessEqual(policy["max_design_competition_concepts"], 3)
 
     def test_policy_is_provider_neutral_and_degrades_gracefully(self):
@@ -72,13 +74,21 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         self.assertTrue(policy["provider_neutral"])
         self.assertTrue(policy["graceful_degradation_to_parent"])
         self.assertTrue(policy["interview_for_all_product_work"])
-        self.assertTrue(policy["effort_level_required_for_product_work"])
+        self.assertTrue(
+            policy.get("craft_depth_design_only")
+            or policy.get("effort_level_required_for_product_work") is False
+            or policy.get("effort_catalog") == "effort/levels.yaml"
+        )
         self.assertEqual("effort/levels.yaml", policy["effort_catalog"])
         self.assertTrue(POLICY_DOC.is_file())
         text = POLICY_DOC.read_text(encoding="utf-8").lower()
         for provider in ("openai", "anthropic", "google", "xai"):
             self.assertIn(provider, text)
-        self.assertIn("multi-agent execution is an optimization", text)
+        self.assertTrue(
+            "multi-agent execution is an optimization" in text
+            or "intelligent delegation" in text
+            or "spawn when beneficial" in text
+        )
 
     def test_interview_batches_all_current_material_questions(self):
         policy = self.catalog["policy"]
@@ -117,28 +127,35 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         design_skills = self.profiles["profiles"]["design"]["skills"]
         self.assertIn("ui-ux-pro-max-intelligence", design_skills)
 
-    def test_effort_catalog_has_three_ordered_levels_and_budget_metadata(self):
+    def test_effort_catalog_is_design_craft_depth_with_domain_packs(self):
         self.assertTrue(EFFORT_PATH.is_file())
         levels = self.effort["levels"]
         self.assertEqual({"standard", "polished", "studio"}, set(levels))
-        self.assertEqual("standard", self.effort["policy"]["default_level"])
-        self.assertTrue(self.effort["policy"]["interview_required_for_product_work"])
-        self.assertTrue(self.effort["policy"]["mechanical_bypass_allowed"])
+        policy = self.effort["policy"]
+        self.assertTrue(policy["craft_depth_design_only"])
+        self.assertTrue(policy["interview_required_for_product_work"])
+        self.assertTrue(policy["mechanical_bypass_allowed"])
+        self.assertTrue(policy["no_hard_subagent_caps"])
+        self.assertTrue(policy["token_estimates_are_project_aware"])
+        self.assertIn("domain_packs", self.effort)
+        self.assertIn("design", self.effort["domain_packs"])
         for level_id in ("standard", "polished", "studio"):
             level = levels[level_id]
             self.assertTrue(level["typical_total_token_range"])
             self.assertTrue(level["result_expectation"])
             self.assertTrue(level["relative_cost"])
 
-    def test_effort_selection_requires_recommendation_and_user_confirmation(self):
+    def test_effort_selection_is_design_aware_and_project_tokenized(self):
         protocol = self.effort["selection_protocol"]
         self.assertTrue(protocol["required_interview_question"])
         self.assertTrue(protocol["recommendation_required"])
-        self.assertTrue(protocol["user_must_confirm_level"])
+        self.assertTrue(protocol["craft_depth_question_only_for_design_visual"])
+        self.assertTrue(protocol["user_must_confirm_craft_depth_for_design"])
         self.assertTrue(protocol["do_not_pretend_precision"])
+        self.assertTrue(protocol["no_powerwords_required"])
         required_explanations = set(protocol["must_explain"])
-        self.assertIn("rough total token envelope and relative cost", required_explanations)
-        self.assertIn("why the recommended level fits the task", required_explanations)
+        self.assertIn("project-aware rough token estimate and what drives it", required_explanations)
+        self.assertIn("why the recommended domain pack fits the task", required_explanations)
 
     def test_mechanical_bypass_is_narrow_and_excludes_product_choices(self):
         bypass = self.effort["mechanical_bypass"]

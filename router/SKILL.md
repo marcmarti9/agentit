@@ -3,9 +3,11 @@ name: task-router
 description: Classify risk, topology, skills, and context before execution. Use to route a task; not as permission to run it.
 ---
 
-# Conservative task router
+# Intelligent task router
 
-Use the router as a heuristic planning aid, never as permission to execute. It is provider-neutral and deliberately does not execute the task, load skill bodies, rewrite stdout, install hooks, call MCP servers, or reduce an inferred risk level. The default topology is one capable agent; a budget is not an instruction to spawn. A human must review critical operations before execution.
+Use the router as a heuristic planning aid, never as permission to execute. It is provider-neutral and deliberately does not execute the task, load skill bodies, rewrite stdout, install hooks, call MCP servers, or reduce an inferred risk level.
+
+It recommends a topology and an **advisory** specialist budget with **no hard min/max caps**. Spawn only when structure or ordinary language shows benefit. Craft depth (standard/polished/studio) is design/visual only. Token estimates are project-aware. No powerwords beyond natural Agentit activation. A human must review critical operations before execution.
 
 ## Invocation
 
@@ -30,7 +32,9 @@ The JSON result is a proposal. The active provider, project instructions, explic
 - `applied_preferences` exposes active user preferences (`preferred_language`, `testing_framework`, `ui_styling`). Agents should apply these preferences unless they conflict with project requirements or safety rules.
 - `jit_profile_recommendations` lists missing profiles recommended for the task. Agents may auto-activate them via `./agentit enable <profile> --project . --apply` when JIT mode is active.
 - `topology` can be `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or
-  `audit`. `subagents` is a bounded proposal, never an instruction to spawn.
+  `audit`. `subagents.recommended` is soft guidance (`hard_cap: false`, `max: null`).
+- `domain_pack`, `skill_budget`, `craft_depth` (design only), `spend`, `token_estimate`,
+  `parallelism`, `critic_required`, and `multi_agent_pushback` guide intelligent execution.
 
 `registry.yaml` is portable operational policy, not a machine inventory. It uses only `${HOME}` and `${REPO_ROOT}` path templates. Generate an ignored, per-machine observation with `python3 -m router.inventory`; executable versions may remain unobserved.
 
@@ -42,7 +46,7 @@ The JSON result is a proposal. The active provider, project instructions, explic
 4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, numbers, credentials, schemas, migrations, and affected-file lists.
 5. Use only exact deduplication by default. Reversible CCR may be considered for RISK_2 large outputs when the original is retained and retrieval is explicit.
 6. For RISK_3 and RISK_4, retrieve original content before a decision if compressed content could influence it and require human review. For RISK_4 also require backup evidence, a dry run where possible, independent review, and a post-operation check.
-7. Do not spawn an agent solely because the budget allows it. Delegation must have a bounded scope and a verification result.
+7. Do not spawn solely because a number is non-zero; do not refuse solely because single-agent is traditional. Delegation needs scope, ownership, and a verifier. Large structural plans set `critic_required`.
 8. Select `supabase-postgres-best-practices` only when the request includes a PostgreSQL signal such as Postgres, PostgreSQL, `psql`, or Supabase. A SQLite task is still a database task but must not receive Postgres-specific guidance; if no database engine is known, return `inspect_database_stack` in `routing_advice`.
 
 ## Skill visibility profiles
@@ -73,7 +77,7 @@ bash install.sh --provider codex --apply --prune-on-demand
 
 ## Adaptive execution
 
-Prefer `direct` for focused or tightly coupled work, `probe` for isolated read-only investigation, `fan_out` only for genuinely independent packages, and `audit` for high-risk independent review. A delegated contract must declare objective, inputs, ownership, output artifact, verifier, stop condition, and escalation boundary. Use one writer per file or contract; parallel writers require isolated branches or worktrees.
+Prefer `direct` for tightly coupled work, `probe` for read-only investigation, `fan_out` for independent packages/paths/domains (ordinary language is enough), `pipeline` for staged research→implement, and `audit` for high-risk review. One writer per file; parallel writers need worktrees/branches.
 
 ## Provider adapters
 

@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Confirm product intent and effort level before planning. Use for every product-affecting task; bypass only purely mechanical work with no product decision.
+description: Confirm product intent before planning. Ask craft depth only for design/visual work. Use for every product-affecting task; bypass only purely mechanical work.
 ---
 
 # Interview Me
@@ -11,13 +11,17 @@ For Agentit, **interview is the default entrypoint for product work**. If the ta
 
 The only normal bypass is purely mechanical execution with no product decision: explicitly named directory/file creation, exact moves/renames, deterministic formatting, running an explicitly requested command/test, or copying exact content.
 
-If unsure whether a task is mechanical or product-affecting, treat it as product-affecting and interview.
+If unsure, treat as product-affecting and interview.
 
-Canonical effort catalog: `effort/levels.yaml`.
+Canonical catalogs: `effort/levels.yaml` (domain packs + design craft depth), router domain packs / profiles.
+
+## No powerwords
+
+Users do not need special jargon. Ordinary language is enough. The only harness activation phrase is a natural “use / usa / utilise / … **agentit**” in the user’s language. Do not require fan-out, Studio, pipeline, or similar terms.
 
 ## Comprehensive batch first
 
-Agentit should minimize conversational latency. **Ask all material questions you can reasonably formulate in one interview round instead of drip-feeding questions one by one.**
+**Ask all material questions you can reasonably formulate in one interview round.**
 
 For product work:
 
@@ -25,129 +29,113 @@ For product work:
 2. build the complete set of material user decisions identifiable now;
 3. ask them together in **one numbered batch**;
 4. attach a recommendation/default to every question;
-5. include the Standard / Polished / Studio recommendation in the same batch;
-6. wait for the user's answers;
-7. ask a **follow-up batch** only if those answers expose **genuinely new material decisions** that could not reasonably have been asked before.
+5. include **domain pack** (skill family) recommendation;
+6. include **craft depth** (Standard / Polished / Studio) **only if the task is design/visual**;
+7. give a **project-aware token estimate** (not the old fixed 15k–80k menu as a bill);
+8. wait for answers;
+9. follow-up batch only for **genuinely new material decisions** that could not reasonably have been asked before.
 
-Do not intentionally save known questions for later. Preferred outcome: **one comprehensive interview round, one user reply, then persist state and implement**.
+Preferred outcome: **one comprehensive interview round → user reply → persist state → plan/build**.
 
-A follow-up is valid when an answer creates a previously irrelevant branch. It is not valid merely because the agent wanted shorter messages.
+## What interview must achieve
 
-## Interview goals
+1. Discover what the user actually wants before code locks assumptions.
+2. Choose the **domain pack** (which skill family / MCP stack), not a universal Studio tax.
+3. For design/visual work only, confirm craft depth.
+4. Persist enough state for another session/provider/machine to resume.
 
-The interview must:
+## Domain packs (skill families)
 
-1. discover what the user actually wants before code locks in assumptions;
-2. confirm how much work Agentit should spend: Standard, Polished, or Studio;
-3. produce enough confirmed state for another session/provider/machine to resume the work.
+Recommend one primary pack from: engineering, frontend, design, backend, data, product, writing, release, research, or a user role (`role:…`).
 
-## Effort levels
+Load **always_core + that family’s skills only**. Never load the design studio stack for pure backend work.
 
-### Standard
+If the user assigns a role (“act as a finance expert”), scope skills to that role plus always_core; use `find-skills` / marketplace when local coverage is missing.
 
-Efficient production-quality execution. Minimal research, usually one agent, focused implementation and verification.
+## Craft depth — design/visual only
 
-Typical total model-token envelope: **~15k-80k** across parent + delegated calls.
+| Level | When |
+|---|---|
+| **Standard** | Ordinary UI fixes/components; clean and usable |
+| **Polished** | Public-facing UI, stronger polish/states/responsive QA |
+| **Studio** | Flagship visual/concept work; competition/critique welcome |
 
-### Polished
+Do **not** ask Standard/Polished/Studio for APIs, infra, pure logic, or docs unless there is a real visual surface.
 
-Higher-quality execution with deliberate research/review, stronger edge-case handling, more visual/interaction polish, and more iterations when useful.
+## Spend posture (optional, soft)
 
-Typical total model-token envelope: **~50k-250k**.
+If thoroughness is ambiguous for non-design work, recommend **lean / normal / thorough** as soft main-agent rigor — not a multi-agent quota and not fixed token ranges.
 
-### Studio
+## Token estimates
 
-Quality-first flagship/high-ambition execution. Deep discovery, current research, multiple concepts when useful, specialist delegation/model diversity, independent critique, broader QA, and more iteration.
+Use router/`token_estimate` style project-aware envelopes:
 
-Typical total model-token envelope: **~150k-800k+**.
-
-These are rough total-session estimates, not billing guarantees. Never pretend precision.
+- risk, complexity, domain pack, topology, specialists/critic, craft depth if any
+- say they are rough and provider-dependent
+- never present the old fixed tables as authoritative billing
 
 ## Build the complete interview batch
 
-Before asking, identify every currently knowable decision category that could materially change the result. Use only relevant dimensions, but do not defer a relevant question because there are many.
-
-Possible dimensions:
+Possible dimensions (only relevant ones):
 
 - outcome/problem;
 - audience;
 - success criteria;
 - scope/non-goals;
-- business/information goal;
-- behavior/workflow;
-- UX tradeoffs;
-- visual personality, references, anti-references;
-- content/copy/brand/positioning;
-- device/platform/browser constraints;
-- accessibility;
-- performance/latency/cost;
-- privacy/security/data ownership;
-- architecture/integration tradeoffs the user actually owns;
-- acceptable risk/reversibility;
-- launch/deployment expectations if in scope;
-- maintainability/learning/handoff expectations;
-- effort level.
+- UX / visual personality (if visual);
+- architecture/integration tradeoffs the user owns;
+- risk/reversibility;
+- domain pack / role;
+- craft depth **if design/visual**;
+- whether independent critique or specialists are expected (Architect may still require critic for large structural plans).
 
-Do not ask stack, package versions, repo layout, existing routes/styles, test commands, or other facts that tools can inspect.
+Do not ask stack, package versions, routes, or other tool-discoverable facts.
 
 ## Question format
 
-Every question gets a recommendation/default and enough explanation for fast reaction.
-
 ```text
-INTERVIEW — I think I can cover the material decisions in one round.
+INTERVIEW — material decisions in one round.
 
-1. Primary audience
-   Recommendation: recruiters + technical hiring managers.
-   Question: Is that primary, or should clients/founders be equally important?
+1. Outcome
+   Recommendation: ...
+   Question: ...
 
-2. Visual risk
-   Recommendation: ambitious but usable; unusual interactions only when they improve the story.
-   Question: Confirm or prefer conservative?
+2. Domain pack
+   Recommendation: backend (+ verification). Load only API/data skills, not design studio.
+   Question: Confirm or switch pack?
 
-3. Effort
-   Recommendation: Studio because concept quality is a major part of the value.
-   Standard: ~15k-80k — clean, limited exploration.
-   Polished: ~50k-250k — stronger research/polish.
-   Studio: ~150k-800k+ — deeper research, concepts, specialists, critique.
-   Question: Which level do you confirm?
+3. Craft depth
+   (omit entirely if not design/visual)
+   Recommendation: Polished for this landing.
+   Question: Standard / Polished / Studio?
+
+4. Rough cost
+   Recommendation: ~40k-120k total model tokens for this repo/task (project-aware; not a bill).
+   Question: Any spend ceiling?
 ```
-
-The user should be able to answer all numbers in one message.
 
 ## Small product changes
 
-Mandatory interview does not imply a huge questionnaire. If only two decisions exist, ask both at once.
+If only one or two decisions exist, ask both at once. Skip craft depth when irrelevant.
 
-```text
-I only see two decisions:
-1. Keep current animation and only change breakpoint? Recommendation: yes.
-2. Effort: Standard. Recommendation: Standard (~15k-80k envelope; likely far below the ceiling here).
-Confirm/correct both and I'll implement.
-```
+## Critic and specialists
 
-## Effort recommendation contract
+Do not use interview to force multi-agent. The Architect:
 
-Do not present the levels as a blind menu. Recommend by marginal value and explain:
-
-- why the level fits;
-- what lower/higher levels change when relevant;
-- rough token envelope / relative cost;
-- likely research/specialist/iteration depth;
-- what the user gains or gives up.
-
-The user must confirm the effort level before implementation. Explicit `Studio`, `go all out`, `keep it Standard`, etc. counts when unambiguous.
+- spawns specialists when ordinary language or structure shows benefit;
+- always schedules an independent critic for large structural plans;
+- may push back if the user asks for many agents without independence.
 
 ## Restate + persistence gate
 
-After answers arrive:
+After answers:
 
 1. resolve contradictions;
-2. if answers exposed new material decisions, ask one follow-up batch containing all of them;
-3. otherwise restate confirmed intent compactly;
-4. persist confirmed state according to `docs/PROJECT_CONTINUITY.md` **before implementation**.
+2. follow-up only for new material decisions;
+3. restate confirmed intent;
+4. persist per `docs/PROJECT_CONTINUITY.md` **before implementation**.
 
-For meaningful work, capture:
+Capture at least:
 
 ```text
 Outcome: ...
@@ -155,55 +143,43 @@ Audience: ...
 Success: ...
 Constraints: ...
 Out of scope: ...
-Effort: Polished
-Budget expectation: ~50k-250k total model tokens, rough/provider-dependent
+Domain pack: backend
+Craft depth: n/a (not design)
+Spend: normal
+Token estimate: ~40k-120k (project-aware)
+Critic: required for architecture plan
 ```
-
-Do not rely on chat history as the only copy.
 
 ## Stop condition
 
-Stop interviewing when:
-
-- all currently material user decisions are answered;
-- effort is confirmed;
-- no known material question is intentionally deferred;
-- further questions are unlikely to change the result materially.
-
-For open-ended/high-cost work ask: `Can a fresh agent read persisted intent and make the same major decisions without this chat?` If not, ask/document what is missing.
+- material user decisions answered;
+- design craft depth confirmed **when applicable**;
+- domain pack clear;
+- state persistable for a fresh agent.
 
 ## Mid-task escalation
 
-If execution reveals the selected level is no longer realistic, do not silently burn a much larger budget. Ask one compact escalation batch containing every newly exposed user decision plus the proposed effort change.
-
-Correctness/safety are exceptions: never knowingly ship broken/unsafe work to preserve budget.
+If scope grows, ask before expanding spend. Safety/correctness may force extra work — disclose it.
 
 ## Non-interactive contexts
 
-Do not fake interviews in CI/scheduled/autonomous contexts. If unresolved product decisions or effort confirmation are required and no live user/documented answer exists, block rather than guess.
+Do not fake interviews in CI/autonomous contexts. Block rather than guess unresolved product decisions.
 
 ## Anti-patterns
 
-- one known question per message when several are already identifiable;
-- deliberately withholding questions for later;
-- implementation before effort confirmation;
-- bypassing because a product change looks easy;
-- asking discoverable facts;
-- generic giant questionnaires with irrelevant questions;
-- Studio by default for design;
-- precise-looking token billing promises;
-- silent Standard → Studio escalation;
-- finishing interview without persisting decisions.
+- asking Studio/Polished/Standard for non-design work;
+- fixed token ranges as if universal truth;
+- powerwords or jargon gates;
+- loading every skill family;
+- one known question per message;
+- implementation before persisting intent;
+- silent huge spend escalation.
 
 ## Verification checklist
 
-- [ ] Mechanical bypass vs product work classified.
-- [ ] Product work interviewed before planning/implementation.
-- [ ] Discoverable facts inspected first.
-- [ ] All currently identifiable material questions asked in the same batch.
-- [ ] Every meaningful question included a recommendation/default.
-- [ ] Effort recommendation included consequences and rough token estimates.
-- [ ] User explicitly confirmed effort.
-- [ ] Follow-up only for genuinely new material decisions.
-- [ ] Confirmed intent persisted before implementation.
-- [ ] Execution stayed within effort spirit or asked before escalation.
+- [ ] Mechanical vs product classified.
+- [ ] Facts inspected before questions.
+- [ ] One batch of material decisions.
+- [ ] Domain pack recommended; craft depth only if design/visual.
+- [ ] Project-aware token estimate (rough).
+- [ ] Intent persisted before implementation.

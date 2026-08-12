@@ -6,99 +6,64 @@ Estas reglas son comunes a cualquier repositorio. Las instrucciones locales del 
 
 ### Activación
 
-**Frases de disparo:** `usa agentit` · `use agentit` · `usando agentit` · `with agentit` · `modo agentit` · `agentit mode`.
+**Única frase especial:** cualquier forma natural de “usar Agentit” en el idioma del usuario (p. ej. `usa agentit`, `use agentit`, `utilise agentit`, `usando agentit`, …) siempre que quede claro que se activa el harness **agentit**.
 
-Cuando el usuario diga cualquiera de ellas (o Agentit ya sea el harness por defecto de la sesión):
+No hace falta ninguna otra powerword. El resto del routing se basa en lenguaje ordinario del prompt (archivos, dominios, “al mismo tiempo”, “frontend y backend”, “revisa y arregla”, “varios agentes”, etc.).
 
-1. Carga `using-agentit` (`~/code/agentit/skills/using-agentit/SKILL.md` o copia del proveedor).
-2. Sigue su playbook para el resto de la sesión.
+Cuando Agentit esté activo:
+
+1. Carga `using-agentit`.
+2. Sigue su playbook el resto de la sesión.
 3. No improvises otra metodología incompatible.
 
-Agentit es provider-neutral: OpenAI, Anthropic, Google, xAI y clientes compatibles deben preservar las mismas semantics aunque cambie la primitiva de agentes/subagentes.
+Agentit es provider-neutral: OpenAI, Anthropic, Google, xAI y clientes compatibles preservan las mismas semantics aunque cambie la primitiva de agentes/subagentes.
 
 ### Playbook compacto
 
 | Paso | Acción |
 |---|---|
-| 0. Interview | Si afecta producto, inspecciona hechos y pregunta **todas las decisiones materiales identificables en una sola ronda**, incluyendo Standard/Polished/Studio. Solo bypass mecánico exacto. |
-| 1. Persist | Tras confirmar entrevista, actualiza `docs/agentit/STATE.md` (o equivalente canónico) para poder reanudar sin el chat. |
+| 0. Interview | Si afecta producto: una sola ronda con todas las decisiones materiales. **Craft depth (Standard/Polished/Studio) solo si es diseño/visual.** Domain pack de skills. Estimación de tokens del proyecto, no tablas fijas. |
+| 1. Persist | Actualiza `docs/agentit/STATE.md` (o equivalente). |
 | 2. Route | `python3 ~/code/agentit/router/route.py "tarea"` o `agentit trace "tarea" --project .` |
-| 3. Profiles JIT | `agentit enable <profile> --project <ruta> --apply` si faltan skills. |
-| 4. Skills | Carga solo skills relevantes; UI/UX Pro Max se consulta JIT, no se vuelca entero en contexto. |
-| 5. Ejecuta | Single-agent-first. Especialistas solo si aportan valor y respetan el nivel de esfuerzo. |
-| 6. Documenta | Mantén el estado actualizado tras decisiones/milestones y antes de cualquier corte/handoff. |
-| 7. Verify | `agentit verify "tarea" --project . --apply`; no `done` sin evidencia fresca. |
-| 8. Git | Branch + PR por defecto. No escribir/mergear directo a `main`/`master` salvo excepción explícita del usuario/proyecto. |
+| 3. Skills | Solo `skill_budget`: always_core + load_now. Nunca el catálogo entero. |
+| 4. MCP | `mcp-tooling-fit` cuando importe: status, fit, desactivar ruido, descubrir catálogo/marketplace/web. |
+| 5. Ejecuta | Delegación inteligente. Sin cupos min/max duros. Critic obligatorio en planes estructurales grandes. |
+| 6. Documenta | Estado actualizado en milestones y antes de cortes. |
+| 7. Verify | `agentit verify "tarea" --project . --apply`; no `done` sin evidencia. |
+| 8. Git | Branch + PR por defecto. |
 
-### Entrevista
+### Skills y packs
 
-Para trabajo de producto, no hagas goteo de preguntas. Tras inspeccionar repo/docs/tools, formula de golpe todas las preguntas materiales que ya puedas identificar. Cada pregunta incluye recomendación/default. Una segunda ronda solo se justifica si las respuestas revelan decisiones nuevas que no podían conocerse antes.
+Los perfiles (`frontend`, `backend`, `design`, …) existen para cargar **familias** por tipo de tarea. El agente principal no es mini-experto en todo: organiza, proyecta skills del pack, y spawnea especialistas con sus skills.
 
-La entrevista debe recomendar y confirmar Standard / Polished / Studio con consecuencias y rango aproximado de tokens.
+Si el usuario asigna un rol (“actúa como experto en X”), carga solo skills de ese dominio + core mínimo; si faltan, busca e instala con aprobación.
 
-### Continuidad obligatoria
+### Delegación
 
-El chat es contexto desechable. Todo lo necesario para continuar una tarea significativa debe quedar en el repositorio.
+- No dogmático single-agent-first ni multi forzado.
+- Spawnea cuando independencia, aislamiento, especialidad o crítica aportan.
+- Si el usuario pide muchos agentes sin beneficio, dilo y recomienda no spawnear.
+- Planes estructurales grandes → **siempre critic** independiente antes de implementar en serio.
 
-Política canónica: `docs/PROJECT_CONTINUITY.md`.
+### Continuidad
 
-Estado por defecto del proyecto: `docs/agentit/STATE.md` salvo equivalente existente.
-
-Debe permitir a otro agente/máquina/proveedor saber: objetivo, intención confirmada, nivel de esfuerzo, estado actual, decisiones, archivos/artefactos, branch/PR, verificación, blockers y siguientes acciones.
-
-Actualiza el estado:
-
-- justo después de confirmar entrevista/esfuerzo;
-- tras decisiones caras de redescubrir;
-- tras milestones significativos;
-- antes de cambiar de sesión/modelo/proveedor/máquina o quedarse sin contexto/tokens;
-- antes de parar por error/límite/pausa;
-- antes de cerrar la tarea.
-
-Nunca persistir secretos, credenciales, chain-of-thought, transcripts completos o dumps enormes.
+Chat desechable. Estado canónico: `docs/agentit/STATE.md`. Política: `docs/PROJECT_CONTINUITY.md`.
 
 ### Git / PR-first
 
-Cambios de repositorio usan por defecto:
-
-`branch de trabajo -> commits -> verificación -> PR -> decisión de merge`.
-
-- No commitear directamente a la rama por defecto salvo instrucción explícita.
-- No mergear automáticamente un PR salvo instrucción explícita.
-- La documentación de continuidad viaja en el mismo branch/PR.
-- Una excepción `directo a main` vale solo para la tarea concreta donde fue autorizada.
-
-### Skills de diseño
-
-- Inteligencia UI/UX estructurada → `ui-ux-pro-max-intelligence` (consulta JIT al upstream MIT; evidence/candidates, no dirección creativa automática).
-- Art direction / landings / portfolios → `design-taste-frontend`.
-- Critique/polish → `impeccable-design`.
-- Interaction/motion → `emil-design-eng`.
-- UI/a11y → `frontend-ui-engineering`.
-- Research/trends → `design-inspiration-research`, `design-trend-researcher`.
-
-El nivel de esfuerzo controla profundidad: Standard eficiente, Polished selectivo, Studio quality-first.
-
-### Mantenimiento
-
-- Tras cambios del harness: `bash ~/code/agentit/install.sh --provider all --with-guides --apply`.
-- No reviertas guías/skills gestionados sin motivo.
+`branch → commits → verificación → PR → merge por el usuario` salvo excepción explícita.
 
 ## Reglas operativas
 
-- Trabaja solo sobre el alcance solicitado.
-- Inspecciona primero archivos directamente afectados; no leas todo el repo por ceremonia.
-- Busca causa raíz; no ocultes errores ni añadas fallbacks falsos.
-- Aplica preferencias del usuario salvo conflicto con seguridad/proyecto.
-- Ejecuta verificaciones relevantes antes de cerrar.
-- No deploys, migraciones remotas ni cambios externos sin autorización.
-- Prioriza simplicidad, mantenibilidad y coherencia.
-- Estilo conciso y directo.
+- Alcance solo lo pedido.
+- Inspecciona primero archivos afectados.
+- Causa raíz; sin fallbacks falsos.
+- Verificaciones relevantes antes de cerrar.
+- Sin deploys/migraciones remotas sin autorización.
+- Simplicidad y coherencia.
 
-## Política de delegación adaptativa
+## Precedencia
 
-El agente principal conserva requisitos, arquitectura, integración, documentación y revisión final. Toda delegación debe proyectar instrucciones del proyecto, skills de la tarea, preferencias seguras, riesgo, I/O, verificación y stop condition mediante el Worker Context Contract.
+`safety > user > project > preferences > defaults`.
 
-Precedencia: `safety > user > project > preferences > defaults`.
-
-No conviertas la arquitectura en una cadena fija. Si el proveedor no soporta subagentes, ejecuta el mismo rol/skill bundle en contexto aislado o en el parent. Multi-agent es optimización, no dependencia.
+Multi-agent es optimización, no dependencia de corrección. Si el proveedor no soporta subagentes, el parent ejecuta el mismo bundle de skills en contexto aislado o directo.

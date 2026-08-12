@@ -27,6 +27,8 @@ DEFAULT_PREFERENCES: dict[str, Any] = {
     },
     "auto_jit_profiles": True,
     "auto_plan_mode": True,
+    # Soft preference only — does not force multi-agent. Values: low|medium|high|max
+    "parallelism_preference": "medium",
     "preferred_skills": [
         "frontend-ui-engineering",
         "test-driven-development",

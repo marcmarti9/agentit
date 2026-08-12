@@ -4,19 +4,21 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/version-v0.3.2--stable-green.svg)](https://github.com/marcmarti9/agentit/releases)
 
-> **Agentit is a portable, provider-neutral meta-harness for AI coding agents: interview first, choose an explicit effort level, route skills/specialists, keep work resumable, verify, and deliver through PRs by default.**
+> **Agentit is a portable, provider-neutral meta-harness for AI coding agents: activate with natural language, interview once, load only the skill family you need, spawn specialists when useful, critique large plans, verify with evidence, and ship through PRs.**
 
 Agentit is designed to work across **OpenAI, Anthropic, Google, xAI**, and compatible future coding-agent environments. Provider-specific subagents/workers are optional execution primitives; the shared Agentit protocol is semantic and portable.
 
 ## Use it
 
-Tell the agent:
+The only special phrase is a natural **use Agentit** in your language:
 
 ```text
 usa agentit
+use agentit
+utilise agentit
 ```
 
-or combine it with a task:
+No other powerwords. Ordinary prompts drive routing (“frontend and backend”, two file paths, “at the same time”, “review and fix”, “several agents”, …).
 
 ```text
 usa agentit y crea mi portfolio personal
@@ -29,44 +31,36 @@ inspect facts
    ↓
 one comprehensive interview batch
    ↓
-confirm Standard / Polished / Studio
+domain pack (+ craft depth only if design/visual)
+   ↓
+project-aware token estimate
    ↓
 persist resumable project state
    ↓
-route skills + optional specialists
+skill budget + MCP fit + optional specialists
+   ↓
+critic on large structural plans
    ↓
 implement on work branch
    ↓
-continuous documentation + verification
-   ↓
-PR by default
+verification → PR by default
 ```
 
-Purely mechanical chores such as exact `mkdir`, file moves/renames, formatting, copying known content, or running a specified command can bypass the interview.
+Purely mechanical chores can bypass the interview.
 
 ---
 
-## Interview-first, but not one-question-at-a-time
+## Interview-first, domain packs, design craft only
 
 Agentit interviews **every product-affecting task**, not only ambiguous ones.
 
-Before asking, the agent inspects repo/docs/tools so it does not ask discoverable facts. Then it asks **all currently identifiable material user decisions in one numbered batch**, with a recommended/default answer on every question.
+Before asking, the agent inspects repo/docs/tools. Then it asks **all currently identifiable material decisions in one batch**.
 
-The preferred flow is one interview message, one user reply, then work. A second batch is allowed only when the first answers reveal genuinely new decisions that could not reasonably have been known before.
+It recommends a **domain pack** (skill family: frontend, backend, design, data, …) and loads **only that family plus a tiny always-core**, not the whole catalog.
 
-Every product interview also recommends and confirms an effort level.
+**Standard / Polished / Studio** are **design/visual craft depth only** — not a universal tax on every task. Token estimates are **project-aware** (router `token_estimate`), not fixed billing tables.
 
-| Level | Typical total model tokens* | Intent |
-|---|---:|---|
-| **Standard** | ~15k-80k | efficient production-quality execution |
-| **Polished** | ~50k-250k | targeted research, stronger polish/QA, selective specialists |
-| **Studio** | ~150k-800k+ | quality-first flagship work, deeper research/concepting/review |
-
-\* Rough total-session envelopes across parent + delegated calls, not billing guarantees.
-
-Standard is not lower correctness. Studio is not automatically “design mode”. The agent recommends by marginal value, explains what changes between levels, and asks before materially escalating later.
-
-Canonical files: [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md), [`effort/levels.yaml`](effort/levels.yaml), [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md).
+Canonical files: [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md), [`effort/levels.yaml`](effort/levels.yaml), [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md), [`skills/mcp-tooling-fit/SKILL.md`](skills/mcp-tooling-fit/SKILL.md).
 
 ---
 
@@ -86,7 +80,7 @@ The state must let a completely fresh agent recover:
 
 - what is being built and why;
 - confirmed intent, audience, success criteria, constraints, and non-goals;
-- selected Standard/Polished/Studio level;
+- domain pack, craft depth if design/visual, spend, token estimate;
 - what is done / in progress / blocked / not started;
 - durable product, architecture, API, data, and design decisions;
 - important files/artifacts;
@@ -139,7 +133,7 @@ api-tester
 workflow-optimizer
 ```
 
-Agentit remains single-agent-first. A specialist is spawned only when fresh context, true parallelism, domain expertise, different tooling/model capability, creative diversity, or independent review outweighs coordination overhead.
+Agentit uses **intelligent delegation**: stay single-agent when that is best; spawn specialists when independence, isolation, domain expertise, or independent critique wins. No hard min/max subagent caps. Large structural plans require an independent critic. If the user asks for multi-agent without benefit, the Architect should push back.
 
 Execution fallback:
 

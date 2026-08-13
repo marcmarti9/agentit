@@ -57,7 +57,7 @@ DEFAULT_CONSTRAINTS: tuple[str, ...] = (
     "no dependency changes",
 )
 
-ROLES: frozenset[str] = frozenset({"implementer", "reviewer", "probe"})
+ROLES: frozenset{str] = frozenset({"implementer", "reviewer", "probe"})
 
 VALID_RISKS: frozenset[str] = frozenset(
     {"RISK_1", "RISK_2", "RISK_3", "RISK_4"}
@@ -71,6 +71,8 @@ PROJECTABLE_PREFERENCE_KEYS: tuple[str, ...] = (
     "ui_styling",
     "response_style",
 )
+
+HARNESS_ROOT = Path(__file__).resolve().parents[1]
 
 _SECRET_KEY_RE = re.compile(
     r"(secret|password|passwd|token|api[_-]?key|private[_-]?key|credential|auth)",
@@ -140,6 +142,12 @@ def _sha256_prefix(text: str, n: int = 12) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:n]
 
 
+def _sha256_text(text: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def _is_safe_regular_file(path: Path) -> bool:
     try:
         return path.is_file() and not path.is_symlink()
@@ -149,6 +157,74 @@ def _is_safe_regular_file(path: Path) -> bool:
 
 def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def _read_scoped_skill_body(path: Path, *, root: Path) -> str | None:
+    """Read one skill candidate without following symlinks or escaping its root."""
+    root = root.resolve()
+    if not path.exists():
+        return None
+    current = path
+    while current != root and current != current.parent:
+        if current.is_symlink():
+            raise WorkerContextError(f"symlink rejected in skill path: {current}")
+        current = current.parent
+    if not _is_safe_regular_file(path):
+        raise WorkerContextError(f"skill body must be a regular file: {path}")
+    try:
+        path.resolve().relative_to(root)
+    except ValueError as exc:
+        raise WorkerContextError(f"skill body escapes trusted root: {path}") from exc
+    return _read_text(path)
+
+
+def load_skill_bodies(
+    skill_ids: Sequence[str], *, project_root: Path
+) -> tuple[list[dict[str, str]], list[str]]:
+    """Resolve task skills to real SKILL.md bodies with project-local precedence.
+
+    Project-activated/custom skills under `.agents/skills` win. The Agentit
+    harness repository is the fallback. Missing bodies are recorded so the
+    pre-spawn gate can fail closed without changing selection semantics.
+    """
+    project_root = Path(project_root).resolve()
+    bodies: list[dict[str, str]] = []
+    missing: list[str] = []
+
+    for skill_id in skill_ids:
+        candidates = (
+            (
+                "project",
+                project_root / ".agents" / "skills" / skill_id / "SKILL.md",
+                project_root,
+            ),
+            (
+                "harness",
+                HARNESS_ROOT / "skills" / skill_id / "SKILL.md",
+                HARNESS_ROOT,
+            ),
+        )
+        loaded = False
+        for source, path, trusted_root in candidates:
+            content = _read_scoped_skill_body(path, root=trusted_root)
+            if content is None:
+                continue
+            relative = path.resolve().relative_to(trusted_root.resolve()).as_posix()
+            bodies.append(
+                {
+                    "id": skill_id,
+                    "source": source,
+                    "path": relative,
+                    "sha256": _sha256_text(content),
+                    "content": content,
+                }
+            )
+            loaded = True
+            break
+        if not loaded:
+            missing.append(skill_id)
+
+    return bodies, missing
 
 
 def discover_project_instructions(
@@ -426,7 +502,7 @@ def build_worker_context(
         assert_projection_complete() fails — used to prove the #671 regression.
     """
     if not spec.objective or not str(spec.objective).strip():
-        raise WorkerContextError("objective is required")
+        raise WorkerContextError(Iobjective is required")
     if spec.role not in ROLES:
         raise WorkerContextError(f"invalid role: {spec.role}")
     if spec.risk not in VALID_RISKS:
@@ -448,6 +524,9 @@ def build_worker_context(
         manifest_skills=manifest_skills,
         include_manifest_skills=spec.include_manifest_skills,
         known_repository_skills=known_repository_skills,
+    )
+    skill_bodies_projected, skills_missing_bodies = load_skill_bodies(
+        skills_projected, project_root=root
     )
     try:
         capability_catalog = load_capability_catalog()
@@ -532,6 +611,8 @@ def build_worker_context(
         ],
         "project_instruction_paths": [inst.path for inst in instructions],
         "skills_projected": skills_projected,
+        "skill_bodies_projected": skill_bodies_projected,
+        "skills_missing_bodies": skills_missing_bodies,
         "specialist_ids": list(spec.specialist_ids),
         "capability_envelope": capability_envelope,
         "preferences_projected": prefs,
@@ -550,6 +631,17 @@ def build_worker_context(
             "project_instructions_projected": bool(instructions),
             "skip_project_instructions": bool(skip_project_instructions),
             "skills_count": len(skills_projected),
+            "skill_bodies_count": len(skill_bodies_projected),
+            "skills_missing_bodies": list(skills_missing_bodies),
+            "skill_load_receipt": [
+                {
+                    "id": item["id"],
+                    "source": item["source"],
+                    "path": item["path"],
+                    "sha256": item["sha256"],
+                }
+                for item in skill_bodies_projected
+            ],
             "manifest_skills_available": list(manifest_skills),
             "full_catalog_forbidden": True,
         },
@@ -567,16 +659,10 @@ def build_worker_context(
 
 
 def assert_projection_complete(payload: Mapping[str, Any]) -> None:
-    """Fail closed if mandatory projection fields are missing or empty when required.
+    """Fail closed if mandatory projection fields are missing or malformed.
 
-    Rules:
-    - worker_context object must exist with schema_version, objective, risk, role
-    - project instructions must be projected unless the project truly has none
-      AND skip was not used; if skip_project_instructions is True → always fail
-    - constraints must be non-empty
-    - skills_projected must not equal a full dump when a bound is provided
-      (checked separately via assert_skills_bounded)
-    - secrets must not appear in projected preferences or instruction paths
+    Missing skill bodies are recorded here but rejected by validate_for_spawn()
+    after catalog-size checks, preserving the existing full-catalog diagnostic.
     """
     if "worker_context" not in payload:
         raise WorkerContextError("missing worker_context root key")
@@ -611,25 +697,57 @@ def assert_projection_complete(payload: Mapping[str, Any]) -> None:
         raise WorkerContextError("project_instructions field missing")
     if "skills_projected" not in ctx:
         raise WorkerContextError("skills_projected field missing")
+    if "skill_bodies_projected" not in ctx:
+        raise WorkerContextError("skill_bodies_projected field missing")
+    if "skills_missing_bodies" not in ctx:
+        raise WorkerContextError("skills_missing_bodies field missing")
+
+    projected_ids = list(ctx.get("skills_projected") or [])
+    bodies = ctx.get("skill_bodies_projected") or []
+    missing = list(ctx.get("skills_missing_bodies") or [])
+    if not isinstance(bodies, list):
+        raise WorkerContextError("skill_bodies_projected must be a list")
+    body_ids: list[str] = []
+    for item in bodies:
+        if not isinstance(item, dict):
+            raise WorkerContextError("skill body entry must be an object")
+        skill_id = item.get("id")
+        content = item.get("content")
+        sha256 = item.get("sha256")
+        if not isinstance(skill_id, str) or not isinstance(content, str) or not isinstance(sha256, str):
+            raise WorkerContextError("skill body entry missing id/content/sha256")
+        if skill_id in body_ids:
+            raise WorkerContextError(f"duplicate projected skill body: {skill_id}")
+        if _sha256_text(content) != sha256:
+            raise WorkerContextError(f"skill body hash mismatch: {skill_id}")
+        body_ids.append(skill_id)
+
+    if len(missing) != len(set(missing)):
+        raise WorkerContextError("skills_missing_bodies contains duplicates")
+    if set(body_ids).intersection(missing):
+        raise WorkerContextError("skill body cannot be both loaded and missing")
+    if set(body_ids).union(missing) != set(projected_ids):
+        raise WorkerContextError("skill body accounting does not match skills_projected")
+
     envelope = ctx.get("capability_envelope")
     if not isinstance(envelope, dict):
         raise WorkerContextError("capability_envelope field missing")
     if envelope.get("least_privilege") is not True:
-        raise WorkerContextError("capability envelope must enforce least privilege")
+        raise WorkerContextError(Icapability envelope must enforce least privilege")
     try:
         validate_capability_envelope(envelope)
     except CapabilityCatalogError as exc:
         raise WorkerContextError(str(exc)) from exc
-    if "preferences_projected" not in ctx:
+    if "preferences_projected" not i ctx:
         raise WorkerContextError("preferences_projected field missing")
 
-    prefs = ctx.get("preferences_projected") or {}
+    prefs = ctx.get("prreferences_projected") or {}
     if isinstance(prefs, dict):
         for key, value in prefs.items():
             if _SECRET_KEY_RE.search(str(key)):
                 raise WorkerContextError(f"secret-shaped preference key projected: {key}")
             if isinstance(value, str) and _SECRET_VALUE_RE.search(value):
-                raise WorkerContextError("secret-shaped preference value projected")
+                raise WorkerContextError(Isecret-shaped preference value projected")
 
     blob = json.dumps(ctx, ensure_ascii=False)
     if _SECRET_VALUE_RE.search(blob):
@@ -648,34 +766,26 @@ def validate_for_spawn(
     ctx = payload["worker_context"]
     instructions = ctx.get("project_instructions") or []
     if require_project_instructions and not instructions:
-        raise WorkerContextError(
-            "spawn rejected: project instructions required but none projected"
-        )
+        raise WorkerContextError(Ispawn rejected: project instructions required but none projected")
     skills = ctx.get("skills_projected") or []
     if max_skills is not None and len(skills) > max_skills:
-        raise WorkerContextError(
-            f"spawn rejected: {len(skills)} skills projected exceeds max_skills={max_skills}"
-        )
+        raise WorkerContextError(f"spawn rejected: {len(skills)} skills projected exceeds max_skills={max_skills}")
     if repository_skill_count is not None and repository_skill_count > 0:
         if len(skills) >= repository_skill_count and repository_skill_count > 5:
-            raise WorkerContextError(
-                "spawn rejected: skills_projected looks like a full-catalog dump"
-            )
+            raise WorkerContextError(Ispawn rejected: skills_projected looks like a full-catalog dump")
+    missing_bodies = ctx.get("skills_missing_bodies") or []
+    if missing_bodies:
+        raise WorkerContextError(Ispawn rejected: selected skill bodies unavailable: " + ", ".join*missing_bodies))
     unresolved = (ctx.get("capability_envelope") or {}).get("unresolved_required") or []
     if unresolved:
-        raise WorkerContextError(
-            f"spawn rejected: unresolved required capabilities: {', '.join(unresolved)}"
-        )
+        raise WorkerContextError(f"spawn rejected: unresolved required capabilities: {', '.join(unresolved)}")
     pending = (ctx.get("capability_envelope") or {}).get("pending_inventory") or []
     if pending:
-        raise WorkerContextError(
-            "spawn rejected: provider inventory required for capabilities: "
-            + ", ".join(pending)
-        )
+        raise WorkerContextError(Ispawn rejected: provider inventory required for capabilities: " + ", ".join(pending))
 
 
 def render_worker_prompt(payload: Mapping[str, Any]) -> str:
-    """Render a worker prompt that embeds the projected contract.
+    """Render a worker prompt that embeds the projected contract and skill bodies.
 
     The prompt is the operational surface; the JSON payload is the audit surface.
     """
@@ -685,8 +795,7 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
         "# Worker Context Contract",
         "",
         "You are a delegated worker. You do not speak to the user.",
-        "Obey the precedence rule: safety > explicit user instruction > "
-        "project instruction > preferences > defaults.",
+        "Obey the precedence rule: safety > explicit user instruction > project instruction > preferences > defaults.",
         "",
         f"## Role\n{ctx['role']}",
         f"## Risk\n{ctx['risk']}",
@@ -696,9 +805,7 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
         lines.append(f"## Scope\n{ctx['scope']}")
 
     orch = ctx.get("orchestration") or {}
-    if any(orch.get(k) for k in ("domain_pack", "specialist_id", "model_tier", "parent_topology")) or orch.get(
-        "critic_required"
-    ):
+    if any(orch.get(k) for k in ("domain_pack", "specialist_id", "model_tier", "parent_topology")) or orch.get("critic_required"):
         lines.append("## Orchestration context")
         if orch.get("domain_pack"):
             lines.append(f"- domain_pack: {orch['domain_pack']}")
@@ -732,17 +839,24 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
             lines.append(inst["content"].rstrip())
             lines.append("")
     else:
-        lines.append(
-            "## Project instructions\n(none found at project root or work_subdir)"
-        )
+        lines.append("## Project instructions\n(none found at project root or work_subdir)")
 
-    skills = ctx.get("skills_projected") or []
-    lines.append("## Active skills for this task (only these; not the full catalog)")
-    if skills:
-        for sid in skills:
-            lines.append(f"- {sid}")
+    skill_bodies = ctx.get("skill_bodies_projected") or []
+    lines.append("## Active skill bodies for this task (only these; not the full catalog)")
+    if skill_bodies:
+        for item in skill_bodies:
+            lines.append(f"### Skill: {item['id']}")
+            lines.append(f"Source: {item['source']}:{item['path']} | SHA256: {item['sha256']}")
+            lines.append(item["content"].rstrip())
+            lines.append("")
     else:
         lines.append("- (none projected for this task)")
+
+    missing_bodies = ctx.get("skills_missing_bodies") or []
+    if missing_bodies:
+        lines.append("## Missing selected skill bodies (spawn must fail)")
+        for skill_id in missing_bodies:
+            lines.append(f"- {skill_id}")
 
     envelope = ctx.get("capability_envelope") or {}
     lines.append("## Capability envelope (least privilege)")
@@ -751,9 +865,7 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
         if grants:
             for grant in grants:
                 permissions = ", ".join(grant.get("permissions") or [])
-                lines.append(
-                    f"- {grant['capability']} via {grant['provider']}: {permissions}"
-                )
+                lines.append(f"- {grant['capability']} via {grant['provider']}: {permissions}")
         else:
             lines.append("- (no provider grants)")
     else:
@@ -789,29 +901,11 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
     conflicts = ctx.get("instruction_conflicts") or []
     if conflicts:
         lines.append("## Instruction conflict warnings")
-        lines.append(
-            "Resolve using precedence (safety > user > project root vs subdir "
-            "is still under project_instruction; escalate if ambiguous)."
-        )
+        lines.append("Resolve using precedence (safety > user > project root vs subdir is still under project_instruction; escalate if ambiguous).")
         for conflict in conflicts:
-            lines.append(
-                f"- {conflict.get('basename')}: {conflict.get('root_path')} vs "
-                f"{conflict.get('subdir_path')}"
-            )
+            lines.append(f"- {conflict.get('basename')}: {conflict.get('root_path')} vs {conflict.get('subdir_path')}")
 
-    lines.extend(
-        [
-            "",
-            "## Forbidden",
-            "- Silently dropping project instructions",
-            "- Loading every global skill",
-            "- Forwarding secrets unrelated to the task",
-            "- Commits, pushes, or external changes unless constraints allow them",
-            "",
-            "## Return receipt",
-            "result; files/artifacts; verification evidence; risks; stop reason.",
-        ]
-    )
+    lines.extend(["", "## Forbidden", "- Silently dropping project instructions", "- Loading every global skill", "- Forwarding secrets unrelated to the task", "- Commits, pushes, or external changes unless constraints allow them", "", "## Return receipt", "result; files/artifacts; verification evidence; risks; stop reason."])
     return "\n".join(lines) + "\n"
 
 
@@ -842,9 +936,7 @@ def build_and_validate(
     )
     return payload
 
-
-# --- CLI helpers -----------------------------------------------------------------
-
+### CLI helpers
 
 def _spec_from_mapping(data: Mapping[str, Any]) -> WorkerTaskSpec:
     return WorkerTaskSpec(
@@ -875,27 +967,14 @@ def main(argv: list[str] | None = None) -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Build an auditable Worker Context Contract payload."
-    )
-    parser.add_argument(
-        "command",
-        nargs="?",
-        default="build",
-        choices=("build", "render", "validate"),
-    )
+    parser = argparse.ArgumentParser(description="Build an auditable Worker Context Contract payload.")
+    parser.add_argument("command", nargs="?", default="build", choices=("build", "render", "validate"))
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--objective", default="")
     parser.add_argument("--scope", default="")
     parser.add_argument("--role", default="implementer", choices=sorted(ROLES))
     parser.add_argument("--risk", default="RISK_2", choices=sorted(VALID_RISKS))
-    parser.add_argument(
-        "--skill",
-        action="append",
-        default=[],
-        dest="skills",
-        help="Task-scoped skill id (repeatable). Never dumps the full catalog.",
-    )
+    parser.add_argument("--skill", action="append", default=[], dest="skills", help="Task-scoped skill id (repeatable). Never dumps the full catalog.")
     parser.add_argument("--verification", default="")
     parser.add_argument("--expected-output", default="")
     parser.add_argument("--work-subdir", default=None)
@@ -906,11 +985,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-project-instructions", action="store_true")
     parser.add_argument("--spec-json", type=Path, help="Load WorkerTaskSpec fields from JSON")
     parser.add_argument("--preferences-json", type=Path)
-    parser.add_argument(
-        "--format",
-        choices=("json", "prompt"),
-        default="json",
-    )
+    parser.add_argument("--format", choices=("json", "prompt"), default="json")
     args = parser.parse_args(argv)
 
     try:
@@ -943,18 +1018,10 @@ def main(argv: list[str] | None = None) -> int:
             prefs = json.loads(args.preferences_json.read_text(encoding="utf-8"))
 
         spec = _spec_from_mapping(data)
-        payload = build_worker_context(
-            spec,
-            project_root=args.project.resolve(),
-            preferences=prefs,
-            skip_project_instructions=args.skip_project_instructions,
-        )
+        payload = build_worker_context(spec, project_root=args.project.resolve(), preferences=prefs, skip_project_instructions=args.skip_project_instructions)
 
         if args.command in {"build", "validate", "render"}:
-            validate_for_spawn(
-                payload,
-                require_project_instructions=args.require_project_instructions,
-            )
+            validate_for_spawn(payload, require_project_instructions=args.require_project_instructions)
 
         if args.command == "render" or args.format == "prompt":
             sys.stdout.write(render_worker_prompt(payload))

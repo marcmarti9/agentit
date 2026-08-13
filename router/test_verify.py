@@ -77,6 +77,21 @@ class VerifyPlannerTests(unittest.TestCase):
             self.assertIn("project-test-suite", ids)
             self.assertIn("no-secrets-in-diff", ids)
 
+    def test_tests_directory_without_pytest_config_uses_unittest(self):
+        from router.verify import plan_verification
+
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            (project / "tests").mkdir()
+            plan = plan_verification(project, task_text="implement feature with tests")
+            probe = next(
+                item for item in plan["probes"] if item["id"] == "project-test-suite"
+            )
+            self.assertEqual(
+                ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"],
+                probe["command"],
+            )
+
     def test_postgres_task_selects_rls_probe(self):
         from router.verify import plan_verification
 

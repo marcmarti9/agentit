@@ -53,6 +53,8 @@ def write_trace(
     registry_path: Path | None = None,
     home: Path | None = None,
     explicit_risk: str | None = None,
+    provider_host: str = "local",
+    available_providers: list[str] | tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     """Route a task and persist a JSON trace under `.agentit/traces/`."""
     root = Path(project_root).resolve()
@@ -65,6 +67,8 @@ def write_trace(
         registry_path=registry_path,
         home=home,
         project_root=root,
+        provider_host=provider_host,
+        available_providers=available_providers,
     )
 
     now = datetime.now(timezone.utc)
@@ -102,6 +106,10 @@ def write_trace(
                 "size_class": (result.get("project_signals") or {}).get("size_class"),
                 "stack_markers": (result.get("project_signals") or {}).get("stack_markers"),
             },
+            "specialists": result.get("specialists"),
+            "capabilities": result.get("capabilities"),
+            "capability_status": (result.get("capability_envelope") or {}).get("status"),
+            "capability_grants": (result.get("capability_envelope") or {}).get("grants"),
             "reasons": result.get("reasons"),
         },
     }
@@ -143,6 +151,8 @@ def format_trace_summary(payload: dict[str, Any]) -> str:
         f"skills: {', '.join(summary.get('skills_available') or []) or '(none)'}",
         f"missing: {', '.join(summary.get('skills_recommended_missing') or []) or '(none)'}",
         f"jit_profiles: {', '.join(summary.get('jit_profile_recommendations') or []) or '(none)'}",
+        f"specialists: {', '.join(summary.get('specialists') or []) or '(none)'}",
+        f"capability_status: {summary.get('capability_status')}",
     ]
     reasons = summary.get("reasons") or []
     if reasons:

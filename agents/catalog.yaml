@@ -37,6 +37,9 @@ specialists:
     description: Production frontend implementation, component architecture, responsive behavior, accessibility, and browser polish.
     triggers: [frontend, react, nextjs, ui implementation, responsive, component]
     skills: [frontend-ui-engineering, browser-testing-with-devtools, performance-optimization]
+    capabilities:
+      required: [repository.read, filesystem.read, filesystem.write]
+      preferred: [design.inspect, browser.inspect, browser.automate, documentation.read]
     output: implementation receipt with files changed, browser evidence, tests, and remaining issues
 
   - id: backend-architect
@@ -45,6 +48,9 @@ specialists:
     description: API boundaries, service decomposition, data flow, reliability, and backend architecture decisions.
     triggers: [backend architecture, api design, service boundary, data model, distributed system]
     skills: [api-and-interface-design, observability-and-instrumentation, security-and-hardening]
+    capabilities:
+      required: [repository.read, documentation.read]
+      preferred: [database.read, observability.read]
     output: architecture recommendation with tradeoffs, interfaces, risks, and verification plan
 
   - id: ai-engineer
@@ -53,6 +59,9 @@ specialists:
     description: LLM/RAG/agent workflows, evaluation, tool use, prompting, model integration, and failure handling.
     triggers: [llm, rag, agents, embeddings, model api, tool calling]
     skills: [source-driven-development, architect-orchestrator, verification-before-completion]
+    capabilities:
+      required: [repository.read, filesystem.read, filesystem.write, runtime.execute]
+      preferred: [documentation.read, data.analyze]
     output: implementation or design with eval criteria, failure modes, and cost/latency notes
 
   - id: devops-automator
@@ -61,6 +70,9 @@ specialists:
     description: CI/CD, deployment automation, containers, release workflows, and operational reproducibility.
     triggers: [ci, cd, deployment, docker, github actions, infrastructure]
     skills: [ci-cd-and-automation, shipping-and-launch, observability-and-instrumentation]
+    capabilities:
+      required: [repository.read, filesystem.write, runtime.execute]
+      preferred: [deployment.inspect, deployment.manage, observability.read]
     output: automation changes plus dry-run/test evidence and rollback notes
 
   - id: trend-researcher
@@ -69,6 +81,9 @@ specialists:
     description: Current market, product, design, and technology trend research with source-backed synthesis.
     triggers: [trend, current market, emerging, inspiration, benchmark]
     skills: [source-driven-development, design-trend-researcher]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, design.inspect]
     output: concise trend map separating emerging, maturing, saturated, and speculative patterns
 
   - id: feedback-synthesizer
@@ -77,6 +92,9 @@ specialists:
     description: Cluster user feedback, identify repeated pain points, contradictions, and actionable product hypotheses.
     triggers: [user feedback, reviews, interviews, complaints, feature requests]
     skills: [idea-refine, interview-me, documentation-and-adrs]
+    capabilities:
+      required: [documentation.read, data.analyze]
+      preferred: [issue.read, collaboration.read]
     output: themes, evidence, tensions, hypotheses, and prioritized opportunities
 
   - id: sprint-prioritizer
@@ -85,6 +103,9 @@ specialists:
     description: Prioritize work by impact, evidence, dependency, effort, risk, and reversibility.
     triggers: [prioritize, sprint, roadmap, backlog]
     skills: [planning-and-task-breakdown, spec-driven-development]
+    capabilities:
+      required: [issue.read, documentation.read]
+      preferred: [data.analyze]
     output: ranked plan with rationale, dependencies, cuts, and explicit non-goals
 
   - id: design-system-researcher
@@ -93,6 +114,9 @@ specialists:
     description: Query product-aware UI/UX design intelligence JIT and return compact baselines for style, typography, color, UX, charts, icons, motion, and stack guidance.
     triggers: [design system, ui patterns, ux patterns, palette, typography, product style, chart design, ui ux pro max]
     skills: [ui-ux-pro-max-intelligence, source-driven-development]
+    capabilities:
+      required: [documentation.read]
+      preferred: [design.inspect]
     output: compact design-intelligence brief with queries/evidence, recommended baselines, alternatives, anti-patterns, and missing-result notes
 
   - id: ui-researcher
@@ -101,6 +125,9 @@ specialists:
     description: Research current interfaces and visual references, extracting reusable principles instead of cloning examples.
     triggers: [design inspiration, visual references, ui research, redesign]
     skills: [design-inspiration-research, design-trend-researcher, source-driven-development]
+    capabilities:
+      required: [documentation.read]
+      preferred: [design.inspect, browser.inspect]
     output: reference board in text form with patterns, anti-patterns, transferable principles, and source links
 
   - id: creative-tool-scout
@@ -109,6 +136,9 @@ specialists:
     description: Find the best current libraries, creative tools, shaders, motion systems, 3D tooling, and implementation primitives for a chosen concept.
     triggers: [which library, creative tooling, shader, webgl, animation tool, implementation technique]
     skills: [creative-tool-scout, source-driven-development]
+    capabilities:
+      required: [documentation.read]
+      preferred: [design.inspect, browser.inspect]
     output: recommended tool stack with alternatives, maturity, tradeoffs, integration cost, and proof links
 
   - id: visual-storytelling-director
@@ -117,6 +147,9 @@ specialists:
     description: "Turn content and brand intent into a paced visual narrative: opening, reveals, transitions, rests, climax, and interaction rhythm."
     triggers: [storytelling, cinematic, narrative, campaign, immersive landing, brand experience]
     skills: [visual-storytelling-director, creative-web-experiences, design-taste-frontend]
+    capabilities:
+      required: [documentation.read]
+      preferred: [design.inspect, design.edit]
     output: beat sheet, scene/state map, interaction grammar, and rationale
 
   - id: spatial-experience-designer
@@ -125,6 +158,9 @@ specialists:
     description: Design guided or explorable spatial web experiences such as stores, museums, exhibitions, rooms, and virtual showrooms.
     triggers: [virtual store, showroom, museum, spatial, 3d environment, walkthrough]
     skills: [threejs-spatial-experiences, creative-web-experiences, gsap-performance]
+    capabilities:
+      required: [repository.read, documentation.read]
+      preferred: [design.inspect, browser.inspect, browser.automate]
     output: navigation model, camera path, scene zones, interaction points, mobile fallback, and performance budget
 
   - id: delight-and-whimsy
@@ -133,6 +169,9 @@ specialists:
     description: Add a small number of memorable, brand-appropriate moments without turning the interface into a gimmick.
     triggers: [delight, whimsy, playful, easter egg, memorable, polish]
     skills: [delight-and-whimsy, emil-design-eng, impeccable-design]
+    capabilities:
+      required: [repository.read]
+      preferred: [design.inspect, browser.inspect]
     output: prioritized delight opportunities with restraint rules and implementation notes
 
   - id: design-critic
@@ -141,6 +180,9 @@ specialists:
     description: Independent visual and interaction critique covering hierarchy, composition, typography, motion, responsiveness, states, and anti-slop signals.
     triggers: [critique, review design, polish, premium, visual qa]
     skills: [impeccable-design, design-taste-frontend, emil-design-eng]
+    capabilities:
+      required: [repository.read]
+      preferred: [design.inspect, browser.inspect]
     output: severity-ranked critique with concrete fixes and acceptance criteria
 
   - id: performance-benchmarker
@@ -149,6 +191,9 @@ specialists:
     description: Stress-test runtime performance, animation smoothness, loading, mobile degradation, and resource budgets.
     triggers: [performance, fps, webgl, animation jank, lighthouse, mobile]
     skills: [performance-optimization, gsap-performance, browser-testing-with-devtools]
+    capabilities:
+      required: [repository.read, browser.inspect]
+      preferred: [observability.read, browser.automate]
     output: measured bottlenecks, reproduction conditions, budget violations, and prioritized fixes
 
   - id: api-tester
@@ -157,6 +202,9 @@ specialists:
     description: Exercise API contracts, error paths, authentication boundaries, idempotency, validation, and edge cases.
     triggers: [api test, endpoint test, contract test, integration test]
     skills: [api-and-interface-design, test-driven-development, security-and-hardening]
+    capabilities:
+      required: [repository.read, runtime.execute]
+      preferred: [database.read, documentation.read]
     output: cases run, failures, contract mismatches, and residual risk
 
   - id: workflow-optimizer
@@ -165,4 +213,7 @@ specialists:
     description: Analyze a multi-step human or agent workflow for unnecessary handoffs, latency, context waste, and automation opportunities.
     triggers: [workflow, process, automate, optimize steps, handoff]
     skills: [architect-orchestrator, planning-and-task-breakdown, code-simplification]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, issue.read, collaboration.read]
     output: current-state map, bottlenecks, proposed flow, and expected savings

@@ -110,6 +110,78 @@ class SkillsProjectionTests(unittest.TestCase):
         self.assertEqual([], projected)
 
 
+class CapabilityEnvelopeTests(unittest.TestCase):
+    def test_worker_projects_only_specialist_capabilities_and_selected_permissions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            payload = build_worker_context(
+                WorkerTaskSpec(
+                    objective="Implement the responsive account page",
+                    specialist_ids=("frontend-developer",),
+                    available_providers=("mcp.github", "local.filesystem"),
+                    provider_host="codex",
+                ),
+                project_root=root,
+            )
+
+        envelope = payload["worker_context"]["capability_envelope"]
+        granted = {item["capability"]: item for item in envelope["grants"]}
+        self.assertEqual("mcp.github", granted["repository.read"]["provider"])
+        self.assertEqual(["repository:read"], granted["repository.read"]["permissions"])
+        self.assertNotIn("mail.send", granted)
+        self.assertTrue(envelope["least_privilege"])
+
+    def test_spawn_rejects_explicitly_unresolved_required_capability(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = build_worker_context(
+                WorkerTaskSpec(
+                    objective="Read the repository",
+                    required_capabilities=("repository.read",),
+                    available_providers=(),
+                    provider_host="codex",
+                ),
+                project_root=Path(tmp),
+            )
+
+        with self.assertRaises(WorkerContextError):
+            validate_for_spawn(payload)
+
+    def test_spawn_rejects_capability_plan_without_provider_inventory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = build_worker_context(
+                WorkerTaskSpec(
+                    objective="Implement a frontend change",
+                    specialist_ids=("frontend-developer",),
+                ),
+                project_root=Path(tmp),
+            )
+
+        self.assertEqual(
+            "inventory_required",
+            payload["worker_context"]["capability_envelope"]["status"],
+        )
+        with self.assertRaises(WorkerContextError):
+            validate_for_spawn(payload)
+
+    def test_spawn_rejects_tampered_provider_permissions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = build_worker_context(
+                WorkerTaskSpec(
+                    objective="Read the repository",
+                    required_capabilities=("repository.read",),
+                    available_providers=("mcp.github",),
+                    provider_host="codex",
+                ),
+                project_root=Path(tmp),
+            )
+
+        payload["worker_context"]["capability_envelope"]["grants"][0][
+            "permissions"
+        ].append("repository:admin")
+        with self.assertRaises(WorkerContextError):
+            validate_for_spawn(payload)
+
+
 class PreferenceProjectionTests(unittest.TestCase):
     def test_projects_style_preferences_only(self):
         prefs = {

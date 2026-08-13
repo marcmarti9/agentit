@@ -28,6 +28,21 @@ try:
 except ImportError:
     from preferences import load_preferences
 
+try:
+    from router.capabilities import (
+        CapabilityCatalogError,
+        load_capability_catalog,
+        resolve_capabilities,
+        specialist_capability_requirements,
+    )
+except ImportError:
+    from capabilities import (  # type: ignore
+        CapabilityCatalogError,
+        load_capability_catalog,
+        resolve_capabilities,
+        specialist_capability_requirements,
+    )
+
 RISK_ORDER = {f"RISK_{level}": level for level in range(5)}
 SKILL_PROFILE_MAP = {
     "supabase-postgres-best-practices": "supabase",
@@ -106,6 +121,15 @@ CATEGORY_SKILL_FAMILIES = {
     "documentation": ["anti-ai-slop-writing", "documentation-and-adrs"],
     "explanation": [],
     "engineering": ["architect-orchestrator"],
+}
+SPECIALIST_BY_CATEGORY = {
+    "frontend": "frontend-developer",
+    "database": "backend-architect",
+    "security": "backend-architect",
+    "testing": "api-tester",
+    "bug": "api-tester",
+    "design": "design-system-researcher",
+    "marketing": "trend-researcher",
 }
 
 PRESENTATION_PATTERNS = (
@@ -1184,6 +1208,12 @@ def _pushback_on_multi_agent(parallelism: dict[str, Any], topology: str) -> dict
     }
 
 
+def _recommended_specialists(category: str) -> list[str]:
+    """Recommend semantic expertise without requiring a provider subagent."""
+    specialist_id = SPECIALIST_BY_CATEGORY.get(category)
+    return [specialist_id] if specialist_id else []
+
+
 def _rejected_topologies(selected: str) -> dict[str, str]:
     reasons: dict[str, str] = {}
     for topology in TOPOLOGIES:
@@ -1367,6 +1397,10 @@ def route_task(
     spend_override: str | None = None,
     parallelism_override: str | None = None,
     topology_override: str | None = None,
+    provider_host: str = "local",
+    available_providers: list[str] | tuple[str, ...] | None = None,
+    capability_catalog_path: Path | None = None,
+    specialist_catalog_path: Path | None = None,
 ) -> dict[str, Any]:
     resolved_registry_path = (
         Path(registry_path) if registry_path is not None else DEFAULT_REGISTRY_PATH
@@ -1526,6 +1560,20 @@ def route_task(
         project_signals=project_signals,
     )
     multi_agent_pushback = _pushback_on_multi_agent(parallelism, topology)
+    specialists = _recommended_specialists(category)
+    capability_catalog = load_capability_catalog(capability_catalog_path)
+    capabilities = specialist_capability_requirements(
+        specialists,
+        specialist_catalog_path=specialist_catalog_path,
+        capability_catalog=capability_catalog,
+    )
+    capability_envelope = resolve_capabilities(
+        required=capabilities["required"],
+        preferred=capabilities["preferred"],
+        available_providers=available_providers,
+        host=provider_host,
+        catalog=capability_catalog,
+    )
     signals = _signals(
         lowered,
         risk=risk,
@@ -1675,6 +1723,9 @@ def route_task(
         "output_profile": output_profile,
         "compression": compression,
         "topology": topology,
+        "specialists": specialists,
+        "capabilities": capabilities,
+        "capability_envelope": capability_envelope,
         "subagents": subagents,
         "verification": verification,
         "auto_plan_mode_recommended": auto_plan_recommended,
@@ -1727,6 +1778,11 @@ def main() -> int:
         choices=TOPOLOGIES,
         help="topology override (never lowers risk floor)",
     )
+    parser.add_argument("--host", default="local", help="provider host (chatgpt, codex, claude, ...)")
+    parser.add_argument(
+        "--available",
+        help="comma-separated explicit provider inventory (for example mcp.github,cli.git)",
+    )
     args = parser.parse_args()
     prompt = args.file.read_text(encoding="utf-8") if args.file else " ".join(args.prompt)
     if not prompt.strip():
@@ -1742,8 +1798,14 @@ def main() -> int:
             spend_override=args.spend,
             parallelism_override=args.parallelism,
             topology_override=args.topology,
+            provider_host=args.host,
+            available_providers=(
+                [item.strip() for item in args.available.split(",") if item.strip()]
+                if args.available is not None
+                else None
+            ),
         )
-    except RegistryError as exc:
+    except (RegistryError, CapabilityCatalogError) as exc:
         parser.error(str(exc))
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     return 0

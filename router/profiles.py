@@ -602,6 +602,7 @@ def _parser() -> argparse.ArgumentParser:
             "route",
             "verify",
             "continuity",
+            "capabilities",
         ),
     )
     parser.add_argument("subcommand", nargs="?")
@@ -646,6 +647,19 @@ def _parser() -> argparse.ArgumentParser:
         "--force",
         action="store_true",
         help="Allow RISK_3/RISK_4 MCP enable",
+    )
+    parser.add_argument("--host", default="local", help="Capability provider host")
+    parser.add_argument(
+        "--available",
+        help="Comma-separated explicit capability provider inventory",
+    )
+    parser.add_argument("--required", help="Comma-separated required capability IDs")
+    parser.add_argument("--preferred", help="Comma-separated preferred capability IDs")
+    parser.add_argument(
+        "--specialist",
+        action="append",
+        default=[],
+        help="Semantic specialist ID whose capabilities should be included (repeatable)",
     )
     return parser
 
@@ -693,6 +707,12 @@ def main(argv: list[str] | None = None) -> int:
                     project_root=project_root,
                     registry_path=repo_root / "registry.yaml",
                     home=Path.home(),
+                    provider_host=args.host,
+                    available_providers=(
+                        [item.strip() for item in args.available.split(",") if item.strip()]
+                        if args.available is not None
+                        else None
+                    ),
                 )
             except (TraceError, RouteRegistryError) as exc:
                 raise ProfileError(str(exc)) from exc
@@ -700,6 +720,80 @@ def main(argv: list[str] | None = None) -> int:
                 print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             else:
                 print(format_trace_summary(payload))
+            return 0
+
+        if args.command == "capabilities":
+            try:
+                from router.capabilities import (
+                    CapabilityCatalogError,
+                    load_capability_catalog,
+                    resolve_capabilities,
+                    specialist_capability_requirements,
+                )
+            except ImportError:
+                from capabilities import (  # type: ignore
+                    CapabilityCatalogError,
+                    load_capability_catalog,
+                    resolve_capabilities,
+                    specialist_capability_requirements,
+                )
+
+            def comma_list(value: str | None) -> list[str]:
+                return [item.strip() for item in (value or "").split(",") if item.strip()]
+
+            try:
+                capability_catalog = load_capability_catalog(
+                    repo_root / "capabilities" / "catalog.yaml"
+                )
+                sub = args.subcommand or "list"
+                if sub == "list":
+                    payload = {
+                        "policy": capability_catalog["policy"],
+                        "capabilities": sorted(capability_catalog["capabilities"]),
+                        "providers": sorted(capability_catalog["providers"]),
+                    }
+                elif sub == "show":
+                    if not args.target:
+                        parser.error("capabilities show requires a capability ID")
+                    capability = capability_catalog["capabilities"].get(args.target)
+                    if capability is None:
+                        raise CapabilityCatalogError(
+                            f"unknown capability: {args.target}"
+                        )
+                    payload = {"id": args.target, **capability}
+                elif sub == "resolve":
+                    requirements = specialist_capability_requirements(
+                        args.specialist,
+                        capability_catalog=capability_catalog,
+                    )
+                    required = list(
+                        dict.fromkeys(
+                            [*requirements["required"], *comma_list(args.required)]
+                        )
+                    )
+                    preferred = [
+                        capability
+                        for capability in dict.fromkeys(
+                            [*requirements["preferred"], *comma_list(args.preferred)]
+                        )
+                        if capability not in required
+                    ]
+                    payload = resolve_capabilities(
+                        required=required,
+                        preferred=preferred,
+                        available_providers=(
+                            comma_list(args.available)
+                            if args.available is not None
+                            else None
+                        ),
+                        host=args.host,
+                        catalog=capability_catalog,
+                    )
+                else:
+                    parser.error("capabilities requires list, show, or resolve")
+            except CapabilityCatalogError as exc:
+                raise ProfileError(str(exc)) from exc
+            print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
 
         if args.command == "verify":
@@ -920,6 +1014,27 @@ def main(argv: list[str] | None = None) -> int:
                     skills=tuple(skills),
                     risk="RISK_2",
                     role="implementer",
+                    specialist_ids=tuple(args.specialist),
+                    required_capabilities=tuple(
+                        item.strip()
+                        for item in (args.required or "").split(",")
+                        if item.strip()
+                    ),
+                    preferred_capabilities=tuple(
+                        item.strip()
+                        for item in (args.preferred or "").split(",")
+                        if item.strip()
+                    ),
+                    available_providers=(
+                        tuple(
+                            item.strip()
+                            for item in args.available.split(",")
+                            if item.strip()
+                        )
+                        if args.available is not None
+                        else None
+                    ),
+                    provider_host=args.host,
                 )
                 payload = build_worker_context(
                     spec,

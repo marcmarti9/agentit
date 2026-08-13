@@ -1,15 +1,12 @@
-# Task Checklist: Router Explainability and Representative Evals
+# Task Checklist: Provider-Neutral Capability Resolution
 
-- [x] Add failing router tests for payment UI wording, auth implementation topology,
-  explainability fields, and rejected topologies.
-- [x] Implement the smallest router changes that satisfy those tests.
-- [x] Add the profile catalog with 10 global core skills and explicit on-demand
-  profiles; do not merge or delete skill bodies.
-- [x] Shorten all 28 discovery descriptions to concise activation/avoidance text.
-- [x] Add safe project profile activation with dry-run, manifest, and status output.
-- [x] Make provider installation copy only global-profile skills by default.
-- [x] Add and test `--prune-on-demand` for safe cleanup of older global installs.
-- [x] Add representative eval cases and the local runner.
-- [x] Test the runner and update its documentation.
-- [x] Update README and router skill contract with real output examples.
-- [x] Run the complete local verification suite and inspect the final diff.
+- [x] Observe new capability tests failing before implementation.
+- [x] Add and validate `capabilities/catalog.yaml`.
+- [x] Implement deterministic capability resolution and fallbacks.
+- [x] Add required/preferred capability declarations to all specialists.
+- [x] Expose specialist requirements and capability envelope in router output.
+- [x] Project least-privilege capability envelopes into worker contexts.
+- [x] Reject unresolved required capabilities at the spawn gate when inventory is explicit.
+- [x] Add representative eval coverage and documentation.
+- [x] Run full local verification and inspect the final diff.
+- [ ] Commit, push, and open a draft PR.

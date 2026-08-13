@@ -16,6 +16,23 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
+try:
+    from router.capabilities import (
+        CapabilityCatalogError,
+        load_capability_catalog,
+        resolve_capabilities,
+        specialist_capability_requirements,
+        validate_capability_envelope,
+    )
+except ImportError:
+    from capabilities import (  # type: ignore
+        CapabilityCatalogError,
+        load_capability_catalog,
+        resolve_capabilities,
+        specialist_capability_requirements,
+        validate_capability_envelope,
+    )
+
 # Discovery names (highest local path wins within project_instruction tier;
 # explicit user instructions and safety always outrank these).
 INSTRUCTION_BASENAMES: tuple[str, ...] = (
@@ -110,6 +127,11 @@ class WorkerTaskSpec:
     specialist_id: str = ""
     model_tier: str = ""
     parent_topology: str = ""
+    specialist_ids: Sequence[str] = field(default_factory=tuple)
+    required_capabilities: Sequence[str] = field(default_factory=tuple)
+    preferred_capabilities: Sequence[str] = field(default_factory=tuple)
+    available_providers: Sequence[str] | None = None
+    provider_host: str = "local"
 
 
 def _sha256_prefix(text: str, n: int = 12) -> str:
@@ -427,6 +449,33 @@ def build_worker_context(
         include_manifest_skills=spec.include_manifest_skills,
         known_repository_skills=known_repository_skills,
     )
+    try:
+        capability_catalog = load_capability_catalog()
+        specialist_requirements = specialist_capability_requirements(
+            spec.specialist_ids,
+            capability_catalog=capability_catalog,
+        )
+        required_capabilities = list(
+            dict.fromkeys(
+                [*specialist_requirements["required"], *spec.required_capabilities]
+            )
+        )
+        preferred_capabilities = [
+            capability
+            for capability in dict.fromkeys(
+                [*specialist_requirements["preferred"], *spec.preferred_capabilities]
+            )
+            if capability not in required_capabilities
+        ]
+        capability_envelope = resolve_capabilities(
+            required=required_capabilities,
+            preferred=preferred_capabilities,
+            available_providers=spec.available_providers,
+            host=spec.provider_host,
+            catalog=capability_catalog,
+        )
+    except CapabilityCatalogError as exc:
+        raise WorkerContextError(str(exc)) from exc
 
     prefs = project_preferences(preferences)
     constraints = build_constraints(spec)
@@ -483,6 +532,8 @@ def build_worker_context(
         ],
         "project_instruction_paths": [inst.path for inst in instructions],
         "skills_projected": skills_projected,
+        "specialist_ids": list(spec.specialist_ids),
+        "capability_envelope": capability_envelope,
         "preferences_projected": prefs,
         "risk": spec.risk,
         "constraints": constraints,
@@ -560,6 +611,15 @@ def assert_projection_complete(payload: Mapping[str, Any]) -> None:
         raise WorkerContextError("project_instructions field missing")
     if "skills_projected" not in ctx:
         raise WorkerContextError("skills_projected field missing")
+    envelope = ctx.get("capability_envelope")
+    if not isinstance(envelope, dict):
+        raise WorkerContextError("capability_envelope field missing")
+    if envelope.get("least_privilege") is not True:
+        raise WorkerContextError("capability envelope must enforce least privilege")
+    try:
+        validate_capability_envelope(envelope)
+    except CapabilityCatalogError as exc:
+        raise WorkerContextError(str(exc)) from exc
     if "preferences_projected" not in ctx:
         raise WorkerContextError("preferences_projected field missing")
 
@@ -601,6 +661,17 @@ def validate_for_spawn(
             raise WorkerContextError(
                 "spawn rejected: skills_projected looks like a full-catalog dump"
             )
+    unresolved = (ctx.get("capability_envelope") or {}).get("unresolved_required") or []
+    if unresolved:
+        raise WorkerContextError(
+            f"spawn rejected: unresolved required capabilities: {', '.join(unresolved)}"
+        )
+    pending = (ctx.get("capability_envelope") or {}).get("pending_inventory") or []
+    if pending:
+        raise WorkerContextError(
+            "spawn rejected: provider inventory required for capabilities: "
+            + ", ".join(pending)
+        )
 
 
 def render_worker_prompt(payload: Mapping[str, Any]) -> str:
@@ -672,6 +743,22 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
             lines.append(f"- {sid}")
     else:
         lines.append("- (none projected for this task)")
+
+    envelope = ctx.get("capability_envelope") or {}
+    lines.append("## Capability envelope (least privilege)")
+    if envelope.get("inventory_provided"):
+        grants = envelope.get("grants") or []
+        if grants:
+            for grant in grants:
+                permissions = ", ".join(grant.get("permissions") or [])
+                lines.append(
+                    f"- {grant['capability']} via {grant['provider']}: {permissions}"
+                )
+        else:
+            lines.append("- (no provider grants)")
+    else:
+        pending = ", ".join(envelope.get("pending_inventory") or []) or "none"
+        lines.append(f"- provider inventory required before execution: {pending}")
 
     prefs = ctx.get("preferences_projected") or {}
     if prefs:

@@ -35,6 +35,7 @@ Cada paquete declara:
 - propósito y definición de terminado;
 - instrucciones de proyecto relevantes (raíz y subdir si aplica);
 - skills de la tarea (acotadas);
+- capability envelope mínimo; no pases providers que no hayan sido seleccionados;
 - entradas exactas y artefactos;
 - archivos permitidos para lectura y escritura;
 - invariantes, preferencias aplicables y constraints de riesgo;

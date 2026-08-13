@@ -11,7 +11,7 @@ Users need no powerwords beyond natural Agentit activation. Do not require terms
 
 ## One comprehensive round
 
-Ask **all material questions** that are currently knowable in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Follow up only when the first answers reveal genuinely new material uncertainty.
+Ask **all material questions** that are currently knowable in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a **follow-up batch** only when the first answers reveal **genuinely new material decisions** that could not reasonably have been asked in the first round.
 
 The interview should make a weak prompt usable; it must not transfer the design/product job back to the user. The user may answer **“use your recommendation”** for any or all decisions.
 

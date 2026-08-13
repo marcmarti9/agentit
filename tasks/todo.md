@@ -9,4 +9,4 @@
 - [x] Reject unresolved required capabilities at the spawn gate when inventory is explicit.
 - [x] Add representative eval coverage and documentation.
 - [x] Run full local verification and inspect the final diff.
-- [ ] Commit, push, and open a draft PR.
+- [x] Commit, push, and open a draft PR.

@@ -50,7 +50,7 @@ chain. Unknown availability never becomes an assumed grant.
 
 - [x] Document inventory shape, fallbacks, least privilege, and extension steps.
 - [x] Add representative eval cases and CI catalog validation.
-- [ ] Run Agentit verification, inspect the diff, commit, push, and open a draft PR.
+- [x] Run Agentit verification, inspect the diff, commit, push, and open a draft PR.
 
 ## Risks and Mitigations
 

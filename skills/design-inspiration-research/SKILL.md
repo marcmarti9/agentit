@@ -1,91 +1,82 @@
 ---
 name: design-inspiration-research
-description: Research current visual, motion, interaction, spatial, and brand references before committing to a design direction. Use for ambitious redesigns, premium landing pages, creative coding, motion direction, spatial experiences, or when the user asks for fresh inspiration from the web, TikTok, galleries, social media, studios, or award sites.
+description: Research current visual and interaction references before public greenfield or total-redesign art direction.
 ---
 
 # Design Inspiration Research
 
-Act as a design researcher, not a scraper or copy machine. Gather current references, decompose why they work, and synthesize original directions for the project.
+Research exists to change design decisions, not to produce a link dump.
 
-## Goal
+## Required by default
 
-Return a compact inspiration board made of **patterns and principles**, then feed those findings into `creative-web-experiences`, `design-taste-frontend`, and the implementation specialists.
+Run this pass before art direction/code for:
 
-Do not start coding before the reference pass when the user explicitly asks for fresh/current inspiration or when originality is a primary success criterion.
+- greenfield public websites, landings, homepages, portfolios and storefronts;
+- total visual redesigns;
+- ambitious Polished/Studio public visual work;
+- work where originality or current visual context matters.
 
-## Source mix
+Skip only when the user explicitly opts out, current-source tooling is unavailable, or the surface is routine repeated-use product UI where references add no material decision. If current research is unavailable, say so instead of presenting memory as live research.
 
-Prefer a diverse mix rather than one aesthetic bubble:
+## Research workload
 
-- studio and agency sites;
-- Awwwards-style galleries and curated web showcases;
-- real product/brand sites;
-- portfolios and experimental creative-development sites;
-- Figma Community when relevant;
-- GitHub demos / CodePen / shader and Three.js showcases for implementation ideas;
-- TikTok, Instagram, Pinterest, YouTube, X, or other social feeds when browser access is available and the content is useful;
-- editorial, architecture, fashion, industrial design, photography, film titles, games, museums, and physical retail when cross-domain inspiration would improve the concept.
+When current web/browser tooling is available:
 
-Treat social platforms as discovery surfaces, not authoritative technical documentation.
+1. Search 4–8 distinct queries that describe the desired **experience**, not only the industry.
+2. Inspect promising pages/interactions rather than relying on thumbnails.
+3. Collect 6–12 useful references, then stop.
+4. Mix real brands/products, strong studios/showcases and adjacent disciplines such as editorial, architecture, industrial design, fashion, photography, film titles, games, museums or retail when useful.
+5. Studio work should normally include cross-domain references, not just competitors.
+6. Cluster observations into 2–4 patterns and identify what has become cliché.
+7. Synthesize 2–3 original project-specific directions from multiple principles.
 
-## Browser research workflow
+## What to extract
 
-When live browser/search tools are available:
+For each useful reference capture only what may change the project:
 
-1. Search 4-8 distinct queries that describe the **experience**, not only the industry. Examples: `interactive retail webgl`, `spatial ecommerce website`, `kinetic typography landing`, `scroll camera journey`, `digital flagship store`, `immersive editorial web`.
-2. Open promising references and inspect actual behavior, not only thumbnails.
-3. Record the URL/title/source and the specific mechanism worth learning from.
-4. When a page is interactive, inspect multiple states or scroll sections.
-5. Collect 6-12 useful references, then stop. More references are not automatically better.
-6. Cluster them into 2-4 patterns and identify what is becoming cliché.
-7. Synthesize new directions that combine principles from multiple references.
+- first-impression hook;
+- composition/grid/scale/whitespace/depth;
+- typography;
+- imagery/crop/artifact strategy;
+- interaction and motion grammar;
+- narrative/reveal pacing;
+- likely implementation family;
+- why the principle fits this project;
+- what should not be copied.
 
-Use Playwright or Chrome DevTools when interaction must be experienced directly. Prefer an isolated browser profile. Do not attach to a user's personal daily browser unless explicitly authorized.
+## Required deliverables
 
-## TikTok / social research
+### INSPIRATION_SYNTHESIS
 
-If TikTok or another social platform is requested:
+Include strongest reference signals, 2–4 pattern clusters, cliché radar, 2–3 original directions and implementation implications.
 
-- Prefer ordinary browser navigation/search through public pages or an explicitly authorized isolated logged-in session.
-- Respect platform access controls, rate limits, robots/terms, and authentication boundaries. Do not bypass CAPTCHAs, anti-bot systems, private accounts, paywalls, or login protections.
-- Do not assume an official API supports arbitrary discovery. If the available API only exposes authorized-user content or restricted research access, fall back to browser research or another source.
-- Capture **design observations and links**, not bulk-downloaded media.
-- Social trends age quickly; note the research date and avoid treating engagement metrics as proof of design quality.
+### REFERENCE_TO_DECISION_MAP
 
-## What to extract from every reference
+Map candidate/chosen decisions back to observed principles and state the project-specific adaptation:
 
-For each useful reference, answer only what matters:
+- typography;
+- composition and section rhythm;
+- imagery/crop strategy;
+- material/color;
+- motion/interaction;
+- narrative, proof and CTA presentation.
 
-- **Hook:** what makes the first 3-5 seconds distinctive?
-- **Composition:** grid, scale, whitespace, depth, framing, typography.
-- **Interaction:** what does the user do and what responds?
-- **Motion grammar:** easing, pacing, continuity, camera, masks, transforms, cuts.
-- **Narrative:** how does the experience reveal information?
-- **Technical hypothesis:** CSS / GSAP / canvas / WebGL / video / image sequence / Rive / mixed DOM+3D.
-- **Why it works:** the principle worth keeping.
-- **What not to copy:** distinctive brand assets/layouts/content or overused gimmicks.
+Do not claim a reference influenced the design when the effect cannot be explained. Do not copy distinctive brand assets/content/layouts.
 
-Do not reverse-engineer proprietary code when observation is enough.
+## Handoff
 
-## Deliverable: inspiration brief
+Feed both artifacts into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the reference principles that shaped it.
 
-Produce:
+If the final design would plausibly look the same without this research, the research failed. Extract stronger principles or explicitly state that the references did not improve the direction.
 
-### Reference signals
-A concise list of the strongest references and the one useful idea from each.
+## Parallel research
 
-### Pattern clusters
-Group observations into coherent directions such as spatial navigation, editorial motion, object theatre, tactile interaction, or restrained luxury.
+Reference research is a strong delegation boundary because it is read-only and context-heavy. Independent workers may explore different lenses such as category peers, adjacent visual disciplines, motion/interaction and technical feasibility. The Architect synthesizes their bounded receipts and chooses the final direction.
 
-### Cliché radar
-Call out recurring patterns that would make the result feel derivative or AI-generated.
+## Failure modes
 
-### Original synthesis
-Propose 2-3 project-specific concepts. Each concept must combine multiple principles rather than cloning a single reference.
-
-### Implementation implications
-State which Agentit specialists should be loaded: GSAP, scrollytelling, Three.js spatial/product, Figma, performance, etc.
-
-## Quality bar
-
-A reference board is successful when it expands the solution space and improves judgement. It fails when it merely produces a Pinterest wall, copies the coolest site found, or forces every fashionable technique into one page.
+- link dump with no synthesis;
+- copying one fashionable site;
+- forcing every trendy technique into one page;
+- doing research only after the visual direction is already fixed;
+- invisible research with no traceable impact on design.

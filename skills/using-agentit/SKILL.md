@@ -11,6 +11,19 @@ Agentit exists to turn underspecified prompts into excellent work. Prompt qualit
 
 Natural language that means use/usa/utilise Agentit activates this playbook for the session. No other powerwords are required.
 
+## Stable harness locations
+
+When running from the normal harness checkout, use the repository as source of truth:
+
+- harness root: `~/code/agentit`;
+- router: `~/code/agentit/router/route.py`;
+- skills: `~/code/agentit/skills/<id>/SKILL.md`;
+- specialist catalog: `~/code/agentit/agents/catalog.yaml`;
+- profiles: `~/code/agentit/profiles.yaml`;
+- project continuity: `<project>/docs/agentit/STATE.md` plus `docs/PROJECT_CONTINUITY.md` policy.
+
+A provider may expose equivalent installed/project-local paths; use the actual resolved copy and keep the source explicit.
+
 ## Core protocol
 
 1. Classify mechanical bypass vs product-affecting work.
@@ -23,6 +36,13 @@ Natural language that means use/usa/utilise Agentit activates this playbook for 
 8. Independent critic for large structural/high-impact plans and Studio greenfield/total visual redesigns.
 9. Verify with fresh evidence; visual claims require rendered evidence.
 10. PR-first for repository changes unless explicitly overridden.
+11. Keep continuity state current on long/multi-stage work.
+
+## Domain packs
+
+Choose one primary family per task/stage: engineering, frontend, design, backend, data, product, writing, release, research, or a role-scoped pack. Load the smallest useful family + core; do not dump every skill into context.
+
+Craft depth Standard/Polished/Studio applies only to visual/design work. Lean/normal/thorough may describe non-design rigor separately.
 
 ## Public visual quality floor
 
@@ -54,7 +74,7 @@ The user can answer “use your recommendation” for any/all decisions.
 
 ### Inspiration must be real and visible
 
-For greenfield public surfaces, total redesigns, and ambitious Polished/Studio public work, run `design-inspiration-research` before art direction unless the user explicitly opts out or browsing is unavailable.
+For greenfield public surfaces, total redesigns, and ambitious Polished/Studio public work, run `design-inspiration-research` before art direction unless the user explicitly opts out or current-source tooling is unavailable.
 
 Research 6–12 useful current references across a diverse mix. Include adjacent/cross-domain references for Studio when they improve the concept. Inspect actual pages/interactions where tooling permits.
 
@@ -96,26 +116,32 @@ Before each stage:
 3. retain a small receipt: skill ID + path + content hash when possible;
 4. project the same bodies/receipt to workers that depend on them.
 
-A worker prompt containing only skill IDs is insufficient on providers that do not automatically resolve those IDs. Fail closed or embed/load the bodies; do not pretend they influenced the result.
+A worker prompt containing only skill IDs is insufficient on providers that do not automatically resolve those IDs. Load the bodies or surface the missing context; do not pretend the skill influenced the result.
+
+## Tooling / MCP fit
+
+When external tools materially improve the task, run the tooling-fit process: inventory what is actually available, choose only relevant capabilities, and avoid enabling a noisy universal tool surface. Any install/enable action remains plan-first according to project policy.
+
+Figma/browser/context/documentation tooling should be selected because the current stage needs it, not because design work always needs every design tool.
 
 ## Intelligent delegation: no single-agent gravity
 
 Spawn when expertise, independence, tool separation, context isolation or fresh judgment improves the result. Real examples include:
 
-- a worker reading large documentation sets and returning a cited/sourced synthesis;
+- a worker reading large documentation sets and returning a bounded sourced synthesis;
 - parallel reference research from different visual angles;
 - 2–3 independent design concepts;
 - a fresh-context design critic;
 - separate backend/frontend packages;
-- independent safety/performance review.
+- independent correctness/performance review.
 
-A strong judgment parent should preserve its context for synthesis and decisions instead of serially reading every large source. Use capable lower-tier workers for volume reading/research when available, then make the parent verify/integrate their receipts. Provider adapters may map semantic tiers to models such as a stronger parent and faster workers; do not hardcode vendor model names into portable policy.
+A strong judgment parent should preserve its context for synthesis and decisions instead of serially reading every large source. Use capable lower-tier workers for volume reading/research when available, then make the parent verify/integrate their receipts. Provider adapters map semantic tiers to available models; do not hardcode vendor model names into portable policy.
 
 Do not spawn workers merely for show, and do not refuse delegation merely because direct execution is traditional. `subagents.recommended` is guidance, never a hard cap.
 
 ## Design competition
 
-For Studio greenfield/total public design, normally explore **3 genuinely different concepts** in isolated branches/worker contexts, then judge them explicitly against the brief, research and constraints. Polished redesigns may use 2 concepts when there is real directional uncertainty. Routine UI maintenance does not need competition.
+For Studio greenfield/total public design, normally explore **3 genuinely different concepts** in isolated contexts, then judge them explicitly against the brief, research and constraints. Polished redesigns may use 2 concepts when there is real directional uncertainty. Routine UI maintenance does not need competition.
 
 Concepts must differ in thesis/composition/imagery/type/narrative, not just color palettes. The Architect chooses/integrates; one implementation owner writes the final surface.
 
@@ -135,6 +161,12 @@ Every visible card/container should justify grouping, interaction, clipping or a
 
 For a long public page, establish authored structural rhythm and avoid the same composition primitive more than twice consecutively unless the content genuinely requires it.
 
+## Continuity and long tasks
+
+Persist confirmed user intent before product implementation. On long work keep `STATE.md` useful for a fresh provider/session: current objective, decisions, constraints, selected pack/craft depth, evidence, completed stages and next action. Do not use continuity files as a substitute for source code or exact operational evidence.
+
+When local-model routing is enabled, treat model selection as another provider capability decision. Critical judgment/review should not silently downgrade just because a cheaper/local model exists.
+
 ## Verification
 
 No done/fixed/premium/beautiful claim without fresh evidence. Public visual work requires at minimum:
@@ -146,6 +178,10 @@ No done/fixed/premium/beautiful claim without fresh evidence. Public visual work
 - accessibility/performance sanity appropriate to the surface;
 - proof that critical real assets/copy were not fabricated.
 
+## Provider fallback
+
+Prefer native scoped workers when useful. If unavailable, use isolated delegated calls/fresh contexts; if even that is unavailable, continue in the parent with the same scoped skill bodies. Multi-agent improves quality/efficiency but should not become a correctness dependency.
+
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. One writer per file unless isolated branches/worktrees make ownership safe. Workers return evidence; the Architect owns acceptance, integration and the user-facing result.
+Explicit user instructions and project rules beat defaults. Safety beats all. One writer per file/shared state unless isolated branches/worktrees make ownership safe. Workers return evidence; the Architect owns acceptance, integration and the user-facing result.

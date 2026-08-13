@@ -11,7 +11,7 @@ Users need no powerwords beyond natural Agentit activation. Do not require terms
 
 ## One comprehensive round
 
-Ask all currently knowable material decisions in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Follow up only when the first answers reveal genuinely new material uncertainty.
+Ask **all material questions** that are currently knowable in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Follow up only when the first answers reveal genuinely new material uncertainty.
 
 The interview should make a weak prompt usable; it must not transfer the design/product job back to the user. The user may answer **“use your recommendation”** for any or all decisions.
 
@@ -118,7 +118,7 @@ A fresh agent can continue from persisted state without inventing material inten
 
 - [ ] Mechanical vs product-affecting classified.
 - [ ] Discoverable facts inspected first.
-- [ ] All current material decisions asked in one batch.
+- [ ] All material questions asked in one batch.
 - [ ] Recommendation/default attached to each question.
 - [ ] Domain pack recommended; craft depth only when visual.
 - [ ] Greenfield/total visual work received copy + imagery + preserve/replace questions.

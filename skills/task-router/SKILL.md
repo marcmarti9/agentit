@@ -1,91 +1,114 @@
 ---
 name: task-router
-description: Classify risk, topology, skills, and context before execution. Use to route a task; not as permission to run it.
+description: Classify risk, topology, skills, and context before execution. Public visual surfaces are design-primary.
 ---
 
 # Intelligent task router
 
-Use the router as a heuristic planning aid, never as permission to execute. It is provider-neutral and deliberately does not execute the task, load skill bodies, rewrite stdout, install hooks, call MCP servers, or reduce an inferred risk level.
-
-It recommends a topology and an **advisory** specialist budget with **no hard min/max caps**. Spawn only when structure or ordinary language shows benefit. Craft depth (standard/polished/studio) is design/visual only. Token estimates are project-aware. No powerwords beyond natural Agentit activation. A human must review critical operations before execution.
+The router is a provider-neutral planning aid, never permission to execute, lower risk, mutate tooling, or skip user/project instructions. Its JSON is advisory; the active provider and explicit instructions still win.
 
 ## Invocation
-
-From the harness repository:
 
 ```bash
 python3 router/route.py "describe the task"
 python3 router/route.py --risk RISK_2 "describe the task"
 ```
 
-The JSON result is a proposal. The active provider, project instructions, explicit user request, and human authorization still have precedence. Inspect the repository and target environment before acting.
+Inspect the repository/target environment before acting.
+
+## Hard routing correction: public visual surfaces
+
+A landing page, homepage, corporate/brand website, marketing site, portfolio, storefront, campaign site, or complete visual redesign is **design-primary**, even when implementation is React/Next/CSS and even if a generic heuristic labels it `frontend` or `marketing`.
+
+For public visual work:
+
+- use the `design` domain pack;
+- greenfield public surfaces and total visual redesigns recommend **Studio** unless the user chooses a leaner depth;
+- run the deep `interview-me` path before planning;
+- research live references before art direction;
+- create a concrete `DESIGN_DIRECTION` before code;
+- use independent research/concept/critique workers when isolation or diversity helps;
+- require browser evidence on desktop and mobile before visual-success claims.
+
+Normal greenfield/total shape:
+
+`interview -> reference research -> concept/direction -> implementation -> independent visual critique -> browser verification`
+
+Research/concept branches may fan out inside that pipeline. Do not collapse to direct only because one model could technically perform every step.
 
 ## Output contract
 
-- `skills_available` contains only recommended skills whose catalog state, observed path, and essential dependencies are compatible.
-- `skills_recommended_missing` contains relevant recommendations that are not usable under those checks.
-- `skills` is a legacy alias for `skills_available`; it never contains missing recommendations.
-- `signals` lists the human-readable evidence used by the deterministic heuristic.
-- `confidence` is an uncalibrated signal-strength score; `confidence_calibrated` is
-  `false` until reviewed labels exist.
-- `rejected_topologies` explains why the other execution shapes were not selected.
-- `applied_preferences` exposes active user preferences (`preferred_language`, `testing_framework`, `ui_styling`). Agents should apply these preferences unless they conflict with project requirements or safety rules.
-- `jit_profile_recommendations` lists missing profiles recommended for the task. Agents may auto-activate them via `./agentit enable <profile> --project . --apply` when JIT mode is active.
-- `topology` can be `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or
-  `audit`. `subagents.recommended` is soft guidance (`hard_cap: false`, `max: null`).
-- `domain_pack`, `skill_budget`, `craft_depth` (design only), `spend`, `token_estimate`,
-  `parallelism`, `critic_required`, and `multi_agent_pushback` guide intelligent execution.
+- `skills_available`: recommended skills that are discoverable/compatible.
+- `skills_recommended_missing`: relevant recommendations that cannot currently be used.
+- `skills`: legacy alias of `skills_available`.
+- `signals`: evidence used by routing heuristics.
+- `confidence`: uncalibrated signal strength; `confidence_calibrated` remains false without reviewed labels.
+- `rejected_topologies`: why alternatives were not selected.
+- `applied_preferences`: safe project/user preferences to apply.
+- `jit_profile_recommendations`: missing profiles worth project-local activation.
+- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or `audit`.
+- `subagents.recommended`: soft guidance; no hard max/min quota.
+- `domain_pack`, `skill_budget`, `craft_depth` (visual only), `spend`, `token_estimate`, `parallelism`, `critic_required`, `multi_agent_pushback`: execution guidance.
 
-`registry.yaml` is portable operational policy, not a machine inventory. It uses only `${HOME}` and `${REPO_ROOT}` path templates. Generate an ignored, per-machine observation with `python3 -m router.inventory`; executable versions may remain unobserved.
+## Skill activation contract
+
+A skill ID in router output, a profile, or a worker payload is **not proof the skill is active**. Before a stage relies on a skill, the model doing that stage must actually read its `SKILL.md` body or receive it through demonstrable provider-native injection. Keep a small ID/path/hash load receipt when the host supports it.
+
+If a worker only sees names such as `design-taste-frontend` and the provider does not resolve those names automatically, load/embed the corresponding bodies before work. Never claim an unopened skill shaped the result.
+
+Greenfield/total public work normally loads by stage:
+
+- research: `design-inspiration-research`;
+- direction: `design-taste-frontend` + `impeccable-design`;
+- implementation: `frontend-ui-engineering` + `emil-design-eng`;
+- critique: `impeccable-design` + `design-taste-frontend` + browser verification.
 
 ## Selection rules
 
-1. Infer risk from the requested action and target environment, not from a keyword mention alone. Explanation or documentation about backups, production, credentials, or permissions does not request that operation. An explicit risk label may raise the level but never lower any inferred risk.
-2. Select the smallest useful skill set. A registry entry is metadata; load its `SKILL.md` only after selection.
-3. Use `TERSE_SAFE` only for low-risk, unambiguous progress or explanation output. Use `STANDARD` for ordinary work and `VERBOSE_ALLOWED` when precision or review matters.
-4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, numbers, credentials, schemas, migrations, and affected-file lists.
-5. Use only exact deduplication by default. Reversible CCR may be considered for RISK_2 large outputs when the original is retained and retrieval is explicit.
-6. For RISK_3 and RISK_4, retrieve original content before a decision if compressed content could influence it and require human review. For RISK_4 also require backup evidence, a dry run where possible, independent review, and a post-operation check.
-7. Do not spawn solely because a number is non-zero; do not refuse solely because single-agent is traditional. Delegation needs scope, ownership, and a verifier. Large structural plans set `critic_required`.
-8. Select `supabase-postgres-best-practices` only when the request includes a PostgreSQL signal such as Postgres, PostgreSQL, `psql`, or Supabase. A SQLite task is still a database task but must not receive Postgres-specific guidance; if no database engine is known, return `inspect_database_stack` in `routing_advice`.
+1. Infer risk from the requested action/environment, not keyword mentions alone. Explicit risk may raise but never lower inferred risk.
+2. Select the smallest **useful** skill set. For a public visual surface, art direction is useful/required rather than optional polish.
+3. Use terse output only for low-risk unambiguous work; preserve enough detail for review when precision matters.
+4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, credentials, schemas, migrations and affected-file lists.
+5. Exact deduplication is safe by default; do not semantically compress decision-critical material without retrieval.
+6. RISK_3/4 use fuller evidence/independent review; RISK_4 also needs the stronger operational gates defined by the base router.
+7. Delegation needs scope/ownership/verifier, but **context isolation, research breadth, concept diversity and fresh critique are legitimate benefits**.
+8. PostgreSQL-specific guidance requires a real PostgreSQL/psql/Supabase signal. Generic/SQLite work must not receive Postgres-specific advice.
+9. Large structural/high-impact plans require an independent critic.
+10. Verify actual runtime/rendered behavior before completion claims.
+
+## Delegation
+
+Valid reasons include independent files/domains, read-only investigation, large documentation/reference sets, independent visual hypotheses, concept competition, fresh critique, or using a more efficient worker for volume reading while a stronger parent preserves context for judgment/synthesis.
+
+Provider-specific model names belong in provider configuration. Portable routing talks about semantic capability tiers.
 
 ## Skill visibility profiles
 
-The repository keeps all skill bodies in `skills/`, but `install.sh` copies only
-the 12-skill `core` profile (includes `using-agentit` + `verification-gauntlet`)
-to provider-global directories. Use the plan-first helper to add an opt-in
-profile to a project without overwriting or removing unmanaged files:
+The repository keeps all skill bodies in `skills/`; global installation remains intentionally bounded to the `core` profile. Add opt-in families project-locally rather than dumping the entire catalog into every context:
 
 ```bash
-./agentit enable supabase --project .
-./agentit activate supabase --project .  # alias
-./agentit enable supabase --project . --apply
+./agentit enable design --project .
+./agentit enable design --project . --apply
 ./agentit status --project .
-./agentit disable supabase --project . --apply
+./agentit disable design --project . --apply
 ```
 
-`profiles.yaml` is the installation visibility policy. `registry.yaml` remains
-the compact routing/inventory metadata and does not imply that every repository
-skill should be globally discoverable.
-
-For an older global install, use the explicit migration flag below. It only removes
-unmodified byte-identical non-core copies after creating a backup:
-
-```bash
-bash install.sh --provider codex --apply --prune-on-demand
-```
+`profiles.yaml` is visibility policy; `registry.yaml` is routing/inventory metadata. A registry entry does not mean its body was loaded.
 
 ## Adaptive execution
 
-Prefer `direct` for tightly coupled work, `probe` for read-only investigation, `fan_out` for independent packages/paths/domains (ordinary language is enough), `pipeline` for staged research→implement, and `audit` for high-risk review. One writer per file; parallel writers need worktrees/branches.
+Prefer `direct` for tightly coupled work, `probe` for read-only investigation, `fan_out` for independent branches, `pipeline` for dependent stages, `writer_reviewer` for one implementation owner + independent review, and `audit` for critical review. One writer per file/shared state unless isolated branches/worktrees give explicit ownership.
+
+The design critic should reject wrapper-only cardification, repeated section silhouettes, generic hero/card/CTA templates, and research that cannot explain any final design decision.
 
 ## Provider adapters
 
-The router output can be consumed by Codex CLI, Claude Code, or Antigravity/Gemini as a local JSON planning step. Do not assume that a model name is portable between providers. Provider-specific model selection belongs in the provider configuration, and an unavailable model must fail closed rather than silently downgrade a critical review.
+Codex/Claude/Gemini/other hosts may implement workers and skill loading differently. Do not assume model names or skill injection are portable. Missing critical review/skill context should fail visibly rather than silently downgrade. If native subagents are unavailable, use an isolated delegated call/fresh context or load the same scoped skill bundle into the parent.
 
 ## Non-goals
 
-- No global shell interception.
-- No semantic compression of source code or operational data.
-- No automatic activation of hooks, MCP servers, proxies, or third-party installers.
-- No replacement of full logs, errors, diffs, or migration plans with summaries.
+- no global shell interception;
+- no automatic activation of unrelated tooling;
+- no full-catalog context dumps;
+- no replacement of exact errors/diffs/operational evidence with lossy summaries;
+- no forced multi-agent and no forced single-agent.

@@ -1,185 +1,126 @@
 ---
 name: interview-me
-description: Confirm product intent before planning. Ask craft depth only for design/visual work. Use for every product-affecting task; bypass only purely mechanical work.
+description: Confirm product intent before planning. Greenfield and total visual redesigns require a deep recommendation-led interview.
 ---
 
 # Interview Me
 
-## Core rule
+Product-affecting work is interviewed before planning/implementation. Purely mechanical execution may bypass. Inspect repo/docs/tools first so the user is never asked for facts Agentit can discover.
 
-For Agentit, **interview is the default entrypoint for product work**. If the task creates or changes a product, feature, page, workflow, architecture, API, UX, visual design, content, or other meaningful engineering/product decision, interview before planning or implementation.
+Users need no powerwords beyond natural Agentit activation. Do not require terms such as fan-out, Studio or pipeline.
 
-The only normal bypass is purely mechanical execution with no product decision: explicitly named directory/file creation, exact moves/renames, deterministic formatting, running an explicitly requested command/test, or copying exact content.
+## One comprehensive round
 
-If unsure, treat as product-affecting and interview.
+Ask **all material questions** that are currently knowable in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a **follow-up batch** only when the first answers reveal **genuinely new material decisions** that could not reasonably have been asked in the first round.
 
-Canonical catalogs: `effort/levels.yaml` (domain packs + design craft depth), router domain packs / profiles.
+The interview should make a weak prompt usable; it must not transfer the design/product job back to the user. The user may answer **“use your recommendation”** for any or all decisions.
 
-## No powerwords
+For every product interview also recommend the primary domain pack. Ask craft depth only for genuinely visual/design work. Give a rough **project-aware token estimate** based on risk, complexity, domain, topology, likely specialists/critic and craft depth; state that it is provider-dependent and not a bill.
 
-Users do not need special jargon. Ordinary language is enough. The only harness activation phrase is a natural “use / usa / utilise / … **agentit**” in the user’s language. Do not require fan-out, Studio, pipeline, or similar terms.
+## Mandatory deep visual interview
 
-## Comprehensive batch first
+A new landing/homepage/public company or brand website/portfolio/storefront/campaign surface, or a request to completely redesign / do a “lavado total de cara” of an existing visual surface, gets a deep interview.
 
-**Ask all material questions you can reasonably formulate in one interview round.**
+Cover the relevant decisions below in the first batch:
 
-For product work:
+1. **Outcome / conversion.** Recommend the primary action and ask what the surface must make people do or believe.
+2. **Audience.** Recommend the likely primary audience; ask who matters most, what they know already, objections and trust concerns.
+3. **Brand truth vs freedom.** List discoverable logo/colors/type/assets/product truth. Ask what must survive and, for total redesign, what may be replaced.
+4. **Visual personality.** Offer 2–4 concrete, product-specific directions and recommend one. Examples: editorial/technical, warm/tactile, restrained/luxury, industrial/utilitarian. Do not ask only “what style?”.
+5. **Imagery strategy.** Recommend imagery-heavy, imagery-light, artifact/product-led, or another fit. Distinguish photography, real screenshots, illustration, diagrams, video, 3D, generated art and no-imagery approaches. Ask what real assets exist.
+6. **Critical copy ownership.** Ask whether Agentit may rewrite/restructure important copy. For hero/value proposition, key section headlines, CTA and proof/trust copy, propose a recommended message angle or 1–3 short candidate lines instead of asking the user to invent everything.
+7. **Information architecture/story.** Suggest a likely page/section narrative; ask what must exist, what may disappear and whether reordering is allowed.
+8. **Proof / credibility.** Ask what real evidence exists: clients, numbers, reviews, case studies, certifications, press, integrations, guarantees, team, physical presence or product screenshots. Never fabricate proof.
+9. **Motion / interaction.** Recommend intensity. Distinguish quiet polish from cinematic/scrollytelling/spatial interaction.
+10. **Distinctiveness tolerance.** Ask how far category conventions can be pushed and whether one memorable signature mechanic is desirable.
+11. **References / dislikes.** Ask for any the user already has, but never depend on them; public visual work still gets Agentit's own inspiration research.
+12. **Responsive/accessibility/performance constraints.** Ask only business/product constraints not already discoverable.
+13. **Content volume/localization.** Ask when it materially changes navigation, composition or typography.
+14. **Craft depth.** Recommend **Studio** for greenfield public surfaces and total visual redesigns; at least **Polished** for ordinary public-facing visual work unless the user wants leaner execution.
 
-1. inspect repo/docs/tools first so discoverable facts are not asked;
-2. build the complete set of material user decisions identifiable now;
-3. ask them together in **one numbered batch**;
-4. attach a recommendation/default to every question;
-5. include **domain pack** (skill family) recommendation;
-6. include **craft depth** (Standard / Polished / Studio) **only if the task is design/visual**;
-7. give a **project-aware token estimate** (not the old fixed 15k–80k menu as a bill);
-8. wait for answers;
-9. follow-up batch only for **genuinely new material decisions** that could not reasonably have been asked before.
+### Copy suggestion rule
 
-Preferred outcome: **one comprehensive interview round → user reply → persist state → plan/build**.
+Never ask an empty “What should the hero say?” when product context is sufficient to recommend wording. Give a suggested message direction or candidate lines and ask the user to accept/edit/reject them.
 
-## What interview must achieve
+### Imagery suggestion rule
 
-1. Discover what the user actually wants before code locks assumptions.
-2. Choose the **domain pack** (which skill family / MCP stack), not a universal Studio tax.
-3. For design/visual work only, confirm craft depth.
-4. Persist enough state for another session/provider/machine to resume.
+Never ask only “Do you want images?”. Explain the intended visual role/density. Example: “I’d make this product-led with 2–3 large real screenshots and almost no stock photography; okay?”.
 
-## Domain packs (skill families)
+## Domain packs
 
-Recommend one primary pack from: engineering, frontend, design, backend, data, product, writing, release, research, or a user role (`role:…`).
+Recommend one primary pack from engineering, frontend, design, backend, data, product, writing, release, research or a user role. Load always-core + that family/task only, not every skill.
 
-Load **always_core + that family’s skills only**. Never load the design studio stack for pure backend work.
+**Public visual surfaces are design-primary** even if the generic router labels them frontend or marketing. Implementation technology does not decide art direction.
 
-If the user assigns a role (“act as a finance expert”), scope skills to that role plus always_core; use `find-skills` / marketplace when local coverage is missing.
+If the user assigns a specialist role, scope skills to that role + core and discover missing coverage rather than inventing it.
 
-## Craft depth — design/visual only
+## Craft depth and spend
 
-| Level | When |
-|---|---|
-| **Standard** | Ordinary UI fixes/components; clean and usable |
-| **Polished** | Public-facing UI, stronger polish/states/responsive QA |
-| **Studio** | Flagship visual/concept work; competition/critique welcome |
+Craft depth applies only to visual/design work:
 
-Do **not** ask Standard/Polished/Studio for APIs, infra, pure logic, or docs unless there is a real visual surface.
+- **Standard**: ordinary UI maintenance/components;
+- **Polished**: public-facing work with stronger states/responsive/craft QA;
+- **Studio**: flagship concepts; default recommendation for greenfield public surfaces and total redesigns.
 
-## Spend posture (optional, soft)
+For non-design thoroughness, lean/normal/thorough may be used as a soft spend posture. Do not present fixed historical token ranges as universal truth.
 
-If thoroughness is ambiguous for non-design work, recommend **lean / normal / thorough** as soft main-agent rigor — not a multi-agent quota and not fixed token ranges.
+## Specialist/delegation questions
 
-## Token estimates
+Do not force multi-agent ceremony, but treat these as legitimate benefits rather than excuses to stay direct:
 
-Use router/`token_estimate` style project-aware envelopes:
+- large documentation/reference reading;
+- independent visual research angles;
+- concept competition;
+- fresh-context critique;
+- independent packages/domains.
 
-- risk, complexity, domain pack, topology, specialists/critic, craft depth if any
-- say they are rough and provider-dependent
-- never present the old fixed tables as authoritative billing
-
-## Build the complete interview batch
-
-Possible dimensions (only relevant ones):
-
-- outcome/problem;
-- audience;
-- success criteria;
-- scope/non-goals;
-- UX / visual personality (if visual);
-- architecture/integration tradeoffs the user owns;
-- risk/reversibility;
-- domain pack / role;
-- craft depth **if design/visual**;
-- whether independent critique or specialists are expected (Architect may still require critic for large structural plans).
-
-Do not ask stack, package versions, routes, or other tool-discoverable facts.
-
-## Question format
-
-```text
-INTERVIEW — material decisions in one round.
-
-1. Outcome
-   Recommendation: ...
-   Question: ...
-
-2. Domain pack
-   Recommendation: backend (+ verification). Load only API/data skills, not design studio.
-   Question: Confirm or switch pack?
-
-3. Craft depth
-   (omit entirely if not design/visual)
-   Recommendation: Polished for this landing.
-   Question: Standard / Polished / Studio?
-
-4. Rough cost
-   Recommendation: ~40k-120k total model tokens for this repo/task (project-aware; not a bill).
-   Question: Any spend ceiling?
-```
+Studio greenfield/total public design normally warrants independent research/concept work plus a critic. The user does not need to request “multiple agents”.
 
 ## Small product changes
 
-If only one or two decisions exist, ask both at once. Skip craft depth when irrelevant.
+If only one or two genuine user decisions exist, ask both in one short round. Do not manufacture a 14-question interview for a two-line UI fix.
 
-## Critic and specialists
+## After answers
 
-Do not use interview to force multi-agent. The Architect:
-
-- spawns specialists when ordinary language or structure shows benefit;
-- always schedules an independent critic for large structural plans;
-- may push back if the user asks for many agents without independence.
-
-## Restate + persistence gate
-
-After answers:
-
-1. resolve contradictions;
-2. follow-up only for new material decisions;
-3. restate confirmed intent;
-4. persist per `docs/PROJECT_CONTINUITY.md` **before implementation**.
-
-Capture at least:
-
-```text
-Outcome: ...
-Audience: ...
-Success: ...
-Constraints: ...
-Out of scope: ...
-Domain pack: backend
-Craft depth: n/a (not design)
-Spend: normal
-Token estimate: ~40k-120k (project-aware)
-Critic: required for architecture plan
-```
-
-## Stop condition
-
-- material user decisions answered;
-- design craft depth confirmed **when applicable**;
-- domain pack clear;
-- state persistable for a fresh agent.
+1. Resolve contradictions.
+2. Restate confirmed intent and defaults the user accepted.
+3. Persist state per `docs/PROJECT_CONTINUITY.md` before implementation.
+4. Capture outcome, audience, success criteria, constraints/non-goals, domain pack, applicable craft depth/spend, rough token estimate and critic/specialist expectations.
+5. For public greenfield/total redesign additionally persist brand preserve/replace decisions, visual directions, copy ownership/messages, imagery/assets strategy, IA/story, proof material, motion tolerance and references/dislikes.
+6. Hand that state to research/art-direction stages; do not silently re-decide it during coding.
 
 ## Mid-task escalation
 
-If scope grows, ask before expanding spend. Safety/correctness may force extra work — disclose it.
+If scope grows enough to materially change spend, topology or user-owned tradeoffs, surface the change before expanding work. Correctness requirements may force extra work; disclose why.
 
 ## Non-interactive contexts
 
-Do not fake interviews in CI/autonomous contexts. Block rather than guess unresolved product decisions.
+Do not simulate a fake interview in CI/autonomous execution. When unresolved product decisions materially affect the result, stop at a clear decision boundary rather than silently guessing them.
+
+## Stop condition
+
+A fresh agent can continue from persisted state without inventing material intent. For greenfield/total visual work, copy strategy, imagery strategy and preservation/replacement scope are explicit enough to create a concrete `DESIGN_DIRECTION`.
 
 ## Anti-patterns
 
-- asking Studio/Polished/Standard for non-design work;
-- fixed token ranges as if universal truth;
-- powerwords or jargon gates;
-- loading every skill family;
-- one known question per message;
+- one known question per turn;
+- asking only “what vibe?”;
+- asking the user to write all critical copy from scratch;
+- yes/no imagery questions with no recommendation;
+- asking stack/version facts the repo can answer;
+- craft depth questions for non-visual work;
+- fixed token tables presented as billing truth;
 - implementation before persisting intent;
-- silent huge spend escalation.
+- silent large spend escalation;
+- treating multi-agent jargon as a powerword.
 
 ## Verification checklist
 
-- [ ] Mechanical vs product classified.
-- [ ] Facts inspected before questions.
-- [ ] One batch of material decisions.
-- [ ] Domain pack recommended; craft depth only if design/visual.
-- [ ] Project-aware token estimate (rough).
-- [ ] Intent persisted before implementation.
+- [ ] Mechanical vs product-affecting classified.
+- [ ] Discoverable facts inspected first.
+- [ ] All material questions asked in one batch.
+- [ ] Recommendation/default attached to each question.
+- [ ] Domain pack recommended; craft depth only when visual.
+- [ ] Greenfield/total visual work received copy + imagery + preserve/replace questions.
+- [ ] Rough project-aware token estimate supplied.
+- [ ] Confirmed intent persisted before implementation.

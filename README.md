@@ -151,6 +151,34 @@ Multi-agent execution is an optimization, never a correctness dependency.
 
 ---
 
+## Provider-neutral capability resolution
+
+Specialists declare stable `required` and `preferred` capability IDs such as
+`repository.read`, `design.inspect`, or `browser.inspect`. Agentit resolves those
+IDs against an explicit host inventory using ordered ChatGPT app, MCP, CLI, and
+local fallbacks.
+
+```text
+specialist -> capabilities -> explicit available providers -> scoped grants
+```
+
+No inventory means no assumed grant. Delegated workers receive only the selected
+capability/provider permissions, and an explicit unresolved required capability
+fails the pre-spawn gate. Resolution is plan-only: Agentit does not install,
+authenticate, enable, or call providers.
+
+```bash
+./agentit capabilities resolve \
+  --specialist frontend-developer \
+  --host codex \
+  --available mcp.github,local.filesystem,mcp.playwright
+```
+
+See [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) for the catalog, inventory
+contract, fallbacks, least-privilege envelope, and extension guide.
+
+---
+
 ## UI/UX Pro Max intelligence
 
 Agentit's design profile includes `ui-ux-pro-max-intelligence`, a provider-neutral JIT adapter for the MIT-licensed upstream [`nextlevelbuilder/ui-ux-pro-max-skill`](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill).

@@ -20,6 +20,7 @@ Antes de actuar debes conocer:
 - objetivo exacto, alcance y definición de terminado;
 - instrucciones de proyecto proyectadas (`AGENTS.md` / `CLAUDE.md` / `CODEX.md`…);
 - skills activas **solo para esta tarea** (no el catálogo completo);
+- capability envelope: usa solo los providers y permisos seleccionados;
 - preferencias de usuario aplicables (estilo/herramientas; sin secretos);
 - clasificación de riesgo y acciones prohibidas (commits/push/externo por defecto);
 - archivos o artefactos de entrada y ownership de escritura;

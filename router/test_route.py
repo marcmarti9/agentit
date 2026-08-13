@@ -456,6 +456,26 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertEqual(result["topology"], "direct")
         self.assertNotEqual(result["topology"], "probe")
 
+    def test_frontend_route_derives_capabilities_from_semantic_specialist(self):
+        result = route_task(
+            "Implementa una interfaz responsive en React",
+            home=self.home,
+            provider_host="codex",
+            available_providers=["mcp.github", "local.filesystem"],
+        )
+
+        self.assertIn("frontend-developer", result["specialists"])
+        self.assertIn("repository.read", result["capabilities"]["required"])
+        self.assertEqual(
+            "mcp.github",
+            next(
+                grant["provider"]
+                for grant in result["capability_envelope"]["grants"]
+                if grant["capability"] == "repository.read"
+            ),
+        )
+        self.assertTrue(result["capability_envelope"]["least_privilege"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -50,6 +50,7 @@ Independence, coupling, context gain, real parallel speedup, specialty, risk red
 # Worker contract
 
 Every spawn goes through Worker Context Contract (`agentit worker build`). One writer per file. No full catalog dumps.
+Resolve the specialist capability envelope from explicit host inventory. Expose only selected providers and catalog permissions to the worker.
 
 # MCP
 

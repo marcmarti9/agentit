@@ -21,8 +21,8 @@ class RouterEvaluationTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         report = json.loads(completed.stdout)
-        self.assertEqual(14, report["total"])
-        self.assertEqual(14, report["passed"])
+        self.assertEqual(15, report["total"])
+        self.assertEqual(15, report["passed"])
         self.assertEqual(0, report["failed"])
         self.assertFalse(report["confidence_calibrated"])
 

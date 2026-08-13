@@ -39,6 +39,7 @@ El contrato incluye:
 - tarea exacta, alcance y criterio de terminado;
 - instrucciones de proyecto proyectadas;
 - skills de la tarea (no el catálogo global);
+- capability envelope mínimo resuelto para el especialista;
 - preferencias aplicables y constraints de riesgo;
 - archivos de entrada y escritura permitidos;
 - artefactos referenciados;

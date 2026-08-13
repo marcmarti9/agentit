@@ -35,6 +35,8 @@ def evaluate_case(
         case["prompt"],
         registry_path=registry_path,
         home=home,
+        provider_host=case.get("provider_host", "local"),
+        available_providers=case.get("available_providers"),
     )
     expected = case["expected"]
     mismatches: dict[str, dict[str, Any]] = {}
@@ -57,6 +59,13 @@ def evaluate_case(
         elif field == "jit_profiles_excludes":
             actual_value = result.get("jit_profile_recommendations", [])
             passed = expected_value not in actual_value
+        elif field == "capability_provider_for":
+            grants = {
+                grant["capability"]: grant["provider"]
+                for grant in result.get("capability_envelope", {}).get("grants", [])
+            }
+            actual_value = grants
+            passed = all(grants.get(capability) == provider for capability, provider in expected_value.items())
         else:
             actual_value = result.get(field)
             passed = actual_value == expected_value

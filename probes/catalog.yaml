@@ -16,7 +16,7 @@ probes:
     severity: blocking
     signals_any: [python, node, dart, rust, go, any]
     kind: detect_command
-    description: "Run the project's own test command when detectible (pytest, npm test, flutter test, cargo test, go test)."
+    description: "Run the project's own test command when detectible (pytest/unittest, npm test, flutter test, cargo test, go test)."
     evidence: "full test command output, 0 failures"
     detectors:
       - when: ["pubspec.yaml"]

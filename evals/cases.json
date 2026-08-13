@@ -80,6 +80,23 @@
     }
   },
   {
+    "id": "frontend_capability_cli_fallback",
+    "prompt": "Implementa una interfaz responsive en React",
+    "provider_host": "codex",
+    "available_providers": ["cli.git", "local.filesystem"],
+    "expected": {
+      "risk": "RISK_2",
+      "category": "frontend",
+      "topology": "direct",
+      "specialists": ["frontend-developer"],
+      "capability_provider_for": {
+        "repository.read": "cli.git",
+        "filesystem.read": "local.filesystem",
+        "filesystem.write": "local.filesystem"
+      }
+    }
+  },
+  {
     "id": "production_restore_audit",
     "prompt": "Elimina la tabla de producción y restaura el backup",
     "expected": {

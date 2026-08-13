@@ -1,0 +1,190 @@
+# Provider-neutral capability catalog. Availability/auth is runtime inventory,
+# never inferred from this file.
+schema_version: 1
+policy:
+  provider_neutral: true
+  explicit_inventory_required: true
+  least_privilege: true
+  selection: first_available_host_compatible
+  auto_install: false
+  auto_enable: false
+  notes: |
+    Capability IDs are the stable contract. Provider bindings are ordered
+    fallbacks, not grants. A host must supply an explicit inventory before a
+    binding can be selected. Selected permissions are capability-scoped.
+
+providers:
+  chatgpt.github: {kind: chatgpt_app, name: GitHub, hosts: [chatgpt]}
+  chatgpt.figma: {kind: chatgpt_app, name: Figma, hosts: [chatgpt]}
+  chatgpt.canva: {kind: chatgpt_app, name: Canva, hosts: [chatgpt]}
+  chatgpt.data-analytics: {kind: chatgpt_app, name: Data Analytics, hosts: [chatgpt]}
+  chatgpt.documents: {kind: chatgpt_app, name: Documents, hosts: [chatgpt]}
+  chatgpt.google-drive: {kind: chatgpt_app, name: Google Drive, hosts: [chatgpt]}
+  chatgpt.gmail: {kind: chatgpt_app, name: Gmail, hosts: [chatgpt]}
+  chatgpt.google-calendar: {kind: chatgpt_app, name: Google Calendar, hosts: [chatgpt]}
+  chatgpt.google-contacts: {kind: chatgpt_app, name: Google Contacts, hosts: [chatgpt]}
+  chatgpt.pdf: {kind: chatgpt_app, name: PDF, hosts: [chatgpt]}
+  chatgpt.gamma: {kind: chatgpt_app, name: Gamma, hosts: [chatgpt]}
+  chatgpt.descript: {kind: chatgpt_app, name: Descript, hosts: [chatgpt]}
+  chatgpt.binance: {kind: chatgpt_app, name: Binance, hosts: [chatgpt]}
+  chatgpt.default-templates: {kind: chatgpt_app, name: Default templates, hosts: [chatgpt]}
+  mcp.github: {kind: mcp, name: GitHub MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.figma: {kind: mcp, name: Figma MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.playwright: {kind: mcp, name: Playwright MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.chrome-devtools: {kind: mcp, name: Chrome DevTools MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.context7: {kind: mcp, name: Context7 MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.postgres: {kind: mcp, name: PostgreSQL MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.supabase: {kind: mcp, name: Supabase MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.linear: {kind: mcp, name: Linear MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.notion: {kind: mcp, name: Notion MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.slack: {kind: mcp, name: Slack MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  mcp.sentry: {kind: mcp, name: Sentry MCP, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  cli.git: {kind: cli, name: git CLI, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  cli.gh: {kind: cli, name: GitHub CLI, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  cli.python: {kind: cli, name: Python runtime, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  local.filesystem: {kind: local, name: Scoped filesystem, hosts: [claude, codex, cursor, grok, antigravity, local]}
+  local.browser: {kind: local, name: Local browser automation, hosts: [claude, codex, cursor, grok, antigravity, local]}
+
+capabilities:
+  repository.read:
+    description: Read repository content and history.
+    implementations:
+      - {provider: chatgpt.github, permissions: [repository:read]}
+      - {provider: mcp.github, permissions: [repository:read]}
+      - {provider: cli.git, permissions: [repository:read]}
+      - {provider: local.filesystem, permissions: [filesystem:read]}
+  repository.write:
+    description: Change repository content or collaboration state.
+    implementations:
+      - {provider: chatgpt.github, permissions: [repository:write]}
+      - {provider: mcp.github, permissions: [repository:write]}
+      - {provider: cli.gh, permissions: [repository:write]}
+      - {provider: local.filesystem, permissions: [filesystem:write]}
+  filesystem.read:
+    description: Read files inside explicitly allowed roots.
+    implementations:
+      - {provider: local.filesystem, permissions: [filesystem:read]}
+  filesystem.write:
+    description: Write files inside explicitly allowed roots.
+    implementations:
+      - {provider: local.filesystem, permissions: [filesystem:write]}
+  design.inspect:
+    description: Inspect design files, components, tokens, and layout context.
+    implementations:
+      - {provider: chatgpt.figma, permissions: [design:read]}
+      - {provider: mcp.figma, permissions: [design:read]}
+      - {provider: chatgpt.canva, permissions: [design:read]}
+  design.edit:
+    description: Create or modify design artifacts.
+    implementations:
+      - {provider: chatgpt.figma, permissions: [design:write]}
+      - {provider: mcp.figma, permissions: [design:write]}
+      - {provider: chatgpt.canva, permissions: [design:write]}
+  browser.inspect:
+    description: Inspect rendered UI, accessibility, console, and network state.
+    implementations:
+      - {provider: mcp.chrome-devtools, permissions: [browser:read]}
+      - {provider: mcp.playwright, permissions: [browser:read]}
+      - {provider: local.browser, permissions: [browser:read]}
+  browser.automate:
+    description: Interact with a browser in an isolated or test session.
+    implementations:
+      - {provider: mcp.playwright, permissions: [browser:interact]}
+      - {provider: local.browser, permissions: [browser:interact]}
+  documentation.read:
+    description: Read source-backed technical or product documentation.
+    implementations:
+      - {provider: mcp.context7, permissions: [documentation:read]}
+      - {provider: chatgpt.documents, permissions: [documents:read]}
+      - {provider: chatgpt.google-drive, permissions: [drive:read]}
+      - {provider: chatgpt.pdf, permissions: [pdf:read]}
+      - {provider: local.filesystem, permissions: [filesystem:read]}
+  documents.write:
+    description: Create or update document artifacts.
+    implementations:
+      - {provider: chatgpt.documents, permissions: [documents:write]}
+      - {provider: chatgpt.google-drive, permissions: [drive:write]}
+      - {provider: local.filesystem, permissions: [filesystem:write]}
+  data.analyze:
+    description: Analyze structured data and produce reproducible results.
+    implementations:
+      - {provider: chatgpt.data-analytics, permissions: [data:analyze]}
+      - {provider: cli.python, permissions: [runtime:execute]}
+  database.read:
+    description: Inspect database schema and query data with read scope.
+    implementations:
+      - {provider: mcp.supabase, permissions: [database:read]}
+      - {provider: mcp.postgres, permissions: [database:read]}
+  database.write:
+    description: Apply database mutations explicitly authorized by the task.
+    implementations:
+      - {provider: mcp.supabase, permissions: [database:write]}
+      - {provider: mcp.postgres, permissions: [database:write]}
+  mail.read:
+    description: Search and read mail.
+    implementations:
+      - {provider: chatgpt.gmail, permissions: [mail:read]}
+  mail.send:
+    description: Send or modify mail after explicit user authorization.
+    implementations:
+      - {provider: chatgpt.gmail, permissions: [mail:write]}
+  calendar.read:
+    description: Read calendars and event availability.
+    implementations:
+      - {provider: chatgpt.google-calendar, permissions: [calendar:read]}
+  calendar.write:
+    description: Create or modify calendar events after explicit authorization.
+    implementations:
+      - {provider: chatgpt.google-calendar, permissions: [calendar:write]}
+  contacts.read:
+    description: Read contact records required by the task.
+    implementations:
+      - {provider: chatgpt.google-contacts, permissions: [contacts:read]}
+  presentation.create:
+    description: Create or edit presentation artifacts.
+    implementations:
+      - {provider: chatgpt.gamma, permissions: [presentations:write]}
+      - {provider: chatgpt.canva, permissions: [design:write]}
+      - {provider: chatgpt.default-templates, permissions: [templates:read]}
+  media.edit:
+    description: Create or edit audio and video media.
+    implementations:
+      - {provider: chatgpt.descript, permissions: [media:write]}
+      - {provider: chatgpt.canva, permissions: [design:write]}
+  finance.market.read:
+    description: Read current digital-asset market and account-independent data.
+    implementations:
+      - {provider: chatgpt.binance, permissions: [market:read]}
+  issue.read:
+    description: Read issues, roadmaps, and work tracking context.
+    implementations:
+      - {provider: mcp.linear, permissions: [issues:read]}
+      - {provider: mcp.github, permissions: [issues:read]}
+      - {provider: mcp.notion, permissions: [documents:read]}
+  issue.write:
+    description: Create or modify tracked work after explicit authorization.
+    implementations:
+      - {provider: mcp.linear, permissions: [issues:write]}
+      - {provider: mcp.github, permissions: [issues:write]}
+      - {provider: mcp.notion, permissions: [documents:write]}
+  collaboration.read:
+    description: Read bounded team communication context.
+    implementations:
+      - {provider: mcp.slack, permissions: [messages:read]}
+  observability.read:
+    description: Inspect errors, traces, logs, and deployment health.
+    implementations:
+      - {provider: mcp.sentry, permissions: [observability:read]}
+      - {provider: cli.gh, permissions: [actions:read]}
+  deployment.inspect:
+    description: Inspect deployment configuration and state.
+    implementations:
+      - {provider: cli.gh, permissions: [actions:read]}
+  deployment.manage:
+    description: Change deployment state after explicit authorization.
+    implementations:
+      - {provider: cli.gh, permissions: [actions:write]}
+  runtime.execute:
+    description: Run bounded local analysis or verification commands.
+    implementations:
+      - {provider: cli.python, permissions: [runtime:execute]}

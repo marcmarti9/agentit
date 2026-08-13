@@ -43,5 +43,8 @@ jobs:
       - name: Validate profile catalog
         run: python3 -c "import yaml; yaml.safe_load(open('profiles.yaml', encoding='utf-8'))"
 
+      - name: Validate capability catalog
+        run: python3 -c "from router.capabilities import load_capability_catalog; load_capability_catalog()"
+
       - name: Run router regression evals
         run: python3 evals/run.py

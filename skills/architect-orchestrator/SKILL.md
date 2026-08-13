@@ -1,117 +1,103 @@
 ---
 name: architect-orchestrator
-description: Intelligent orchestration after interview. Domain packs, skill budgets, specialist spawn without hard caps, mandatory critic for large plans. No powerwords.
+description: Intelligent orchestration after interview. Delegate for expertise, independence, context isolation and critique; public visual work gets a design pipeline.
 ---
 
 # Adaptive Agent Architecture
 
-## Core rule
+The Architect owns the user relationship, decomposition, judgment, integration and final answer. Multi-agent is neither mandatory nor a fallback: use it whenever it materially improves outcome, context hygiene or independent judgment.
 
-Agentit is **interview-first for product work** and **intelligent about delegation**.
-
-A capable main agent (Architect) owns the user relationship, decomposition, integration, and final answer. Multi-agent is used when it improves outcomes — not by ceremony, not forbidden by dogma.
-
-No powerwords. Ordinary task language is enough. Only natural Agentit activation is special-cased.
-
-Before topology:
+## Before topology
 
 1. mechanical vs product-affecting;
-2. product work → `interview-me`;
-3. domain pack from router/profiles (not universal Studio);
-4. craft depth only if design/visual;
-5. project-aware token estimate from router.
+2. product work -> load and run `interview-me`;
+3. choose domain pack;
+4. craft depth only for visual/design work;
+5. ensure selected skill **bodies** are actually loaded, not just their IDs;
+6. choose topology based on dependencies + useful independence.
 
-## Axes (not one effort dial)
+## No single-agent gravity
 
-| Axis | Meaning |
-|---|---|
-| Domain pack | Which skill family + MCP stack |
-| Craft depth | standard/polished/studio — **design only** |
-| Spend | lean/normal/thorough — soft main-agent rigor |
-| Delegation | advisory recommended specialists; **no hard caps** |
+Do not ask only “can one agent do this?”. Ask “does isolation or independent work improve this?”. Valid reasons to delegate include:
 
-## Skill loading
+- independent packages/files/domains;
+- large documentation or reference sets that would crowd parent context;
+- several research hypotheses/lenses;
+- different expertise/tools;
+- creative concept diversity;
+- independent critique/review.
 
-```
-always_core (tiny) + skill_budget.load_now (≤3–4 bodies)
-never full catalog into parent or worker
-```
+A strong parent model should spend scarce context on synthesis and hard decisions. When capable workers exist, use them for high-volume reading/research and require bounded receipts/evidence. The parent verifies and integrates; it does not blindly trust summaries.
 
-If the user assigns a role, load that domain only (+ core). Gaps → `find-skills` / marketplace.
-
-## MCP
-
-Run `mcp-tooling-fit` when tools matter: inventory, fit, disable noise, discover catalog/marketplace/web, plan install with user OK.
+Do not hardcode provider model names into portable policy. Provider adapters map semantic tiers: judgment-heavy parent, capable research/implementation worker, independent critic.
 
 ## Topologies
 
-1. **Direct** — coupled single-thread work
-2. **Plan + direct** — broad but sequential
-3. **Probe** — read-only investigation
-4. **Fan-out** — independent packages/files/domains
-5. **Pipeline** — ordered stages (e.g. research → implement)
-6. **Writer + reviewers** — one writer, independent review
-7. **Design competition** — multiple concepts (usually studio craft)
-8. **Orchestrated DAG** — multi-package dependencies
-9. **Audit** — high-risk independent review
+- `direct`: tightly coupled single-thread work with no material isolation benefit;
+- `probe`: read-only investigation;
+- `fan_out`: independent research/packages/concepts;
+- `pipeline`: dependent stages, e.g. research -> direction -> implementation;
+- `writer_reviewer`: one owner + fresh review;
+- `audit`: high-impact independent review;
+- design competition: independent concepts followed by explicit jury;
+- DAG: multi-package dependencies when needed.
 
-Router JSON fields: `topology`, `subagents`, `parallelism`, `critic_required`, `domain_pack`, `skill_budget`, `token_estimate`.
+`subagents.recommended` is soft guidance. No hard min/max quotas.
 
-## Delegation test
+## Public visual pipeline
 
-Spawn when at least one is true:
+A public landing/homepage/company or brand website/portfolio/storefront, especially greenfield or total redesign, is design-primary.
 
-- real independence / parallel speedup;
-- context isolation for large research/logs;
-- distinct expertise or tools;
-- creative diversity;
-- independent risk reduction or **critique**.
+Greenfield/total Studio default shape:
 
-If none, stay single-agent. If the user demands multi-agent without benefit, explain and recommend not spawning.
+1. deep recommendation-led interview;
+2. live reference research, optionally fan-out by independent lens;
+3. **3 genuinely different concepts** in Studio (2 can be enough for Polished uncertainty);
+4. Architect judges against brief + research + constraints;
+5. write one `DESIGN_DIRECTION` contract;
+6. one final implementation owner consumes that direction;
+7. fresh independent design critic;
+8. desktop/mobile browser verification.
 
-## Critic gate (mandatory)
+Concepts differ in visual thesis, composition, typography/imagery and narrative/interaction—not palette swaps.
 
-For large structural plans, architecture proposals, multi-module migrations, or high-impact sensitive implementation:
+## Skill loading
 
-1. Architect drafts the plan/artifact;
-2. **Independent critic subagent** (fresh context, read-only) challenges assumptions, coupling, missing risks, simpler alternatives;
-3. Architect integrates critique before implementation commitment.
+Use `always_core + task/stage skills`, never the whole catalog. But “smallest useful” does not mean dropping art direction from a public website.
 
-Do not self-grade as a substitute when isolation is available.
+A route/profile/worker containing a skill name is not evidence the skill ran. Before a stage relies on a skill, its model must read/receive the `SKILL.md` body or provider-native loading must provide equivalent evidence. Keep a load receipt when possible.
 
-## Budgets
+## Worker contract
 
-- **No hard min/max** subagent counts.
-- `subagents.recommended` is guidance from the router.
-- One writer per file/shared state; parallel writers need worktrees/branches.
-- Default child depth: one generation.
+Every spawn receives objective, scope, role, project/user instructions, actual task-scoped skill bodies, ownership, expected output/evidence, verification and stop condition. One writer per shared file/state unless isolation gives explicit ownership.
 
-## Provider-neutral execution
+Workers return findings/receipts. Architect owns acceptance, contradictions, concept selection and integration.
 
-1. native subagent/worker
-2. isolated delegated model call
-3. fresh-context invocation
-4. parent + same skill bundle
+## Critic gate
 
-Multi-agent is never a correctness dependency.
+Use a fresh independent critic for:
 
-## Worker Context Contract
+- large structural/high-impact plans;
+- architecture/migration decisions where isolation improves review;
+- Studio greenfield public visual work;
+- total visual redesigns.
 
-Every spawn: objective, domain pack, effort/craft if any, projected project instructions, task skills only, risk, I/O ownership, output, verification, stop condition.
+For visual work the critic checks hierarchy, composition, type, imagery, motion, direction fidelity, generic AI-template signals, cardification/container abuse, repeated section silhouettes, responsive behavior and whether reference research visibly affected the design.
 
-Precedence: `safety > user > project > preferences > defaults`.
+## Stop spawning when
 
-## Verification
-
-Correctness floor is independent of craft depth. RISK_3/4: fuller tests + independent review. Visual craft depth controls how deep UI QA goes.
+- branches are no longer independent;
+- coordination cost exceeds context/expertise benefit;
+- multiple workers would write the same state;
+- the remaining work is a tightly coupled integration decision owned by the Architect.
 
 ## Anti-patterns
 
-- Studio/Polished for non-design tasks
-- fixed token bills
-- powerwords
-- loading full skill catalogs
-- forced multi-agent or forced single-agent
-- skipping critic on large structural plans
-- multiple writers on shared state
-- unbounded correction loops
+- forced single-agent because “one model can do it”;
+- workers for show;
+- parent serially reading a massive corpus without considering isolation;
+- skill IDs without bodies;
+- concept competition where every result is the same template;
+- multiple writers on shared state;
+- skipping fresh critique on flagship/total visual work;
+- unbounded correction loops.

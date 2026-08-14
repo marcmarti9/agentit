@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sys
@@ -81,6 +82,31 @@ def _print(payload: Any) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
+def _bind_graph_nodes(spec_path: Path, spec: dict[str, Any]) -> list[dict[str, Any]]:
+    raw_nodes = spec.get("nodes") or []
+    if not isinstance(raw_nodes, list):
+        raise RuntimeCLIError("graph spec nodes must be a list")
+    bound: list[dict[str, Any]] = []
+    for raw in raw_nodes:
+        if not isinstance(raw, dict):
+            raise RuntimeCLIError("graph nodes must be objects")
+        node = copy.deepcopy(raw)
+        if node.get("loop_contract_sha256"):
+            bound.append(node)
+            continue
+        loop_state = str(node.pop("loop_state", "") or "").strip()
+        if not loop_state:
+            raise RuntimeCLIError(f"graph node {node.get('id')} requires loop_state or loop_contract_sha256")
+        loop_path = Path(loop_state)
+        if not loop_path.is_absolute():
+            loop_path = (spec_path.parent / loop_path).resolve()
+        loop = _load(loop_path)
+        validate_loop(loop)
+        node["loop_contract_sha256"] = loop["contract_sha256"]
+        bound.append(node)
+    return bound
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Persistent Agentit Loop/Graph runtime")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -102,6 +128,7 @@ def main(argv: list[str] | None = None) -> int:
 
     loop_check = sub.add_parser("loop-check")
     loop_check.add_argument("--state", type=Path, required=True)
+    loop_check.add_argument("--receipt", type=Path, default=None)
 
     graph_init = sub.add_parser("graph-init")
     graph_init.add_argument("--state", type=Path, required=True)
@@ -123,11 +150,17 @@ def main(argv: list[str] | None = None) -> int:
 
     graph_check = sub.add_parser("graph-check")
     graph_check.add_argument("--state", type=Path, required=True)
+    graph_check.add_argument("--receipt", type=Path, default=None)
 
     args = parser.parse_args(argv)
     try:
         if args.command == "loop-init":
-            state = new_loop(goal=args.goal, verifier=args.verifier, stop_condition=args.stop, max_attempts=args.max_attempts)
+            state = new_loop(
+                goal=args.goal,
+                verifier=args.verifier,
+                stop_condition=args.stop,
+                max_attempts=args.max_attempts,
+            )
             _write_atomic(args.state, state)
             _print({"status": state["status"], "contract_sha256": state["contract_sha256"], "state": str(args.state)})
             return 0
@@ -143,8 +176,7 @@ def main(argv: list[str] | None = None) -> int:
                 artifacts=args.artifact,
             )
             _write_atomic(args.state, state)
-            receipt = loop_receipt(state)
-            _print({"status": state["status"], "receipt": receipt})
+            _print({"status": state["status"], "receipt": loop_receipt(state)})
             return 0
 
         if args.command == "loop-check":
@@ -152,12 +184,15 @@ def main(argv: list[str] | None = None) -> int:
             validate_loop(state)
             receipt = loop_receipt(state)
             validate_loop_receipt(receipt, require_passed=True)
+            if args.receipt:
+                _write_atomic(args.receipt, receipt)
             _print({"passed": True, "receipt": receipt})
             return 0
 
         if args.command == "graph-init":
             spec = _load(args.spec)
-            state = new_graph(spec.get("nodes") or [])
+            nodes = _bind_graph_nodes(args.spec.resolve(), spec)
+            state = new_graph(nodes)
             _write_atomic(args.state, state)
             _print({"status": state["status"], "ready": ready_nodes(state), "contract_sha256": state["contract_sha256"], "state": str(args.state)})
             return 0
@@ -187,7 +222,10 @@ def main(argv: list[str] | None = None) -> int:
             validate_graph(state)
             if state.get("status") != "passed":
                 raise RuntimeCLIError(f"graph is not passed: {state.get('status')}")
-            _print({"passed": True, "receipt": graph_receipt(state)})
+            receipt = graph_receipt(state)
+            if args.receipt:
+                _write_atomic(args.receipt, receipt)
+            _print({"passed": True, "receipt": receipt})
             return 0
 
         raise RuntimeCLIError(f"unsupported command: {args.command}")

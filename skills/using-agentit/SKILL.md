@@ -1,6 +1,6 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. Natural Agentit activation; route, load real skill bodies, delegate intelligently, critique, verify, PR-first.
+description: Activate Agentit end-to-end. Interview, route, load real skills, enforce Loop/Graph runtime, delegate intelligently, critique, verify, PR-first.
 ---
 
 # Using Agentit
@@ -18,6 +18,7 @@ When running from the normal harness checkout, use the repository as source of t
 - harness root: `~/code/agentit`;
 - router: `~/code/agentit/router/route.py`;
 - skills: `~/code/agentit/skills/<id>/SKILL.md`;
+- runtime CLI: `~/code/agentit/router/runtime_cli.py`;
 - specialist catalog: `~/code/agentit/agents/catalog.yaml`;
 - profiles: `~/code/agentit/profiles.yaml`;
 - project continuity: `<project>/docs/agentit/STATE.md` plus `docs/PROJECT_CONTINUITY.md` policy.
@@ -32,11 +33,12 @@ A provider may expose equivalent installed/project-local paths; use the actual r
 4. Route risk/topology/domain. Apply the public-visual correction below when relevant.
 5. Load **actual skill bodies** for `always_core + load_now`; IDs alone are not activation.
 6. Use tools/MCPs only when they fit the task.
-7. Execute with intelligent delegation; do not optimize for single-agent as an ideology.
-8. Independent critic for large structural/high-impact plans and Studio greenfield/total visual redesigns.
-9. Verify with fresh evidence; visual claims require rendered evidence.
-10. PR-first for repository changes unless explicitly overridden.
-11. Keep continuity state current on long/multi-stage work.
+7. Materialize execution runtime: every executable unit gets a bounded Loop Contract; multi-node work also gets a validated Graph Contract.
+8. Execute with intelligent delegation; do not optimize for single-agent as an ideology.
+9. Independent critic for large structural/high-impact plans and Studio greenfield/total visual redesigns.
+10. Accept completion only from runtime receipts + fresh evidence; visual claims also require rendered evidence.
+11. PR-first for repository changes unless explicitly overridden.
+12. Keep continuity state current on long/multi-stage work.
 
 ## Domain packs
 
@@ -44,11 +46,41 @@ Choose one primary family per task/stage: engineering, frontend, design, backend
 
 Craft depth Standard/Polished/Studio applies only to visual/design work. Lean/normal/thorough may describe non-design rigor separately.
 
+## Runtime enforcement: Loop + Graph Engineering
+
+These are runtime contracts, not optional methodology prose.
+
+### Loop Engineering
+
+Every executable unit—including direct single-agent work with a verifiable outcome—declares before action:
+
+- observable goal;
+- verifier;
+- stop condition;
+- bounded attempt budget (default 2 total attempts = 1 automatic retry);
+- escalation boundary.
+
+Persist loop state under ignored `.agentit/runtime/loops/` using `router/runtime_cli.py`. Every attempt records pass/fail, strategy and **actual empirical evidence**. A retry must contain fresh evidence or an alternative strategy. Never weaken the verifier to create an artificial pass.
+
+`loop-check` must succeed before the unit is considered complete. Its `Loop Receipt` is mandatory evidence. A narrative claim such as “done”, “fixed” or “looks good” is not a replacement.
+
+### Graph Engineering
+
+When work has more than one execution node, materialize a DAG under `.agentit/runtime/` before spawning. Each node declares dependencies, exclusive write ownership and expected handoff artifacts where relevant.
+
+`graph-init` must validate before execution. The runtime rejects cycles, unknown/self dependencies, unsafe paths and overlapping write ownership. Spawn only node IDs returned by `graph-ready`.
+
+A graph node unlocks dependents only through `graph-complete` with a **passed Loop Receipt**. Missing expected artifacts block the handoff. A blocked/escalated node is recorded with `graph-block`; do not silently route around it.
+
+Final multi-node completion requires `graph-check` success and a Graph Receipt. Direct work requires a passed Loop Receipt. These receipts are the acceptance gate across providers.
+
+This runtime rule applies whether the topology is implementation, research, design competition, writer/reviewer, audit or documentation fan-out.
+
 ## Public visual quality floor
 
 A landing, homepage, public company/brand site, portfolio, storefront, campaign site, or complete visual redesign is **design-primary**. If the generic router says `frontend` or `marketing`, correct the domain pack to `design`.
 
-For a greenfield public visual surface or a total visual redesign, recommend **Studio** by default. The normal pipeline is:
+For a greenfield public visual surface or a total visual redesign, recommend **Studio** by default. The normal graph is:
 
 `deep interview -> live inspiration research -> concept competition/judgment -> DESIGN_DIRECTION -> implementation -> independent design critique -> desktop/mobile browser QA`
 
@@ -61,7 +93,7 @@ Do not accept “make me a website” as a complete brief and then invent the re
 - primary outcome/conversion and audience;
 - brand truth to preserve vs freedom to replace;
 - 2–4 plausible visual personalities with one recommended direction;
-- imagery strategy: photography/screenshots/illustration/diagram/video/3D/generated/no imagery, with a recommended density/role;
+- imagery strategy: photography/screenshots/illustration/diagram/video/3D/generated/no imagery, with recommended density/role;
 - permission to rewrite/restructure critical copy;
 - proposed hero/value proposition/CTA or message angles instead of asking “what should it say?” with no help;
 - proposed information architecture/story;
@@ -105,6 +137,8 @@ The chosen direction is an implementation contract, not mood-board prose. Record
 
 The implementer consumes this artifact. It must not quietly invent a different generic design system while coding.
 
+In Studio/total design graphs, research/concept/critic nodes should normally be read-only; `DESIGN_DIRECTION` is an explicit handoff artifact; final implementation has one writer owner. Every node closes its own loop before the DAG advances.
+
 ## Skill activation contract
 
 A route/profile/worker that lists `design-taste-frontend` has **not** used that skill unless the model doing the work has read the corresponding `SKILL.md` body or the provider has demonstrably injected it.
@@ -113,7 +147,7 @@ Before each stage:
 
 1. resolve selected skill paths;
 2. read the bodies into the stage's model context (or use provider-native skill loading with equivalent evidence);
-3. retain a small receipt: skill ID + path + content hash when possible;
+3. retain a receipt: skill ID + path + content hash;
 4. project the same bodies/receipt to workers that depend on them.
 
 A worker prompt containing only skill IDs is insufficient on providers that do not automatically resolve those IDs. Load the bodies or surface the missing context; do not pretend the skill influenced the result.
@@ -163,13 +197,13 @@ For a long public page, establish authored structural rhythm and avoid the same 
 
 ## Continuity and long tasks
 
-Persist confirmed user intent before product implementation. On long work keep `STATE.md` useful for a fresh provider/session: current objective, decisions, constraints, selected pack/craft depth, evidence, completed stages and next action. Do not use continuity files as a substitute for source code or exact operational evidence.
+Persist confirmed user intent before product implementation. On long work keep `STATE.md` useful for a fresh provider/session: current objective, decisions, constraints, selected pack/craft depth, evidence, completed stages and next action. Runtime state belongs in `.agentit/runtime/`; continuity files summarize durable decisions, not transient attempt logs.
 
 When local-model routing is enabled, treat model selection as another provider capability decision. Critical judgment/review should not silently downgrade just because a cheaper/local model exists.
 
 ## Verification
 
-No done/fixed/premium/beautiful claim without fresh evidence. Public visual work requires at minimum:
+No done/fixed/premium/beautiful claim without fresh evidence **and the applicable runtime receipt**. Public visual work requires at minimum:
 
 - browser/render evidence at a wide and narrow viewport;
 - comparison against `DESIGN_DIRECTION`;
@@ -180,8 +214,8 @@ No done/fixed/premium/beautiful claim without fresh evidence. Public visual work
 
 ## Provider fallback
 
-Prefer native scoped workers when useful. If unavailable, use isolated delegated calls/fresh contexts; if even that is unavailable, continue in the parent with the same scoped skill bodies. Multi-agent improves quality/efficiency but should not become a correctness dependency.
+Prefer native scoped workers when useful. If unavailable, use isolated delegated calls/fresh contexts; if even that is unavailable, continue in the parent with the same scoped skill bodies and the same runtime contracts. Multi-agent improves quality/efficiency but should not become a correctness dependency.
 
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. One writer per file/shared state unless isolated branches/worktrees make ownership safe. Workers return evidence; the Architect owns acceptance, integration and the user-facing result.
+Explicit user instructions and project rules beat defaults. Safety beats all. One writer per file/shared state; if true parallel writing is required, isolate ownership with branches/worktrees and represent the handoff explicitly rather than allowing overlapping graph claims. Workers return receipts/evidence; the Architect owns acceptance, integration and the user-facing result.

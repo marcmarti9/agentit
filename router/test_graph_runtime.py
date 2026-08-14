@@ -73,6 +73,19 @@ class GraphRuntimeTests(unittest.TestCase):
         with self.assertRaises(GraphRuntimeError):
             complete_node(graph, node_id="b", loop_receipt=a_receipt)
 
+    def test_same_receipt_cannot_complete_two_nodes_even_when_contract_hash_matches(self):
+        shared_loop = new_loop(goal="Shared contract", verifier="pytest -q", stop_condition="verified")
+        passed = record_attempt(shared_loop, passed=True, strategy="run once", evidence="passed", verifier_exit_code=0)
+        shared_receipt = loop_receipt(passed)
+        contract_hash = shared_loop["contract_sha256"]
+        graph = new_graph([
+            {"id": "a", "loop_contract_sha256": contract_hash},
+            {"id": "b", "loop_contract_sha256": contract_hash},
+        ])
+        graph = complete_node(graph, node_id="a", loop_receipt=shared_receipt)
+        with self.assertRaises(GraphRuntimeError):
+            complete_node(graph, node_id="b", loop_receipt=shared_receipt)
+
     def test_manually_completed_node_with_pending_dependency_is_rejected(self):
         research, _ = self._node("research")
         implement, implement_receipt = self._node("implement", deps=["research"])

@@ -7,6 +7,7 @@ from loop_runtime import (
     loop_receipt,
     new_loop,
     record_attempt,
+    validate_loop,
     validate_loop_receipt,
 )
 
@@ -32,6 +33,12 @@ class LoopRuntimeTests(unittest.TestCase):
         loop = record_attempt(loop, passed=False, strategy="same", evidence="same", verifier_exit_code=1)
         with self.assertRaises(LoopRuntimeError):
             record_attempt(loop, passed=False, strategy="same", evidence="same", verifier_exit_code=1)
+
+    def test_contract_tampering_is_rejected(self):
+        loop = new_loop(goal="Original", verifier="pytest -q", stop_condition="tests pass")
+        loop["contract"]["goal"] = "Tampered"
+        with self.assertRaises(LoopRuntimeError):
+            validate_loop(loop)
 
     def test_passed_receipt_is_hash_checked(self):
         loop = new_loop(goal="Ship change", verifier="python -m unittest", stop_condition="suite passes")

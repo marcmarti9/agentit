@@ -2,8 +2,8 @@
 
 The router may recommend a topology, but this module validates and advances the
 actual execution graph. Dependencies cannot be skipped, cycles are rejected,
-write ownership is exclusive, and a node can complete only with a passed Loop
-Engineering receipt.
+write ownership is exclusive, and a node can complete only with the passed Loop
+Receipt bound to that exact node contract.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ class GraphRuntimeError(RuntimeError):
 
 
 _NODE_ID = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9._-]*$")
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 def _hash(value: Any) -> str:
@@ -68,6 +69,9 @@ def _normalize_nodes(nodes: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]
         if node_id in seen:
             raise GraphRuntimeError(f"duplicate node id: {node_id}")
         seen.add(node_id)
+        loop_hash = str(raw.get("loop_contract_sha256") or "").strip()
+        if not _SHA256.fullmatch(loop_hash):
+            raise GraphRuntimeError(f"node {node_id} requires a valid loop_contract_sha256")
         deps: list[str] = []
         for dep in raw.get("deps") or []:
             dep_id = _clean_id(dep)
@@ -78,13 +82,18 @@ def _normalize_nodes(nodes: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]
             clean = _clean_path(path)
             if clean not in write_paths:
                 write_paths.append(clean)
-        expected_artifacts = [str(item).strip() for item in raw.get("expected_artifacts") or [] if str(item).strip()]
+        expected_artifacts = [
+            str(item).strip()
+            for item in raw.get("expected_artifacts") or []
+            if str(item).strip()
+        ]
         result.append({
             "id": node_id,
             "deps": deps,
             "write_paths": write_paths,
             "expected_artifacts": expected_artifacts,
             "objective": str(raw.get("objective") or "").strip(),
+            "loop_contract_sha256": loop_hash,
         })
     if not result:
         raise GraphRuntimeError("graph must contain at least one node")
@@ -170,15 +179,20 @@ def validate_graph(graph: Mapping[str, Any]) -> None:
     states = graph.get("node_states")
     if not isinstance(states, Mapping):
         raise GraphRuntimeError("node_states must be an object")
-    ids = {node["id"] for node in nodes}
-    if set(states) != ids:
+    by_id = {node["id"]: node for node in nodes}
+    if set(states) != set(by_id):
         raise GraphRuntimeError("node state ids do not match graph contract")
+
     completed = 0
     blocked = False
+    seen_receipts: set[str] = set()
     for node_id, state in states.items():
         if not isinstance(state, Mapping) or state.get("status") not in {"pending", "completed", "blocked"}:
             raise GraphRuntimeError(f"invalid state for node {node_id}")
         if state.get("status") == "completed":
+            for dep in by_id[node_id]["deps"]:
+                if states[dep].get("status") != "completed":
+                    raise GraphRuntimeError(f"completed node {node_id} has incomplete dependency {dep}")
             receipt = state.get("loop_receipt")
             if not isinstance(receipt, Mapping):
                 raise GraphRuntimeError(f"completed node {node_id} is missing loop receipt")
@@ -186,9 +200,16 @@ def validate_graph(graph: Mapping[str, Any]) -> None:
                 validate_loop_receipt(receipt, require_passed=True)
             except LoopRuntimeError as exc:
                 raise GraphRuntimeError(f"node {node_id} has invalid loop receipt: {exc}") from exc
+            if receipt.get("contract_sha256") != by_id[node_id]["loop_contract_sha256"]:
+                raise GraphRuntimeError(f"node {node_id} loop receipt does not match its contract")
+            receipt_hash = str(receipt.get("receipt_sha256") or "")
+            if receipt_hash in seen_receipts:
+                raise GraphRuntimeError("a Loop Receipt cannot complete more than one graph node")
+            seen_receipts.add(receipt_hash)
             completed += 1
         if state.get("status") == "blocked":
             blocked = True
+
     status = graph.get("status")
     expected = "blocked" if blocked else ("passed" if completed == len(nodes) else "running")
     if status != expected:
@@ -230,6 +251,15 @@ def complete_node(
         validate_loop_receipt(loop_receipt, require_passed=True)
     except LoopRuntimeError as exc:
         raise GraphRuntimeError(f"node cannot complete without passed loop receipt: {exc}") from exc
+    if loop_receipt.get("contract_sha256") != nodes[node_id]["loop_contract_sha256"]:
+        raise GraphRuntimeError(f"loop receipt belongs to a different node contract: {node_id}")
+    used = {
+        state["loop_receipt"].get("receipt_sha256")
+        for state in graph["node_states"].values()
+        if state.get("status") == "completed" and isinstance(state.get("loop_receipt"), Mapping)
+    }
+    if loop_receipt.get("receipt_sha256") in used:
+        raise GraphRuntimeError("a Loop Receipt cannot complete more than one graph node")
     clean_artifacts = [str(item).strip() for item in artifacts if str(item).strip()]
     expected = set(nodes[node_id]["expected_artifacts"])
     if expected and not expected.issubset(clean_artifacts):
@@ -293,7 +323,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Agentit Graph Engineering DAG runtime")
     sub = parser.add_subparsers(dest="command", required=True)
     init = sub.add_parser("init")
-    init.add_argument("--spec", type=Path, required=True, help="JSON file containing a nodes array")
+    init.add_argument("--spec", type=Path, required=True, help="JSON file containing bound nodes")
     ready = sub.add_parser("ready")
     ready.add_argument("--state", type=Path, required=True)
     check = sub.add_parser("check")

@@ -1,0 +1,66 @@
+# Draft marketing MCP servers for merge into mcp/catalog.yaml
+# Policy: auto_activate remains false; RISK_3 requires --force + human review.
+
+stacks_to_add:
+  growth_marketing:
+    description: "Digital agency growth stack: research + browser verification. Enable Meta/Google Ads, GA4, GSC separately after credentials and human review (RISK_2/3)."
+    servers: [brave-search, firecrawl, exa, playwright, chrome-devtools]
+  digitem:
+    description: "Digitem agency default: developer core plus growth research/browser. Ad/analytics MCPs remain opt-in."
+    servers: [agentit-manager, context7, github, playwright, brave-search, firecrawl]
+
+servers_to_add:
+  - id: meta-ads
+    name: Meta Ads MCP
+    tier: situational
+    category: marketing
+    risk: RISK_3
+    trust: official_vendor
+    summary: "Official Meta Ads connector for insights and campaign operations. Human approval required before write actions."
+    homepage: https://mcp.facebook.com/ads
+    requires_secret: true
+    write_capable: true
+    claude_add: "claude mcp add --transport http meta-ads https://mcp.facebook.com/ads"
+    safety_notes:
+      - "Write-capable: never auto-approve budget or campaign mutations."
+      - "Require human review before enable --apply --force."
+
+  - id: google-ads
+    name: Google Ads MCP
+    tier: situational
+    category: marketing
+    risk: RISK_3
+    trust: official_vendor
+    summary: "Official Google Ads MCP for account queries and performance analysis. Prefer read-only setup first."
+    homepage: https://github.com/googleads/google-ads-mcp
+    requires_secret: true
+    write_capable: true
+    safety_notes:
+      - "Developer token and OAuth required; never commit tokens."
+      - "Treat as RISK_3; enable only with --force after human review."
+
+  - id: ga4
+    name: Google Analytics 4 MCP
+    tier: situational
+    category: analytics
+    risk: RISK_2
+    trust: community_maintained
+    summary: "GA4 reports, realtime, and funnel queries so agents stop inventing KPIs."
+    homepage: https://pypi.org/project/google-analytics-mcp/
+    package: google-analytics-mcp
+    requires_secret: true
+    write_capable: false
+    claude_add: "claude mcp add ga4 -- uvx google-analytics-mcp"
+
+  - id: google-search-console
+    name: Google Search Console MCP
+    tier: situational
+    category: seo
+    risk: RISK_2
+    trust: community_maintained
+    summary: "Search analytics, top queries/pages, and indexing signals for SEO specialists."
+    homepage: https://pypi.org/project/google-search-console-mcp/
+    package: google-search-console-mcp
+    requires_secret: true
+    write_capable: false
+    claude_add: "claude mcp add gsc -- uvx google-search-console-mcp"

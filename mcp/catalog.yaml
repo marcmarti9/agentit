@@ -39,6 +39,12 @@ stacks:
   research:
     description: "Live web + docs research without write access to production systems."
     servers: [context7, brave-search, exa, firecrawl]
+  growth_marketing:
+    description: "Growth and marketing research plus browser verification for SEO/CRO loops."
+    servers: [brave-search, firecrawl, exa, playwright, chrome-devtools]
+  digitem:
+    description: "Digitem agency stack for growth execution, docs context, and browser validation."
+    servers: [agentit-manager, context7, github, playwright, brave-search, firecrawl]
   incident:
     description: "Error triage and repo context. High care with write scopes."
     servers: [sentry, github, linear]
@@ -427,3 +433,100 @@ servers:
       url: https://mcp.exa.ai/mcp
     safety_notes:
       - "Confirm current Exa MCP auth path in vendor docs before use."
+
+  - id: meta-ads
+    name: Meta Ads MCP
+    tier: situational
+    category: marketing
+    risk: RISK_3
+    trust: official_vendor
+    summary: "Meta Ads account and campaign operations; treat as production-affecting writes."
+    homepage: https://mcp.facebook.com/ads
+    package: null
+    requires_secret: true
+    secret_env: META_ADS_ACCESS_TOKEN
+    write_capable: true
+    evidence:
+      - "Digitem growth stack request for paid-media execution"
+      - "Official Meta-hosted MCP endpoint"
+    claude_add: "claude mcp add --transport http meta-ads https://mcp.facebook.com/ads"
+    mcp_json_remote:
+      url: https://mcp.facebook.com/ads
+    safety_notes:
+      - "RISK_3: require human approval before budget, campaign, or audience mutations."
+      - "Use scoped ad-account credentials; never commit tokens."
+
+  - id: google-ads
+    name: Google Ads MCP
+    tier: situational
+    category: marketing
+    risk: RISK_3
+    trust: official_vendor
+    summary: "Google Ads campaign operations for paid acquisition workflows."
+    homepage: https://github.com/googleads/google-ads-mcp
+    package: null
+    requires_secret: true
+    secret_env: GOOGLE_ADS_CREDENTIALS_JSON
+    write_capable: true
+    evidence:
+      - "Digitem growth stack request for paid-media execution"
+      - "googleads/google-ads-mcp upstream repository"
+    claude_add: "claude mcp add google-ads -- env GOOGLE_ADS_CREDENTIALS_JSON=\"${GOOGLE_ADS_CREDENTIALS_JSON}\" uvx google-ads-mcp"
+    mcp_json:
+      command: uvx
+      args: ["google-ads-mcp"]
+      env:
+        GOOGLE_ADS_CREDENTIALS_JSON: "${GOOGLE_ADS_CREDENTIALS_JSON}"
+    safety_notes:
+      - "RISK_3: human review required before any write to campaigns, budgets, or targeting."
+      - "Prefer read-only/service accounts for diagnostics and planning."
+
+  - id: ga4
+    name: Google Analytics 4 MCP
+    tier: situational
+    category: analytics
+    risk: RISK_2
+    trust: community_maintained
+    summary: "GA4 reporting and analytics context for funnel and conversion analysis."
+    homepage: https://pypi.org/project/google-analytics-mcp/
+    package: google-analytics-mcp
+    requires_secret: true
+    secret_env: GOOGLE_ANALYTICS_CREDENTIALS_JSON
+    write_capable: false
+    evidence:
+      - "Digitem growth stack request for analytics instrumentation"
+      - "uvx package google-analytics-mcp"
+    claude_add: "claude mcp add ga4 -- env GOOGLE_ANALYTICS_CREDENTIALS_JSON=\"${GOOGLE_ANALYTICS_CREDENTIALS_JSON}\" uvx google-analytics-mcp"
+    mcp_json:
+      command: uvx
+      args: ["google-analytics-mcp"]
+      env:
+        GOOGLE_ANALYTICS_CREDENTIALS_JSON: "${GOOGLE_ANALYTICS_CREDENTIALS_JSON}"
+    safety_notes:
+      - "RISK_2: restrict property scopes and avoid broad personal-data exports."
+      - "Never commit analytics credentials or downloaded reports with PII."
+
+  - id: google-search-console
+    name: Google Search Console MCP
+    tier: situational
+    category: analytics
+    risk: RISK_2
+    trust: community_maintained
+    summary: "Search performance and indexing diagnostics for SEO workflows."
+    homepage: https://pypi.org/project/google-search-console-mcp/
+    package: google-search-console-mcp
+    requires_secret: true
+    secret_env: GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON
+    write_capable: false
+    evidence:
+      - "Digitem growth stack request for SEO diagnostics"
+      - "uvx package google-search-console-mcp"
+    claude_add: "claude mcp add google-search-console -- env GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON=\"${GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON}\" uvx google-search-console-mcp"
+    mcp_json:
+      command: uvx
+      args: ["google-search-console-mcp"]
+      env:
+        GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: "${GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON}"
+    safety_notes:
+      - "RISK_2: scope credentials to least privilege and non-production when possible."
+      - "Treat query/page datasets as sensitive business data."

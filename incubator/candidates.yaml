@@ -75,3 +75,68 @@ candidates:
   - Context noise if promoted to core profile
   decision: integrate_as_curated_skill
   evidence: Slim skill skills/design-taste-frontend with references/; design+frontend profiles; router recommends for design/marketing; hallmark placeholder archived
+- id: arcads-marketing-os
+  source: https://x.com/rom1trs/status/2089692842708938829
+  claim: Marketing OS growth stack candidate for digital agencies.
+  type: profile_catalog
+  status: incubating
+  decision: hold_for_public_artifact_then_curate
+- id: coreyhaines-marketingskills
+  source: https://github.com/coreyhaines31/marketingskills
+  claim: Growth, CRO, SEO, and analytics skill pack for product marketing tasks.
+  type: external_repository
+  status: validated
+  integration_mode: on_demand
+  decision: curate_registry_on_demand
+- id: hyperfx-marketing-skills
+  source: https://github.com/hyperfx-ai/marketing-skills
+  claim: Optional execution layer for growth and campaign workflows.
+  type: external_repository
+  status: incubating
+  integration_mode: optional_execution_layer
+  decision: evaluate_selective_install
+- id: aaron-seo-geo-skills
+  source: https://github.com/aaron-he-zhu/seo-geo-claude-skills
+  claim: SEO and GEO specialization pack for search visibility workflows.
+  type: external_repository
+  status: incubating
+  integration_mode: on_demand
+  decision: evaluate_selective_install
+- id: claude-ads-audit-pack
+  source: TBD
+  claim: Ads-audit specialist pack for paid acquisition checks.
+  type: external_repository
+  status: incubating
+  decision: pin_upstream_tbd
+- id: meta-ads-mcp
+  source: https://mcp.facebook.com/ads
+  claim: Meta Ads campaign management MCP candidate.
+  type: mcp_server
+  status: incubating
+  risks:
+  - RISK_3 write-capable ad account actions require human review and scoped credentials
+  decision: evaluate_with_safety_gates
+- id: google-ads-mcp
+  source: https://github.com/googleads/google-ads-mcp
+  claim: Google Ads campaign management MCP candidate.
+  type: mcp_server
+  status: incubating
+  risks:
+  - RISK_3 write-capable ad account actions require human review and scoped credentials
+  decision: evaluate_with_safety_gates
+- id: ga4-mcp
+  source: uvx google-analytics-mcp
+  claim: GA4 analytics read/write MCP candidate.
+  type: mcp_server
+  status: incubating
+  risks:
+  - RISK_2 analytics data access requires scoped tokens and no secret commits
+  decision: evaluate_with_safety_gates
+- id: gsc-mcp
+  source: uvx google-search-console-mcp
+  claim: Google Search Console MCP candidate for SEO diagnostics.
+  type: mcp_server
+  status: incubating
+  risks:
+  - RISK_2 search-console data access requires scoped tokens and no secret commits
+  decision: evaluate_with_safety_gates

@@ -104,6 +104,44 @@ profiles:
       - doubt-driven-development
       - spec-driven-development
       - verification-before-completion
+  growth:
+    description: "Product growth profile with marketing validation and completion checks."
+    extends:
+      - product
+    skills:
+      - marketing-and-growth
+      - idea-refine
+      - verification-before-completion
+  seo:
+    description: "Growth profile focused on search discovery and ranking workflows."
+    extends:
+      - growth
+    skills:
+      - marketing-and-growth
+  paid_ads:
+    description: "Growth profile focused on paid acquisition and campaign operations."
+    extends:
+      - growth
+    skills:
+      - marketing-and-growth
+  analytics:
+    description: "Growth profile focused on analytics quality and evidence-based validation."
+    extends:
+      - growth
+    skills:
+      - marketing-and-growth
+      - verification-before-completion
+  digitem:
+    description: "Digital-agency execution profile for discovery, growth strategy, docs, and launch."
+    extends:
+      - product
+    skills:
+      - idea-refine
+      - interview-me
+      - marketing-and-growth
+      - documentation-and-adrs
+      - shipping-and-launch
+      - verification-before-completion
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:

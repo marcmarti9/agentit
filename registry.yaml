@@ -371,13 +371,82 @@ entries:
     depth: specialized
     risk: low
     conflicts: ["installed pm-skills overlap must be tested"]
-    dependencies: ["upstream review"]
+    dependencies: ["upstream review", "selective install only for requested workflows"]
+    essential_dependencies: []
+    required_tools:
+      - "optional: ga4"
+      - "optional: google-search-console"
+      - "optional: meta-ads"
+      - "optional: google-ads"
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized
+
+  - id: hyperfx-marketing-skills
+    name: "HyperFX marketing skills"
+    kind: external-repository
+    category: marketing
+    provenance: not-installed
+    source_ref: "https://github.com/hyperfx-ai/marketing-skills"
+    paths: []
+    trigger: "optional execution layer for growth and campaign workflows"
+    avoid_when: "core product engineering task or when Agentit marketing stack is sufficient"
+    context_cost: medium
+    execution_cost: medium
+    depth: specialized
+    risk: medium
+    conflicts: []
+    dependencies: ["selective install only for requested workflows"]
     essential_dependencies: []
     required_tools: []
     compression_applied: none
     reversibility: high
     state: AVAILABLE_ON_DEMAND
     priority: specialized
+
+  - id: aaron-seo-geo-skills
+    name: "Aaron SEO/GEO Claude skills"
+    kind: external-repository
+    category: marketing
+    provenance: not-installed
+    source_ref: "https://github.com/aaron-he-zhu/seo-geo-claude-skills"
+    paths: []
+    trigger: "SEO/GEO strategy, search diagnostics, or ranking content workflows"
+    avoid_when: "non-search task"
+    context_cost: medium
+    execution_cost: low_to_medium
+    depth: specialized
+    risk: medium
+    conflicts: []
+    dependencies: ["selective install only for requested workflows"]
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized
+
+  - id: claude-ads-audit-pack
+    name: "Claude ads audit pack"
+    kind: external-repository
+    category: marketing
+    provenance: not-installed
+    paths: []
+    trigger: "paid ads audit and campaign quality reviews"
+    avoid_when: "no ad channel or audit requirement"
+    context_cost: medium
+    execution_cost: medium
+    depth: specialized
+    risk: medium
+    conflicts: []
+    dependencies: ["pin upstream repository before install", "selective install only for requested workflows"]
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: medium
+    state: AVAILABLE_ON_DEMAND
+    priority: experimental
 
   - id: hallmark
     name: "Visual design audit and implementation guidance (archived placeholder)"
@@ -785,4 +854,3 @@ entries:
     reversibility: high
     state: AVAILABLE_ON_DEMAND
     priority: on_demand
-

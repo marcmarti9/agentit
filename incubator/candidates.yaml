@@ -75,3 +75,24 @@ candidates:
   - Context noise if promoted to core profile
   decision: integrate_as_curated_skill
   evidence: Slim skill skills/design-taste-frontend with references/; design+frontend profiles; router recommends for design/marketing; hallmark placeholder archived
+- id: arcads-marketing-os
+  source: https://x.com/rom1trs/status/2089692842708938829
+  claim: One Claude skill packing a six-role marketing department with explicit handoffs
+    (Head of Marketing, Copywriter, Creative Strategist, Launch Lead, SEO Lead, Analyst)
+  type: skill
+  status: incubating
+  integration_mode: on_demand_profiles
+  benefits:
+  - Role-specialized marketing loops that map to Pipeline / Writer-Reviewer topologies
+  - Complements existing marketing-and-growth without replacing it
+  - Progressive disclosure fit if split into atomic skills under a product/growth profile
+  costs:
+  - Public artifact still gated (comment "OS" for setup); license and size unknown
+  - Likely Claude-first packaging; needs a provider-neutral SKILL.md slim
+  - Risk of overlap and discovery noise with marketing-and-growth
+  risks:
+  - Vendor coupling to Arcads ads stack or paid APIs
+  - Unbounded multi-role context if imported as one mega-skill
+  - Cannot vendor or register until files, license, and attribution are inspectable
+  decision: hold_for_public_artifact_then_curate
+  evidence: Launch post 2026-08-18 describes role tree and Analyst→Copywriter→Strategist→Analyst loop; no public repo or SKILL.md located; do not promote to registry until artifact review

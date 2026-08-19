@@ -123,6 +123,28 @@ class McpRuntimeTestCase(unittest.TestCase):
         self.assertEqual(data["action"], "enable")
         self.assertTrue((self.project / ".mcp.json").is_file())
 
+    def test_cli_enable_stack_rejects_unknown_stack_instead_of_falling_back(self) -> None:
+        proc = subprocess.run(
+            [
+                str(AGENTIT_CLI),
+                "mcp",
+                "enable-stack",
+                "does-not-exist",
+                "--providers",
+                "project",
+                "--project",
+                str(self.project),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=str(REPO_ROOT),
+        )
+
+        self.assertNotEqual(0, proc.returncode)
+        self.assertIn("unknown MCP stack", proc.stderr)
+        self.assertNotIn('"stack": "developer_core"', proc.stdout)
+
     def test_gateway_self_test(self) -> None:
         proc = subprocess.run(
             ["python3", str(GATEWAY), "--self-test"],

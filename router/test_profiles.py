@@ -11,6 +11,20 @@ REPOSITORY = Path(__file__).resolve().parents[1]
 
 
 class ProfileCatalogTests(unittest.TestCase):
+    def test_growth_and_digitem_profiles_add_real_skill_bodies(self):
+        from router.profiles import load_catalog, resolve_profile
+
+        catalog = load_catalog(REPOSITORY / "profiles.yaml")
+        product = resolve_profile("product", catalog, repo_root=REPOSITORY)
+        growth = resolve_profile("growth", catalog, repo_root=REPOSITORY)
+        digitem = resolve_profile("digitem", catalog, repo_root=REPOSITORY)
+
+        self.assertGreater(len(growth), len(product))
+        self.assertIn("shipping-and-launch", growth)
+        self.assertGreater(len(digitem), len(growth))
+        self.assertIn("incremental-implementation", digitem)
+        self.assertIn("git-workflow-and-versioning", digitem)
+
     def test_core_profile_is_bounded_and_all_repository_skills_remain_catalogued(self):
         completed = subprocess.run(
             [
@@ -141,6 +155,15 @@ class ProjectProfileCliTests(unittest.TestCase):
 
         self.assertEqual(0, activated.returncode, activated.stdout)
         self.assertIn("MODO PLAN", activated.stdout)
+
+    def test_digitem_profile_installs_its_distinct_operating_skills(self):
+        applied = self.run_cli("enable", "digitem", "--apply")
+
+        self.assertEqual(0, applied.returncode, applied.stdout)
+        skill_root = self.project / ".agents" / "skills"
+        self.assertTrue((skill_root / "shipping-and-launch" / "SKILL.md").is_file())
+        self.assertTrue((skill_root / "incremental-implementation" / "SKILL.md").is_file())
+        self.assertTrue((skill_root / "git-workflow-and-versioning" / "SKILL.md").is_file())
 
     def test_enable_without_profile_name_emits_clean_error(self):
         result = self.run_cli("enable")

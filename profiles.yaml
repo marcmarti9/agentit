@@ -104,6 +104,19 @@ profiles:
       - doubt-driven-development
       - spec-driven-development
       - verification-before-completion
+  growth:
+    description: "Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and launch discipline. Live marketing data still requires separately reviewed connectors."
+    extends:
+      - product
+    skills:
+      - shipping-and-launch
+  digitem:
+    description: "Digitem operating profile: product and growth delivery plus incremental implementation and disciplined Git handoffs. Pair with the relevant coding profile for implementation."
+    extends:
+      - growth
+    skills:
+      - incremental-implementation
+      - git-workflow-and-versioning
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:

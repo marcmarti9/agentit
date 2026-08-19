@@ -183,6 +183,11 @@ class RouterSafetyTests(unittest.TestCase):
         self.assertEqual(result["category"], "marketing")
         self.assert_destructive_gates_disabled(result)
 
+    def test_digitem_work_recommends_the_digitem_profile(self):
+        result = self.route("Usa Agentit para organizar las operaciones de DIGITEM")
+
+        self.assertIn("digitem", result["jit_profile_recommendations"])
+
     def test_explicitly_rejected_restore_does_not_trigger_execution_gates(self):
         result = self.route("Do not restore the backup; explain the policy instead.")
 

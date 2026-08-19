@@ -1236,6 +1236,11 @@ def main(argv: list[str] | None = None) -> int:
 
                 if sub in {"enable-stack", "stack-enable"}:
                     stack_name = args.target or "developer_core"
+                    known_stacks = list_stacks(mcp_catalog)
+                    if stack_name not in known_stacks:
+                        raise McpRuntimeError(
+                            f"unknown MCP stack '{stack_name}'; known: {', '.join(known_stacks)}"
+                        )
                     payload = enable_stack(
                         stack_name,
                         project_root=project_root,

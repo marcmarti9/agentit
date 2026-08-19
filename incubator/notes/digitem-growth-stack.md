@@ -7,17 +7,15 @@ Scouted / wired: 2026-08-18
 Digitem-style work is a **digital agency domain**, not only coding:
 programming + marketing + SEO + paid media + analytics.
 
-Agentit keeps **core** lean. Growth capabilities are **on-demand profiles + optional MCP**.
+Agentit keeps **core** lean. The verified growth method is available through
+on-demand profiles; marketing MCPs remain incubator candidates.
 
-## Profiles
+## Integrated profiles
 
 | Profile | Role |
 |---------|------|
-| `growth` | Strategy / CRO / copy layer on top of `product` |
-| `seo` | SEO + GEO specialist |
-| `paid_ads` | Media buyer specialist |
-| `analytics` | Measurement / reporting |
-| `digitem` | Agency umbrella (product + growth skills) |
+| `growth` | Product/CRO/copy method plus launch discipline |
+| `digitem` | Growth plus incremental delivery and Git handoffs |
 
 Enable examples:
 
@@ -26,7 +24,7 @@ agentit enable digitem --project . --apply
 agentit enable growth --project . --apply
 ```
 
-## Skills (method)
+## Skill candidates (not integrated)
 
 | Id | Status |
 |----|--------|
@@ -37,32 +35,17 @@ agentit enable growth --project . --apply
 | `claude-ads-audit-pack` | Audit depth — experimental until upstream pinned |
 | `arcads-marketing-os` | Role OS — incubating until public artifact |
 
-Install selective skills (example):
+External packs remain incubator candidates. Review and pin their source,
+license, current IDs and exact skill bodies before installing any selective
+subset. Do **not** dump every upstream skill into global discovery.
 
-```bash
-npx skills add coreyhaines31/marketingskills --skill page-cro copywriting seo-audit ai-seo paid-ads analytics-tracking
-```
+## MCP candidates (not integrated)
 
-Do **not** dump every upstream skill into global discovery.
-
-## MCP (hands)
-
-| Stack / server | Use |
-|----------------|-----|
-| `growth_marketing` | Research + browser verification baseline |
-| `digitem` | Dev core + research/browser for agency sessions |
-| `meta-ads` | RISK_3 — human gate before writes |
-| `google-ads` | RISK_3 — prefer read-only first |
-| `ga4` | RISK_2 — live analytics |
-| `google-search-console` | RISK_2 — organic evidence |
-
-```bash
-agentit mcp enable-stack digitem --apply
-# after credentials + review:
-agentit mcp enable ga4 --apply
-agentit mcp enable google-search-console --apply
-agentit mcp enable meta-ads --force --apply   # human review required
-```
+Meta Ads, Google Ads, GA4 and Search Console are recorded only in
+`incubator/candidates.yaml`. They are deliberately unavailable through
+`agentit mcp` until a later integration reviews provider configuration,
+credentials, risk gates and runtime tests. Do not present enable commands for
+them yet.
 
 ## Safety rules
 
@@ -75,4 +58,5 @@ agentit mcp enable meta-ads --force --apply   # human review required
 
 - Pin concrete upstream commits for optional skill packs.
 - Merge/close Arcads Marketing OS candidate when files + license exist.
+- Integrate only the connectors that have verified provider snippets and tests.
 - Optional: slim local adapters under `skills/` for Digitem house process.

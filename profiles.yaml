@@ -105,43 +105,18 @@ profiles:
       - spec-driven-development
       - verification-before-completion
   growth:
-    description: "Digital growth strategy on-demand: CRO, copy, SEO signals, paid awareness. Prefer selective external marketingskills; pair with marketing MCP stack when live data is required."
+    description: "Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and launch discipline. Live marketing data still requires separately reviewed connectors."
     extends:
       - product
     skills:
-      - marketing-and-growth
-      - idea-refine
-      - verification-before-completion
-  seo:
-    description: "SEO + GEO/AEO specialist pack for audits, content visibility, and Search Console-backed work."
-    extends:
-      - growth
-    skills:
-      - marketing-and-growth
-  paid_ads:
-    description: "Paid media specialist pack. Requires marketing MCP stack (Meta/Google Ads) for non-hallucinated performance work."
-    extends:
-      - growth
-    skills:
-      - marketing-and-growth
-  analytics:
-    description: "Measurement and reporting specialist. Prefer GA4/GSC MCP enablement; skills stay method-only without data connectors."
-    extends:
-      - growth
-    skills:
-      - marketing-and-growth
-      - verification-before-completion
-  digitem:
-    description: "Digital agency domain pack for Digitem-style work: product discovery plus growth/SEO/paid/analytics on demand. Does not replace core coding profiles."
-    extends:
-      - product
-    skills:
-      - idea-refine
-      - interview-me
-      - marketing-and-growth
-      - documentation-and-adrs
       - shipping-and-launch
-      - verification-before-completion
+  digitem:
+    description: "Digitem operating profile: product and growth delivery plus incremental implementation and disciplined Git handoffs. Pair with the relevant coding profile for implementation."
+    extends:
+      - growth
+    skills:
+      - incremental-implementation
+      - git-workflow-and-versioning
   all:
     description: "Every repository skill; use only when explicitly requested."
     skills:

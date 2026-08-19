@@ -1644,6 +1644,8 @@ def route_task(
     unmapped_skills: list[str] = []
     if auto_jit_enabled:
         mapped_set = set()
+        if _matches(lowered, (r"\bdigitem\b",)):
+            mapped_set.add("digitem")
         postgres_stack = _matches(
             lowered,
             (r"\b(postgres(?:ql)?|psql|supabase|cockroachdb)\b",),

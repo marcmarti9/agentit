@@ -1,15 +1,15 @@
 ---
 name: task-router
-description: AI-native Agentit task-decision protocol. The primary model classifies from full context and a second model reviews the decision before execution.
+description: AI-native Agentit task-decision protocol. The primary model owns semantic classification and strategy; a cheap second model only audits the decision, with strong-model escalation for high risk or unresolved disagreement.
 ---
 
 # AI-native task decision protocol
 
 Agentit has **no programmatic semantic router**.
 
-Do not call Python, regexes, keyword tables, scoring code, decision validators or any other deterministic classifier to work out what the user means. The active model already has richer context than a standalone script and owns the semantic decision.
+Do not call Python, regexes, keyword tables, scoring code, decision validators or any other deterministic classifier to work out what the user means. The active primary model has the richest task context and owns the semantic decision.
 
-The purpose of this skill is not to route the model. It gives the model a mandatory, repeatable thinking framework and a second-model review loop.
+The purpose of this skill is not to route the model. It gives the primary model a mandatory, repeatable decision framework and adds independent AI auditing without handing decision ownership to a weaker model.
 
 ## 1. Inspect before deciding
 
@@ -26,7 +26,9 @@ Use all materially available context:
 
 A follow-up such as “fix it” must be interpreted from context, not from those two words.
 
-## 2. Primary model creates `TASK_DECISION`
+## 2. The primary model owns `TASK_DECISION`
+
+The model currently responsible for the task is the **decision owner**. Do not delegate semantic classification or execution strategy to a cheaper reviewer merely to save tokens.
 
 Before executing material work, the primary model determines at least:
 
@@ -47,7 +49,7 @@ Before executing material work, the primary model determines at least:
 - `verification`: evidence needed before claiming success;
 - `safety`: backup/rollback/dry-run/post-check requirements when applicable.
 
-The model may keep this structure internal when showing it would add noise, but it must actually make the decision.
+The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
 Use the **same rubric**, not the same answer. Context can legitimately change the classification.
 
@@ -81,30 +83,30 @@ An explicit safety/risk requirement can raise the floor; confidence does not low
 
 Do not force multi-agent because a task is large. Do not force single-agent because one strong model could technically do everything. Delegate when independence, specialization, context isolation, breadth, latency or fresh judgment actually helps.
 
-## 5. Mandatory second-model preflight review
+## 5. Mandatory cheap-model audit
 
-Before the primary model executes material changes, send its `TASK_DECISION` to an independent reviewer.
+Before the primary model executes material changes, send the proposed `TASK_DECISION` to an independent read-only audit model.
 
-For ordinary tasks choose the **cheapest capable model/endpoint available**. Prefer semantic tier `fast`; when practical and similarly cheap, prefer a different model family from the primary model.
+For ordinary tasks choose the **cheapest model that is competent to audit the bounded proposal**, typically semantic tier `fast`. When practical and similarly cheap, prefer a different model family from the primary model.
 
-This reviewer is read-only. It does not execute the task and does not need broad tool access.
+This model is a **critic, not a router and not a decision owner**. It must not replace the primary model's classification, assign an authoritative alternative category/risk/topology, or silently rewrite the plan. Its job is to find reasons the primary should reconsider or escalate.
 
 Give it:
 
 - exact user request and material constraints;
 - relevant facts already established;
 - proposed `TASK_DECISION`;
-- this protocol or the bounded rules needed to judge it.
+- this protocol or the bounded rules needed to audit it.
 
 Use the detailed contract in `references/economy-reviewer.md`.
 
-The reviewer returns:
+The audit returns:
 
 ```text
-VERDICT: APPROVE | REVISE | BLOCK
-ISSUES:
+AUDIT: CLEAR | CHALLENGE | ESCALATE
+FINDINGS:
 - ...
-REQUIRED_CHANGES:
+SUGGESTED_CHECKS:
 - ...
 CONFIDENCE: low | medium | high
 ```
@@ -112,7 +114,7 @@ CONFIDENCE: low | medium | high
 It must actively look for:
 
 - misunderstood intent;
-- risk classified too low;
+- risk possibly classified too low;
 - missing production/auth/payment/PII/destructive implications;
 - unjustified assumptions;
 - wrong or excessive skills/tools;
@@ -123,27 +125,43 @@ It must actively look for:
 - missing rollback/backup/post-check;
 - a plan shaped by prompt words rather than the actual problem.
 
-`REVISE` means the primary agent updates the decision and re-runs review when the change is material. Ordinary review is bounded to two revisions; after that, choose a conservative path or surface the unresolved uncertainty.
+`CLEAR` means the auditor found no material objection. It is not a correctness guarantee.
 
-`BLOCK` means do not execute until the missing evidence/user decision/safety issue is resolved.
+`CHALLENGE` means the primary model must reconsider the findings. The primary remains the decision owner: it may revise the decision or retain it with an explicit reason grounded in evidence. If material disagreement remains after reconsideration, escalate instead of letting the cheap model arbitrate.
 
-## 6. Strong-review escalation
+`ESCALATE` means the auditor found uncertainty or consequence that deserves a stronger independent model. Do not let the cheap model resolve that dispute itself.
 
-The cheap reviewer runs for ordinary preflight, but it is not the only reviewer when consequences are high.
+Ordinary audit/reconsideration is bounded to two cycles. If disagreement still matters, escalate to a stronger critic or surface the uncertainty rather than looping.
 
-- `RISK_3/RISK_4` -> add an independent `critic`/`judgment` tier review.
-- destructive or hard-to-reverse data work -> `RISK_4`, verified backup, rollback plan and post-check.
-- auth, payments, secrets, PII, production migrations -> strong independent review.
-- large structural architecture plan -> strong critic before implementation commitment.
-- high-ambition public visual work -> independent design critique plus browser/rendered evidence.
+## 6. Strong-model arbitration
 
-If a separate model cannot be spawned, use an isolated fresh context with the same review contract. If that is also unavailable, perform an explicit adversarial self-review and disclose the lack of independence in the working record.
+A cheap auditor is useful for catching omissions, but it is not trusted as the final judge when consequences or disagreement are substantial.
 
-## 7. Skills are chosen by the AI
+Use an independent `critic`/`judgment` tier model when:
+
+- `RISK_3` or `RISK_4`;
+- the cheap auditor returns `ESCALATE`;
+- a material `CHALLENGE` remains unresolved after primary reconsideration;
+- destructive or hard-to-reverse data work is involved;
+- auth, payments, secrets, PII or production migrations are involved;
+- a large structural architecture/product plan is about to be committed to;
+- another explicit safety boundary requires stronger judgment.
+
+The strong critic reviews the primary decision plus the cheap auditor's findings. It does not become the implementation owner, but for these cases it acts as the **independent judgment gate**: material execution waits until critical objections are resolved, the plan is revised, or required user input is obtained.
+
+For destructive data operations require verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
+
+For high-ambition public visual work, use independent design critique plus browser/rendered evidence.
+
+If a separate model cannot be spawned, use an isolated fresh context with the same bounded audit contract when possible. For high-risk work, do not pretend a same-context self-review is equivalent to independent judgment; record the limitation and take the conservative path or request the missing review/user decision.
+
+## 7. Skills are chosen by the primary AI
 
 Profiles and metadata are knowledge inventories, not a classifier.
 
-The primary model decides which skills are relevant after inspecting the actual task. A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body.
+The primary model decides which skills are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing or excessive skill choice, but the primary model resolves it.
+
+A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body.
 
 Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 
@@ -161,9 +179,9 @@ Do not reduce a design problem to a frontend keyword.
 
 Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task plan.
 
-The rule is simple:
+The boundary is:
 
-> **AI decides; software performs mechanical operations after the decision.**
+> **Primary AI decides; cheap AI audits; strong AI arbitrates when needed; software performs mechanical operations afterward.**
 
 ## Non-goals
 
@@ -172,5 +190,7 @@ The rule is simple:
 - no regex/keyword risk inference;
 - no executable router evals pretending to benchmark language understanding;
 - no script that chooses category/topology/skills from prompt text;
+- no cheap model acting as the semantic decision owner;
+- no cheap-model disagreement being treated as authoritative arbitration;
 - no blind trust in one model when a cheap second opinion is available;
-- no safety downgrade because either model sounds confident.
+- no safety downgrade because any model sounds confident.

@@ -36,6 +36,37 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
             self.assertTrue(report["resumable"])
             self.assertIn("protocol", report)
 
+    def test_state_init_does_not_invent_semantic_defaults(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = ensure_state_file(root, goal="Sensitive task not yet decided")
+            body = path.read_text(encoding="utf-8")
+            self.assertIn("- Pack: (unset)", body)
+            self.assertIn("- Craft depth: (unset)", body)
+            self.assertIn("- Effort: (unset)", body)
+            self.assertIn("- Topology: (unset)", body)
+            self.assertIn("- Strong independent review required: (unset)", body)
+            self.assertNotIn("- Topology: direct", body)
+
+    def test_state_init_persists_explicit_ai_decision_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = ensure_state_file(
+                root,
+                goal="Implement auth boundary",
+                decision={
+                    "domain_pack": "backend",
+                    "effort": "substantial",
+                    "topology": "writer_reviewer",
+                    "strong_review_required": True,
+                },
+            )
+            body = path.read_text(encoding="utf-8")
+            self.assertIn("- Pack: backend", body)
+            self.assertIn("- Effort: substantial", body)
+            self.assertIn("- Topology: writer_reviewer", body)
+            self.assertIn("- Strong independent review required: yes", body)
+
     def test_checkpoint_roundtrip(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

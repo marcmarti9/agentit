@@ -1,8 +1,9 @@
 """Signal-gated verification gauntlet for Agentit.
 
-Plan-first by default: select probes from probes/catalog.yaml based on project
-signals and optional task text. Execute only when apply=True. Persist a receipt
-under .agentit/verify/ for session close-out.
+Plan-first by default. Probe selection uses only mechanical project facts plus
+explicit signals supplied by the AI after TASK_DECISION/review. Natural-language
+task text is retained only as receipt context and is never parsed for routing.
+Execute only when apply=True. Persist a receipt under .agentit/verify/.
 """
 
 from __future__ import annotations
@@ -43,11 +44,18 @@ def _load_catalog(path: Path | None = None) -> dict[str, Any]:
     return data
 
 
-def detect_signals(project_root: Path, task_text: str = "") -> list[str]:
-    """Detect cheap filesystem + task signals for probe selection."""
+def detect_signals(
+    project_root: Path,
+    explicit_signals: list[str] | tuple[str, ...] | None = None,
+) -> list[str]:
+    """Detect mechanical project facts and merge AI-selected explicit signals.
+
+    This function intentionally does not inspect natural-language task text.
+    Semantic signals such as ``auth`` or ``frontend`` must be chosen by the AI
+    and passed explicitly after its decision/review phase.
+    """
     root = Path(project_root)
     signals: set[str] = {"any"}
-    text = task_text.lower()
 
     def has(*names: str) -> bool:
         return any((root / name).exists() for name in names)
@@ -66,53 +74,15 @@ def detect_signals(project_root: Path, task_text: str = "") -> list[str]:
         signals.add("rust")
     if has("go.mod"):
         signals.add("go")
-    if has("supabase", "supabase/config.toml") or _tree_mentions(
-        root, ("supabase", "postgres", "postgresql")
-    ):
+    if has("supabase", "supabase/config.toml"):
         signals.update({"supabase", "postgres", "postgresql"})
-    if _matches(
-        text,
-        (
-            r"\b(postgres|postgresql|psql|supabase|rls)\b",
-            r"\b(auth|login|session|jwt|oauth)\b",
-            r"\b(api|http|endpoint|fastapi|express|flask|django)\b",
-            r"\b(frontend|ui|css|react|browser|landing)\b",
-        ),
-    ):
-        if re.search(r"\b(postgres|postgresql|psql|supabase|rls)\b", text):
-            signals.update({"postgres", "postgresql", "supabase", "psql"})
-        if re.search(r"\b(auth|login|session|jwt|oauth)\b", text):
-            signals.update({"auth", "login", "session", "jwt", "oauth"})
-        if re.search(r"\b(api|http|endpoint|fastapi|express|flask|django)\b", text):
-            signals.update({"api", "http", "endpoint", "fastapi", "express", "flask", "django"})
-        if re.search(r"\b(frontend|ui|css|react|browser|landing)\b", text):
-            signals.update({"frontend", "ui", "css", "react", "browser", "landing"})
+
+    for signal in explicit_signals or ():
+        value = str(signal).strip().lower()
+        if value:
+            signals.add(value)
+
     return sorted(signals)
-
-
-def _tree_mentions(root: Path, needles: tuple[str, ...], *, max_files: int = 80) -> bool:
-    count = 0
-    for path in root.rglob("*"):
-        if count >= max_files:
-            break
-        if not path.is_file() or path.is_symlink():
-            continue
-        if any(part in {".git", "node_modules", ".venv", "venv", "__pycache__"} for part in path.parts):
-            continue
-        if path.suffix.lower() not in {".md", ".ts", ".tsx", ".js", ".py", ".dart", ".sql", ".toml", ".yaml", ".yml", ".json"}:
-            continue
-        count += 1
-        try:
-            sample = path.read_text(encoding="utf-8", errors="ignore")[:4000].lower()
-        except OSError:
-            continue
-        if any(needle in sample for needle in needles):
-            return True
-    return False
-
-
-def _matches(text: str, patterns: tuple[str, ...]) -> bool:
-    return any(re.search(pattern, text, re.IGNORECASE) for pattern in patterns)
 
 
 def select_probes(
@@ -141,7 +111,6 @@ def _detector_matches(project_root: Path, when: list[str]) -> bool:
         path = project_root / name
         if path.exists():
             return True
-        # directory name match
         if name in {"tests"} and (project_root / "tests").is_dir():
             return True
     return False
@@ -174,13 +143,10 @@ def resolve_detect_command(probe: dict[str, Any], project_root: Path) -> list[st
             continue
         command = detector.get("command")
         if isinstance(command, list) and command:
-            # Skip if primary binary missing
             binary = str(command[0])
             if binary in {"python3", "npm", "npx", "cargo", "go", "flutter", "dart"}:
                 if shutil.which(binary) is None and binary != "python3":
-                    # python3 might be sys.executable later
-                    if binary != "python3":
-                        continue
+                    continue
             return [str(part) for part in command]
     return None
 
@@ -189,6 +155,7 @@ def plan_verification(
     project_root: Path,
     *,
     task_text: str = "",
+    explicit_signals: list[str] | tuple[str, ...] | None = None,
     catalog_path: Path | None = None,
     include_advisory: bool = True,
 ) -> dict[str, Any]:
@@ -196,7 +163,7 @@ def plan_verification(
     if not root.is_dir() or root.is_symlink():
         raise VerifyError(f"project root must be a regular directory: {root}")
     catalog = _load_catalog(catalog_path)
-    signals = detect_signals(root, task_text)
+    signals = detect_signals(root, explicit_signals)
     probes = select_probes(catalog, signals, include_advisory=include_advisory)
     planned: list[dict[str, Any]] = []
     for probe in probes:
@@ -233,6 +200,7 @@ def plan_verification(
         "mode": "plan",
         "project_root": str(root),
         "task_text": task_text,
+        "explicit_signals": sorted({str(s).strip().lower() for s in (explicit_signals or ()) if str(s).strip()}),
         "signals": signals,
         "anti_greenwash": catalog.get("anti_greenwash") or [],
         "probes": planned,
@@ -270,6 +238,7 @@ def apply_verification(
     project_root: Path,
     *,
     task_text: str = "",
+    explicit_signals: list[str] | tuple[str, ...] | None = None,
     catalog_path: Path | None = None,
     include_advisory: bool = True,
     run_project_commands: bool = True,
@@ -277,6 +246,7 @@ def apply_verification(
     plan = plan_verification(
         project_root,
         task_text=task_text,
+        explicit_signals=explicit_signals,
         catalog_path=catalog_path,
         include_advisory=include_advisory,
     )

@@ -11,7 +11,6 @@ from router.preferences import (
     save_preferences,
     set_preference,
 )
-from router.route import route_task
 
 
 class PreferencesTestCase(unittest.TestCase):
@@ -23,11 +22,22 @@ class PreferencesTestCase(unittest.TestCase):
         self.tmpdir.cleanup()
 
     def test_dotted_key_get_and_set(self) -> None:
-        set_preference("user_style_preferences.ui_styling", "vanilla_css_oklch", preferences_path=self.prefs_file)
-        val = get_preference("user_style_preferences.ui_styling", preferences_path=self.prefs_file)
+        set_preference(
+            "user_style_preferences.ui_styling",
+            "vanilla_css_oklch",
+            preferences_path=self.prefs_file,
+        )
+        val = get_preference(
+            "user_style_preferences.ui_styling",
+            preferences_path=self.prefs_file,
+        )
         self.assertEqual(val, "vanilla_css_oklch")
 
-        set_preference("nested.deeply.key", "value_123", preferences_path=self.prefs_file)
+        set_preference(
+            "nested.deeply.key",
+            "value_123",
+            preferences_path=self.prefs_file,
+        )
         val2 = get_preference("nested.deeply.key", preferences_path=self.prefs_file)
         self.assertEqual(val2, "value_123")
 
@@ -37,26 +47,10 @@ class PreferencesTestCase(unittest.TestCase):
         st = os.stat(self.prefs_file)
         self.assertEqual(st.st_mode & 0o777, 0o600)
 
-    def test_router_integration_with_preferences(self) -> None:
-        # Save custom preferences
-        save_preferences(
-            {
-                "auto_jit_profiles": False,
-                "auto_plan_mode": False,
-                "user_style_preferences": {
-                    "preferred_language": "en",
-                    "testing_framework": "unittest",
-                    "ui_styling": "custom_css",
-                },
-            },
-            preferences_path=self.prefs_file,
-        )
-
-        res = route_task("optimiza esta consulta de base de datos", home=Path(self.tmpdir.name))
-        self.assertIn("applied_preferences", res)
-        self.assertEqual(res["applied_preferences"]["preferred_language"], "en")
-        self.assertEqual(res["applied_preferences"]["testing_framework"], "unittest")
-        self.assertEqual(res["jit_profile_recommendations"], [])
+    def test_defaults_load_without_persisted_file(self) -> None:
+        prefs = load_preferences(self.prefs_file)
+        self.assertIn("user_style_preferences", prefs)
+        self.assertIn("parallelism_preference", prefs)
 
 
 if __name__ == "__main__":

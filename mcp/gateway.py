@@ -4,7 +4,7 @@
 Exposes tools so agents in Claude / Grok / Cursor / Codex / Antigravity can:
   - see catalog + active servers
   - enable / disable catalog servers across providers
-  - get stack recommendations
+  - inspect explicitly selected MCP stacks
 
 Does NOT auto-start every backend MCP. It writes provider configs and desired
 state; clients may need a reconnect for third-party tools to appear. Meta tools
@@ -35,7 +35,11 @@ from router.mcp_runtime import (  # noqa: E402
     enable_stack,
     runtime_status,
 )
-from router.mcp_catalog import list_servers, recommend_for_task  # noqa: E402
+from router.mcp_catalog import (  # noqa: E402
+    McpCatalogError,
+    list_servers,
+    recommend_stack,
+)
 
 
 SERVER_INFO = {"name": "agentit-manager", "version": "0.1.0"}
@@ -118,19 +122,22 @@ TOOLS = [
     },
     {
         "name": "mcp_recommend",
-        "description": "Recommend an MCP stack for a task description or stack name.",
+        "description": (
+            "Return metadata for an explicit named MCP stack selected by the primary AI. "
+            "This tool does not infer a stack from natural-language task text."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
-                "task": {"type": "string"},
+                "stack_id": {"type": "string"},
                 "enable": {
                     "type": "boolean",
-                    "description": "If true, also enable the stack (apply=true).",
+                    "description": "If true, also enable the selected stack (apply=true).",
                     "default": False,
                 },
                 "force": {"type": "boolean", "default": False},
             },
-            "required": ["task"],
+            "required": ["stack_id"],
             "additionalProperties": False,
         },
     },
@@ -186,11 +193,13 @@ class Gateway:
                 apply=bool(args.get("apply", True)),
             )
         if name == "mcp_recommend":
-            task = args.get("task") or ""
-            rec = recommend_for_task(str(task))
+            stack_id = args.get("stack_id")
+            if not stack_id:
+                raise McpCatalogError("stack_id required")
+            rec = recommend_stack(str(stack_id))
             if args.get("enable"):
                 en = enable_stack(
-                    str(task),
+                    str(stack_id),
                     project_root=self.project_root,
                     apply=True,
                     force=bool(args.get("force", False)),
@@ -261,7 +270,7 @@ def handle(gw: Gateway, message: dict[str, Any]) -> None:
                     "isError": False,
                 },
             )
-        except (McpRuntimeError, ValueError, OSError) as exc:
+        except (McpCatalogError, McpRuntimeError, ValueError, OSError) as exc:
             _respond(
                 msg_id,
                 {

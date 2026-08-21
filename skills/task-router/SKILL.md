@@ -1,114 +1,196 @@
 ---
 name: task-router
-description: Classify risk, topology, skills, and context before execution. Public visual surfaces are design-primary.
+description: AI-native Agentit task-decision protocol. The primary model owns semantic classification and strategy; a cheap second model only audits the decision, with strong-model escalation for high risk or unresolved disagreement.
 ---
 
-# Intelligent task router
+# AI-native task decision protocol
 
-The router is a provider-neutral planning aid, never permission to execute, lower risk, mutate tooling, or skip user/project instructions. Its JSON is advisory; the active provider and explicit instructions still win.
+Agentit has **no programmatic semantic router**.
 
-## Invocation
+Do not call Python, regexes, keyword tables, scoring code, decision validators or any other deterministic classifier to work out what the user means. The active primary model has the richest task context and owns the semantic decision.
 
-```bash
-python3 router/route.py "describe the task"
-python3 router/route.py --risk RISK_2 "describe the task"
+The purpose of this skill is not to route the model. It gives the primary model a mandatory, repeatable decision framework and adds independent AI auditing without handing decision ownership to a weaker model.
+
+## 1. Inspect before deciding
+
+Use all materially available context:
+
+- exact current request;
+- relevant earlier conversation;
+- repository/project state;
+- files and docs already inspected;
+- user and project instructions;
+- available tools/capabilities;
+- known environment and deployment state;
+- unresolved assumptions.
+
+A follow-up such as “fix it” must be interpreted from context, not from those two words.
+
+## 2. The primary model owns `TASK_DECISION`
+
+The model currently responsible for the task is the **decision owner**. Do not delegate semantic classification or execution strategy to a cheaper reviewer merely to save tokens.
+
+Before executing material work, the primary model determines at least:
+
+- `intent`: what outcome the user is actually asking for;
+- `known_facts`: evidence already established;
+- `unknowns`: assumptions that could materially change the plan;
+- `category/domain_pack`: engineering, frontend, design, backend, data, product, writing, release, research, etc.;
+- `complexity`: trivial, bounded, substantial, structural;
+- `risk`: `RISK_0..RISK_4` with reasoning;
+- `reversibility`: how easily the action can be undone;
+- `external_effects`: production, network, account, financial, data or other side effects;
+- `skills`: smallest useful knowledge bodies to load;
+- `tools`: only tools that materially help;
+- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
+- `workers`: useful specialist roles, if any;
+- `parallelism`: why concurrent work is or is not useful;
+- `plan`: concrete execution stages;
+- `verification`: evidence needed before claiming success;
+- `safety`: backup/rollback/dry-run/post-check requirements when applicable.
+
+The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
+
+Use the **same rubric**, not the same answer. Context can legitimately change the classification.
+
+## 3. Risk rubric
+
+`RISK_0` — read-only explanation, research or inspection with no meaningful mutation.
+
+`RISK_1` — local, small, clearly reversible mutation with negligible blast radius.
+
+`RISK_2` — meaningful but bounded implementation/product change.
+
+`RISK_3` — auth/security, payments, secrets, PII, significant data/schema work, infrastructure, external side effects, or another boundary where a bad decision has serious consequences.
+
+`RISK_4` — destructive production action, plausible data loss, irreversible/high-blast-radius operation, or comparable consequence.
+
+An explicit safety/risk requirement can raise the floor; confidence does not lower it.
+
+## 4. Topology rubric
+
+`direct` — one execution owner is clearer and delegation adds no concrete benefit.
+
+`probe` — investigate/read first, then decide.
+
+`fan_out` — two or more genuinely independent branches benefit from isolation or parallel work.
+
+`pipeline` — dependent stages with explicit handoffs.
+
+`writer_reviewer` — one implementation owner plus independent review.
+
+`audit` — inspection/critique is the primary task.
+
+Do not force multi-agent because a task is large. Do not force single-agent because one strong model could technically do everything. Delegate when independence, specialization, context isolation, breadth, latency or fresh judgment actually helps.
+
+## 5. Mandatory cheap-model audit
+
+Before the primary model executes material changes, send the proposed `TASK_DECISION` to an independent read-only audit model.
+
+For ordinary tasks choose the **cheapest model that is competent to audit the bounded proposal**, typically semantic tier `fast`. When practical and similarly cheap, prefer a different model family from the primary model.
+
+This model is a **critic, not a router and not a decision owner**. It must not replace the primary model's classification, assign an authoritative alternative category/risk/topology, or silently rewrite the plan. Its job is to find reasons the primary should reconsider or escalate.
+
+Give it:
+
+- exact user request and material constraints;
+- relevant facts already established;
+- proposed `TASK_DECISION`;
+- this protocol or the bounded rules needed to audit it.
+
+Use the detailed contract in `references/economy-reviewer.md`.
+
+The audit returns:
+
+```text
+AUDIT: CLEAR | CHALLENGE | ESCALATE
+FINDINGS:
+- ...
+SUGGESTED_CHECKS:
+- ...
+CONFIDENCE: low | medium | high
 ```
 
-Inspect the repository/target environment before acting.
+It must actively look for:
 
-## Hard routing correction: public visual surfaces
+- misunderstood intent;
+- risk possibly classified too low;
+- missing production/auth/payment/PII/destructive implications;
+- unjustified assumptions;
+- wrong or excessive skills/tools;
+- missing useful delegation or pointless delegation;
+- unsafe parallel writers/shared state;
+- dependency mistakes;
+- weak verification;
+- missing rollback/backup/post-check;
+- a plan shaped by prompt words rather than the actual problem.
 
-A landing page, homepage, corporate/brand website, marketing site, portfolio, storefront, campaign site, or complete visual redesign is **design-primary**, even when implementation is React/Next/CSS and even if a generic heuristic labels it `frontend` or `marketing`.
+`CLEAR` means the auditor found no material objection. It is not a correctness guarantee.
 
-For public visual work:
+`CHALLENGE` means the primary model must reconsider the findings. The primary remains the decision owner: it may revise the decision or retain it with an explicit reason grounded in evidence. If material disagreement remains after reconsideration, escalate instead of letting the cheap model arbitrate.
 
-- use the `design` domain pack;
-- greenfield public surfaces and total visual redesigns recommend **Studio** unless the user chooses a leaner depth;
-- run the deep `interview-me` path before planning;
-- research live references before art direction;
-- create a concrete `DESIGN_DIRECTION` before code;
-- use independent research/concept/critique workers when isolation or diversity helps;
-- require browser evidence on desktop and mobile before visual-success claims.
+`ESCALATE` means the auditor found uncertainty or consequence that deserves a stronger independent model. Do not let the cheap model resolve that dispute itself.
 
-Normal greenfield/total shape:
+Ordinary audit/reconsideration is bounded to two cycles. If disagreement still matters, escalate to a stronger critic or surface the uncertainty rather than looping.
 
-`interview -> reference research -> concept/direction -> implementation -> independent visual critique -> browser verification`
+## 6. Strong-model arbitration
 
-Research/concept branches may fan out inside that pipeline. Do not collapse to direct only because one model could technically perform every step.
+A cheap auditor is useful for catching omissions, but it is not trusted as the final judge when consequences or disagreement are substantial.
 
-## Output contract
+Use an independent `critic`/`judgment` tier model when:
 
-- `skills_available`: recommended skills that are discoverable/compatible.
-- `skills_recommended_missing`: relevant recommendations that cannot currently be used.
-- `skills`: legacy alias of `skills_available`.
-- `signals`: evidence used by routing heuristics.
-- `confidence`: uncalibrated signal strength; `confidence_calibrated` remains false without reviewed labels.
-- `rejected_topologies`: why alternatives were not selected.
-- `applied_preferences`: safe project/user preferences to apply.
-- `jit_profile_recommendations`: missing profiles worth project-local activation.
-- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or `audit`.
-- `subagents.recommended`: soft guidance; no hard max/min quota.
-- `domain_pack`, `skill_budget`, `craft_depth` (visual only), `spend`, `token_estimate`, `parallelism`, `critic_required`, `multi_agent_pushback`: execution guidance.
+- `RISK_3` or `RISK_4`;
+- the cheap auditor returns `ESCALATE`;
+- a material `CHALLENGE` remains unresolved after primary reconsideration;
+- destructive or hard-to-reverse data work is involved;
+- auth, payments, secrets, PII or production migrations are involved;
+- a large structural architecture/product plan is about to be committed to;
+- another explicit safety boundary requires stronger judgment.
 
-## Skill activation contract
+The strong critic reviews the primary decision plus the cheap auditor's findings. It does not become the implementation owner, but for these cases it acts as the **independent judgment gate**: material execution waits until critical objections are resolved, the plan is revised, or required user input is obtained.
 
-A skill ID in router output, a profile, or a worker payload is **not proof the skill is active**. Before a stage relies on a skill, the model doing that stage must actually read its `SKILL.md` body or receive it through demonstrable provider-native injection. Keep a small ID/path/hash load receipt when the host supports it.
+For destructive data operations require verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
 
-If a worker only sees names such as `design-taste-frontend` and the provider does not resolve those names automatically, load/embed the corresponding bodies before work. Never claim an unopened skill shaped the result.
+For high-ambition public visual work, use independent design critique plus browser/rendered evidence.
 
-Greenfield/total public work normally loads by stage:
+If a separate model cannot be spawned, use an isolated fresh context with the same bounded audit contract when possible. For high-risk work, do not pretend a same-context self-review is equivalent to independent judgment; record the limitation and take the conservative path or request the missing review/user decision.
 
-- research: `design-inspiration-research`;
-- direction: `design-taste-frontend` + `impeccable-design`;
-- implementation: `frontend-ui-engineering` + `emil-design-eng`;
-- critique: `impeccable-design` + `design-taste-frontend` + browser verification.
+## 7. Skills are chosen by the primary AI
 
-## Selection rules
+Profiles and metadata are knowledge inventories, not a classifier.
 
-1. Infer risk from the requested action/environment, not keyword mentions alone. Explicit risk may raise but never lower inferred risk.
-2. Select the smallest **useful** skill set. For a public visual surface, art direction is useful/required rather than optional polish.
-3. Use terse output only for low-risk unambiguous work; preserve enough detail for review when precision matters.
-4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, credentials, schemas, migrations and affected-file lists.
-5. Exact deduplication is safe by default; do not semantically compress decision-critical material without retrieval.
-6. RISK_3/4 use fuller evidence/independent review; RISK_4 also needs the stronger operational gates defined by the base router.
-7. Delegation needs scope/ownership/verifier, but **context isolation, research breadth, concept diversity and fresh critique are legitimate benefits**.
-8. PostgreSQL-specific guidance requires a real PostgreSQL/psql/Supabase signal. Generic/SQLite work must not receive Postgres-specific advice.
-9. Large structural/high-impact plans require an independent critic.
-10. Verify actual runtime/rendered behavior before completion claims.
+The primary model decides which skills are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing or excessive skill choice, but the primary model resolves it.
 
-## Delegation
+A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body.
 
-Valid reasons include independent files/domains, read-only investigation, large documentation/reference sets, independent visual hypotheses, concept competition, fresh critique, or using a more efficient worker for volume reading while a stronger parent preserves context for judgment/synthesis.
+Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 
-Provider-specific model names belong in provider configuration. Portable routing talks about semantic capability tiers.
+## 8. Public visual surfaces
 
-## Skill visibility profiles
+A landing page, homepage, brand/company website, portfolio, storefront, campaign site or total visual redesign is design-primary even if the implementation language is React/CSS/etc.
 
-The repository keeps all skill bodies in `skills/`; global installation remains intentionally bounded to the `core` profile. Add opt-in families project-locally rather than dumping the entire catalog into every context:
+Greenfield or total public redesign normally follows:
 
-```bash
-./agentit enable design --project .
-./agentit enable design --project . --apply
-./agentit status --project .
-./agentit disable design --project . --apply
-```
+`interview -> live reference research -> direction/concept -> implementation -> independent visual critique -> desktop/mobile browser verification`
 
-`profiles.yaml` is visibility policy; `registry.yaml` is routing/inventory metadata. A registry entry does not mean its body was loaded.
+Do not reduce a design problem to a frontend keyword.
 
-## Adaptive execution
+## 9. What remains deterministic
 
-Prefer `direct` for tightly coupled work, `probe` for read-only investigation, `fan_out` for independent branches, `pipeline` for dependent stages, `writer_reviewer` for one implementation owner + independent review, and `audit` for critical review. One writer per file/shared state unless isolated branches/worktrees give explicit ownership.
+Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task plan.
 
-The design critic should reject wrapper-only cardification, repeated section silhouettes, generic hero/card/CTA templates, and research that cannot explain any final design decision.
+The boundary is:
 
-## Provider adapters
-
-Codex/Claude/Gemini/other hosts may implement workers and skill loading differently. Do not assume model names or skill injection are portable. Missing critical review/skill context should fail visibly rather than silently downgrade. If native subagents are unavailable, use an isolated delegated call/fresh context or load the same scoped skill bundle into the parent.
+> **Primary AI decides; cheap AI audits; strong AI arbitrates when needed; software performs mechanical operations afterward.**
 
 ## Non-goals
 
-- no global shell interception;
-- no automatic activation of unrelated tooling;
-- no full-catalog context dumps;
-- no replacement of exact errors/diffs/operational evidence with lossy summaries;
-- no forced multi-agent and no forced single-agent.
+- no `route.py`;
+- no semantic `decision_contract.py`;
+- no regex/keyword risk inference;
+- no executable router evals pretending to benchmark language understanding;
+- no script that chooses category/topology/skills from prompt text;
+- no cheap model acting as the semantic decision owner;
+- no cheap-model disagreement being treated as authoritative arbitration;
+- no blind trust in one model when a cheap second opinion is available;
+- no safety downgrade because any model sounds confident.

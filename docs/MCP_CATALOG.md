@@ -26,7 +26,8 @@ agentit mcp enable context7 --providers all
 agentit mcp enable context7 --providers all --apply
 agentit mcp disable playwright --providers project --apply
 
-# Stack
+# Stack selected explicitly by the primary AI
+agentit mcp recommend developer_core
 agentit mcp enable-stack developer_core --apply
 
 # Always-on meta MCP so tools work without shell
@@ -44,7 +45,9 @@ Connect **agentit-manager** once. The agent then calls:
 | `mcp_list_active` | Currently enabled ids |
 | `mcp_enable` | Enable server (`apply` default true; `force` for RISK_3+) |
 | `mcp_disable` | Disable server |
-| `mcp_recommend` | Stack for a task; optional `enable=true` |
+| `mcp_recommend` | Inspect an explicit `stack_id`; optional `enable=true` |
+
+`mcp_recommend` does **not** accept a natural-language task description. The primary AI chooses the stack from the full task context, then the manager resolves that named stack mechanically.
 
 ## Bootstrap (once per machine)
 
@@ -99,7 +102,7 @@ Meta management always works via CLI or agentit-manager; third-party tool surfac
 | Path | Role |
 |------|------|
 | `mcp/catalog.yaml` | Curated servers + stacks |
-| `router/mcp_catalog.py` | Read/recommend/snippet |
+| `router/mcp_catalog.py` | Read/resolve named stacks/snippets |
 | `router/mcp_runtime.py` | Desired state + enable/disable |
 | `router/mcp_providers.py` | Multi-client config writers |
 | `mcp/gateway.py` | stdio MCP manager |

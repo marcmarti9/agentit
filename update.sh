@@ -244,7 +244,7 @@ preflight_update() {
     fi
   done
   if [[ -f "$SOURCE_SKILLS/task-router/SKILL.md" ]]; then
-    preflight_import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/router/SKILL.md"
+    preflight_import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/skills/task-router/SKILL.md"
   fi
 
   if [[ "$WITH_SETTINGS" == "true" ]]; then
@@ -291,8 +291,6 @@ else
   printf 'provider=%s\ndate=%s\n' "$SOURCE_PROVIDER" "$(date --iso-8601=seconds)" >> "$manifest_path"
 fi
 
-# Allowlist: solo agentes adaptativos de Claude; Codex/Antigravity no son
-# fuentes de la jerarquía. Los archivos ausentes se omiten con evidencia.
 if [[ "$SOURCE_PROVIDER" == "claude" ]]; then
   for agent in architect auditor orchestrator supervisor worker; do
     if [[ -f "$SOURCE_ROOT/agents/$agent.md" ]]; then
@@ -311,7 +309,7 @@ for skill in architect-orchestrator supabase-postgres-best-practices; do
   fi
 done
 if [[ -f "$SOURCE_SKILLS/task-router/SKILL.md" ]]; then
-  import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/router/SKILL.md" "router/SKILL.md"
+  import_file "$SOURCE_SKILLS/task-router/SKILL.md" "$REPO_DIR/skills/task-router/SKILL.md" "skills/task-router/SKILL.md"
 else
   printf 'skip: task-router no instalado en el provider\n'
 fi

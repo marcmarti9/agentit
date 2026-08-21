@@ -9,7 +9,7 @@ description: Discover and invoke the right skills. Use when choosing reusable wo
 
 Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
 
-**Harness bootstrap:** if the user says `usa agentit` / `use agentit` (or equivalent), load `using-agentit` first and follow its playbook (route → JIT profiles → load recommended skills → execute → verify).
+**Harness bootstrap:** if the user says `usa agentit` / `use agentit` (or equivalent), load `using-agentit` first and follow its playbook (inspect context → primary TASK_DECISION → independent audit/escalation → JIT skills/tools → execute → verify).
 
 ## Skill Discovery
 
@@ -166,7 +166,7 @@ For a complete feature, the typical skill sequence is:
 3.  spec-driven-development     → Define what we're building
 4.  planning-and-task-breakdown → Break into verifiable chunks
 5.  context-engineering         → Load the right context
-6.  source-driven-development   → Verify against official docs
+6.  source-driven-development   → Verify against official docs before implementing
 7.  incremental-implementation  → Build slice by slice
 8.  observability-and-instrumentation → Instrument as you build (runs parallel with 7-9, not after)
 9.  doubt-driven-development    → Cross-examine non-trivial decisions in-flight

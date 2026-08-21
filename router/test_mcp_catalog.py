@@ -39,13 +39,11 @@ class McpCatalogTestCase(unittest.TestCase):
         ids = [s["id"] for s in rec["servers"]]
         self.assertEqual(ids, ["agentit-manager", "context7", "github", "playwright"])
 
-    def test_recommend_for_task_frontend(self) -> None:
-        rec = recommend_for_task("implement figma design in react")
-        self.assertEqual(rec["stack"], "frontend")
-
-    def test_recommend_for_task_postgres(self) -> None:
-        rec = recommend_for_task("inspect supabase schema")
-        self.assertEqual(rec["stack"], "backend_data")
+    def test_free_text_task_recommendation_is_rejected(self) -> None:
+        with self.assertRaises(McpCatalogError):
+            recommend_for_task("implement figma design in react")
+        with self.assertRaises(McpCatalogError):
+            recommend_for_task("inspect supabase schema")
 
     def test_snippet_context7_json(self) -> None:
         snip = snippet_for_server("context7", provider="json")
@@ -93,7 +91,7 @@ class McpCatalogTestCase(unittest.TestCase):
         self.assertIn("servers", data)
         self.assertFalse(data["policy"]["auto_activate"])
 
-    def test_cli_recommend(self) -> None:
+    def test_cli_recommend_named_stack(self) -> None:
         proc = subprocess.run(
             [str(AGENTIT_CLI), "mcp", "recommend", "developer_core"],
             capture_output=True,
@@ -103,6 +101,17 @@ class McpCatalogTestCase(unittest.TestCase):
         )
         data = json.loads(proc.stdout)
         self.assertEqual(data["stack"], "developer_core")
+
+    def test_cli_recommend_rejects_free_text(self) -> None:
+        proc = subprocess.run(
+            [str(AGENTIT_CLI), "mcp", "recommend", "implement figma design"],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=str(REPO_ROOT),
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("AI must choose an explicit named stack", proc.stderr)
 
     def test_cli_snippet(self) -> None:
         proc = subprocess.run(

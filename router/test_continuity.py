@@ -11,7 +11,6 @@ try:
         write_checkpoint,
     )
     from .project_signals import collect_project_signals
-    from .route import route_task
     from .verify import evaluate_done_claims
 except ImportError:
     from continuity import (
@@ -22,7 +21,6 @@ except ImportError:
         write_checkpoint,
     )
     from project_signals import collect_project_signals
-    from route import route_task
     from verify import evaluate_done_claims
 
 
@@ -38,6 +36,37 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
             self.assertTrue(report["resumable"])
             self.assertIn("protocol", report)
 
+    def test_state_init_does_not_invent_semantic_defaults(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = ensure_state_file(root, goal="Sensitive task not yet decided")
+            body = path.read_text(encoding="utf-8")
+            self.assertIn("- Pack: (unset)", body)
+            self.assertIn("- Craft depth: (unset)", body)
+            self.assertIn("- Effort: (unset)", body)
+            self.assertIn("- Topology: (unset)", body)
+            self.assertIn("- Strong independent review required: (unset)", body)
+            self.assertNotIn("- Topology: direct", body)
+
+    def test_state_init_persists_explicit_ai_decision_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = ensure_state_file(
+                root,
+                goal="Implement auth boundary",
+                decision={
+                    "domain_pack": "backend",
+                    "effort": "substantial",
+                    "topology": "writer_reviewer",
+                    "strong_review_required": True,
+                },
+            )
+            body = path.read_text(encoding="utf-8")
+            self.assertIn("- Pack: backend", body)
+            self.assertIn("- Effort: substantial", body)
+            self.assertIn("- Topology: writer_reviewer", body)
+            self.assertIn("- Strong independent review required: yes", body)
+
     def test_checkpoint_roundtrip(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -51,20 +80,6 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
         self.assertTrue(signals["available"])
         self.assertIn(signals["size_class"], {"tiny", "small", "medium", "large"})
         self.assertIn("python", signals["stack_markers"])
-
-    def test_route_uses_project_root_for_token_basis(self):
-        repo = Path(__file__).resolve().parents[1]
-        result = route_task(
-            "Implementa una feature pequeña de perfiles",
-            project_root=repo,
-        )
-        self.assertTrue(result["project_signals"]["available"])
-        self.assertTrue(result["token_estimate"]["not_a_bill"])
-        basis = " ".join(result["token_estimate"]["basis"])
-        self.assertIn("size_class=", basis)
-        self.assertIn("models", result)
-        self.assertIn("continuity", result)
-        self.assertEqual("forbidden", result["verification"]["claims_without_evidence"])
 
     def test_evaluate_done_claims_requires_receipt(self):
         denied = evaluate_done_claims(["done"], receipt=None)

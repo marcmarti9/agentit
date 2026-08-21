@@ -4,7 +4,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/version-v0.3.2--stable-green.svg)](https://github.com/marcmarti9/agentit/releases)
 
-> **Agentit is a portable, provider-neutral meta-harness for AI coding agents: activate with natural language, interview once, load only the skill family you need, spawn specialists when useful, critique large plans, verify with evidence, and ship through PRs.**
+> **Agentit is a portable, provider-neutral meta-harness for AI coding agents: activate with natural language, let the model understand the task from full context, review its decision with another AI, load only the knowledge you need, delegate intelligently, verify with evidence, and ship through PRs.**
 
 Agentit is designed to work across **OpenAI, Anthropic, Google, xAI**, and compatible future coding-agent environments. Provider-specific subagents/workers are optional execution primitives; the shared Agentit protocol is semantic and portable.
 
@@ -18,47 +18,63 @@ use agentit
 utilise agentit
 ```
 
-No other powerwords. Ordinary prompts drive routing (“frontend and backend”, two file paths, “at the same time”, “review and fix”, “several agents”, …).
+No other powerwords. The active AI interprets ordinary prompts from the full conversation/project/tool context; Agentit does not place a keyword/regex router in front of the model.
 
 ```text
 usa agentit y crea mi portfolio personal
 ```
 
-For product-affecting work Agentit follows roughly:
+For material work Agentit follows roughly:
 
 ```text
-inspect facts
+inspect facts + context
    ↓
-one comprehensive interview batch
+primary AI creates TASK_DECISION
    ↓
-domain pack (+ craft depth only if design/visual)
+cheap independent AI preflight review
    ↓
-project-aware token estimate
+CLEAR / CHALLENGE / ESCALATE
    ↓
-persist resumable project state
+strong critic too when consequences are high
    ↓
-skill budget + MCP fit + optional specialists
+interview material product decisions when needed
    ↓
-critic on large structural plans
+load the smallest useful skills + tools
    ↓
-implement on work branch
+execute the reviewed plan / delegate when useful
    ↓
-verification → PR by default
+fresh verification → PR by default
 ```
 
-Purely mechanical chores can bypass the interview.
+If an interview materially changes the task, the primary AI updates its decision and reviews the changed plan again before execution. Purely mechanical chores can bypass product interview ceremony, but not the need to understand what is actually being requested.
 
 ---
 
-## Interview-first, domain packs, design craft only
+## AI decides; AI reviews
 
-Agentit interviews **every product-affecting task**, not only ambiguous ones.
+Agentit deliberately has **no programmatic natural-language router**.
 
-Before asking, the agent inspects repo/docs/tools. Then it asks **all currently identifiable material decisions in one batch**.
+The primary model sees information a standalone script normally does not: the conversation, repository state, project instructions, available tools, prior decisions and the real referents behind follow-ups such as “fix it”. It therefore owns semantic classification, risk assessment, topology, skill/tool choice and delegation decisions.
 
-It recommends a **domain pack** (skill family: frontend, backend, design, data, …) and loads **only that family plus a tiny always-core**, not the whole catalog.
+Before material execution, a second AI reviews the proposed `TASK_DECISION`. Ordinary work uses the cheapest capable independent model/endpoint available, preferably a semantic `fast` tier and, when similarly cheap, a different model family. The reviewer is read-only and returns `CLEAR`, `CHALLENGE` or `ESCALATE`.
 
-**Standard / Polished / Studio** are **design/visual craft depth only** — not a universal tax on every task. Token estimates are **project-aware** (router `token_estimate`), not fixed billing tables.
+`CLEAR` means no material objection was found; it is not approval authority. `CHALLENGE` requires the primary model to reconsider the finding, and unresolved material disagreement escalates. `ESCALATE` means a stronger independent reviewer should arbitrate before material execution.
+
+High-consequence work does not trade safety for cheapness: `RISK_3/RISK_4`, destructive/irreversible operations, auth/payments/secrets/PII/production, significant migrations and large structural plans additionally use a stronger `critic`/`judgment` review.
+
+Canonical policy: [`skills/task-router/SKILL.md`](skills/task-router/SKILL.md), [`skills/task-router/references/economy-reviewer.md`](skills/task-router/references/economy-reviewer.md), and [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md).
+
+---
+
+## Interview-first where product decisions matter
+
+Agentit interviews product-affecting work when material user decisions cannot be safely discovered or inferred.
+
+Before asking, the agent inspects repo/docs/tools. Then it asks **all currently identifiable material decisions in one batch**, with useful recommendations so the user can accept defaults instead of designing the solution from scratch.
+
+It selects a **domain pack** (skill family: frontend, backend, design, data, …) and loads **only that family plus a tiny always-core**, not the whole catalog.
+
+**Standard / Polished / Studio** are **design/visual craft depth only** — not a universal tax on every task. Any effort/token estimate is contextual guidance from the active model, not a billing table or deterministic prompt router.
 
 Canonical files: [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md), [`effort/levels.yaml`](effort/levels.yaml), [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md), [`skills/mcp-tooling-fit/SKILL.md`](skills/mcp-tooling-fit/SKILL.md).
 
@@ -68,7 +84,7 @@ Canonical files: [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md),
 
 Agentit assumes any chat can disappear because of context/token exhaustion, provider/model switch, app crash, machine switch, or a long pause.
 
-For every product-affecting task, maintain a compact project state document at:
+For every substantial product-affecting task, maintain a compact project state document at:
 
 ```text
 docs/agentit/STATE.md
@@ -80,7 +96,7 @@ The state must let a completely fresh agent recover:
 
 - what is being built and why;
 - confirmed intent, audience, success criteria, constraints, and non-goals;
-- domain pack, craft depth if design/visual, spend, token estimate;
+- domain pack and craft depth if design/visual;
 - what is done / in progress / blocked / not started;
 - durable product, architecture, API, data, and design decisions;
 - important files/artifacts;
@@ -133,7 +149,7 @@ api-tester
 workflow-optimizer
 ```
 
-Agentit uses **intelligent delegation**: stay single-agent when that is best; spawn specialists when independence, isolation, domain expertise, or independent critique wins. No hard min/max subagent caps. Large structural plans require an independent critic. If the user asks for multi-agent without benefit, the Architect should push back.
+Agentit uses **intelligent delegation**: stay single-agent when that is best; spawn specialists when independence, isolation, domain expertise, latency, breadth, or independent critique wins. No hard min/max subagent caps. Large structural plans require an independent critic. If the user asks for multi-agent without benefit, the Architect should push back.
 
 Execution fallback:
 
@@ -147,7 +163,7 @@ separate fresh-context invocation
 parent + exact specialist skill bundle
 ```
 
-Multi-agent execution is an optimization, never a correctness dependency.
+The mandatory decision reviewer follows the same fallback. Multi-agent execution is an optimization; high-value review should degrade visibly rather than silently pretending independence existed.
 
 ---
 
@@ -213,7 +229,7 @@ See [`skills/ui-ux-pro-max-intelligence/SKILL.md`](skills/ui-ux-pro-max-intellig
 
 ## Design studio
 
-The `design` profile contains a broad but JIT-routed craft stack:
+The `design` profile contains a broad but JIT-selected craft stack:
 
 ```text
 ui-ux-pro-max-intelligence       structured UI/UX design intelligence
@@ -234,7 +250,7 @@ threejs-product-storytelling     GLB/glTF product storytelling
 delight-and-whimsy               restrained memorable details
 ```
 
-Do not load the whole stack just because design is active. Effort level and task signals control depth.
+Do not load the whole stack just because design is active. The AI selects depth from the actual task and evidence.
 
 For genuinely high-ambition Studio work, Agentit may use a **design competition**: shared evidence brief → 2-3 independent concepts → explicit jury by brand fit/originality/clarity/usability/feasibility/performance/memorability → winner or justified hybrid → implementation → independent critique.
 
@@ -276,6 +292,8 @@ agentit verify "task summary" --project . --apply
 
 No `done`, `fixed`, or `passing` claim without fresh evidence after the last relevant edit. Design work needs rendered evidence when browser tooling is available; high-ambition work should normally get independent critique/performance review.
 
+The pre-execution AI reviewer checks the **decision**; verification checks the **result**. They solve different failure modes.
+
 ---
 
 ## MCP runtime
@@ -309,8 +327,9 @@ Open Skills / compatible clients typically use `~/.agents/skills/`; Claude can u
 ```bash
 python3 -m unittest discover -s router -p "test_*.py"
 python3 -m unittest discover -s tests
-python3 evals/run.py
 ```
+
+These tests cover mechanical runtime, profile, capability, MCP, continuity, verification, registry/inventory safety, and worker-context behavior. Agentit intentionally does not pretend a deterministic prompt-classification suite can benchmark the semantic judgment of the active AI.
 
 ---
 
@@ -319,6 +338,8 @@ python3 evals/run.py
 | Doc | Purpose |
 |---|---|
 | [`AGENTS.md`](AGENTS.md) | global agent playbook |
+| [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md) | boundary: AI decisions vs mechanical software |
+| [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md) | primary decision + second-model review protocol |
 | [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md) | batched interview + effort + provider semantics |
 | [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) | resumable project-state contract + PR-first workflow |
 | [`agents/catalog.yaml`](agents/catalog.yaml) | reusable specialist roles |

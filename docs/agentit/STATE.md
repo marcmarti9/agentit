@@ -1,72 +1,75 @@
 # Agentit state
 
-**Updated:** 2026-08-12
-**Status:** complete and merged
-**Branch:** main
-**PR:** https://github.com/marcmarti9/agentit/pull/12
+**Updated:** 2026-08-21
+**Status:** in review
+**Branch:** refactor/llm-native-routing
+**PR:** https://github.com/marcmarti9/agentit/pull/24
 
 ## Goal
 
-Deliver intelligent orchestration for Agentit: domain skill packs, design-only craft depth, project-aware tokens, smart spawn without hard caps, mandatory critic for large plans, MCP fit, long-horizon recovery, evidence-based verification, and first-class local model routing.
+Remove programmatic natural-language routing from Agentit. The primary AI interprets each task from full context, creates a `TASK_DECISION`, and an independent second AI reviews that decision before material execution. Ordinary review uses the cheapest capable model/endpoint; high-consequence work additionally escalates to a stronger critic/judgment reviewer.
 
 ## Confirmed intent
 
-- Audience: Agentit users and agents across providers
-- Success: single vs multi decision is intelligent; no Studio tax on non-design; no powerwords except natural Agentit activation; recovery/verify/local models real
-- Constraints: safety floors, one-writer, PR-first, no multi chaos
-- Non-goals: multi-agent-by-default framework
+- Audience: Agentit users and agents across providers.
+- Success criteria: no Python/regex/keyword semantic router; no executable script decides task intent/category/risk/topology/skills/delegation from prompt text; cheap AI second opinion is the normal pre-execution check; stronger review remains mandatory when consequences justify it.
+- Constraints: provider-neutral semantic tiers, bounded review loop, read-only reviewer, safety escalation, one-writer ownership, PR-first workflow.
+- Non-goals: removing useful mechanical software such as profile installation, MCP/runtime state, test execution, manifests, continuity, capability inventory, or verification.
 
 ## Domain pack
 
-- Pack: engineering (harness/orchestration)
-- Craft depth: n/a (not design/visual product UI)
-- Spend: thorough
-- Token estimate: project-aware via router `--project`
-- Topology: fan_out / pipeline / writer_reviewer as signals dictate
-- Critic required: yes for structural plans
+- Pack: engineering (Agentit harness architecture)
+- Craft depth: n/a (not design/visual work)
+- Effort: structural refactor
+- Topology: writer/reviewer for the architecture change; PR-first integration
+- Strong independent review required: yes for large structural changes
 
 ## Current status
 
-- Complete: router intelligence, domain packs, craft-depth design-only, MCP skill, continuity module, local model catalog, verification claim gate, worker orchestration fields, tests/evals; affirmative Agentit activation; vendor-neutral data profile routing
-- In progress: none
-- Blocked: none
-- Not started: optional follow-ups after merge (deeper MCP marketplace automation UI)
+- Complete: semantic `route.py` removed; semantic decision validator removed; route trace/eval code removed; primary-model decision rubric rewritten; mandatory economy reviewer contract added; strong-review escalation documented; README/AGENTS/using-agentit updated; inventory decoupled from removed router; stale route hooks removed from profile CLI; continuity rewritten around AI decisions rather than router output.
+- In progress: final CI verification and cleanup of stale active documentation/references.
+- Blocked: none known.
+- Not started: merge decision after CI passes.
 
 ## Decisions
 
-- Craft depth Standard/Polished/Studio is design-only
-- No hard subagent min/max
-- Natural language only; Agentit activation is the sole special phrase
-- Project signals feed token estimates
-- Local models are capability-tier first-class via preferences
+- `TASK_DECISION` is made by the primary AI using conversation + project + tool context.
+- A cheap independent AI reviewer returns `APPROVE`, `REVISE`, or `BLOCK` before material execution.
+- Prefer semantic tier `fast` for ordinary preflight and a different model family when similarly cheap.
+- RISK_3/RISK_4, destructive/irreversible work, auth/payments/secrets/PII/production, significant migrations, and large structural plans additionally require a stronger `critic`/`judgment` review.
+- Software may perform mechanical operations after the AI decision but may not infer semantic routing from natural-language keywords.
+- Reviews are bounded; ordinary review does not loop indefinitely.
 
 ## Important files and artifacts
 
-- `router/route.py`, `router/continuity.py`, `router/project_signals.py`, `router/verify.py`, `router/worker_context.py`
-- `effort/levels.yaml`, `models/capabilities.yaml`
-- `skills/mcp-tooling-fit`, `long-horizon-recovery`, `local-model-routing`
-- PR #12, squash merge `16848dc0a8faebb8cb6e6fe73bbcd9e8a0377674`
+- `skills/task-router/SKILL.md`
+- `skills/task-router/references/economy-reviewer.md`
+- `skills/using-agentit/SKILL.md`
+- `AGENTS.md`
+- `docs/NO_PROGRAMMATIC_ROUTER.md`
+- `docs/LLM_NATIVE_DECISION_PROTOCOL.md`
+- `router/profiles.py`, `router/continuity.py`, `router/inventory.py` (mechanical infrastructure only)
+- PR #24
 
 ## Verification
 
-- router unit tests: 166 OK
-- tests/: 17 OK
-- evals: 14/14 after adversarial activation and MySQL profile cases
-- Manual route smoke: fan_out + project signals + models + claims_without_evidence
-- GitHub Actions CI run #58: success
-- `git diff --check`: pass
+- GitHub Actions runs are the acceptance gate for the refactor.
+- Runtime/utility tests must pass after deleting router-dependent modules.
+- Script tests, shell syntax, registry YAML, settings JSON, profile catalog, and capability catalog must pass.
+- No executable prompt-classification eval suite remains by design.
 
 ## Next actions
 
-1. Reinstall the core profile when local provider copies should pick up `mcp-tooling-fit` and `long-horizon-recovery`
-2. Optional: wire provider-native local endpoint probes
+1. Wait for the latest PR #24 CI run and inspect failures if any.
+2. Search active docs/code for stale `route.py`, `agentit trace`, `decision_contract.py`, or deterministic-routing claims and remove applicable references.
+3. Leave PR #24 open for the merge decision once CI is green.
 
 ## Open questions / blockers
 
-- None for this PR scope
+- None currently.
 
 ## Recovery
 
-- Last checkpoint: PR #12 merged into `main`
-- Resume: read this file on `main` → verify assumptions → continue Next actions
-- Mid-task re-route: `agentit trace "<goal>" --project .`
+- Resume from PR #24 on `refactor/llm-native-routing`.
+- Read this file, inspect the latest PR head/CI, then continue Next actions.
+- If the implementation scope changes materially, rebuild `TASK_DECISION` from current context and run the independent AI review again before executing the changed plan.

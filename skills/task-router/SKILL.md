@@ -1,189 +1,176 @@
 ---
 name: task-router
-description: LLM-native Agentit decision protocol. The agent classifies every task from full context; code only validates deterministic invariants.
+description: AI-native Agentit task-decision protocol. The primary model classifies from full context and a second model reviews the decision before execution.
 ---
 
-# LLM-native decision protocol
+# AI-native task decision protocol
 
-Agentit does **not** use a keyword/regex router to understand user intent.
-The active model is the semantic router.
+Agentit has **no programmatic semantic router**.
 
-Before executing any task, classify it using the same rubric below. Use the
-**full available context**: conversation, repository state, files, tools,
-provider capabilities, user instructions and project rules. Do not classify a
-follow-up such as “fix it” from that string alone when prior context explains
-what “it” is.
+Do not call Python, regexes, keyword tables, scoring code, decision validators or any other deterministic classifier to work out what the user means. The active model already has richer context than a standalone script and owns the semantic decision.
 
-The protocol is mandatory; the exact answer is contextual. Same rubric does not
-mean same classification.
+The purpose of this skill is not to route the model. It gives the model a mandatory, repeatable thinking framework and a second-model review loop.
 
-## Mandatory decision
+## 1. Inspect before deciding
 
-Before action, determine:
+Use all materially available context:
 
-- `intent`: explain | investigate | review | implement | design | document | operate
-- `category`: explanation | research | bug | testing | engineering | frontend | design | backend | database | security | marketing | documentation | release
-- `complexity`: trivial | bounded | substantial | structural
-- `risk`: RISK_0..RISK_4
-- `reversible`: true | false | null
-- `topology`: direct | probe | fan_out | pipeline | writer_reviewer | audit
-- `domain_pack`: engineering | frontend | design | backend | data | product | writing | release | research
-- whether this is a public visual surface
-- whether it is greenfield / a total visual redesign
-- design craft depth when applicable: Standard | Polished | Studio
-- whether the task is a destructive data operation
-- smallest useful skills to load
-- useful specialists, if any
-- required/preferred capabilities
-- delegation benefit and useful parallelism
-- verification gates
-- whether an independent critic is required
-- concrete evidence/signals supporting the decision
-- short reasons for the classification
+- exact current request;
+- relevant earlier conversation;
+- repository/project state;
+- files and docs already inspected;
+- user and project instructions;
+- available tools/capabilities;
+- known environment and deployment state;
+- unresolved assumptions.
 
-The host may keep this decision internal when exposing it would only add noise,
-but it must actually make the decision before execution.
+A follow-up such as “fix it” must be interpreted from context, not from those two words.
 
-## Risk rubric
+## 2. Primary model creates `TASK_DECISION`
 
-`RISK_0` — read-only explanation/analysis with no meaningful mutation.
+Before executing material work, the primary model determines at least:
 
-`RISK_1` — local, trivial, easily reversible change with very small blast radius.
+- `intent`: what outcome the user is actually asking for;
+- `known_facts`: evidence already established;
+- `unknowns`: assumptions that could materially change the plan;
+- `category/domain_pack`: engineering, frontend, design, backend, data, product, writing, release, research, etc.;
+- `complexity`: trivial, bounded, substantial, structural;
+- `risk`: `RISK_0..RISK_4` with reasoning;
+- `reversibility`: how easily the action can be undone;
+- `external_effects`: production, network, account, financial, data or other side effects;
+- `skills`: smallest useful knowledge bodies to load;
+- `tools`: only tools that materially help;
+- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
+- `workers`: useful specialist roles, if any;
+- `parallelism`: why concurrent work is or is not useful;
+- `plan`: concrete execution stages;
+- `verification`: evidence needed before claiming success;
+- `safety`: backup/rollback/dry-run/post-check requirements when applicable.
 
-`RISK_2` — meaningful but bounded engineering/product change.
+The model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
-`RISK_3` — sensitive boundary such as auth, security, payments, PII,
-significant migration/infrastructure, or comparable consequences.
+Use the **same rubric**, not the same answer. Context can legitimately change the classification.
 
-`RISK_4` — destructive, production, data-loss, irreversible, or otherwise
-high-blast-radius operation.
+## 3. Risk rubric
 
-Explicit user/project risk policy is a floor. Never lower it.
+`RISK_0` — read-only explanation, research or inspection with no meaningful mutation.
 
-## Topology rubric
+`RISK_1` — local, small, clearly reversible mutation with negligible blast radius.
 
-`direct` — one coherent execution owner; delegation adds no concrete benefit.
+`RISK_2` — meaningful but bounded implementation/product change.
 
-`probe` — read-only investigation should happen before implementation/judgment.
+`RISK_3` — auth/security, payments, secrets, PII, significant data/schema work, infrastructure, external side effects, or another boundary where a bad decision has serious consequences.
 
-`fan_out` — at least two genuinely independent branches benefit from isolated
-parallel work.
+`RISK_4` — destructive production action, plausible data loss, irreversible/high-blast-radius operation, or comparable consequence.
 
-`pipeline` — dependent stages need explicit handoffs.
+An explicit safety/risk requirement can raise the floor; confidence does not lower it.
 
-`writer_reviewer` — one implementation owner plus independent review is justified
-by error cost.
+## 4. Topology rubric
 
-`audit` — the main job is independent inspection/critique rather than writing.
+`direct` — one execution owner is clearer and delegation adds no concrete benefit.
 
-Multi-agent is an optimization, not a ritual. Use it for independence,
-specialization, context isolation, research breadth or fresh review. Do not use
-it merely because the task is long, and do not avoid it merely because one model
-could technically do everything.
+`probe` — investigate/read first, then decide.
 
-## Deterministic hard gates
+`fan_out` — two or more genuinely independent branches benefit from isolation or parallel work.
 
-The structured decision can be checked with `router/decision_contract.py`.
-Python validates; Python does not reinterpret the prompt.
+`pipeline` — dependent stages with explicit handoffs.
 
-Hard invariants:
+`writer_reviewer` — one implementation owner plus independent review.
 
-1. RISK_3/RISK_4 require independent review.
-2. RISK_4 requires a dry-run/preview where technically meaningful, rollback plan,
-   and post-check.
-3. Destructive data operations require RISK_4 and a verified backup.
-4. Structural work requires an independent critic.
-5. `fan_out` requires at least two independent branches and a concrete reason.
-6. `direct` means one execution owner.
-7. Public visual surfaces are design-primary and require browser/rendered evidence.
-8. Greenfield/total public visual redesign defaults to Studio unless the user
-   explicitly chooses a leaner depth.
+`audit` — inspection/critique is the primary task.
 
-## Skill selection and loading
+Do not force multi-agent because a task is large. Do not force single-agent because one strong model could technically do everything. Delegate when independence, specialization, context isolation, breadth, latency or fresh judgment actually helps.
 
-The model decides which skills are relevant. Registry code may only verify that
-a requested ID exists and is actually loadable.
+## 5. Mandatory second-model preflight review
 
-A skill name in a decision is **not evidence the skill was used**. Before a stage
-relies on a skill, read that skill's `SKILL.md` body or use a provider-native
-mechanism that demonstrably injects the same content. Missing skills must be
-surfaced or replaced deliberately; never pretend an unopened skill shaped the
-work.
+Before the primary model executes material changes, send its `TASK_DECISION` to an independent reviewer.
 
-Select the smallest useful set. PostgreSQL-specific guidance requires actual
-Postgres/psql/Supabase evidence. Similar domain-specific constraints should be
-resolved from real context, not prompt substrings.
+For ordinary tasks choose the **cheapest capable model/endpoint available**. Prefer semantic tier `fast`; when practical and similarly cheap, prefer a different model family from the primary model.
 
-## Public visual surfaces
+This reviewer is read-only. It does not execute the task and does not need broad tool access.
 
-Landing pages, homepages, public company/brand sites, portfolios, storefronts,
-campaign sites and total visual redesigns are design-primary.
+Give it:
 
-For ambitious greenfield/total public visual work, the normal shape remains:
+- exact user request and material constraints;
+- relevant facts already established;
+- proposed `TASK_DECISION`;
+- this protocol or the bounded rules needed to judge it.
 
-`interview -> live reference research -> concept/direction -> implementation -> independent visual critique -> desktop/mobile browser verification`
+Use the detailed contract in `references/economy-reviewer.md`.
 
-Do not let a generic “frontend” implementation label erase the design problem.
+The reviewer returns:
 
-## Structured decision shape
-
-Provider adapters may materialize the internal decision as JSON. The canonical
-schema is enforced by `router/decision_contract.py`; conceptually:
-
-```json
-{
-  "schema_version": 1,
-  "intent": "implement",
-  "category": "engineering",
-  "complexity": "bounded",
-  "risk": "RISK_2",
-  "reversible": true,
-  "topology": "direct",
-  "domain_pack": "engineering",
-  "public_visual": false,
-  "greenfield_or_total_redesign": false,
-  "craft_depth": null,
-  "craft_depth_overridden": false,
-  "destructive_data_operation": false,
-  "skills": [],
-  "specialists": [],
-  "capabilities": {"required": [], "preferred": []},
-  "delegation": {"parallelism": 1, "reason": ""},
-  "verification": {
-    "tests_required": true,
-    "browser_required": false,
-    "independent_review": false,
-    "dry_run_required": false,
-    "backup_required": false,
-    "rollback_plan_required": false,
-    "post_check_required": false
-  },
-  "critic_required": false,
-  "evidence_signals": [],
-  "reasons": ["short evidence-based reason"]
-}
+```text
+VERDICT: APPROVE | REVISE | BLOCK
+ISSUES:
+- ...
+REQUIRED_CHANGES:
+- ...
+CONFIDENCE: low | medium | high
 ```
 
-## CLI boundary
+It must actively look for:
 
-`python3 router/route.py "task"` now emits a **decision request**, not a semantic
-classification. This exists for adapters/debugging and makes the ownership
-boundary explicit.
+- misunderstood intent;
+- risk classified too low;
+- missing production/auth/payment/PII/destructive implications;
+- unjustified assumptions;
+- wrong or excessive skills/tools;
+- missing useful delegation or pointless delegation;
+- unsafe parallel writers/shared state;
+- dependency mistakes;
+- weak verification;
+- missing rollback/backup/post-check;
+- a plan shaped by prompt words rather than the actual problem.
 
-To validate a host-model decision:
+`REVISE` means the primary agent updates the decision and re-runs review when the change is material. Ordinary review is bounded to two revisions; after that, choose a conservative path or surface the unresolved uncertainty.
 
-```bash
-python3 router/route.py --decision decision.json
-```
+`BLOCK` means do not execute until the missing evidence/user decision/safety issue is resolved.
 
-Do not call the CLI as a substitute for reasoning. The active agent already has
-more context than a standalone prompt string and should classify the task itself.
+## 6. Strong-review escalation
+
+The cheap reviewer runs for ordinary preflight, but it is not the only reviewer when consequences are high.
+
+- `RISK_3/RISK_4` -> add an independent `critic`/`judgment` tier review.
+- destructive or hard-to-reverse data work -> `RISK_4`, verified backup, rollback plan and post-check.
+- auth, payments, secrets, PII, production migrations -> strong independent review.
+- large structural architecture plan -> strong critic before implementation commitment.
+- high-ambition public visual work -> independent design critique plus browser/rendered evidence.
+
+If a separate model cannot be spawned, use an isolated fresh context with the same review contract. If that is also unavailable, perform an explicit adversarial self-review and disclose the lack of independence in the working record.
+
+## 7. Skills are chosen by the AI
+
+Profiles and metadata are knowledge inventories, not a classifier.
+
+The primary model decides which skills are relevant after inspecting the actual task. A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body.
+
+Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
+
+## 8. Public visual surfaces
+
+A landing page, homepage, brand/company website, portfolio, storefront, campaign site or total visual redesign is design-primary even if the implementation language is React/CSS/etc.
+
+Greenfield or total public redesign normally follows:
+
+`interview -> live reference research -> direction/concept -> implementation -> independent visual critique -> desktop/mobile browser verification`
+
+Do not reduce a design problem to a frontend keyword.
+
+## 9. What remains deterministic
+
+Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task plan.
+
+The rule is simple:
+
+> **AI decides; software performs mechanical operations after the decision.**
 
 ## Non-goals
 
-- no prompt-keyword risk inference;
-- no regex intent classifier;
-- no deterministic guess of category/topology from natural language;
-- no forced single-agent or forced multi-agent;
-- no claim that IDs equal loaded skill bodies;
-- no safety downgrade because the model is confident.
+- no `route.py`;
+- no semantic `decision_contract.py`;
+- no regex/keyword risk inference;
+- no executable router evals pretending to benchmark language understanding;
+- no script that chooses category/topology/skills from prompt text;
+- no blind trust in one model when a cheap second opinion is available;
+- no safety downgrade because either model sounds confident.

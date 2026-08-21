@@ -2,11 +2,17 @@
 
 Agentit does not use executable natural-language routing.
 
-The primary AI interprets the task from the full context available to it and creates a `TASK_DECISION`. Before material execution, a second AI reviews that proposal. This review is part of the operating protocol, not an optional quality pass.
+The architecture deliberately separates three reasoning roles:
 
-## Primary decision
+1. the **primary model decides** from the full task context;
+2. a **cheap independent model audits** the proposal for omissions and reasons to reconsider/escalate;
+3. a **strong independent critic/judgment model arbitrates** high-risk or materially disputed cases before execution.
 
-The primary model considers at least:
+The cheap model is not the router and is never the owner of semantic classification.
+
+## Primary decision ownership
+
+The active primary model considers at least:
 
 - the user's actual intent and desired outcome;
 - facts already established from conversation/project/tool context;
@@ -22,38 +28,59 @@ The primary model considers at least:
 - verification evidence;
 - backup, dry-run, rollback and post-check needs where relevant.
 
+It then owns the resulting `TASK_DECISION`. Do not demote this work to a cheaper worker just because the decision can be represented compactly.
+
 The same rubric is applied consistently, but the result remains context-sensitive. A follow-up such as “fix it” is interpreted from the context that gives “it” meaning rather than from those words in isolation.
 
-## Economy review
+## Cheap audit
 
-For ordinary material work, use the cheapest capable independent model/endpoint available to review the proposed `TASK_DECISION`. Prefer a semantic `fast` tier. When similarly cheap, a different model family from the primary model is preferable because diversity makes the second opinion more useful.
+For ordinary material work, use the cheapest independent model/endpoint that is still competent to audit the bounded `TASK_DECISION`, typically semantic tier `fast`. When similarly cheap, a different model family from the primary model is preferable because diversity makes the second opinion more useful.
 
-The reviewer is read-only. Give it only the bounded context needed to judge the proposal:
+The auditor is read-only. Give it only the bounded context needed to judge the proposal:
 
 - exact request and material user/project constraints;
 - relevant facts already established;
 - proposed `TASK_DECISION`;
 - applicable Agentit rules.
 
-It returns `APPROVE`, `REVISE` or `BLOCK` and actively checks for misunderstood intent, risk classified too low, missing constraints, unjustified assumptions, poor skill/tool choice, unnecessary or missing delegation, unsafe parallel ownership, dependency mistakes and weak verification.
+It must not replace the decision. It only checks for misunderstood intent, risk possibly classified too low, missing constraints, unjustified assumptions, poor skill/tool choice, unnecessary or missing delegation, unsafe parallel ownership, dependency mistakes, weak verification, and reasons to escalate.
 
-Ordinary review is bounded to two revision cycles. After that, choose a conservative route or surface the unresolved uncertainty rather than looping indefinitely.
+It returns:
 
-## Strong review
+```text
+AUDIT: CLEAR | CHALLENGE | ESCALATE
+FINDINGS:
+- ...
+SUGGESTED_CHECKS:
+- ...
+CONFIDENCE: low | medium | high
+```
 
-The economy reviewer is the default preflight check, but high-consequence work also requires a stronger independent `critic` or `judgment` tier review.
+`CLEAR` means no material objection was found.
 
-Examples:
+`CHALLENGE` means the primary model must reconsider the finding. The primary may revise its decision or retain it with explicit evidence-based reasoning.
+
+`ESCALATE` means a stronger independent model should review before execution. If a material challenge remains unresolved after primary reconsideration, escalate rather than letting the cheap model arbitrate.
+
+Ordinary audit/reconsideration is bounded to two cycles.
+
+## Strong arbitration
+
+Use an independent `critic` or `judgment` tier model when:
 
 - `RISK_3` or `RISK_4`;
-- destructive or difficult-to-reverse operations;
-- authentication/authorization/session boundaries;
-- payments/billing/financial effects;
-- secrets or credentials;
-- PII or sensitive data;
-- production infrastructure/deployments;
-- significant data/schema migrations;
-- large structural architecture/product plans.
+- the cheap auditor returns `ESCALATE`;
+- material disagreement survives primary reconsideration;
+- destructive or difficult-to-reverse operations are involved;
+- authentication/authorization/session boundaries are involved;
+- payments/billing/financial effects are involved;
+- secrets or credentials are involved;
+- PII or sensitive data is involved;
+- production infrastructure/deployments are involved;
+- significant data/schema migrations are involved;
+- a large structural architecture/product plan is about to be committed to.
+
+The strong critic reviews the primary `TASK_DECISION` and relevant audit findings. It does not become the implementation owner, but for these cases it is the independent judgment gate: material execution waits until critical objections are resolved, the decision is revised, or required user input is obtained.
 
 For destructive data work, require a verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
 
@@ -65,12 +92,12 @@ Programs may **not** parse the user's natural language to choose semantic intent
 
 The boundary is:
 
-> **AI decides; another AI reviews; software performs mechanical operations after the decision.**
+> **Primary AI decides; cheap AI audits; strong AI arbitrates when needed; software performs mechanical operations afterward.**
 
 ## Canonical files
 
 - `skills/task-router/SKILL.md` — mandatory primary-model decision rubric.
-- `skills/task-router/references/economy-reviewer.md` — cheap independent reviewer contract.
+- `skills/task-router/references/economy-reviewer.md` — cheap independent audit contract.
 - `skills/using-agentit/SKILL.md` — end-to-end operating protocol.
 - `docs/NO_PROGRAMMATIC_ROUTER.md` — architecture boundary.
 

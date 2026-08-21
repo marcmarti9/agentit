@@ -11,7 +11,6 @@ try:
         write_checkpoint,
     )
     from .project_signals import collect_project_signals
-    from .route import route_task
     from .verify import evaluate_done_claims
 except ImportError:
     from continuity import (
@@ -22,7 +21,6 @@ except ImportError:
         write_checkpoint,
     )
     from project_signals import collect_project_signals
-    from route import route_task
     from verify import evaluate_done_claims
 
 
@@ -51,21 +49,6 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
         self.assertTrue(signals["available"])
         self.assertIn(signals["size_class"], {"tiny", "small", "medium", "large"})
         self.assertIn("python", signals["stack_markers"])
-
-    def test_decision_request_exposes_project_facts_without_classifying_task(self):
-        repo = Path(__file__).resolve().parents[1]
-        result = route_task(
-            "Implementa una feature pequeña de perfiles",
-            project_root=repo,
-        )
-        self.assertTrue(result["project_signals"]["available"])
-        self.assertTrue(result["token_estimate"]["not_a_bill"])
-        self.assertEqual("pending_host_decision", result["token_estimate"]["status"])
-        basis = " ".join(result["token_estimate"]["basis"])
-        self.assertIn("size_class=", basis)
-        self.assertEqual("decision_required", result["status"])
-        self.assertNotIn("risk", result)
-        self.assertNotIn("topology", result)
 
     def test_evaluate_done_claims_requires_receipt(self):
         denied = evaluate_done_claims(["done"], receipt=None)

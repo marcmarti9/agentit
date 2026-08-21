@@ -141,17 +141,13 @@ def recommend_stack(stack_name: str, catalog: dict[str, Any] | None = None) -> d
 
 
 def recommend_for_task(task: str, catalog: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Reject the removed free-text heuristic API.
+    """Backward-compatible exact-stack resolver with no task-text inference.
 
-    Kept temporarily as an explicit compatibility failure so old callers do not
-    silently fall back to a keyword classifier. The active AI must choose a
-    named stack after interpreting the task from full context, then call
-    `recommend_stack`/`plan_stack` with that explicit stack ID.
+    Older callers still import this name. Treat the argument only as an exact
+    stack id and delegate to `recommend_stack`; arbitrary natural-language text
+    therefore fails as an unknown stack instead of being classified.
     """
-    del task, catalog
-    raise McpCatalogError(
-        "free-text MCP routing was removed; the AI must choose an explicit named stack"
-    )
+    return recommend_stack(task, catalog)
 
 
 def _mcp_json_entry(server: dict[str, Any]) -> dict[str, Any]:

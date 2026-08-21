@@ -1,110 +1,77 @@
 # LLM-native decision protocol
 
-Agentit no longer tries to understand natural-language tasks with a deterministic
-keyword/regex router.
+Agentit does not use executable natural-language routing.
 
-The host model owns semantic classification because it has the information that
-a standalone prompt classifier does not: conversation history, repository state,
-project instructions, available tools, previous decisions and the actual user
-intent behind follow-ups.
+The primary AI interprets the task from the full context available to it and creates a `TASK_DECISION`. Before material execution, a second AI reviews that proposal. This review is part of the operating protocol, not an optional quality pass.
 
-## Architecture
+## Primary decision
 
-```text
-user task + full context
-        ↓
-host LLM decision (mandatory rubric)
-        ↓
-structured decision when useful
-        ↓
-deterministic contract validation
-        ↓
-skill/capability availability checks
-        ↓
-Loop / Graph runtime
-        ↓
-execution
-        ↓
-verification + receipts
-```
+The primary model considers at least:
 
-The old architecture inverted those responsibilities by asking Python to infer
-risk/category/topology from prompt strings before the model reasoned about the
-task.
-
-## Ownership boundary
-
-The host LLM decides:
-
-- intent and category;
+- the user's actual intent and desired outcome;
+- facts already established from conversation/project/tool context;
+- material unknowns and assumptions;
+- domain/category and complexity;
 - risk and reversibility;
+- production, account, financial, data or other external effects;
+- useful skills and tools;
 - topology and delegation benefit;
-- domain pack and skill relevance;
-- specialists and capability needs;
-- public-visual/design classification;
-- verification strategy;
-- whether a critic is required.
+- workers/specialists and ownership boundaries when useful;
+- dependency order;
+- execution plan;
+- verification evidence;
+- backup, dry-run, rollback and post-check needs where relevant.
 
-Python validates facts that do not require language understanding:
+The same rubric is applied consistently, but the result remains context-sensitive. A follow-up such as “fix it” is interpreted from the context that gives “it” meaning rather than from those words in isolation.
 
-- schema/enums/types;
-- explicit risk floors;
-- RISK_3/4 review gates;
-- RISK_4 operational gates;
-- destructive-data backup rule;
-- structural critic rule;
-- fan-out consistency;
-- public-visual design/browser invariants once the model has identified the surface;
-- registry skill availability;
-- capability-provider availability.
+## Economy review
 
-## Files
+For ordinary material work, use the cheapest capable independent model/endpoint available to review the proposed `TASK_DECISION`. Prefer a semantic `fast` tier. When similarly cheap, a different model family from the primary model is preferable because diversity makes the second opinion more useful.
 
-- `skills/task-router/SKILL.md` — mandatory model decision rubric.
-- `skills/using-agentit/SKILL.md` — end-to-end Agentit playbook.
-- `router/decision_contract.py` — structured decision schema + hard invariants.
-- `router/registry.py` — deterministic registry validation/skill availability.
-- `router/route.py` — compatibility adapter; **not a semantic router**.
-- `evals/run.py` — deterministic contract regressions, not language-classifier benchmarks.
+The reviewer is read-only. Give it only the bounded context needed to judge the proposal:
 
-## Compatibility behavior
+- exact request and material user/project constraints;
+- relevant facts already established;
+- proposed `TASK_DECISION`;
+- applicable Agentit rules.
 
-Historical callers may still invoke:
+It returns `APPROVE`, `REVISE` or `BLOCK` and actively checks for misunderstood intent, risk classified too low, missing constraints, unjustified assumptions, poor skill/tool choice, unnecessary or missing delegation, unsafe parallel ownership, dependency mistakes and weak verification.
 
-```bash
-python3 router/route.py "Implement auth"
-```
+Ordinary review is bounded to two revision cycles. After that, choose a conservative route or surface the unresolved uncertainty rather than looping indefinitely.
 
-The command now returns a `decision_required` envelope containing the task,
-protocol, preferences and deterministic project facts. It deliberately omits
-inferred `risk`, `category` and `topology`.
+## Strong review
 
-A provider adapter can validate a model-produced decision with:
+The economy reviewer is the default preflight check, but high-consequence work also requires a stronger independent `critic` or `judgment` tier review.
 
-```bash
-python3 router/route.py --decision decision.json
-```
+Examples:
 
-The active agent normally does not need to call the compatibility CLI just to
-reason; it should apply the `task-router` skill directly.
+- `RISK_3` or `RISK_4`;
+- destructive or difficult-to-reverse operations;
+- authentication/authorization/session boundaries;
+- payments/billing/financial effects;
+- secrets or credentials;
+- PII or sensitive data;
+- production infrastructure/deployments;
+- significant data/schema migrations;
+- large structural architecture/product plans.
 
-## Why this is safer
+For destructive data work, require a verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
 
-A deterministic prompt router tends to grow exception trees for phrases such as
-“delete button”, “backup service landing”, “explain payments”, or context-free
-follow-ups like “fix it”. That is a brittle attempt to reproduce language
-understanding manually.
+## Software boundary
 
-The LLM-native design keeps semantic judgment where context exists while keeping
-hard safety invariants deterministic and testable.
+Programs may still perform mechanical work after the AI has made and reviewed the decision: copy files, manage manifests, persist runtime state, invoke explicitly selected tools, run tests and checks, or enforce mechanical ownership/dependency constraints.
 
-## Testing philosophy
+Programs may **not** parse the user's natural language to choose semantic intent, category, risk, topology, skill relevance or delegation.
 
-CI no longer asserts that a regex tree classifies English/Spanish prompts into a
-specific route. It asserts that:
+The boundary is:
 
-- natural-language adapters do not invent a classification;
-- valid structured decisions pass;
-- unsafe/inconsistent decisions fail closed;
-- registry and capability checks remain deterministic;
-- existing runtime/verification/profile infrastructure still works.
+> **AI decides; another AI reviews; software performs mechanical operations after the decision.**
+
+## Canonical files
+
+- `skills/task-router/SKILL.md` — mandatory primary-model decision rubric.
+- `skills/task-router/references/economy-reviewer.md` — cheap independent reviewer contract.
+- `skills/using-agentit/SKILL.md` — end-to-end operating protocol.
+- `docs/NO_PROGRAMMATIC_ROUTER.md` — architecture boundary.
+
+There is intentionally no `route.py`, semantic `decision_contract.py`, prompt-regex router, or executable language-classification eval suite.

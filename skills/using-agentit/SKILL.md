@@ -1,6 +1,6 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, verifies, and ships PR-first.
+description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, verifies, and ships PR-first.
 ---
 
 # Using Agentit
@@ -37,8 +37,8 @@ There is intentionally no semantic `route.py` or programmatic decision contract.
 7. **Persist durable state.** Keep `docs/agentit/STATE.md` or the project's canonical equivalent current on substantial/long work.
 8. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
 9. **Select tools deliberately.** Use MCPs/tools only when they materially improve the chosen plan and keep least privilege.
-10. **Execute the reviewed plan.** Delegate where specialization, independence, isolation, breadth, latency or fresh judgment adds value.
-11. **Verify.** No completion claim without fresh evidence appropriate to the task.
+10. **Execute the reviewed plan through runtime contracts.** Every executable unit with a verifiable outcome gets a Loop Contract; multi-node work additionally gets a Graph Contract before spawning.
+11. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed Loop Receipt. Multi-node work requires a passed Graph Receipt backed by passed node Loop Receipts.
 12. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
 
 ## `TASK_DECISION`
@@ -151,11 +151,13 @@ One writer owns each file/shared state unless isolation through branches/worktre
 
 ## Runtime: mechanical enforcement only
 
-Agentit's Loop/Graph runtime may still be used for mechanical execution state, attempt budgets, dependency tracking, receipts and write ownership. It must not classify natural-language intent.
+Agentit's Loop/Graph runtime is **mandatory for executable work with a verifiable outcome**. It provides execution state, attempt budgets, dependency tracking, receipts and write ownership. It must not classify natural-language intent.
+
+Removing the semantic router does not weaken the runtime acceptance gate. The runtime enforces a plan only after the AI has decided and reviewed that plan.
 
 ### Loop
 
-For an executable unit with a verifiable outcome, define:
+Every executable unit with a verifiable outcome must define and persist:
 
 - observable goal;
 - verifier;
@@ -165,11 +167,17 @@ For an executable unit with a verifiable outcome, define:
 
 A retry needs fresh evidence or a changed strategy. Do not weaken a verifier to manufacture success.
 
+A direct/single-unit executable task is accepted only after the verifier has produced fresh evidence and `loop-check` has produced a passed **Loop Receipt** for the current contract/state.
+
 ### Graph
 
-For genuinely multi-node execution, define dependencies, ownership and expected handoffs before spawning. Avoid overlapping writers to the same shared state.
+Every genuinely multi-node execution must materialize a DAG before spawning. Define dependencies, exclusive write ownership where relevant, expected handoff artifacts and each node's bound Loop Contract.
 
-These mechanisms enforce the plan **after the AI has decided it**; they are not a semantic router.
+Spawn only ready nodes. Do not advance around a pending/blocked dependency and do not allow overlapping writers to shared state unless branches/worktrees provide explicit isolation.
+
+Final multi-node acceptance requires `graph-check` and a passed **Graph Receipt** backed by the current passed Loop Receipts for completed nodes.
+
+These mechanisms are execution infrastructure, not a semantic router.
 
 ## Product interview
 
@@ -206,17 +214,18 @@ Do not persist secrets, credentials, private chain-of-thought, full transcripts 
 
 ## Verification
 
-No `done`, `fixed`, `passing`, `premium`, `beautiful` or equivalent claim without fresh evidence appropriate to the claim.
+No `done`, `fixed`, `passing`, `premium`, `beautiful` or equivalent claim without fresh evidence appropriate to the claim **and the applicable runtime receipt**.
 
 Examples:
 
-- code change -> relevant tests/runtime checks;
-- UI/visual claim -> rendered/browser evidence at relevant viewport sizes;
-- migration -> pre/post state plus rollback readiness;
-- bug fix -> reproduction before and verification after;
-- high-risk change -> independent strong review plus operational checks.
+- code change -> relevant tests/runtime checks + passed Loop Receipt;
+- UI/visual claim -> rendered/browser evidence at relevant viewport sizes + applicable receipt;
+- migration -> pre/post state plus rollback readiness + applicable receipt;
+- bug fix -> reproduction before and verification after + applicable receipt;
+- high-risk change -> independent strong review plus operational checks + applicable receipt;
+- multi-node task -> passed Graph Receipt backed by node Loop Receipts.
 
-The cheap decision audit happens **before** execution; verification happens **after** execution. They solve different failure modes.
+The cheap decision audit happens **before** execution; Loop/Graph governs execution acceptance; verification checks the actual result. They solve different failure modes.
 
 ## Git ownership
 
@@ -234,4 +243,4 @@ The active primary model owns semantic reasoning even when a cheaper model is av
 
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration and user-facing result. It must not bypass required audit/escalation merely because it is confident.
+Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration and user-facing result. It must not bypass required audit/escalation or runtime receipts merely because it is confident.

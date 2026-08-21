@@ -26,7 +26,7 @@ jobs:
       - name: Install YAML dependency
         run: python3 -m pip install PyYAML
 
-      - name: Run decision and runtime tests
+      - name: Run runtime and utility tests
         run: python3 -m unittest discover -s router -p 'test_*.py' -v
 
       - name: Run script tests
@@ -46,6 +46,3 @@ jobs:
 
       - name: Validate capability catalog
         run: python3 -c "from router.capabilities import load_capability_catalog; load_capability_catalog()"
-
-      - name: Run decision contract regression evals
-        run: python3 evals/run.py

@@ -144,10 +144,18 @@ def recommend_for_task(task: str, catalog: dict[str, Any] | None = None) -> dict
     """Backward-compatible exact-stack resolver with no task-text inference.
 
     Older callers still import this name. Treat the argument only as an exact
-    stack id and delegate to `recommend_stack`; arbitrary natural-language text
-    therefore fails as an unknown stack instead of being classified.
+    stack id; arbitrary natural-language text is rejected explicitly instead of
+    being classified.
     """
-    return recommend_stack(task, catalog)
+    data = catalog or load_catalog()
+    stacks = list_stacks(data)
+    if task not in stacks:
+        known = ", ".join(sorted(stacks))
+        raise McpCatalogError(
+            "free-text MCP routing was removed; the AI must choose an explicit "
+            f"named stack; unknown stack '{task}'; known: {known}"
+        )
+    return recommend_stack(task, data)
 
 
 def _mcp_json_entry(server: dict[str, Any]) -> dict[str, Any]:

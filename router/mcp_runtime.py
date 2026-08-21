@@ -23,7 +23,7 @@ try:
         get_server,
         list_servers,
         load_catalog,
-        recommend_for_task,
+        recommend_stack,
     )
     from router.mcp_providers import (
         ALL_PROVIDERS,
@@ -39,7 +39,7 @@ except ImportError:  # pragma: no cover
         get_server,
         list_servers,
         load_catalog,
-        recommend_for_task,
+        recommend_stack,
     )
     from mcp_providers import (  # type: ignore
         ALL_PROVIDERS,
@@ -287,23 +287,22 @@ def disable_server(
 
 
 def enable_stack(
-    stack_or_task: str,
+    stack_id: str,
     *,
     project_root: Path,
     providers: list[str] | None = None,
     apply: bool = False,
     force: bool = False,
 ) -> dict[str, Any]:
-    try:
-        from router.mcp_catalog import list_stacks, recommend_stack
-    except ImportError:  # pragma: no cover
-        from mcp_catalog import list_stacks, recommend_stack
+    """Enable one explicit named stack selected by the AI.
 
-    stacks = list_stacks()
-    if stack_or_task in stacks:
-        rec = recommend_stack(stack_or_task)
-    else:
-        rec = recommend_for_task(stack_or_task)
+    This function performs only catalog lookup and enablement. It never infers a
+    stack from natural-language task text.
+    """
+    try:
+        rec = recommend_stack(stack_id)
+    except McpCatalogError as exc:
+        raise McpRuntimeError(str(exc)) from exc
 
     results = []
     errors = []

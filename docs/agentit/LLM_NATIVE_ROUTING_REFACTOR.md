@@ -15,7 +15,7 @@ primary AI creates TASK_DECISION
         ↓
 cheap independent AI reviewer
         ↓
-APPROVE / REVISE / BLOCK
+CLEAR / CHALLENGE / ESCALATE
         ↓
 strong critic too when consequences are high
         ↓
@@ -46,7 +46,7 @@ Before material execution, the primary AI sends its proposed `TASK_DECISION` to 
 
 The reviewer is deliberately read-only and adversarial. It checks whether the primary model misunderstood the task, underestimated risk, forgot constraints, selected the wrong tools/skills, delegated badly, created unsafe parallel ownership/dependencies, or proposed inadequate verification.
 
-It returns `APPROVE`, `REVISE` or `BLOCK`.
+It returns `CLEAR`, `CHALLENGE` or `ESCALATE`. `CLEAR` is not approval authority; it only means no material objection was found. `CHALLENGE` requires primary reconsideration, and `ESCALATE` sends the decision to a stronger independent reviewer.
 
 ## Strong-review escalation
 

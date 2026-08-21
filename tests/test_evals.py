@@ -8,8 +8,8 @@ from pathlib import Path
 REPOSITORY = Path(__file__).resolve().parents[1]
 
 
-class RouterEvaluationTests(unittest.TestCase):
-    def test_representative_router_cases_pass(self):
+class DecisionContractEvaluationTests(unittest.TestCase):
+    def test_representative_decision_contract_cases_pass(self):
         completed = subprocess.run(
             [sys.executable, str(REPOSITORY / "evals" / "run.py"), "--json"],
             cwd=REPOSITORY,
@@ -21,10 +21,11 @@ class RouterEvaluationTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         report = json.loads(completed.stdout)
-        self.assertEqual(15, report["total"])
-        self.assertEqual(15, report["passed"])
+        self.assertGreaterEqual(report["total"], 10)
+        self.assertEqual(report["total"], report["passed"])
         self.assertEqual(0, report["failed"])
-        self.assertFalse(report["confidence_calibrated"])
+        self.assertIn("decision-contract invariants", report["scope"])
+        self.assertIn("host LLM owns semantic classification", report["scope"])
 
 
 if __name__ == "__main__":

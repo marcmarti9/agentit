@@ -231,7 +231,6 @@ def _manifest_payload(
             ):
                 file_managed = bool(prev_entry["managed"])
             elif relative == "SKILL.md" and previous and "managed" in previous:
-                # Legacy skill-level flag applies to SKILL.md only.
                 file_managed = bool(previous.get("managed", True))
             else:
                 file_managed = True
@@ -318,7 +317,6 @@ def _managed_package_files(metadata: dict[str, Any]) -> list[str]:
         if managed:
             return sorted(managed)
         return []
-    # Legacy manifests: skill-level managed flag applies to SKILL.md only.
     if metadata.get("managed", True):
         return ["SKILL.md"]
     return []
@@ -408,7 +406,6 @@ def _check_enable(
                 ):
                     per_file[relative] = bool(previous.get("managed", True))
                 elif previous is None:
-                    # Exact pre-existing file not from Agentit: do not adopt.
                     per_file[relative] = False
                 else:
                     per_file[relative] = True
@@ -513,7 +510,6 @@ def enable_profile(
                 _copy_skill_file(
                     source_dir / relative, destination, project_root=project_root
                 )
-    # Refresh installed hashes to the files just written / kept.
     for skill_id, metadata in payload["skills"].items():
         skill_root = (project_root / metadata["destination"]).parent
         files = metadata.get("files")
@@ -598,8 +594,6 @@ def _parser() -> argparse.ArgumentParser:
             "scout",
             "worker",
             "mcp",
-            "trace",
-            "route",
             "verify",
             "continuity",
             "capabilities",
@@ -683,45 +677,6 @@ def main(argv: list[str] | None = None) -> int:
         if project_root.is_symlink():
             raise ProfileError(f"project root symlink rejected: {project_root}")
 
-        if args.command in {"trace", "route"}:
-            # Local routing trail for daily harness use (not a public benchmark).
-            prompt_parts = [
-                part
-                for part in (args.subcommand, args.target, args.extra_arg)
-                if part
-            ]
-            prompt = " ".join(prompt_parts).strip()
-            if not prompt:
-                parser.error(
-                    'trace/route requiere un prompt, p.ej. agentit trace "implement auth"'
-                )
-            try:
-                from router.route import RegistryError as RouteRegistryError
-                from router.trace import TraceError, format_trace_summary, write_trace
-            except ImportError:
-                from route import RegistryError as RouteRegistryError
-                from trace import TraceError, format_trace_summary, write_trace
-            try:
-                payload = write_trace(
-                    prompt,
-                    project_root=project_root,
-                    registry_path=repo_root / "registry.yaml",
-                    home=Path.home(),
-                    provider_host=args.host,
-                    available_providers=(
-                        [item.strip() for item in args.available.split(",") if item.strip()]
-                        if args.available is not None
-                        else None
-                    ),
-                )
-            except (TraceError, RouteRegistryError) as exc:
-                raise ProfileError(str(exc)) from exc
-            if args.format == "json":
-                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
-            else:
-                print(format_trace_summary(payload))
-            return 0
-
         if args.command == "capabilities":
             try:
                 from router.capabilities import (
@@ -731,7 +686,7 @@ def main(argv: list[str] | None = None) -> int:
                     specialist_capability_requirements,
                 )
             except ImportError:
-                from capabilities import (  # type: ignore
+                from capabilities import (
                     CapabilityCatalogError,
                     load_capability_catalog,
                     resolve_capabilities,
@@ -836,30 +791,25 @@ def main(argv: list[str] | None = None) -> int:
                     resume_report,
                     write_checkpoint,
                 )
-                from router.route import route_task as _route_task
             except ImportError:
-                from continuity import (  # type: ignore
+                from continuity import (
                     ContinuityError,
                     ensure_state_file,
                     list_checkpoints,
                     resume_report,
                     write_checkpoint,
                 )
-                from route import route_task as _route_task  # type: ignore
             try:
                 if sub == "init":
                     goal = " ".join(
                         p for p in (args.target, args.extra_arg) if p
                     ).strip()
-                    route = (
-                        _route_task(goal, project_root=project_root)
-                        if goal
-                        else {}
-                    )
                     path = ensure_state_file(
-                        project_root, goal=goal, route=route, overwrite=bool(args.apply)
+                        project_root,
+                        goal=goal,
+                        overwrite=bool(args.apply),
                     )
-                    payload = {"action": "init", "path": str(path), "route": route or None}
+                    payload = {"action": "init", "path": str(path)}
                 elif sub == "status":
                     payload = resume_report(project_root)
                     payload["checkpoints"] = list_checkpoints(project_root)
@@ -877,10 +827,7 @@ def main(argv: list[str] | None = None) -> int:
                     return 2
             except ContinuityError as exc:
                 raise ProfileError(str(exc)) from exc
-            if args.format == "json":
-                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
-            else:
-                print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+            print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
 
         if args.command == "artifact":
@@ -965,8 +912,6 @@ def main(argv: list[str] | None = None) -> int:
             parser.error(f"subcomando context desconocido: {sub}")
 
         if args.command == "worker":
-            # Worker Context Contract: mandatory projection before delegated spawn.
-            # Runtime topology infrastructure (not a skill). See router/worker_context.py.
             try:
                 from router.worker_context import (
                     WorkerContextError,
@@ -988,7 +933,6 @@ def main(argv: list[str] | None = None) -> int:
             if sub not in {"build", "render", "validate"}:
                 parser.error("worker requiere subcomando build|render|validate")
 
-            # target = objective when positional; prefer --description reuse avoided
             objective = args.target or ""
             if not objective:
                 parser.error(
@@ -998,11 +942,9 @@ def main(argv: list[str] | None = None) -> int:
 
             skills: list[str] = []
             if args.extra_arg:
-                # Optional comma-separated skills as second positional
                 skills = [s.strip() for s in args.extra_arg.split(",") if s.strip()]
 
             try:
-                prefs = None
                 try:
                     from router.preferences import load_preferences
                 except ImportError:
@@ -1055,7 +997,6 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.command == "mcp":
-            # Catalog + runtime toggle across Claude/Cursor/Codex/Grok/Antigravity.
             try:
                 from router.mcp_catalog import (
                     McpCatalogError,

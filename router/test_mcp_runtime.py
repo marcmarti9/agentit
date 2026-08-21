@@ -155,6 +155,7 @@ class McpRuntimeTestCase(unittest.TestCase):
         )
         data = json.loads(proc.stdout)
         self.assertIn("mcp_enable", data["tools"])
+        self.assertIn("mcp_recommend", data["tools"])
         self.assertTrue(data["ok"])
 
     def test_gateway_tools_call_status(self) -> None:
@@ -196,6 +197,65 @@ class McpRuntimeTestCase(unittest.TestCase):
         ids = {s["id"] for s in body["servers"]}
         self.assertIn("context7", ids)
         self.assertIn("agentit-manager", ids)
+
+    def test_gateway_recommend_uses_explicit_stack_id(self) -> None:
+        req = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "tools/call",
+            "params": {
+                "name": "mcp_recommend",
+                "arguments": {"stack_id": "developer_core"},
+            },
+        }
+        proc = subprocess.run(
+            [
+                "python3",
+                str(GATEWAY),
+                "--project",
+                str(self.project),
+                "--repo",
+                str(REPO_ROOT),
+            ],
+            input=json.dumps(req) + "\n",
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(REPO_ROOT),
+        )
+        response = json.loads(proc.stdout.strip())
+        self.assertFalse(response["result"]["isError"])
+        body = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(body["stack"], "developer_core")
+
+    def test_gateway_recommend_rejects_task_text_contract(self) -> None:
+        req = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "tools/call",
+            "params": {
+                "name": "mcp_recommend",
+                "arguments": {"task": "implement figma design"},
+            },
+        }
+        proc = subprocess.run(
+            [
+                "python3",
+                str(GATEWAY),
+                "--project",
+                str(self.project),
+                "--repo",
+                str(REPO_ROOT),
+            ],
+            input=json.dumps(req) + "\n",
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(REPO_ROOT),
+        )
+        response = json.loads(proc.stdout.strip())
+        self.assertTrue(response["result"]["isError"])
+        self.assertIn("stack_id required", response["result"]["content"][0]["text"])
 
     def test_toml_upsert_via_provider_helpers(self) -> None:
         # project provider only for isolation — codex/grok touch $HOME

@@ -33,7 +33,7 @@ primary AI creates TASK_DECISION
    ↓
 cheap independent AI preflight review
    ↓
-REVISE / BLOCK / APPROVE
+CLEAR / CHALLENGE / ESCALATE
    ↓
 strong critic too when consequences are high
    ↓
@@ -56,7 +56,9 @@ Agentit deliberately has **no programmatic natural-language router**.
 
 The primary model sees information a standalone script normally does not: the conversation, repository state, project instructions, available tools, prior decisions and the real referents behind follow-ups such as “fix it”. It therefore owns semantic classification, risk assessment, topology, skill/tool choice and delegation decisions.
 
-Before material execution, a second AI reviews the proposed `TASK_DECISION`. Ordinary work uses the cheapest capable independent model/endpoint available, preferably a semantic `fast` tier and, when similarly cheap, a different model family. The reviewer is read-only and returns `APPROVE`, `REVISE` or `BLOCK`.
+Before material execution, a second AI reviews the proposed `TASK_DECISION`. Ordinary work uses the cheapest capable independent model/endpoint available, preferably a semantic `fast` tier and, when similarly cheap, a different model family. The reviewer is read-only and returns `CLEAR`, `CHALLENGE` or `ESCALATE`.
+
+`CLEAR` means no material objection was found; it is not approval authority. `CHALLENGE` requires the primary model to reconsider the finding, and unresolved material disagreement escalates. `ESCALATE` means a stronger independent reviewer should arbitrate before material execution.
 
 High-consequence work does not trade safety for cheapness: `RISK_3/RISK_4`, destructive/irreversible operations, auth/payments/secrets/PII/production, significant migrations and large structural plans additionally use a stronger `critic`/`judgment` review.
 
@@ -327,7 +329,7 @@ python3 -m unittest discover -s router -p "test_*.py"
 python3 -m unittest discover -s tests
 ```
 
-These tests cover mechanical runtime, profile, capability, MCP, continuity, verification, and worker-context behavior. Agentit intentionally does not pretend a deterministic prompt-classification suite can benchmark the semantic judgment of the active AI.
+These tests cover mechanical runtime, profile, capability, MCP, continuity, verification, registry/inventory safety, and worker-context behavior. Agentit intentionally does not pretend a deterministic prompt-classification suite can benchmark the semantic judgment of the active AI.
 
 ---
 

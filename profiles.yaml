@@ -1,1 +1,150 @@
-PLACEHOLDER
+schema_version: 1
+default_profile: core
+global_profiles:
+  - core
+profiles:
+  core:
+    description: "Small global discovery set for intelligent orchestration; domain packs load extra families JIT."
+    skills:
+      - using-agentit
+      - task-router
+      - architect-orchestrator
+      - using-agent-skills
+      - mcp-tooling-fit
+      - long-horizon-recovery
+      - debugging-and-error-recovery
+      - code-review-and-quality
+      - test-driven-development
+      - security-and-hardening
+      - planning-and-task-breakdown
+      - verification-gauntlet
+  frontend:
+    description: "Core plus browser, performance, and UI maintenance guidance."
+    extends:
+      - core
+    skills:
+      - frontend-ui-engineering
+      - browser-testing-with-devtools
+      - performance-optimization
+      - code-simplification
+      - anti-ai-slop-design
+      - design-taste-frontend
+      - specialist-agent-routing
+  backend:
+    description: "Core plus API boundaries, observability, and service maintenance."
+    extends:
+      - core
+    skills:
+      - api-and-interface-design
+      - observability-and-instrumentation
+      - performance-optimization
+      - code-simplification
+  supabase:
+    description: "Backend profile plus PostgreSQL/Supabase-specific guidance."
+    extends:
+      - backend
+    skills:
+      - supabase-postgres-best-practices
+  product:
+    description: "Core plus discovery, marketing, CRO, and product decision support."
+    extends:
+      - core
+    skills:
+      - idea-refine
+      - interview-me
+      - documentation-and-adrs
+      - spec-driven-development
+      - marketing-and-growth
+      - verification-before-completion
+  writing:
+    description: "Technical writing, documentation, and anti-AI-slop editing."
+    extends:
+      - core
+    skills:
+      - documentation-and-adrs
+      - anti-ai-slop-writing
+  design:
+    description: "Craft-first design studio: JIT UI/UX intelligence, research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Craft depth (Standard/Polished/Studio) applies only to visual/design work."
+    extends:
+      - frontend
+    skills:
+      - anti-ai-slop-design
+      - ui-ux-pro-max-intelligence
+      - design-taste-frontend
+      - impeccable-design
+      - emil-design-eng
+      - design-inspiration-research
+      - design-trend-researcher
+      - creative-web-experiences
+      - visual-storytelling-director
+      - creative-tool-scout
+      - delight-and-whimsy
+      - figma-design-workflow
+      - scrollytelling-web
+      - gsap-scrolltrigger
+      - gsap-performance
+      - threejs-spatial-experiences
+      - threejs-product-storytelling
+  release:
+    description: "Core plus CI, migration, launch, and operational readiness."
+    extends:
+      - core
+    skills:
+      - ci-cd-and-automation
+      - deprecation-and-migration
+      - shipping-and-launch
+      - documentation-and-adrs
+      - verification-before-completion
+  research:
+    description: "Core plus context, specifications, and adversarial review."
+    extends:
+      - core
+    skills:
+      - context-engineering
+      - doubt-driven-development
+      - spec-driven-development
+      - verification-before-completion
+  growth:
+    description: "Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and launch discipline. Live marketing data still requires separately reviewed connectors."
+    extends:
+      - product
+    skills:
+      - shipping-and-launch
+  agency:
+    description: "Agency operating profile: product and growth delivery plus incremental implementation and disciplined Git handoffs. Pair with the relevant coding profile for implementation."
+    extends:
+      - growth
+    skills:
+      - incremental-implementation
+      - git-workflow-and-versioning
+  all:
+    description: "Every repository skill; use only when explicitly requested."
+    skills:
+      - anti-ai-slop-design
+      - anti-ai-slop-writing
+      - api-and-interface-design
+      - architect-orchestrator
+      - browser-testing-with-devtools
+      - ci-cd-and-automation
+      - code-review-and-quality
+      - code-simplification
+      - context-engineering
+      - creative-tool-scout
+      - creative-web-experiences
+      - debugging-and-error-recovery
+      - delight-and-whimsy
+      - mcp-tooling-fit
+      - deprecation-and-migration
+      - design-inspiration-research
+      - design-taste-frontend
+      - design-trend-researcher
+      - documentation-and-adrs
+      - doubt-driven-development
+      - emil-design-eng
+      - figma-design-workflow
+      - find-skills
+      - frontend-ui-engineering
+      - git-workflow-and-versioning
+      - gsap-performance
+      - gsap-scrolltrigger
+      - idea-refine

@@ -27,10 +27,10 @@ Remove programmatic natural-language routing from Agentit. The primary AI interp
 ## Current status
 
 - Complete: semantic `route.py` removed; semantic decision validator removed; route trace/eval code removed; primary-model decision rubric rewritten; mandatory economy reviewer contract added; strong-review escalation documented; README/AGENTS/using-agentit updated; inventory decoupled from removed router; stale route hooks removed from profile CLI; continuity rewritten around AI decisions rather than router output.
-- Review fixes complete: MCP manager now accepts only explicit `stack_id` recommendations; gateway tests exercise the real tool path; continuity no longer invents semantic defaults before `TASK_DECISION`; mechanical registry/inventory safety tests restored; reviewer verdict vocabulary unified to `CLEAR / CHALLENGE / ESCALATE`; stale router wording removed from active skill docs.
-- In progress: final GitHub Actions verification on the latest PR head and final stale-reference scan.
+- Review fixes complete: MCP manager now accepts only explicit `stack_id` recommendations; MCP stack enablement no longer falls back to free-text routing; gateway tests exercise the real tool path; continuity no longer invents semantic defaults before `TASK_DECISION`; mechanical registry/inventory safety tests restored; reviewer verdict vocabulary unified to `CLEAR / CHALLENGE / ESCALATE`; stale router wording removed from active skill docs.
+- Verification complete: GitHub Actions CI run #206 passed on commit `073da66242a5a82d9cc4c0dd428e3800f4d68378`, including runtime/utility tests, script tests, shell syntax, registry/settings/profile/capability validation and the new regression coverage.
 - Blocked: independent strong architecture review is still required by Agentit's own policy before merge; the previous Copilot review attempt failed because its quota was exhausted.
-- Not started: merge decision after CI and strong review are green.
+- Not started: merge decision after strong review.
 
 ## Decisions
 
@@ -54,27 +54,29 @@ Remove programmatic natural-language routing from Agentit. The primary AI interp
 - `docs/NO_PROGRAMMATIC_ROUTER.md`
 - `docs/LLM_NATIVE_DECISION_PROTOCOL.md`
 - `docs/MCP_CATALOG.md`
-- `router/profiles.py`, `router/continuity.py`, `router/inventory.py`, `router/mcp_catalog.py` (mechanical infrastructure only)
+- `router/profiles.py`, `router/continuity.py`, `router/inventory.py`, `router/mcp_catalog.py`, `router/mcp_runtime.py` (mechanical infrastructure only)
 - `router/test_inventory_registry.py`, `router/test_mcp_runtime.py`, `router/test_continuity.py`
 - `mcp/gateway.py`
 - PR #24
+- GitHub Actions CI #206: success on `073da66242a5a82d9cc4c0dd428e3800f4d68378`
 
 ## Verification
 
-- GitHub Actions runs are the acceptance gate for the refactor.
-- Runtime/utility tests must pass after deleting router-dependent modules.
-- Gateway tests must prove explicit named-stack recommendation works and free-text recommendation does not silently route.
-- Continuity tests must prove undecided semantic fields remain visibly unset and explicit AI decision fields persist.
-- Registry/inventory tests must cover duplicate IDs, invalid states/schema, malformed/missing YAML, portable-root traversal, symlink escape and malformed provider metadata.
-- Script tests, shell syntax, registry YAML, settings JSON, profile catalog, and capability catalog must pass.
+- GitHub Actions CI #206: **success**.
+- Runtime and utility tests: passed.
+- Script tests: passed.
+- Shell syntax: passed.
+- Registry YAML, settings JSON, profile catalog and capability catalog validation: passed.
+- Gateway regression coverage proves explicit named-stack recommendation works and task-text input does not silently route.
+- Continuity regression coverage proves undecided semantic fields remain visibly unset and explicit AI decision fields persist.
+- Registry/inventory regression coverage includes duplicate IDs, invalid states/schema, malformed/missing YAML, portable-root traversal, symlink escape and malformed provider metadata.
 - No executable prompt-classification eval suite remains by design.
 
 ## Next actions
 
-1. Inspect the latest PR #24 GitHub Actions run and fix any failures.
-2. Search active docs/code for stale `APPROVE/REVISE/BLOCK`, `agentit trace`, deleted `route.py` invocation, `decision_contract.py`, or free-text `recommend_for_task` usage and remove applicable references.
-3. Obtain the required independent strong architecture review.
-4. Leave PR #24 open for the merge decision once CI and review are green.
+1. Obtain the required independent strong architecture review.
+2. If that review raises material findings, fix them and rerun CI.
+3. Leave PR #24 open for the user merge decision once strong review is green.
 
 ## Open questions / blockers
 

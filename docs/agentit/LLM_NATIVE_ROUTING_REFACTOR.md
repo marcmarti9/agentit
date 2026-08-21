@@ -1,21 +1,74 @@
-# Agentit LLM-native routing refactor
+# Agentit task-decision refactor: AI decides, AI reviews
 
 ## Goal
 
-Remove prompt-keyword semantic routing from Agentit and make the active LLM the
-mandatory classifier, while retaining deterministic safety validation.
+Remove programmatic natural-language routing from Agentit.
 
-## What changed
+A capable language model should not be placed behind a hand-maintained keyword/regex classifier that sees less context than the model itself. The primary AI now owns task interpretation and planning, and another AI provides the pre-execution check.
 
-- `router/route.py` no longer infers risk/category/topology from natural language.
-- `router/decision_contract.py` defines the structured host-model decision contract.
-- `router/registry.py` verifies model-selected skill availability without selecting skills.
-- `task-router` is now an LLM decision protocol rather than a regex router.
-- `using-agentit` and `AGENTS.md` require the model to classify every task from full context.
-- traces distinguish `decision_request` from `validated_decision`.
-- evals now test hard decision invariants, not prompt-classifier heuristics.
+## Architecture
 
-## Non-goal
+```text
+user request + full conversation/project/tool context
+        ↓
+primary AI creates TASK_DECISION
+        ↓
+cheap independent AI reviewer
+        ↓
+APPROVE / REVISE / BLOCK
+        ↓
+strong critic too when consequences are high
+        ↓
+execute reviewed plan
+        ↓
+fresh verification
+```
 
-This does not remove routing as a concept. It moves semantic routing to the model
-and leaves code responsible only for stable, testable invariants and inventory.
+## Removed responsibilities from code
+
+Executable code does not infer from natural language:
+
+- intent;
+- semantic category/domain;
+- task risk;
+- topology;
+- skill relevance;
+- whether delegation is useful;
+- which specialist should handle the problem.
+
+Those judgments belong to the AI that can see the actual context.
+
+The refactor removes the semantic `route.py`, semantic decision validator, route traces, router-specific tests and executable prompt-classification evals.
+
+## Mandatory economy review
+
+Before material execution, the primary AI sends its proposed `TASK_DECISION` to the cheapest capable independent reviewer available. The normal target is a semantic `fast` tier model/endpoint; when similarly cheap, model-family diversity is preferred.
+
+The reviewer is deliberately read-only and adversarial. It checks whether the primary model misunderstood the task, underestimated risk, forgot constraints, selected the wrong tools/skills, delegated badly, created unsafe parallel ownership/dependencies, or proposed inadequate verification.
+
+It returns `APPROVE`, `REVISE` or `BLOCK`.
+
+## Strong-review escalation
+
+A cheap second opinion is useful even for routine work, but it is not sufficient for high-consequence decisions. `RISK_3/RISK_4`, destructive or irreversible work, auth/payments/secrets/PII/production, significant migrations and large structural plans additionally require a stronger independent `critic`/`judgment` tier review.
+
+## What code may still do
+
+Mechanical code is still useful for mechanical jobs after the AI has decided what to do:
+
+- copy/install skill files;
+- manage manifests and configuration;
+- persist continuity/runtime state;
+- execute explicitly selected tools;
+- run tests/checks;
+- track attempt budgets, dependencies and write ownership;
+- produce verification receipts.
+
+That code is execution infrastructure, not a language-understanding router.
+
+## Canonical policy
+
+- `skills/task-router/SKILL.md`
+- `skills/task-router/references/economy-reviewer.md`
+- `skills/using-agentit/SKILL.md`
+- `docs/NO_PROGRAMMATIC_ROUTER.md`

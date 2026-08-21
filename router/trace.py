@@ -1,7 +1,6 @@
-"""Persist and summarize Agentit routing decisions for daily use.
+"""Persist Agentit decision requests or validated host-model decisions.
 
-Not a marketing benchmark tool: a local debug trail so you can see what the
-router chose on real tasks and tighten heuristics over time.
+Tracing is diagnostic only. It never classifies natural language itself.
 """
 
 from __future__ import annotations
@@ -14,12 +13,12 @@ import stat
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 try:
-    from router.route import RegistryError, route_task
+    from router.decision_contract import build_decision_request, validate_decision
 except ImportError:  # pragma: no cover
-    from route import RegistryError, route_task  # type: ignore
+    from decision_contract import build_decision_request, validate_decision  # type: ignore
 
 
 class TraceError(RuntimeError):
@@ -50,26 +49,59 @@ def write_trace(
     prompt: str,
     *,
     project_root: Path,
+    decision: dict[str, Any] | None = None,
     registry_path: Path | None = None,
     home: Path | None = None,
     explicit_risk: str | None = None,
     provider_host: str = "local",
-    available_providers: list[str] | tuple[str, ...] | None = None,
+    available_providers: Iterable[str] | None = None,
 ) -> dict[str, Any]:
-    """Route a task and persist a JSON trace under `.agentit/traces/`."""
+    """Persist a decision request or a validated decision under `.agentit/traces/`."""
     root = Path(project_root).resolve()
     if not root.is_dir() or root.is_symlink():
         raise TraceError(f"project root must be a regular directory: {root}")
 
-    result = route_task(
-        prompt,
-        explicit_risk=explicit_risk,
-        registry_path=registry_path,
-        home=home,
-        project_root=root,
-        provider_host=provider_host,
-        available_providers=available_providers,
-    )
+    if decision is None:
+        result = build_decision_request(
+            prompt,
+            explicit_risk=explicit_risk,
+            registry_path=registry_path,
+            home=home,
+            project_root=root,
+            provider_host=provider_host,
+            available_providers=available_providers,
+        )
+        trace_kind = "decision_request"
+        summary = {
+            "status": result["status"],
+            "classification_owner": result["classification_owner"],
+            "task": result["task"],
+            "project_size": (result.get("project_signals") or {}).get("size_class"),
+        }
+    else:
+        result = validate_decision(
+            decision,
+            explicit_risk=explicit_risk,
+            registry_path=registry_path,
+            home=home,
+            provider_host=provider_host,
+            available_providers=available_providers,
+        )
+        trace_kind = "validated_decision"
+        decided = result["decision"]
+        summary = {
+            "status": result["status"],
+            "classification_owner": result["classification_owner"],
+            "risk": decided["risk"],
+            "category": decided["category"],
+            "domain_pack": decided["domain_pack"],
+            "topology": decided["topology"],
+            "critic_required": decided["critic_required"],
+            "skills_available": result["skill_inventory"]["available"],
+            "skills_recommended_missing": result["skill_inventory"]["missing"],
+            "capability_status": result["capability_envelope"].get("status"),
+            "execution_ready": result["execution_ready"],
+        }
 
     now = datetime.now(timezone.utc)
     digest = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:10]
@@ -81,37 +113,13 @@ def write_trace(
     destination = _assert_safe_path(traces_dir / name, root=root)
 
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "created_at": now.isoformat(),
+        "kind": trace_kind,
         "prompt": prompt,
         "project_root": str(root),
-        "route": result,
-        "summary": {
-            "risk": result.get("risk"),
-            "category": result.get("category"),
-            "domain_pack": result.get("domain_pack"),
-            "craft_depth": result.get("craft_depth"),
-            "spend": result.get("spend"),
-            "topology": result.get("topology"),
-            "critic_required": result.get("critic_required"),
-            "subagents": result.get("subagents"),
-            "token_estimate": result.get("token_estimate"),
-            "skills_available": result.get("skills_available"),
-            "skills_recommended_missing": result.get("skills_recommended_missing"),
-            "skill_budget": result.get("skill_budget"),
-            "verification": result.get("verification"),
-            "jit_profile_recommendations": result.get("jit_profile_recommendations"),
-            "models": result.get("models"),
-            "project_signals": {
-                "size_class": (result.get("project_signals") or {}).get("size_class"),
-                "stack_markers": (result.get("project_signals") or {}).get("stack_markers"),
-            },
-            "specialists": result.get("specialists"),
-            "capabilities": result.get("capabilities"),
-            "capability_status": (result.get("capability_envelope") or {}).get("status"),
-            "capability_grants": (result.get("capability_envelope") or {}).get("grants"),
-            "reasons": result.get("reasons"),
-        },
+        "result": result,
+        "summary": summary,
     }
 
     fd, temporary_name = tempfile.mkstemp(
@@ -130,36 +138,38 @@ def write_trace(
 
     return {
         "path": str(destination),
-        "summary": payload["summary"],
-        "route": result,
+        "kind": trace_kind,
+        "summary": summary,
+        "result": result,
     }
 
 
 def format_trace_summary(payload: dict[str, Any]) -> str:
     summary = payload.get("summary") or {}
-    token = summary.get("token_estimate") or {}
     lines = [
-        f"risk: {summary.get('risk')}",
-        f"category: {summary.get('category')}",
-        f"domain_pack: {summary.get('domain_pack')}",
-        f"craft_depth: {summary.get('craft_depth')}",
-        f"spend: {summary.get('spend')}",
-        f"topology: {summary.get('topology')}",
-        f"critic_required: {summary.get('critic_required')}",
-        f"subagents: {summary.get('subagents')}",
-        f"tokens: {token.get('display') or '(n/a)'}",
-        f"skills: {', '.join(summary.get('skills_available') or []) or '(none)'}",
-        f"missing: {', '.join(summary.get('skills_recommended_missing') or []) or '(none)'}",
-        f"jit_profiles: {', '.join(summary.get('jit_profile_recommendations') or []) or '(none)'}",
-        f"specialists: {', '.join(summary.get('specialists') or []) or '(none)'}",
-        f"capability_status: {summary.get('capability_status')}",
+        f"kind: {payload.get('kind')}",
+        f"status: {summary.get('status')}",
+        f"classification_owner: {summary.get('classification_owner')}",
     ]
-    reasons = summary.get("reasons") or []
-    if reasons:
-        lines.append("reasons:")
-        for reason in reasons:
-            lines.append(f"  - {reason}")
-    path = payload.get("path")
-    if path:
-        lines.append(f"trace: {path}")
+    for field in (
+        "risk",
+        "category",
+        "domain_pack",
+        "topology",
+        "critic_required",
+        "execution_ready",
+        "project_size",
+    ):
+        if field in summary:
+            lines.append(f"{field}: {summary.get(field)}")
+    if summary.get("skills_available") is not None:
+        lines.append(f"skills: {', '.join(summary.get('skills_available') or []) or '(none)'}")
+    if summary.get("skills_recommended_missing") is not None:
+        lines.append(
+            f"missing: {', '.join(summary.get('skills_recommended_missing') or []) or '(none)'}"
+        )
+    if summary.get("task"):
+        lines.append(f"task: {summary['task']}")
+    if payload.get("path"):
+        lines.append(f"trace: {payload['path']}")
     return "\n".join(lines)

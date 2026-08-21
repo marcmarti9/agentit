@@ -1,114 +1,189 @@
 ---
 name: task-router
-description: Classify risk, topology, skills, and context before execution. Public visual surfaces are design-primary.
+description: LLM-native Agentit decision protocol. The agent classifies every task from full context; code only validates deterministic invariants.
 ---
 
-# Intelligent task router
+# LLM-native decision protocol
 
-The router is a provider-neutral planning aid, never permission to execute, lower risk, mutate tooling, or skip user/project instructions. Its JSON is advisory; the active provider and explicit instructions still win.
+Agentit does **not** use a keyword/regex router to understand user intent.
+The active model is the semantic router.
 
-## Invocation
+Before executing any task, classify it using the same rubric below. Use the
+**full available context**: conversation, repository state, files, tools,
+provider capabilities, user instructions and project rules. Do not classify a
+follow-up such as “fix it” from that string alone when prior context explains
+what “it” is.
 
-```bash
-python3 router/route.py "describe the task"
-python3 router/route.py --risk RISK_2 "describe the task"
+The protocol is mandatory; the exact answer is contextual. Same rubric does not
+mean same classification.
+
+## Mandatory decision
+
+Before action, determine:
+
+- `intent`: explain | investigate | review | implement | design | document | operate
+- `category`: explanation | research | bug | testing | engineering | frontend | design | backend | database | security | marketing | documentation | release
+- `complexity`: trivial | bounded | substantial | structural
+- `risk`: RISK_0..RISK_4
+- `reversible`: true | false | null
+- `topology`: direct | probe | fan_out | pipeline | writer_reviewer | audit
+- `domain_pack`: engineering | frontend | design | backend | data | product | writing | release | research
+- whether this is a public visual surface
+- whether it is greenfield / a total visual redesign
+- design craft depth when applicable: Standard | Polished | Studio
+- whether the task is a destructive data operation
+- smallest useful skills to load
+- useful specialists, if any
+- required/preferred capabilities
+- delegation benefit and useful parallelism
+- verification gates
+- whether an independent critic is required
+- concrete evidence/signals supporting the decision
+- short reasons for the classification
+
+The host may keep this decision internal when exposing it would only add noise,
+but it must actually make the decision before execution.
+
+## Risk rubric
+
+`RISK_0` — read-only explanation/analysis with no meaningful mutation.
+
+`RISK_1` — local, trivial, easily reversible change with very small blast radius.
+
+`RISK_2` — meaningful but bounded engineering/product change.
+
+`RISK_3` — sensitive boundary such as auth, security, payments, PII,
+significant migration/infrastructure, or comparable consequences.
+
+`RISK_4` — destructive, production, data-loss, irreversible, or otherwise
+high-blast-radius operation.
+
+Explicit user/project risk policy is a floor. Never lower it.
+
+## Topology rubric
+
+`direct` — one coherent execution owner; delegation adds no concrete benefit.
+
+`probe` — read-only investigation should happen before implementation/judgment.
+
+`fan_out` — at least two genuinely independent branches benefit from isolated
+parallel work.
+
+`pipeline` — dependent stages need explicit handoffs.
+
+`writer_reviewer` — one implementation owner plus independent review is justified
+by error cost.
+
+`audit` — the main job is independent inspection/critique rather than writing.
+
+Multi-agent is an optimization, not a ritual. Use it for independence,
+specialization, context isolation, research breadth or fresh review. Do not use
+it merely because the task is long, and do not avoid it merely because one model
+could technically do everything.
+
+## Deterministic hard gates
+
+The structured decision can be checked with `router/decision_contract.py`.
+Python validates; Python does not reinterpret the prompt.
+
+Hard invariants:
+
+1. RISK_3/RISK_4 require independent review.
+2. RISK_4 requires a dry-run/preview where technically meaningful, rollback plan,
+   and post-check.
+3. Destructive data operations require RISK_4 and a verified backup.
+4. Structural work requires an independent critic.
+5. `fan_out` requires at least two independent branches and a concrete reason.
+6. `direct` means one execution owner.
+7. Public visual surfaces are design-primary and require browser/rendered evidence.
+8. Greenfield/total public visual redesign defaults to Studio unless the user
+   explicitly chooses a leaner depth.
+
+## Skill selection and loading
+
+The model decides which skills are relevant. Registry code may only verify that
+a requested ID exists and is actually loadable.
+
+A skill name in a decision is **not evidence the skill was used**. Before a stage
+relies on a skill, read that skill's `SKILL.md` body or use a provider-native
+mechanism that demonstrably injects the same content. Missing skills must be
+surfaced or replaced deliberately; never pretend an unopened skill shaped the
+work.
+
+Select the smallest useful set. PostgreSQL-specific guidance requires actual
+Postgres/psql/Supabase evidence. Similar domain-specific constraints should be
+resolved from real context, not prompt substrings.
+
+## Public visual surfaces
+
+Landing pages, homepages, public company/brand sites, portfolios, storefronts,
+campaign sites and total visual redesigns are design-primary.
+
+For ambitious greenfield/total public visual work, the normal shape remains:
+
+`interview -> live reference research -> concept/direction -> implementation -> independent visual critique -> desktop/mobile browser verification`
+
+Do not let a generic “frontend” implementation label erase the design problem.
+
+## Structured decision shape
+
+Provider adapters may materialize the internal decision as JSON. The canonical
+schema is enforced by `router/decision_contract.py`; conceptually:
+
+```json
+{
+  "schema_version": 1,
+  "intent": "implement",
+  "category": "engineering",
+  "complexity": "bounded",
+  "risk": "RISK_2",
+  "reversible": true,
+  "topology": "direct",
+  "domain_pack": "engineering",
+  "public_visual": false,
+  "greenfield_or_total_redesign": false,
+  "craft_depth": null,
+  "craft_depth_overridden": false,
+  "destructive_data_operation": false,
+  "skills": [],
+  "specialists": [],
+  "capabilities": {"required": [], "preferred": []},
+  "delegation": {"parallelism": 1, "reason": ""},
+  "verification": {
+    "tests_required": true,
+    "browser_required": false,
+    "independent_review": false,
+    "dry_run_required": false,
+    "backup_required": false,
+    "rollback_plan_required": false,
+    "post_check_required": false
+  },
+  "critic_required": false,
+  "evidence_signals": [],
+  "reasons": ["short evidence-based reason"]
+}
 ```
 
-Inspect the repository/target environment before acting.
+## CLI boundary
 
-## Hard routing correction: public visual surfaces
+`python3 router/route.py "task"` now emits a **decision request**, not a semantic
+classification. This exists for adapters/debugging and makes the ownership
+boundary explicit.
 
-A landing page, homepage, corporate/brand website, marketing site, portfolio, storefront, campaign site, or complete visual redesign is **design-primary**, even when implementation is React/Next/CSS and even if a generic heuristic labels it `frontend` or `marketing`.
-
-For public visual work:
-
-- use the `design` domain pack;
-- greenfield public surfaces and total visual redesigns recommend **Studio** unless the user chooses a leaner depth;
-- run the deep `interview-me` path before planning;
-- research live references before art direction;
-- create a concrete `DESIGN_DIRECTION` before code;
-- use independent research/concept/critique workers when isolation or diversity helps;
-- require browser evidence on desktop and mobile before visual-success claims.
-
-Normal greenfield/total shape:
-
-`interview -> reference research -> concept/direction -> implementation -> independent visual critique -> browser verification`
-
-Research/concept branches may fan out inside that pipeline. Do not collapse to direct only because one model could technically perform every step.
-
-## Output contract
-
-- `skills_available`: recommended skills that are discoverable/compatible.
-- `skills_recommended_missing`: relevant recommendations that cannot currently be used.
-- `skills`: legacy alias of `skills_available`.
-- `signals`: evidence used by routing heuristics.
-- `confidence`: uncalibrated signal strength; `confidence_calibrated` remains false without reviewed labels.
-- `rejected_topologies`: why alternatives were not selected.
-- `applied_preferences`: safe project/user preferences to apply.
-- `jit_profile_recommendations`: missing profiles worth project-local activation.
-- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, or `audit`.
-- `subagents.recommended`: soft guidance; no hard max/min quota.
-- `domain_pack`, `skill_budget`, `craft_depth` (visual only), `spend`, `token_estimate`, `parallelism`, `critic_required`, `multi_agent_pushback`: execution guidance.
-
-## Skill activation contract
-
-A skill ID in router output, a profile, or a worker payload is **not proof the skill is active**. Before a stage relies on a skill, the model doing that stage must actually read its `SKILL.md` body or receive it through demonstrable provider-native injection. Keep a small ID/path/hash load receipt when the host supports it.
-
-If a worker only sees names such as `design-taste-frontend` and the provider does not resolve those names automatically, load/embed the corresponding bodies before work. Never claim an unopened skill shaped the result.
-
-Greenfield/total public work normally loads by stage:
-
-- research: `design-inspiration-research`;
-- direction: `design-taste-frontend` + `impeccable-design`;
-- implementation: `frontend-ui-engineering` + `emil-design-eng`;
-- critique: `impeccable-design` + `design-taste-frontend` + browser verification.
-
-## Selection rules
-
-1. Infer risk from the requested action/environment, not keyword mentions alone. Explicit risk may raise but never lower inferred risk.
-2. Select the smallest **useful** skill set. For a public visual surface, art direction is useful/required rather than optional polish.
-3. Use terse output only for low-risk unambiguous work; preserve enough detail for review when precision matters.
-4. Keep exact content for commands, pipes, redirects, diffs, errors, SQL, paths, IDs, hashes, credentials, schemas, migrations and affected-file lists.
-5. Exact deduplication is safe by default; do not semantically compress decision-critical material without retrieval.
-6. RISK_3/4 use fuller evidence/independent review; RISK_4 also needs the stronger operational gates defined by the base router.
-7. Delegation needs scope/ownership/verifier, but **context isolation, research breadth, concept diversity and fresh critique are legitimate benefits**.
-8. PostgreSQL-specific guidance requires a real PostgreSQL/psql/Supabase signal. Generic/SQLite work must not receive Postgres-specific advice.
-9. Large structural/high-impact plans require an independent critic.
-10. Verify actual runtime/rendered behavior before completion claims.
-
-## Delegation
-
-Valid reasons include independent files/domains, read-only investigation, large documentation/reference sets, independent visual hypotheses, concept competition, fresh critique, or using a more efficient worker for volume reading while a stronger parent preserves context for judgment/synthesis.
-
-Provider-specific model names belong in provider configuration. Portable routing talks about semantic capability tiers.
-
-## Skill visibility profiles
-
-The repository keeps all skill bodies in `skills/`; global installation remains intentionally bounded to the `core` profile. Add opt-in families project-locally rather than dumping the entire catalog into every context:
+To validate a host-model decision:
 
 ```bash
-./agentit enable design --project .
-./agentit enable design --project . --apply
-./agentit status --project .
-./agentit disable design --project . --apply
+python3 router/route.py --decision decision.json
 ```
 
-`profiles.yaml` is visibility policy; `registry.yaml` is routing/inventory metadata. A registry entry does not mean its body was loaded.
-
-## Adaptive execution
-
-Prefer `direct` for tightly coupled work, `probe` for read-only investigation, `fan_out` for independent branches, `pipeline` for dependent stages, `writer_reviewer` for one implementation owner + independent review, and `audit` for critical review. One writer per file/shared state unless isolated branches/worktrees give explicit ownership.
-
-The design critic should reject wrapper-only cardification, repeated section silhouettes, generic hero/card/CTA templates, and research that cannot explain any final design decision.
-
-## Provider adapters
-
-Codex/Claude/Gemini/other hosts may implement workers and skill loading differently. Do not assume model names or skill injection are portable. Missing critical review/skill context should fail visibly rather than silently downgrade. If native subagents are unavailable, use an isolated delegated call/fresh context or load the same scoped skill bundle into the parent.
+Do not call the CLI as a substitute for reasoning. The active agent already has
+more context than a standalone prompt string and should classify the task itself.
 
 ## Non-goals
 
-- no global shell interception;
-- no automatic activation of unrelated tooling;
-- no full-catalog context dumps;
-- no replacement of exact errors/diffs/operational evidence with lossy summaries;
-- no forced multi-agent and no forced single-agent.
+- no prompt-keyword risk inference;
+- no regex intent classifier;
+- no deterministic guess of category/topology from natural language;
+- no forced single-agent or forced multi-agent;
+- no claim that IDs equal loaded skill bodies;
+- no safety downgrade because the model is confident.

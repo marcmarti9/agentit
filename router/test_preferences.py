@@ -1,4 +1,4 @@
-"""Unit tests for user preferences memory and dotted key handling."""
+"""Unit tests for user preferences memory and LLM decision-request projection."""
 
 import os
 import tempfile
@@ -17,7 +17,8 @@ from router.route import route_task
 class PreferencesTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.tmpdir = tempfile.TemporaryDirectory()
-        self.prefs_file = Path(self.tmpdir.name) / ".agentit" / "preferences.yaml"
+        self.home = Path(self.tmpdir.name)
+        self.prefs_file = self.home / ".agentit" / "preferences.yaml"
 
     def tearDown(self) -> None:
         self.tmpdir.cleanup()
@@ -37,26 +38,32 @@ class PreferencesTestCase(unittest.TestCase):
         st = os.stat(self.prefs_file)
         self.assertEqual(st.st_mode & 0o777, 0o600)
 
-    def test_router_integration_with_preferences(self) -> None:
-        # Save custom preferences
+    def test_decision_request_projects_safe_preferences_without_semantic_routing(self) -> None:
         save_preferences(
             {
                 "auto_jit_profiles": False,
                 "auto_plan_mode": False,
+                "parallelism_preference": "high",
                 "user_style_preferences": {
                     "preferred_language": "en",
                     "testing_framework": "unittest",
                     "ui_styling": "custom_css",
+                    "response_style": "terse",
                 },
             },
             preferences_path=self.prefs_file,
         )
 
-        res = route_task("optimiza esta consulta de base de datos", home=Path(self.tmpdir.name))
-        self.assertIn("applied_preferences", res)
-        self.assertEqual(res["applied_preferences"]["preferred_language"], "en")
-        self.assertEqual(res["applied_preferences"]["testing_framework"], "unittest")
-        self.assertEqual(res["jit_profile_recommendations"], [])
+        res = route_task("optimiza esta consulta de base de datos", home=self.home)
+        prefs = res["applied_preferences"]
+        self.assertEqual(prefs["preferred_language"], "en")
+        self.assertEqual(prefs["testing_framework"], "unittest")
+        self.assertEqual(prefs["ui_styling"], "custom_css")
+        self.assertEqual(prefs["parallelism_preference"], "high")
+        self.assertFalse(prefs["auto_jit_profiles"])
+        self.assertFalse(prefs["auto_plan_mode"])
+        self.assertEqual("decision_required", res["status"])
+        self.assertNotIn("category", res)
 
 
 if __name__ == "__main__":

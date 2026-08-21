@@ -1,143 +1,388 @@
 [
   {
-    "id": "explanation_backup",
-    "prompt": "Explícame cómo funciona un backup.",
-    "expected": {
-      "risk": "RISK_0",
-      "category": "explanation",
-      "topology": "direct"
-    }
-  },
-  {
-    "id": "payment_button_css",
-    "prompt": "Cambia el color del botón de pago en este CSS",
-    "expected": {
-      "risk": "RISK_1",
-      "category": "frontend",
-      "topology": "direct"
-    }
-  },
-  {
-    "id": "marketing_landing",
-    "prompt": "Diseña una landing para un servicio de backups.",
-    "expected": {
-      "risk": "RISK_2",
-      "category": "marketing",
-      "topology": "direct"
-    }
-  },
-  {
-    "id": "bug_probe",
-    "prompt": "Investiga y reproduce la causa raíz de este bug",
-    "expected": {
-      "risk": "RISK_2",
-      "category": "bug",
-      "topology": "probe"
-    }
-  },
-  {
-    "id": "independent_packages",
-    "prompt": "Investiga en paralelo dos hipótesis independientes del bug",
-    "expected": {
-      "risk": "RISK_2",
-      "category": "bug",
-      "topology": "fan_out"
-    }
-  },
-  {
-    "id": "multi_path_fan_out",
-    "prompt": "fix bugs in auth.ts and billing.ts",
-    "expected": {
-      "risk": "RISK_3",
-      "topology": "fan_out"
-    }
-  },
-  {
-    "id": "architecture_critic",
-    "prompt": "Plantea la arquitectura del sistema de notificaciones",
-    "expected": {
-      "risk": "RISK_2",
+    "id": "bounded_direct_valid",
+    "expected_valid": true,
+    "decision": {
+      "schema_version": 1,
+      "intent": "implement",
       "category": "engineering",
-      "topology": "direct"
-    }
-  },
-  {
-    "id": "auth_writer_reviewer",
-    "prompt": "Implementa el login y la expiración de sesiones",
-    "expected": {
-      "risk": "RISK_3",
-      "category": "security",
-      "topology": "writer_reviewer"
-    }
-  },
-  {
-    "id": "postgres_profile",
-    "prompt": "Optimiza esta consulta PostgreSQL en Supabase.",
-    "expected": {
+      "complexity": "bounded",
       "risk": "RISK_2",
-      "category": "database",
-      "topology": "direct"
-    }
-  },
-  {
-    "id": "frontend_capability_cli_fallback",
-    "prompt": "Implementa una interfaz responsive en React",
-    "provider_host": "codex",
-    "available_providers": ["cli.git", "local.filesystem"],
-    "expected": {
-      "risk": "RISK_2",
-      "category": "frontend",
+      "reversible": true,
       "topology": "direct",
-      "specialists": ["frontend-developer"],
-      "capability_provider_for": {
-        "repository.read": "cli.git",
-        "filesystem.read": "local.filesystem",
-        "filesystem.write": "local.filesystem"
-      }
+      "domain_pack": "engineering",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": [],
+      "reasons": ["Host model decision"]
     }
   },
   {
-    "id": "production_restore_audit",
-    "prompt": "Elimina la tabla de producción y restaura el backup",
-    "expected": {
-      "risk": "RISK_4",
-      "category": "database",
-      "topology": "audit"
+    "id": "explicit_risk_floor_rejected",
+    "expected_valid": false,
+    "explicit_risk": "RISK_3",
+    "decision": {
+      "schema_version": 1,
+      "intent": "implement",
+      "category": "engineering",
+      "complexity": "bounded",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "direct",
+      "domain_pack": "engineering",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": [],
+      "reasons": ["Host model decision"]
     }
   },
   {
-    "id": "generic_database_stack_probe",
-    "prompt": "Optimiza esta consulta de base de datos.",
-    "expected": {
+    "id": "risk_three_requires_review",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "implement",
+      "category": "security",
+      "complexity": "substantial",
       "risk": "RISK_3",
-      "category": "database",
+      "reversible": true,
+      "topology": "direct",
+      "domain_pack": "backend",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": ["authentication"],
+      "reasons": ["Sensitive auth boundary"]
+    }
+  },
+  {
+    "id": "risk_four_gated_valid",
+    "expected_valid": true,
+    "decision": {
+      "schema_version": 1,
+      "intent": "operate",
+      "category": "release",
+      "complexity": "substantial",
+      "risk": "RISK_4",
+      "reversible": false,
       "topology": "writer_reviewer",
-      "routing_advice_contains": "inspect_database_stack"
+      "domain_pack": "release",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": "Independent review after implementation"},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": true,
+        "dry_run_required": true,
+        "backup_required": false,
+        "rollback_plan_required": true,
+        "post_check_required": true
+      },
+      "critic_required": false,
+      "evidence_signals": ["production"],
+      "reasons": ["High blast radius operation"]
     }
   },
   {
-    "id": "negated_agentit_activation",
-    "prompt": "Do not use Agentit, just explain hashing",
-    "expected": {
-      "activation_requested": false,
-      "skills_excludes": "using-agentit"
-    }
-  },
-  {
-    "id": "natural_agentit_activation",
-    "prompt": "Usa Agentit para implementar este endpoint",
-    "expected": {
-      "activation_requested": true,
-      "skills_contains": "using-agentit"
-    }
-  },
-  {
-    "id": "mysql_neutral_profile",
-    "prompt": "Implement a database schema for a MySQL service",
-    "expected": {
+    "id": "destructive_data_requires_backup",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "operate",
       "category": "database",
-      "jit_profiles_contains": "backend",
-      "jit_profiles_excludes": "supabase"
+      "complexity": "substantial",
+      "risk": "RISK_4",
+      "reversible": false,
+      "topology": "writer_reviewer",
+      "domain_pack": "data",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": true,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": "Independent review"},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": true,
+        "dry_run_required": true,
+        "backup_required": false,
+        "rollback_plan_required": true,
+        "post_check_required": true
+      },
+      "critic_required": false,
+      "evidence_signals": ["database", "production"],
+      "reasons": ["Destructive data change"]
+    }
+  },
+  {
+    "id": "public_visual_wrong_pack_rejected",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "design",
+      "category": "design",
+      "complexity": "bounded",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "direct",
+      "domain_pack": "frontend",
+      "public_visual": true,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": "Polished",
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": true,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": ["public_visual"],
+      "reasons": ["Public visual surface"]
+    }
+  },
+  {
+    "id": "public_visual_design_valid",
+    "expected_valid": true,
+    "decision": {
+      "schema_version": 1,
+      "intent": "design",
+      "category": "design",
+      "complexity": "bounded",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "direct",
+      "domain_pack": "design",
+      "public_visual": true,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": "Polished",
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": true,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": ["public_visual"],
+      "reasons": ["Public visual surface"]
+    }
+  },
+  {
+    "id": "structural_requires_critic",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "implement",
+      "category": "engineering",
+      "complexity": "structural",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "direct",
+      "domain_pack": "engineering",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": [],
+      "reasons": ["Structural plan"]
+    }
+  },
+  {
+    "id": "fan_out_requires_reason",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "investigate",
+      "category": "bug",
+      "complexity": "bounded",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "fan_out",
+      "domain_pack": "engineering",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 2, "reason": ""},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": [],
+      "reasons": ["Two possible hypotheses"]
+    }
+  },
+  {
+    "id": "fan_out_valid",
+    "expected_valid": true,
+    "decision": {
+      "schema_version": 1,
+      "intent": "investigate",
+      "category": "bug",
+      "complexity": "bounded",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "fan_out",
+      "domain_pack": "engineering",
+      "public_visual": false,
+      "greenfield_or_total_redesign": false,
+      "craft_depth": null,
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 2, "reason": "Independent hypotheses can be investigated in isolation."},
+      "verification": {
+        "tests_required": true,
+        "browser_required": false,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": [],
+      "reasons": ["Independent hypotheses"]
+    }
+  },
+  {
+    "id": "greenfield_defaults_studio",
+    "expected_valid": false,
+    "decision": {
+      "schema_version": 1,
+      "intent": "design",
+      "category": "design",
+      "complexity": "substantial",
+      "risk": "RISK_2",
+      "reversible": true,
+      "topology": "pipeline",
+      "domain_pack": "design",
+      "public_visual": true,
+      "greenfield_or_total_redesign": true,
+      "craft_depth": "Polished",
+      "craft_depth_overridden": false,
+      "destructive_data_operation": false,
+      "skills": [],
+      "specialists": [],
+      "capabilities": {"required": [], "preferred": []},
+      "delegation": {"parallelism": 1, "reason": "Dependent design stages"},
+      "verification": {
+        "tests_required": true,
+        "browser_required": true,
+        "independent_review": false,
+        "dry_run_required": false,
+        "backup_required": false,
+        "rollback_plan_required": false,
+        "post_check_required": false
+      },
+      "critic_required": false,
+      "evidence_signals": ["public_visual", "greenfield"],
+      "reasons": ["New public visual surface"]
     }
   }
 ]

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Run the checked-in router regression cases.
+"""Run checked-in deterministic Agentit decision-contract regression cases.
 
-This evaluates deterministic routing fields only. It is not an agent-quality,
-token-cost, or production-readiness benchmark.
+These cases do not test natural-language classification. The host LLM owns that
+step. The evals only prove that structured decisions are accepted/rejected by
+stable safety and execution invariants.
 """
 
 from __future__ import annotations
@@ -10,7 +11,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +18,7 @@ REPOSITORY = Path(__file__).resolve().parents[1]
 if str(REPOSITORY) not in sys.path:
     sys.path.insert(0, str(REPOSITORY))
 
-from router.route import route_task  # noqa: E402
+from router.decision_contract import DecisionContractError, validate_decision  # noqa: E402
 
 
 def load_cases(path: Path) -> list[dict[str, Any]]:
@@ -28,70 +28,44 @@ def load_cases(path: Path) -> list[dict[str, Any]]:
     return payload
 
 
-def evaluate_case(
-    case: dict[str, Any], *, registry_path: Path, home: Path
-) -> dict[str, Any]:
-    result = route_task(
-        case["prompt"],
-        registry_path=registry_path,
-        home=home,
-        provider_host=case.get("provider_host", "local"),
-        available_providers=case.get("available_providers"),
-    )
-    expected = case["expected"]
-    mismatches: dict[str, dict[str, Any]] = {}
-    for field, expected_value in expected.items():
-        if field == "routing_advice_contains":
-            actual_value = result.get("routing_advice", [])
-            passed = expected_value in actual_value
-        elif field == "activation_requested":
-            actual_value = (result.get("activation") or {}).get("requested")
-            passed = actual_value == expected_value
-        elif field == "skills_contains":
-            actual_value = result.get("skills_available", [])
-            passed = expected_value in actual_value
-        elif field == "skills_excludes":
-            actual_value = result.get("skills_available", [])
-            passed = expected_value not in actual_value
-        elif field == "jit_profiles_contains":
-            actual_value = result.get("jit_profile_recommendations", [])
-            passed = expected_value in actual_value
-        elif field == "jit_profiles_excludes":
-            actual_value = result.get("jit_profile_recommendations", [])
-            passed = expected_value not in actual_value
-        elif field == "capability_provider_for":
-            grants = {
-                grant["capability"]: grant["provider"]
-                for grant in result.get("capability_envelope", {}).get("grants", [])
-            }
-            actual_value = grants
-            passed = all(grants.get(capability) == provider for capability, provider in expected_value.items())
-        else:
-            actual_value = result.get(field)
-            passed = actual_value == expected_value
-        if not passed:
-            mismatches[field] = {"expected": expected_value, "actual": actual_value}
+def evaluate_case(case: dict[str, Any], *, registry_path: Path) -> dict[str, Any]:
+    expected_valid = case.get("expected_valid")
+    if not isinstance(expected_valid, bool):
+        raise ValueError(f"case {case.get('id')} must define expected_valid")
+    decision = case.get("decision")
+    if not isinstance(decision, dict):
+        raise ValueError(f"case {case.get('id')} must define a decision mapping")
+
+    error = None
+    try:
+        validate_decision(
+            decision,
+            explicit_risk=case.get("explicit_risk"),
+            registry_path=registry_path,
+        )
+        actual_valid = True
+    except DecisionContractError as exc:
+        actual_valid = False
+        error = str(exc)
+
     return {
         "id": case.get("id"),
-        "passed": not mismatches,
-        "mismatches": mismatches,
+        "passed": actual_valid == expected_valid,
+        "expected_valid": expected_valid,
+        "actual_valid": actual_valid,
+        "error": error,
     }
 
 
 def run(cases: list[dict[str, Any]], *, registry_path: Path) -> dict[str, Any]:
-    with tempfile.TemporaryDirectory(prefix="agentit-eval-home-") as temporary_home:
-        results = [
-            evaluate_case(case, registry_path=registry_path, home=Path(temporary_home))
-            for case in cases
-        ]
+    results = [evaluate_case(case, registry_path=registry_path) for case in cases]
     passed = sum(1 for result in results if result["passed"])
     return {
         "total": len(results),
         "passed": passed,
         "failed": len(results) - passed,
         "results": results,
-        "scope": "deterministic router regression cases only",
-        "confidence_calibrated": False,
+        "scope": "deterministic decision-contract invariants only; host LLM owns semantic classification",
     }
 
 
@@ -110,12 +84,14 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
     else:
         print(
-            f"Router evals: {report['passed']}/{report['total']} passed "
+            f"Decision contract evals: {report['passed']}/{report['total']} passed "
             f"({report['failed']} failed)"
         )
         for result in report["results"]:
             marker = "PASS" if result["passed"] else "FAIL"
             print(f"{marker} {result['id']}")
+            if not result["passed"] and result.get("error"):
+                print(f"  {result['error']}")
     return 0 if report["failed"] == 0 else 1
 
 

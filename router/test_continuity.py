@@ -52,7 +52,7 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
         self.assertIn(signals["size_class"], {"tiny", "small", "medium", "large"})
         self.assertIn("python", signals["stack_markers"])
 
-    def test_route_uses_project_root_for_token_basis(self):
+    def test_decision_request_exposes_project_facts_without_classifying_task(self):
         repo = Path(__file__).resolve().parents[1]
         result = route_task(
             "Implementa una feature pequeña de perfiles",
@@ -60,11 +60,12 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
         )
         self.assertTrue(result["project_signals"]["available"])
         self.assertTrue(result["token_estimate"]["not_a_bill"])
+        self.assertEqual("pending_host_decision", result["token_estimate"]["status"])
         basis = " ".join(result["token_estimate"]["basis"])
         self.assertIn("size_class=", basis)
-        self.assertIn("models", result)
-        self.assertIn("continuity", result)
-        self.assertEqual("forbidden", result["verification"]["claims_without_evidence"])
+        self.assertEqual("decision_required", result["status"])
+        self.assertNotIn("risk", result)
+        self.assertNotIn("topology", result)
 
     def test_evaluate_done_claims_requires_receipt(self):
         denied = evaluate_done_claims(["done"], receipt=None)

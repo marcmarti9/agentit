@@ -44,17 +44,24 @@ def state_path(project_root: Path) -> Path:
 def default_state_markdown(
     *,
     goal: str = "",
-    domain_pack: str = "engineering",
+    domain_pack: str | None = None,
     craft_depth: str | None = None,
-    effort: str = "normal",
-    topology: str = "direct",
-    strong_review_required: bool = False,
+    effort: str | None = None,
+    topology: str | None = None,
+    strong_review_required: bool | None = None,
     status: str = "not started",
     branch: str = "",
     extra: dict[str, Any] | None = None,
 ) -> str:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    craft = craft_depth or "n/a (not design/visual)"
+    pack = domain_pack or "(unset)"
+    craft = craft_depth or "(unset)"
+    effort_value = effort or "(unset)"
+    topology_value = topology or "(unset)"
+    if strong_review_required is None:
+        strong_review = "(unset)"
+    else:
+        strong_review = "yes" if strong_review_required else "no"
     body = f"""# Agentit state
 
 **Updated:** {now}
@@ -72,11 +79,11 @@ def default_state_markdown(
 - Non-goals:
 
 ## Domain pack
-- Pack: {domain_pack}
+- Pack: {pack}
 - Craft depth: {craft}
-- Effort: {effort}
-- Topology: {topology}
-- Strong independent review required: {"yes" if strong_review_required else "no"}
+- Effort: {effort_value}
+- Topology: {topology_value}
+- Strong independent review required: {strong_review}
 
 ## Current status
 - Complete:
@@ -129,7 +136,8 @@ def ensure_state_file(
 
     `decision` is optional model-produced metadata supplied by the caller. This
     function stores it mechanically and never derives semantic fields from the
-    natural-language goal.
+    natural-language goal. Missing semantic fields remain visibly unset rather
+    than being replaced with invented routing defaults.
     """
     root = Path(project_root).resolve()
     if not root.is_dir() or root.is_symlink():
@@ -139,13 +147,23 @@ def ensure_state_file(
         return path
 
     decision = decision or {}
+
+    def optional_text(key: str) -> str | None:
+        value = decision.get(key)
+        return str(value) if value is not None else None
+
+    strong_review_required = (
+        bool(decision["strong_review_required"])
+        if "strong_review_required" in decision
+        else None
+    )
     content = default_state_markdown(
         goal=goal,
-        domain_pack=str(decision.get("domain_pack") or "engineering"),
-        craft_depth=decision.get("craft_depth"),
-        effort=str(decision.get("effort") or "normal"),
-        topology=str(decision.get("topology") or "direct"),
-        strong_review_required=bool(decision.get("strong_review_required")),
+        domain_pack=optional_text("domain_pack"),
+        craft_depth=optional_text("craft_depth"),
+        effort=optional_text("effort"),
+        topology=optional_text("topology"),
+        strong_review_required=strong_review_required,
         status="in progress" if goal else "not started",
     )
     path.parent.mkdir(parents=True, exist_ok=True)

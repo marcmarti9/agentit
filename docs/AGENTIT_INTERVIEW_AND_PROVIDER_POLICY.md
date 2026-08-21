@@ -2,70 +2,84 @@
 
 Agentit owns the work protocol. Providers own only the execution primitive.
 
-## 1. Product work interviews by default
+## 1. AI decision before product interview
 
-Any task that creates or changes product behavior or a meaningful implementation decision must pass `interview-me` before planning or implementation.
+Agentit has no programmatic natural-language router. The active primary AI inspects the available conversation, repository, files, tools, instructions and state, then owns the semantic `TASK_DECISION`.
 
-Mechanical bypass only for exact chores with no product decision.
+For product-affecting work, inspect discoverable facts first. If material user decisions remain unresolved, use `interview-me` before implementation. Mechanical chores with no product decision can bypass the interview, but not task understanding, review or verification.
 
 ## 2. Batch every currently identifiable material question
 
-After inspecting facts, ask **all material user decisions** in one numbered batch with recommendations. Follow-up only for genuinely new decisions.
+Ask all currently identifiable material user decisions in one useful batch with recommendations. Follow up only for genuinely new decisions. Do not ask the user to repeat facts that are already available in project or conversation context.
 
-## 3. Domain packs replace universal Studio tax
+## 3. Domain packs are AI-selected knowledge families
 
 Machine catalog: `effort/levels.yaml` + `profiles.yaml`.
 
-The agent recommends a **domain pack** (skill family): engineering, frontend, design, backend, data, product, writing, release, research, or a user role.
+The primary AI chooses the smallest useful domain pack for each stage: engineering, frontend, design, backend, data, product, writing, release, research, or another clearly scoped role.
 
-Load only always_core + that family’s task skills. Never load the design studio stack for pure backend work.
+Profiles and registries are inventories, not classifiers. Load actual skill bodies only when relevant; an ID in metadata is not proof a skill was used.
 
 ## 4. Craft depth is design/visual only
 
-Standard / Polished / Studio apply **only** when the task is visual/design craft.
+Standard / Polished / Studio apply only to visual/design craft. They do not gate ordinary APIs, infrastructure, pure logic or documentation.
 
-They do **not** gate ordinary APIs, infra, pure logic, or docs.
+Lean / normal / thorough may describe non-design rigor, but they are guidance rather than semantic routing outputs.
 
-Optional soft spend for non-design: lean / normal / thorough (thoroughness, not multi-agent quotas).
+## 5. Effort and token estimates are contextual guidance
 
-## 5. Project-aware token estimates
+Do not present fixed token tables as authoritative bills and do not derive semantic decisions through a deterministic `token_estimate` router.
 
-Do not present fixed 15k–80k / 50k–250k / 150k–800k tables as authoritative bills.
+The active model may provide a rough contextual effort/token estimate when useful, based on inspected project scope, risk, dependencies, topology and evidence. Such estimates never decide category, risk, topology, skills or delegation.
 
-Use router `token_estimate` (risk, complexity, domain, topology, specialists/critic, craft depth, project signals). Always label as rough.
+## 6. No task-routing powerwords
 
-## 6. No powerwords
+Only natural Agentit activation in the user's language is special. After activation, the primary AI interprets ordinary language from full context. No regex, keyword table, scoring script or prompt classifier decides task meaning.
 
-Only natural Agentit activation in the user’s language is special. Task routing uses ordinary language. Multi-agent requests may be declined with reason if they lack independence.
+## 7. Independent decision review and intelligent delegation
 
-## 7. Intelligent delegation and critic
+Before material execution, the proposed `TASK_DECISION` receives a read-only economy audit from the cheapest competent independent model, normally semantic tier `fast`.
 
-- Spawn specialists when beneficial; no hard min/max caps.
-- Large structural plans require an independent critic before implementation commitment.
-- Multi-agent execution is an optimization, never a correctness dependency.
+`CHALLENGE` requires primary reconsideration. `ESCALATE`, unresolved material disagreement, `RISK_3/RISK_4`, destructive or difficult-to-reverse work, auth, payments, secrets, PII, production, significant migrations and large structural plans require a stronger independent `critic`/`judgment` review before material execution.
 
-## 8. Continuity
+Delegate when specialization, isolation, independent hypotheses, breadth, latency or fresh judgment adds value. Do not force single-agent or multi-agent execution as ideology.
 
-Chat is disposable. Persist `docs/agentit/STATE.md` (or equivalent) per `docs/PROJECT_CONTINUITY.md`.
+## 8. Loop/Graph execution runtime remains mandatory
 
-Include domain pack, craft depth if any, spend, token estimate, critic/specialist plan, branch/PR, verification, next actions.
+The semantic router was removed; the mechanical execution guarantees were not.
 
-## 9. PR-first
+Every executable unit with a verifiable outcome must use a persisted Loop Contract and is accepted only after fresh verifier evidence and a passed Loop Receipt.
 
-`work branch → commits → verification → PR → user merge` unless explicitly overridden for that task.
+Multi-node execution must additionally materialize a Graph Contract with dependencies, ownership and handoffs. Final multi-node acceptance requires a passed Graph Receipt backed by the node Loop Receipts.
 
-## 10. Provider-neutral specialist contract
+Loop/Graph infrastructure enforces a plan after the AI has decided it. It must never infer natural-language intent, category, risk, topology, skills or delegation.
 
-Catalog roles are logical bundles. Fallback: native subagent → isolated call → fresh context → parent + same skills.
+## 9. Continuity
 
-## 11. MCP fit
+Chat is disposable. Persist `docs/agentit/STATE.md` (or the project's canonical equivalent) per `docs/PROJECT_CONTINUITY.md` for substantial work.
 
-Use `mcp-tooling-fit` and `agentit mcp` to inventory, enable/disable, and discover servers (catalog + marketplace + web). Installs plan-first with user approval; RISK_3+ needs force/consent.
+Record compact durable state: objective, confirmed constraints, `TASK_DECISION` summary, economy-review verdict, strong-review verdict when required, domain pack/craft depth/effort, worker ownership, branch/PR, verification evidence, blockers and next actions. Do not persist secrets or private chain-of-thought.
 
-## 12. Cross-provider compatibility
+## 10. PR-first
 
-Shared policy describes semantic capabilities for OpenAI, Anthropic, Google, xAI, and compatible clients — not one vendor’s API.
+`work branch -> commits -> verification -> PR -> user merge` unless explicitly overridden for that task.
 
-## 13. Non-interactive execution
+## 11. Provider-neutral specialist contract
 
-Do not fake interviews. Block rather than guess unresolved product decisions or craft depth when design work needs it.
+Catalog roles are logical bundles. Fallback order is provider-native scoped worker -> isolated delegated call/fresh context -> parent with the same bounded skill bodies and execution contracts.
+
+A missing independent strong review for high-risk work must degrade visibly rather than being silently replaced by same-context confidence.
+
+## 12. MCP fit
+
+Use `mcp-tooling-fit` and `agentit mcp` to inspect the catalog and explicitly selected named stacks. The primary AI chooses a stack from full context; software resolves that exact `stack_id` mechanically.
+
+MCP activation remains opt-in and plan-first. RISK_3+ tooling requires the applicable review and force/consent gate.
+
+## 13. Cross-provider compatibility
+
+Shared policy describes semantic capability tiers for OpenAI, Anthropic, Google, xAI and compatible clients, not one vendor's model names or subagent API.
+
+## 14. Non-interactive execution
+
+Do not fake interviews or independent reviews. If a material decision cannot be safely inferred and no user input is available, block or take the conservative non-mutating path rather than inventing permission.

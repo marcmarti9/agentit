@@ -1,36 +1,46 @@
 # Recomendaciones integradas
 
-**Alcance:** decisiones de diseño para el repositorio. No constituyen aprobación de seguridad, despliegue ni publicación.
+**Estado:** recomendaciones vigentes para el diseño del repositorio tras el refactor LLM-native. No constituyen por sí solas autorización de seguridad, despliegue ni publicación.
 
 ## Conservar como núcleo
 
-- resolución directa y cero subagentes por defecto; delegación solo con independencia, ownership y verificador claros;
-- `router/route.py` como clasificador heurístico y planificador, nunca como ejecutor o fuente de autorización;
-- revisión humana para RISK_3/RISK_4 y todas las operaciones críticas;
-- `registry.yaml` como política operativa portable, separada del inventario observado;
-- progressive disclosure, deduplicación exacta y preservación íntegra de comandos, SQL, errores, diffs, rutas, hashes y números;
-- instalador y actualizador en modo plan por defecto, con copias por archivo, manifiesto y rollback manual verificable.
+- La IA principal interpreta la petición con todo el contexto disponible y es la propietaria de `TASK_DECISION`.
+- No existe un router semántico programado: nada de regex, keywords, scoring o clasificadores Python para decidir intención, categoría, riesgo, topología, skills o delegación.
+- Antes de trabajo material, un modelo barato independiente audita la decisión con `CLEAR / CHALLENGE / ESCALATE`; no sustituye al principal.
+- `RISK_3/RISK_4`, trabajo destructivo o difícil de revertir, auth, pagos, secretos, PII, producción, migraciones significativas y planes estructurales grandes requieren además revisión fuerte independiente.
+- La delegación se decide por beneficio real: especialidad, aislamiento, independencia, amplitud, latencia o juicio fresco. No hay single-agent-first ni multi-agent-forzado.
+- `registry.yaml`, `profiles.yaml`, catálogos y manifests son inventarios/política mecánica, no clasificadores de lenguaje natural.
+- Progressive disclosure, deduplicación exacta y preservación íntegra de comandos, SQL, errores, diffs, rutas, hashes y números siguen siendo garantías útiles.
+- Instalador y actualizador permanecen plan-first, con manifiesto, ownership claro y rollback verificable.
 
-## Selección de skills
+## Selección y carga de skills
 
-El router debe informar por separado:
+La IA principal elige el conjunto mínimo útil después de inspeccionar el contexto real. Una skill no se considera usada por aparecer en un ID, perfil o manifest: el modelo que ejecuta la etapa debe leer su `SKILL.md` o recibir una inyección provider-native equivalente.
 
-- `skills_available`: recomendaciones que superaron estado, ruta y dependencias esenciales;
-- `skills_recommended_missing`: recomendaciones pertinentes que no superaron esas comprobaciones;
-- `skills`: alias heredado que contiene únicamente `skills_available`.
+Las skills específicas de dominio necesitan evidencia real del dominio. Por ejemplo, `supabase-postgres-best-practices` requiere contexto PostgreSQL/psql/Supabase; la palabra genérica “database” no basta.
 
-No se debe cargar ni anunciar como utilizable una recomendación ausente. `supabase-postgres-best-practices` requiere una señal explícita de Postgres, PostgreSQL, `psql` o Supabase; SQLite no cumple esa condición.
+## Runtime de ejecución
+
+Eliminar el router semántico no elimina Loop/Graph Engineering.
+
+- Toda unidad ejecutable con resultado verificable usa Loop Contract y solo se acepta con evidencia fresca + Loop Receipt válido.
+- Todo trabajo multi-nodo materializa Graph Contract con dependencias, ownership y handoffs; la aceptación final necesita Graph Receipt respaldado por los Loop Receipts de sus nodos.
+- Loop/Graph son infraestructura mecánica posterior a la decisión de la IA. No interpretan prompts.
+
+## MCP
+
+La IA principal selecciona explícitamente un `stack_id` a partir del contexto. `agentit mcp` y `agentit-manager` solo resuelven ese nombre y gestionan estado/configuración mecánicamente. No debe existir fallback de texto libre a heurísticas de stack.
 
 ## Inventario y plataforma
 
-Generar la observación de cada máquina con `python3 -m router.inventory`. `reports/local/inventory.yaml` está ignorado por Git y puede omitir versiones que no se hayan observado. No trasladar sus rutas o estados al catálogo portable.
+Generar la observación local con `python3 -m router.inventory`. `reports/local/inventory.yaml` permanece ignorado por Git y no debe contaminar el catálogo portable.
 
-Los scripts shell requieren Linux, Bash 4+ y utilidades GNU. En otros sistemas deben ejecutarse únicamente en un entorno compatible o adaptarse y probarse antes de usar `--apply`.
+Los scripts shell requieren un entorno compatible con sus dependencias reales; antes de `--apply`, validar plataforma, paths, permisos y rollback.
 
 ## Componentes externos
 
-Mantener hooks de compresión, proxies, MCP, wrappers y repositorios externos fuera del baseline hasta revisar procedencia, permisos, red, fidelidad y rollback. Los estados del catálogo son decisiones de política, no afirmaciones sobre lo instalado en una máquina.
+Hooks, proxies, MCPs, wrappers y repositorios externos permanecen opt-in hasta revisar procedencia, permisos, red, fidelidad y rollback. Los estados del catálogo son decisiones de política, no afirmaciones sobre lo instalado en una máquina.
 
-## Evidencia y cambios locales
+## Evidencia
 
-Los resultados locales reproducibles se registran en `evals/results.md`; el estado de GitHub Actions se informa por separado y solo después de una ejecución real. Esta corrección ejecutó `--apply` únicamente en fixtures temporales; no lo ejecutó sobre el HOME real. Solo cambió el repositorio y generó el inventario ignorado.
+No declarar `done`, `fixed` o `passing` sin evidencia fresca posterior al último cambio relevante y, con Agentit activo, sin el receipt Loop/Graph aplicable. El estado de GitHub Actions se registra solo después de una ejecución real sobre el HEAD correspondiente.

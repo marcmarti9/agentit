@@ -1,7 +1,8 @@
 """Curated MCP catalog for Agentit.
 
-Opt-in only: list, recommend, show, and emit provider snippets.
-Never installs packages, never writes client configs, never activates servers.
+Opt-in only: list named stacks/servers, show entries, and emit provider snippets.
+Never installs packages, never writes client configs, never activates servers,
+and never infers a tool stack from natural-language task text.
 """
 
 from __future__ import annotations
@@ -107,6 +108,11 @@ def list_stacks(catalog: dict[str, Any] | None = None) -> dict[str, Any]:
 
 
 def recommend_stack(stack_name: str, catalog: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return one explicitly selected named stack.
+
+    The caller (normally the AI after TASK_DECISION/review) chooses the stack.
+    This function only resolves catalog metadata mechanically.
+    """
     data = catalog or load_catalog()
     stacks = list_stacks(data)
     if stack_name not in stacks:
@@ -135,23 +141,17 @@ def recommend_stack(stack_name: str, catalog: dict[str, Any] | None = None) -> d
 
 
 def recommend_for_task(task: str, catalog: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Heuristic stack pick from a free-text task description."""
-    text = (task or "").lower()
-    if any(k in text for k in ("figma", "design", "ui", "css", "frontend", "browser", "playwright")):
-        name = "frontend"
-    elif any(k in text for k in ("postgres", "supabase", "sql", "database", "schema")):
-        name = "backend_data"
-    elif any(k in text for k in ("sentry", "incident", "error", "crash", "oncall")):
-        name = "incident"
-    elif any(k in text for k in ("linear", "notion", "slack", "ticket", "product", "roadmap")):
-        name = "product_ops"
-    elif any(k in text for k in ("research", "search", "scrape", "crawl", "web")):
-        name = "research"
-    else:
-        name = "developer_core"
-    result = recommend_stack(name, catalog)
-    result["matched_from_task"] = task
-    return result
+    """Reject the removed free-text heuristic API.
+
+    Kept temporarily as an explicit compatibility failure so old callers do not
+    silently fall back to a keyword classifier. The active AI must choose a
+    named stack after interpreting the task from full context, then call
+    `recommend_stack`/`plan_stack` with that explicit stack ID.
+    """
+    del task, catalog
+    raise McpCatalogError(
+        "free-text MCP routing was removed; the AI must choose an explicit named stack"
+    )
 
 
 def _mcp_json_entry(server: dict[str, Any]) -> dict[str, Any]:
@@ -159,7 +159,6 @@ def _mcp_json_entry(server: dict[str, Any]) -> dict[str, Any]:
         return dict(server["mcp_json"])
     remote = server.get("mcp_json_remote")
     if isinstance(remote, dict) and remote.get("url"):
-        # Cursor/Claude common remote shape; clients may remap.
         return {"url": remote["url"]}
     raise McpCatalogError(
         f"server '{server.get('id')}' has no mcp_json / mcp_json_remote snippet"
@@ -203,7 +202,6 @@ def snippet_for_server(
     if provider == "codex":
         toml = server.get("codex_toml") or server.get("codex_note")
         if not toml:
-            # Fall back to JSON-derived note
             entry = _mcp_json_entry(server)
             payload["snippet"] = (
                 f"# Manual Codex config for {server_id}\n"
@@ -215,7 +213,6 @@ def snippet_for_server(
         payload["snippet"] = str(toml).replace("${PROJECT_ROOT}", project_root)
         return payload
 
-    # cursor / json → mcpServers fragment
     entry = _mcp_json_entry(server)
     rendered = json.loads(
         json.dumps(entry).replace("${PROJECT_ROOT}", project_root)

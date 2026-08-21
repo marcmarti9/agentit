@@ -1,13 +1,13 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. The primary AI decides from full context, a cheap independent AI reviews the decision, then Agentit interviews, loads real skills, delegates intelligently, verifies, and ships PR-first.
+description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, verifies, and ships PR-first.
 ---
 
 # Using Agentit
 
 Agentit is an operating protocol for capable AI agents. It is not a natural-language classifier implemented in code.
 
-The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration and verification. A second model checks the proposed decision before material execution.
+The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration and verification. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
 
 ## Activation
 
@@ -17,7 +17,7 @@ Natural language that means use/usa/utilise Agentit activates this playbook for 
 
 - harness root: `~/code/agentit` when using the normal checkout;
 - decision protocol: `~/code/agentit/skills/task-router/SKILL.md`;
-- economy reviewer contract: `~/code/agentit/skills/task-router/references/economy-reviewer.md`;
+- economy audit contract: `~/code/agentit/skills/task-router/references/economy-reviewer.md`;
 - skills: `~/code/agentit/skills/<id>/SKILL.md`;
 - runtime CLI: `~/code/agentit/router/runtime_cli.py` for mechanical Loop/Graph state only;
 - specialist catalog: `~/code/agentit/agents/catalog.yaml`;
@@ -29,10 +29,10 @@ There is intentionally no semantic `route.py` or programmatic decision contract.
 ## Core protocol
 
 1. **Inspect context.** Recover relevant conversation, repository, files, project rules, tools and current state before asking the user to repeat information.
-2. **Decide with the primary AI.** Apply `task-router` and form `TASK_DECISION` from the full context.
-3. **Review with another AI.** Before material execution, send the proposed decision to the cheapest capable independent reviewer; ordinarily use semantic tier `fast`.
-4. **Revise or block.** `REVISE` requires correction; `BLOCK` stops execution until the issue is resolved. Ordinary review is bounded to two revision cycles.
-5. **Escalate when consequences are high.** RISK_3/RISK_4, destructive/irreversible work, auth/payments/PII/production and large structural plans additionally require a stronger critic/judgment review.
+2. **Primary decides.** Apply `task-router` and form `TASK_DECISION` from the full context. Do not hand this semantic ownership to a cheaper worker.
+3. **Cheap audit.** Before material execution, send the proposed decision to the cheapest capable independent audit model, ordinarily semantic tier `fast`.
+4. **Reconsider or escalate.** `CHALLENGE` makes the primary reconsider; `ESCALATE` or unresolved material disagreement goes to a stronger critic. The cheap model never arbitrates the final semantic decision.
+5. **Strong review when consequences are high.** `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/PII/production and large structural plans require a stronger `critic`/`judgment` review before execution.
 6. **Interview product decisions.** For product-affecting work, inspect discoverable facts first and ask all currently material user decisions in one useful batch.
 7. **Persist durable state.** Keep `docs/agentit/STATE.md` or the project's canonical equivalent current on substantial/long work.
 8. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
@@ -60,45 +60,51 @@ The primary model must decide, at minimum:
 - verification evidence;
 - backup/dry-run/rollback/post-check requirements where relevant.
 
-The decision may remain internal if surfacing it would add noise, but the review worker must receive it.
+The decision may remain internal if surfacing it would add noise, but the audit worker must receive it.
 
-## Mandatory economy reviewer
+## Mandatory economy audit
 
-For ordinary material work, always request a read-only second opinion from the cheapest model/endpoint that is still competent to understand the bounded decision.
+For ordinary material work, request a read-only second opinion from the cheapest model/endpoint that is still competent to audit the bounded decision.
 
-Prefer the semantic `fast` tier. When similarly cheap, diversity is useful: a different model family from the primary agent is preferable because correlated mistakes are less valuable as a review.
+Prefer the semantic `fast` tier. When similarly cheap, diversity is useful: a different model family from the primary agent is preferable because correlated mistakes are less useful as a check.
 
-The reviewer receives only the bounded context necessary to judge the proposal:
+The auditor receives only the bounded context necessary to judge the proposal:
 
 - exact request and relevant constraints;
 - project facts already established;
 - proposed `TASK_DECISION`;
 - applicable Agentit decision rules.
 
-It does not need write permissions and must not execute the task.
+It does not need write permissions and must not execute the task or generate an authoritative replacement plan.
 
-Use `task-router/references/economy-reviewer.md`. Expected verdict:
+Use `task-router/references/economy-reviewer.md`. Expected output:
 
 ```text
-VERDICT: APPROVE | REVISE | BLOCK
-ISSUES:
+AUDIT: CLEAR | CHALLENGE | ESCALATE
+FINDINGS:
 - ...
-REQUIRED_CHANGES:
+SUGGESTED_CHECKS:
 - ...
 CONFIDENCE: low | medium | high
 ```
 
-The primary agent must treat the reviewer as an adversarial checker, not a ceremonial rubber stamp.
+The primary agent treats this as an adversarial check, not a ceremonial rubber stamp and not a transfer of decision ownership.
 
-If no worker can be spawned, use a fresh/isolated context. If that is impossible too, perform an explicit adversarial self-review and record that the check was not independent.
+`CLEAR` means no material objection was found.
+
+`CHALLENGE` means the primary must reconsider the finding. It may revise the decision or retain it with explicit evidence-based reasoning. If material disagreement remains after reconsideration, escalate.
+
+`ESCALATE` means use a stronger independent model. The cheap auditor does not resolve the dispute itself.
+
+If no cheap worker can be spawned, use a fresh/isolated context when possible. For high-risk work, a same-context self-audit is not equivalent to an independent strong review.
 
 ## Strong-review escalation
 
-The economy reviewer is the default preflight check, not the final authority for high-consequence work.
+A stronger independent `critic` or `judgment` tier is mandatory when any of these apply:
 
-Use a stronger independent `critic` or `judgment` tier in addition when any of these apply:
-
-- RISK_3 or RISK_4;
+- `RISK_3` or `RISK_4`;
+- the cheap auditor asks to escalate;
+- material disagreement survives primary reconsideration;
 - auth/authorization/session boundaries;
 - payments/billing/financial effects;
 - secrets/credentials;
@@ -108,7 +114,9 @@ Use a stronger independent `critic` or `judgment` tier in addition when any of t
 - difficult rollback;
 - large structural architecture or product plan.
 
-For destructive data operations, require verified backup, rollback plan and post-check. For RISK_4, use a preview/dry-run whenever technically meaningful.
+The strong critic receives the primary `TASK_DECISION` plus relevant audit findings. It is not the implementation owner, but for these cases it is the independent judgment gate: execution waits until critical objections are resolved, the decision is revised, or required user input is obtained.
+
+For destructive data operations, require verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
 
 ## Domain packs
 
@@ -120,7 +128,7 @@ Craft depth Standard/Polished/Studio applies only to design/visual work.
 
 ## Skills are knowledge, not routing code
 
-Profiles and registries are inventories. The AI reads enough metadata/context to choose useful skills. No script infers the semantic skill set from prompt words.
+Profiles and registries are inventories. The primary AI reads enough metadata/context to choose useful skills. No script and no cheap auditor owns semantic skill selection.
 
 A skill is actually used only when the stage model reads its `SKILL.md` body or receives equivalent provider-native injection. A list of IDs is not evidence of skill use.
 
@@ -208,7 +216,7 @@ Examples:
 - bug fix -> reproduction before and verification after;
 - high-risk change -> independent strong review plus operational checks.
 
-The second-model decision review happens **before** execution; verification happens **after** execution. They solve different failure modes.
+The cheap decision audit happens **before** execution; verification happens **after** execution. They solve different failure modes.
 
 ## Git ownership
 
@@ -222,8 +230,8 @@ Do not write directly to `main`/`master` or auto-merge unless explicitly authori
 
 Provider adapters may map `fast`, `coding`, `critic` and `judgment` to different concrete models. Do not hardcode one vendor into the portable protocol.
 
-For an ordinary decision review, cost/latency matters: use the cheapest capable reviewer. For high-risk work, capability matters more than cheapness and the stronger escalation is mandatory.
+The active primary model owns semantic reasoning even when a cheaper model is available. Cost/latency matters for bounded auditing and repetitive delegated work; capability matters more for primary judgment and mandatory high-risk escalation.
 
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns final integration and the user-facing result, but it must not bypass the required review just because it is confident.
+Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration and user-facing result. It must not bypass required audit/escalation merely because it is confident.

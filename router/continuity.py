@@ -1,6 +1,7 @@
 """Long-horizon continuity: project STATE, checkpoints, resume protocol.
 
-Chat is disposable. Meaningful work must resume from repository state.
+Chat is disposable. Meaningful work must resume from repository state. This
+module persists mechanical state only; semantic task decisions belong to the AI.
 """
 
 from __future__ import annotations
@@ -45,10 +46,9 @@ def default_state_markdown(
     goal: str = "",
     domain_pack: str = "engineering",
     craft_depth: str | None = None,
-    spend: str = "normal",
-    token_estimate: str = "",
+    effort: str = "normal",
     topology: str = "direct",
-    critic_required: bool = False,
+    strong_review_required: bool = False,
     status: str = "not started",
     branch: str = "",
     extra: dict[str, Any] | None = None,
@@ -74,10 +74,9 @@ def default_state_markdown(
 ## Domain pack
 - Pack: {domain_pack}
 - Craft depth: {craft}
-- Spend: {spend}
-- Token estimate: {token_estimate or "(from router, project-aware)"}
+- Effort: {effort}
 - Topology: {topology}
-- Critic required: {"yes" if critic_required else "no"}
+- Strong independent review required: {"yes" if strong_review_required else "no"}
 
 ## Current status
 - Complete:
@@ -86,7 +85,10 @@ def default_state_markdown(
 - Not started:
 
 ## Decisions
-(stable product/technical/design decisions and why)
+- TASK_DECISION summary:
+- Economy reviewer verdict:
+- Strong reviewer verdict (when required):
+- Stable product/technical/design decisions:
 
 ## Important files and artifacts
 - Paths:
@@ -107,7 +109,7 @@ def default_state_markdown(
 ## Recovery
 - Last checkpoint:
 - Resume: read this file → inspect branch/diff → verify assumptions → continue next action
-- Mid-task re-route: run `agentit trace "<current goal>" --project .` if scope changed
+- If scope/risk materially changed: rebuild TASK_DECISION with current context and run the AI review again before executing the changed plan.
 """
     if extra:
         body += "\n## Extra\n"
@@ -120,25 +122,30 @@ def ensure_state_file(
     project_root: Path,
     *,
     goal: str = "",
-    route: dict[str, Any] | None = None,
+    decision: dict[str, Any] | None = None,
     overwrite: bool = False,
 ) -> Path:
-    """Create STATE.md if missing (or overwrite when requested)."""
+    """Create STATE.md if missing (or overwrite when requested).
+
+    `decision` is optional model-produced metadata supplied by the caller. This
+    function stores it mechanically and never derives semantic fields from the
+    natural-language goal.
+    """
     root = Path(project_root).resolve()
     if not root.is_dir() or root.is_symlink():
         raise ContinuityError(f"project root must be a regular directory: {root}")
     path = state_path(root)
     if path.exists() and not overwrite:
         return path
-    route = route or {}
+
+    decision = decision or {}
     content = default_state_markdown(
-        goal=goal or str(route.get("reasons") or ""),
-        domain_pack=str(route.get("domain_pack") or "engineering"),
-        craft_depth=route.get("craft_depth"),
-        spend=str(route.get("spend") or "normal"),
-        token_estimate=(route.get("token_estimate") or {}).get("display", ""),
-        topology=str(route.get("topology") or "direct"),
-        critic_required=bool(route.get("critic_required")),
+        goal=goal,
+        domain_pack=str(decision.get("domain_pack") or "engineering"),
+        craft_depth=decision.get("craft_depth"),
+        effort=str(decision.get("effort") or "normal"),
+        topology=str(decision.get("topology") or "direct"),
+        strong_review_required=bool(decision.get("strong_review_required")),
         status="in progress" if goal else "not started",
     )
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -182,7 +189,7 @@ def resume_report(project_root: Path) -> dict[str, Any]:
             "reason": "no STATE.md",
             "actions": [
                 "create docs/agentit/STATE.md via agentit continuity init",
-                "or run interview + persist before continuing product work",
+                "or inspect context + decide + review + persist before continuing substantial work",
             ],
         }
     parsed = parse_state(path)
@@ -199,6 +206,7 @@ def resume_report(project_root: Path) -> dict[str, Any]:
             "inspect branch/PR/diff referenced in state",
             "verify assumptions still true",
             "repair stale state before new work",
+            "rebuild and review TASK_DECISION if scope/risk materially changed",
             "continue from Next actions",
         ],
     }
@@ -226,7 +234,10 @@ def write_checkpoint(
         "label": label,
         "payload": payload,
     }
-    _atomic_write_text(destination, json.dumps(body, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+    _atomic_write_text(
+        destination,
+        json.dumps(body, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+    )
     os.chmod(destination, stat.S_IRUSR | stat.S_IWUSR)
     return destination
 
@@ -240,23 +251,25 @@ def list_checkpoints(project_root: Path, *, limit: int = 20) -> list[str]:
     return [str(path) for path in files[:limit]]
 
 
-def mid_task_reroute_advice(route: dict[str, Any] | None = None) -> list[str]:
+def mid_task_decision_advice(decision: dict[str, Any] | None = None) -> list[str]:
     advice = [
-        "If scope, risk, or independence changed mid-task, re-run agentit trace with the current goal.",
+        "If scope, risk, or independence changed mid-task, rebuild TASK_DECISION from current context.",
+        "Run the independent AI preflight again before executing a materially changed plan.",
         "Update STATE.md Next actions before any handoff or context limit.",
-        "If critic_required and plan changed, re-run independent critic before more implementation.",
     ]
-    if route and route.get("critic_required"):
-        advice.append("Current route still marks critic_required=true.")
-    if route and int((route.get("subagents") or {}).get("recommended") or 0) >= 2:
-        advice.append("Parallel units still recommended; keep one writer per path.")
+    if decision and decision.get("strong_review_required"):
+        advice.append("The current decision requires a strong independent critic/judgment review.")
+    if decision and decision.get("topology") in {"fan_out", "pipeline", "writer_reviewer"}:
+        advice.append("Keep one writer per shared path/state unless isolation is explicit.")
     return advice
 
 
 def _atomic_write_text(path: Path, content: str) -> None:
     parent = path.parent
     parent.mkdir(parents=True, exist_ok=True)
-    fd, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.tmp-", dir=parent, text=True)
+    fd, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.tmp-", dir=parent, text=True
+    )
     temporary_path = Path(temporary_name)
     try:
         os.fchmod(fd, stat.S_IRUSR | stat.S_IWUSR)

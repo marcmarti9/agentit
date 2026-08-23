@@ -105,8 +105,25 @@ Para operaciones destructivas: `RISK_4`, backup verificado, rollback y post-chec
 | 6. Skills | Carga solo bodies realmente útiles + core mínimo. IDs no equivalen a skills cargadas. |
 | 7. MCP/tools | Usa solo herramientas que aporten; inventario real y least privilege. |
 | 8. Execute | Ejecuta la decisión revisada. Delegación inteligente, no decorativa. |
-| 9. Verify | No declares `done/fixed/passing` sin evidencia fresca. |
-| 10. Git | Branch + PR por defecto para cambios de repositorio. |
+| 9. Document | Actualiza Markdown durable: arquitectura, componentes, contratos, decisiones y troubleshooting afectados. |
+| 10. Verify | No declares `done/fixed/passing` sin evidencia fresca ni revisión de drift documental. |
+| 11. Git | Branch + PR por defecto para cambios de repositorio. |
+
+## Documentación obligatoria
+
+El chat y el código por sí solos no son documentación suficiente. En trabajo sustancial de repositorio, Agentit debe aplicar `docs/DOCUMENTATION_CONTRACT.md` junto con el contrato de continuidad.
+
+Objetivo: un agente o ingeniero nuevo debe poder entender el sistema relevante **desde la arquitectura completa hasta cada pieza materialmente afectada**, incluyendo por qué existe, cómo interactúa, qué contratos/invariantes mantiene, qué decisiones se tomaron y cómo diagnosticar fallos, sin tener que leer todo el código ni reconstruir el historial de conversación.
+
+Reglas mínimas:
+
+- `docs/agentit/STATE.md` mantiene estado operativo y recuperación; no sustituye la documentación permanente.
+- Actualiza la documentación canónica existente; no crees duplicados que puedan divergir.
+- Documenta decisiones durables no obvias con contexto, decisión, alternativas, consecuencias y condición de revisión; nunca chain-of-thought privado.
+- Documenta componentes no triviales con responsabilidad, ubicación, inputs/outputs, flujo, dependencias, configuración, fallos y verificación.
+- Mantén arquitectura, interfaces, datos/eventos, operaciones y troubleshooting alineados con el código.
+- Si una decisión, contrato, componente o fallo descubierto sería costoso de redescubrir, debe quedar persistido en `.md` durante el trabajo, no solo al final.
+- Antes de declarar completado un cambio sustancial, comprueba explícitamente drift documental. Si la documentación relevante ya no describe la realidad, el trabajo no está terminado.
 
 ## Skills y packs
 

@@ -1,13 +1,13 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, verifies, and ships PR-first.
+description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, documents durable system knowledge, verifies, and ships PR-first.
 ---
 
 # Using Agentit
 
 Agentit is an operating protocol for capable AI agents. It is not a natural-language classifier implemented in code.
 
-The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration and verification. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
+The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration, documentation and verification. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
 
 ## Activation
 
@@ -22,7 +22,8 @@ Natural language that means use/usa/utilise Agentit activates this playbook for 
 - runtime CLI: `~/code/agentit/router/runtime_cli.py` for mechanical Loop/Graph state only;
 - specialist catalog: `~/code/agentit/agents/catalog.yaml`;
 - profiles: `~/code/agentit/profiles.yaml`;
-- continuity: `<project>/docs/agentit/STATE.md`.
+- continuity: `<project>/docs/agentit/STATE.md`;
+- durable documentation contract: `~/code/agentit/docs/DOCUMENTATION_CONTRACT.md`.
 
 There is intentionally no semantic `route.py` or programmatic decision contract. Mechanical utilities may manage files/state/tests, but they do not interpret user intent.
 
@@ -38,8 +39,9 @@ There is intentionally no semantic `route.py` or programmatic decision contract.
 8. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
 9. **Select tools deliberately.** Use MCPs/tools only when they materially improve the chosen plan and keep least privilege.
 10. **Execute the reviewed plan through runtime contracts.** Every executable unit with a verifiable outcome gets a Loop Contract; multi-node work additionally gets a Graph Contract before spawning.
-11. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed Loop Receipt. Multi-node work requires a passed Graph Receipt backed by passed node Loop Receipts.
-12. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
+11. **Document durable knowledge as part of execution.** Keep architecture, components, contracts, decisions, operations and troubleshooting Markdown aligned with the implementation. `STATE.md` does not replace permanent system documentation.
+12. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed Loop Receipt. Multi-node work requires a passed Graph Receipt backed by passed node Loop Receipts. Substantial repository work additionally requires a documentation-drift check.
+13. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
 
 ## `TASK_DECISION`
 
@@ -212,6 +214,25 @@ Chat sessions are disposable. Keep a compact canonical project state that allows
 
 Do not persist secrets, credentials, private chain-of-thought, full transcripts or giant tool dumps.
 
+## Mandatory durable documentation
+
+Continuity answers **where the work is now**. It does not fully answer **how the system works**. For substantial repository work, apply `docs/DOCUMENTATION_CONTRACT.md` as an acceptance contract.
+
+The documentation goal is that a fresh agent or engineer can understand the relevant system from the overall architecture down to each materially affected component without first reading the whole codebase.
+
+During work, persist durable knowledge when it becomes stable rather than reconstructing it at the end. Update the project's canonical Markdown documentation for:
+
+- architecture, layers, boundaries, dependencies and end-to-end data/control flow;
+- each non-trivial affected component: responsibility, location, inputs/outputs, internal flow, dependencies, configuration, failure modes and verification;
+- APIs, schemas, events, files, invariants and compatibility contracts;
+- durable non-obvious decisions, including context, chosen option, realistic alternatives, consequences and conditions for revisiting;
+- operational behavior such as startup, lifecycle, jobs, persistence, retries/fallbacks and observability;
+- troubleshooting paths that connect symptom -> likely cause -> diagnostic evidence -> corrective action -> verification.
+
+Reuse existing docs instead of creating duplicate sources of truth. Use ADR-style `.md` records when a decision would otherwise be expensive or risky to rediscover. Do not store private chain-of-thought; record the concise decision rationale and evidence needed by future maintainers.
+
+Before declaring substantial repository work complete, perform a documentation-drift check. The work is not complete if relevant Markdown no longer matches the implementation, materially changed components/contracts are unexplained, new important failure modes lack diagnostic guidance, or the current `STATE.md` is stale.
+
 ## Verification
 
 No `done`, `fixed`, `passing`, `premium`, `beautiful` or equivalent claim without fresh evidence appropriate to the claim **and the applicable runtime receipt**.
@@ -223,9 +244,10 @@ Examples:
 - migration -> pre/post state plus rollback readiness + applicable receipt;
 - bug fix -> reproduction before and verification after + applicable receipt;
 - high-risk change -> independent strong review plus operational checks + applicable receipt;
-- multi-node task -> passed Graph Receipt backed by node Loop Receipts.
+- multi-node task -> passed Graph Receipt backed by node Loop Receipts;
+- substantial repository change -> documentation-drift check against `docs/DOCUMENTATION_CONTRACT.md`.
 
-The cheap decision audit happens **before** execution; Loop/Graph governs execution acceptance; verification checks the actual result. They solve different failure modes.
+The cheap decision audit happens **before** execution; Loop/Graph governs execution acceptance; documentation preserves durable system knowledge; verification checks the actual result. They solve different failure modes.
 
 ## Git ownership
 
@@ -243,4 +265,4 @@ The active primary model owns semantic reasoning even when a cheaper model is av
 
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration and user-facing result. It must not bypass required audit/escalation or runtime receipts merely because it is confident.
+Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration, documentation and user-facing result. It must not bypass required audit/escalation, durable documentation or runtime receipts merely because it is confident.

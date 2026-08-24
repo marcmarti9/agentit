@@ -1,82 +1,129 @@
 # About Agentit
 
-> **Agentit is a portable, provider-neutral meta-harness for safe AI coding-agent orchestration, skill routing, persistent context management, and ecosystem tool incubation.**
+Agentit is an **open-source, provider-neutral reliability layer for AI coding agents**.
 
----
+It is not another coding model and it is not a framework that tries to replace the native capabilities of Codex, Claude Code, or other capable agents. Agentit supplies a shared operating protocol around them: model-owned task decisions, independent review, just-in-time skills and tools, bounded delegation, resumable project state, mechanical execution receipts, fresh verification, durable documentation, and reviewable Git handoffs.
 
-## 🎯 The Core Philosophy
+The [README](README.md) is the canonical public introduction and installation guide. This document explains the design identity behind it.
 
-> *"Most multi-agent frameworks start by adding agents. **Agentit starts by asking whether delegation actually helps — then spawns when it does.**"*
+## Design identity
 
-In the modern AI software engineering ecosystem, most agent frameworks default to complex, multi-tiered hierarchies (Architect → Orchestrator → Supervisor → Worker → Auditor) for even simple, 5-line bug fixes. This approach introduces three critical problems:
+### AI judgment stays with the AI
 
-1. **Context Distortion**: Instructions are re-summarized across agent layers, eroding prompt fidelity and burning thousands of unnecessary context tokens.
-2. **Latency Overhead**: Unnecessary agent handoffs create round-trip latency for tightly coupled tasks.
-3. **Unsafe Execution**: Blindly running subagents without bounded contracts, file ownership, or verification gates leads to uncoordinated code edits.
+Agentit deliberately does **not** use regexes, keyword scores, or a Python classifier to infer natural-language intent, risk, topology, or the right skill from a prompt.
 
-**Agentit uses intelligent orchestration.** A strong main agent (Architect) owns the user relationship and loads only the skill family needed for the task. Multi-agent topologies (Probe, Fan-Out, Pipeline, Writer-Reviewer, Audit) spawn when context isolation, real parallelism, domain specialization, or independent critique improves the result — with no hard subagent quotas and with a mandatory independent critic on large structural plans.
+The active primary model sees the actual conversation and project context and produces `TASK_DECISION`. A separate model reviews material decisions. Deterministic software then enforces the parts that are genuinely mechanical: manifests, capability resolution, runtime state, receipts, verification probes, continuity artifacts, and safe configuration changes.
 
----
+### Orchestration must earn its cost
 
-## 🛠️ The Four Engineering Layers
+Agentit has no fixed "Architect → Manager → Supervisor → Worker" pyramid.
 
-Agentit structures agent orchestration across four distinct, complementary layers:
+Delegation is useful when it creates a concrete advantage such as:
 
+- specialist expertise;
+- independent criticism;
+- parallel read-only investigation;
+- context isolation for large source sets;
+- independent design alternatives;
+- bounded implementation ownership.
+
+Tightly coupled work can remain direct. Multi-node work gets an explicit Graph Contract rather than an invisible hierarchy.
+
+### Skills are curated, not sprayed into context
+
+Agentit uses small, task-scoped skills and bounded profiles. A skill is not considered used because its ID appears in a catalog; the executing model must actually receive its body.
+
+The repository can learn from strong upstream projects, but external skills are not bulk-imported simply because they are popular. The preferred order is:
+
+```text
+strengthen existing capability
+        ↓
+adapt a better upstream idea with provenance
+        ↓
+incubate a genuinely distinct repeated workflow
+        ↓
+evaluate
+        ↓
+promote only if it earns permanent context/maintenance cost
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Layer 1: Harness & Policy                     │
-│   (Permissions, Environment Isolation, Tools, Skills Registry)  │
-└────────────────────────────────┬────────────────────────────────┘
-                                 │
-┌────────────────────────────────┴────────────────────────────────┐
-│                   Layer 2: Native Context Engines               │
-│   (Tool Filtering, Artifact References & CCR, Session Dedup)    │
-└────────────────────────────────┬────────────────────────────────┘
-                                 │
-┌────────────────────────────────┴────────────────────────────────┐
-│                    Layer 3: Directed Topologies                 │
-│   (Direct ── Probe ── Fan-Out ── Pipeline ── Writer/Reviewers)  │
-└────────────────────────────────┬────────────────────────────────┘
-                                 │
-┌────────────────────────────────┴────────────────────────────────┐
-│                  Layer 4: Scout & Incubator Pipeline            │
-│   (Ecosystem Ingestion, Candidate Evaluation, Promotion Gates)  │
-└─────────────────────────────────────────────────────────────────┘
+
+See [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Core layers
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│  Semantic policy                                            │
+│  TASK_DECISION → independent audit → escalation when needed │
+└─────────────────────────────┬────────────────────────────────┘
+                              │
+┌─────────────────────────────▼────────────────────────────────┐
+│  JIT capability layer                                       │
+│  skills → profiles → specialists → MCP/tool capabilities    │
+└─────────────────────────────┬────────────────────────────────┘
+                              │
+┌─────────────────────────────▼────────────────────────────────┐
+│  Mechanical execution layer                                 │
+│  Loop contracts → Graph contracts → receipts                │
+└─────────────────────────────┬────────────────────────────────┘
+                              │
+┌─────────────────────────────▼────────────────────────────────┐
+│  Project reliability layer                                  │
+│  continuity → verification → durable docs → Git review      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-1. **Layer 1: Harness & Policy**: Controls environment permissions, git worktree isolation, tool availability, and progressive disclosure of modular skills via bounded profiles.
-2. **Layer 2: Native Context Engines**: Operates format-aware tool-output filtering (`tool_filter.py`), exact artifact archiving with SHA-256 sidecars (`artifact_ref.py`), and cross-process turn deduplication (`dedup.py`).
-3. **Layer 3: Directed Topologies**: Connects multiple bounded loops in deterministic acyclic graphs for parallel, non-overlapping work units.
-4. **Layer 4: Scout & Incubator Pipeline**: Ingests ecosystem tools, papers, repos, and tweets, evaluating them against strict benefit/risk metrics in `incubator/candidates.yaml` before promoting them into core architecture.
+### 1. Semantic policy
 
----
+The primary model owns task interpretation. An independent reviewer challenges the decision before material execution, with stronger review for high-consequence changes.
 
-## 🔌 Provider Neutrality
+### 2. JIT capabilities
 
-Agentit is designed from the ground up to be vendor-neutral. It decouples operational policies and shared skills from specific AI model runtimes:
+Profiles expose a bounded discovery set. The active agent selects the smallest useful skill/tool set, and workers receive only task-scoped project instructions, capabilities, and skill bodies.
 
-- **Claude Code**: Native adaptive multi-agent profiles (`architect`, `auditor`, etc.) and hook management.
-- **OpenAI Codex**: Scoped worker delegation profiles (`terra_worker`, `luna_worker`) without imposing rigid agent hierarchies.
-- **Google Antigravity & Open Skills**: Automatic discovery via standardized `~/.agents/skills` conventions.
-- **Grok Build & Others**: Compatible via standardized Open Skills discovery.
+### 3. Mechanical execution
 
----
+Executable work uses Loop Contracts with observable goals, verifiers, stop conditions, bounded attempts, and escalation boundaries. Multi-node work uses Graph Contracts with explicit dependencies and write ownership.
 
-## 🛡️ Safety & Deterministic Controls
+### 4. Project reliability
 
-Agentit is built with a strict **safety-first engineering posture**:
+Substantial work can resume from repository state instead of a chat transcript. Completion claims require fresh evidence, and durable architecture/operations documentation must remain aligned with implementation.
 
-- **Dry-Run by Default**: All management scripts (`install.sh`, `update.sh`, `harden-local.sh`, `./agentit`) run in preview mode by default. File modifications occur strictly when passed an explicit `--apply` flag.
-- **SHA-256 Sidecar Verification**: Artifact references verify full SHA-256 content checksums against sidecar metadata JSON files (`ref-<hash>.json`) to detect accidental disk corruption or edits.
-- **Symlink Component Protection**: All path operations walk parent directory components (`reject_symlink_components`) to reject symlinks and prevent directory traversal.
-- **Machine Isolation**: Environment secrets and local machine configurations remain isolated in gitignored files (`reports/local/inventory.yaml`, `settings.local.json`). Agentit never collects or stores secret credential values.
+## Safety posture
 
----
+Agentit's management operations are designed to be explicit and reversible, but the exact mutation contract depends on the command:
 
-## 📄 Open Source & Community
+- `install.sh`, `update.sh`, and `security/harden-local.sh` are **plan-first** and require `--apply` for their managed filesystem changes;
+- profile and MCP enable/disable operations are **plan-first** and require `--apply` to apply managed configuration;
+- continuity commands such as `continuity init` and `continuity checkpoint` are explicit state-writing commands by design;
+- verification is plan-first, while `verify --apply` executes probes and writes a receipt;
+- provider credentials and machine secrets must never be committed to the repository.
 
-Agentit is an early-stage, community-driven open-source project licensed under the [Apache License, Version 2.0](LICENSE).
+Filesystem-management code rejects unsafe symlink/path states where applicable and uses hashes/manifests for managed reversible writes.
 
-- **GitHub Repository**: [https://github.com/marcmarti9/agentit](https://github.com/marcmarti9/agentit)
-- **Contribution Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Security Policy**: [SECURITY.md](SECURITY.md)
+## Provider neutrality
+
+The protocol and shared skills are intended to remain provider-neutral. Provider adapters are deliberately thin and may have different feature maturity.
+
+The current shell installer has explicit targets for Claude Code, OpenAI Codex, and Antigravity-style skill discovery. The **current installer scripts are GNU/Linux-oriented**; that is a packaging/platform limitation, not a claim that the underlying skill/protocol format is Linux-only.
+
+## Evidence posture
+
+Agentit is early-stage. Mechanical contracts can be tested deterministically; claims that it universally improves code quality, token use, latency, or cost cannot.
+
+Public claims therefore distinguish:
+
+- **implemented/tested contract** — backed by code/tests/CI for the exact revision;
+- **design hypothesis** — a reason Agentit may improve agent reliability;
+- **comparative claim** — requires controlled agent-level baseline experiments.
+
+See [`evals/evaluation-plan.md`](evals/evaluation-plan.md).
+
+## Open source
+
+Agentit is licensed under the [Apache License, Version 2.0](LICENSE).
+
+- [README](README.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)

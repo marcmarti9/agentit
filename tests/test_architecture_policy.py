@@ -37,6 +37,27 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("passed **Graph Receipt**", text)
         self.assertIn("mandatory for executable work", text)
 
+    def test_agentit_is_agent_operated_not_human_cli_driven(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("operated by the coding agent", readme)
+        self.assertIn("not a human-facing CLI workflow", harness)
+        self.assertIn("agent-facing mechanical operations", harness)
+
+    def test_constructive_dissent_preserves_user_agency(self):
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
+        planning = (
+            ROOT / "skills" / "planning-and-task-breakdown" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("no seas un yes-man", agents)
+        self.assertIn("Conserva la agencia del usuario", agents)
+        self.assertIn("Agentit is not a yes-man protocol", task_router)
+        self.assertIn("preserve the user's ability to choose the original approach", task_router)
+        self.assertIn("Planning is not a rubber-stamp phase", planning)
+        self.assertIn("let the user keep the original approach", planning)
+
     def test_legacy_mcp_helper_is_exact_stack_only(self):
         self.assertEqual(recommend_for_task("developer_core")["stack"], "developer_core")
         with self.assertRaises(McpCatalogError):

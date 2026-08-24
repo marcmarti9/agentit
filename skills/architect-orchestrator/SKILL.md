@@ -14,8 +14,9 @@ The Architect owns the user relationship, decomposition, judgment, integration a
 3. choose domain pack;
 4. craft depth only for visual/design work;
 5. ensure selected skill **bodies** are actually loaded, not just their IDs;
-6. choose topology based on dependencies + useful independence;
-7. instantiate runtime contracts before execution: bounded loops for every executable unit, and a validated graph for multi-node work.
+6. for material structural/interface choices, compare genuinely different designs before committing;
+7. choose topology based on dependencies + useful independence;
+8. instantiate runtime contracts before execution: bounded loops for every executable unit, and a validated graph for multi-node work.
 
 ## No single-agent gravity
 
@@ -24,6 +25,23 @@ Do not ask only “can one agent do this?”. Ask “does isolation or independe
 A strong parent should spend scarce context on synthesis and hard decisions. Use capable workers for high-volume reading/research when available and require bounded receipts/evidence. The parent verifies and integrates; it does not blindly trust summaries.
 
 Do not hardcode provider model names into portable policy. Provider adapters map semantic tiers: judgment-heavy parent, capable research/implementation worker, independent critic.
+
+## Design alternatives before structural commitment
+
+The first plausible architecture is not automatically the right one. When work materially changes a public interface, module seam, persistence model, protocol, service boundary, migration strategy, or another expensive-to-reverse structural choice, **design it more than once before implementation**.
+
+This is not a tax on mechanical work. Skip it for obvious local edits, routine bug fixes with an established seam, and changes whose alternatives are not materially different.
+
+For structural work:
+
+1. Write the constraints and invariants any viable design must satisfy.
+2. Produce at least **two genuinely different** designs. Use independent workers when fresh context or concept independence is useful; otherwise the Architect may produce them directly.
+3. Make each design concrete enough to compare: interface/surface, ownership, dependencies, failure modes, migration/rollback implications, test seam, and a short caller/example flow.
+4. Compare on **interface simplicity, hidden complexity, locality of change, testability, operational risk, reversibility, migration cost, and fit with existing project conventions**.
+5. Recommend one design or an explicit hybrid and record why the rejected option lost.
+6. Persist the decision when it is durable enough to matter to future maintainers.
+
+Do not manufacture cosmetic variants of the same architecture. If two proposals have the same seam, ownership and failure model with different names, they are one design.
 
 ## Topologies
 
@@ -147,6 +165,8 @@ For visual work the critic checks hierarchy, composition, type, imagery, motion,
 
 - forced single-agent because “one model can do it”;
 - workers for show;
+- accepting the first plausible structural design without comparing a materially different alternative;
+- cosmetic “alternatives” with the same seam/ownership/failure model;
 - parent serially reading a massive corpus without considering isolation;
 - skill IDs without bodies;
 - execution without Loop Receipt;

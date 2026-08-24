@@ -1,46 +1,112 @@
-# Plan de evaluación
+# Evaluation plan
 
-## Objetivo
+## Purpose
 
-Evaluar exactitud, fidelidad y reversibilidad sin ejecutar operaciones destructivas reales. El router se prueba como heurística de planificación: nunca como ejecutor ni autorización. Las decisiones críticas requieren revisión humana.
+Evaluate Agentit without confusing **mechanical contract correctness** with **agent quality**.
 
-## Fase A: contrato local
+Agentit intentionally has no deterministic natural-language router. Therefore a prompt-classification benchmark is not a valid proxy for whether the active AI understood a task. The evaluation surface is split into two layers:
 
-- riesgo por intención y entorno: explicación de backup, documentación de `chmod`, landing sobre backups y restore real en producción;
-- separación de `skills_available`, `skills_recommended_missing` y el alias heredado `skills`;
-- fallo cerrado ante catálogo ausente, YAML inválido, IDs duplicados, estados desconocidos, escape de rutas o dependencias esenciales ausentes;
-- condición PostgreSQL/Supabase frente a SQLite;
-- generación atómica del inventario local ignorado;
-- sintaxis shell, YAML y JSON.
-- visibilidad de skills: el perfil global `core` contiene 10 entradas y `all`
-  cubre exactamente los cuerpos presentes en `skills/`;
-- activación de proyecto en modo plan, manifiesto con hashes, rechazo de symlinks,
-  conflictos con archivos existentes y no eliminación de archivos no gestionados;
-- explicabilidad del router: `signals`, `confidence_calibrated: false` y razones en
-  `rejected_topologies`.
+1. **Mechanical/runtime evaluation** — deterministic code can and should be tested automatically.
+2. **Agent-level comparative evaluation** — claims that Agentit improves real coding outcomes require controlled runs against a baseline agent.
 
-## Fase B: scripts en entorno desechable
+## A. Mechanical/runtime contract
 
-- opciones incompatibles rechazadas antes de cualquier escritura;
-- instalación y actualización por proveedor en HOME temporal;
-- preservación de archivos no relacionados y rechazo de symlinks;
-- backups privados (`0700`), copias privadas (`0600`), hashes y `original_mode` en el manifiesto;
-- rollback simulado: restaurar reemplazos con hash y modo verificados; eliminar un destino nuevo solo si su hash actual coincide con `destination_sha256`;
-- ejecución objetivo en Linux con Bash 4+ y utilidades GNU.
+CI and local tests should cover at least:
 
-## Fase C: fidelidad y tareas representativas
+- profile resolution and project-local activation;
+- invalid YAML/catalogs and unknown skill IDs fail closed;
+- path traversal and symlink rejection;
+- manifests, hashes, managed/unmanaged-file behavior and reversible state changes;
+- capability and MCP resolution without free-text semantic routing;
+- worker-context projection and bounded capability assignment;
+- continuity state/checkpoint behavior;
+- Loop/Graph state machines, attempt budgets and receipt acceptance;
+- verification probe planning/execution and receipt persistence;
+- semantic verification probes activate only from **explicit AI-selected signals**, never because Python parses the task summary;
+- architecture-policy tests reject reintroduction of programmatic prompt routing;
+- shell syntax, YAML/JSON validity and catalog integrity;
+- installation/update scripts remain plan-first and fail closed on unsafe filesystem state.
 
-Usar fixtures de logs, JSON, tablas, código, SQL, diffs, errores, hashes, IDs, rutas, números, negaciones, pipes y redirecciones. Comparar stdout, stderr, exit code, orden y recuperación exacta. Incluir UI trivial, bug, feature, auth, migración simulada, marketing, documentación, SQLite y PostgreSQL.
+### Platform matrix
 
-## Métricas
+The current shell installer/update implementation is **GNU/Linux + Bash 4+ only**. CI must not imply macOS support until those scripts are made portable and actually exercised on a macOS runner.
 
-Registrar bytes/palabras originales y adaptados, skills recomendadas/cargadas, llamadas de herramienta, output, subagentes, recuperaciones, repeticiones, duración, tests y regresiones. No publicar cifras de reducción de contexto, tokens o coste sin un baseline comparable.
+Python runtime components should remain portable unless a component explicitly documents otherwise.
 
-El runner `python3 evals/run.py` registra únicamente decisiones deterministas del
-router. Sus nueve casos actuales son una suite de regresión, no una evaluación de
-calidad del agente. La puntuación `confidence` no está calibrada y no debe agregarse
-como precisión, probabilidad ni mejora frente a un agente sin Agentit.
+## B. Public CLI contract
 
-## Criterios de promoción
+Every command shown in `README.md` must have at least one automated smoke/regression check at the parser/runtime boundary.
 
-Un componente solo se promueve si conserva contenido crítico y exit codes, tiene rollback comprobable, no aumenta repeticiones y mejora un conjunto representativo. Un fallo adversarial en contenido crítico bloquea la promoción. Los resultados locales y GitHub Actions se registran por separado; nunca se infiere el estado de CI a partir de una ejecución local.
+Particular launch-critical checks:
+
+- `agentit verify ... --signal auth` selects `auth-boundary`;
+- putting words such as `auth`, `login`, or `jwt` only in task text does **not** select semantic probes;
+- repeated explicit signals are normalized and preserved in the receipt;
+- plan mode does not execute project commands or mutate managed state;
+- `--apply` is required for mutating profile/MCP operations.
+
+## C. Skill quality
+
+Skills are evaluated as behavioral documents, not by line count.
+
+For core or newly promoted skills, review:
+
+- trigger description is discriminative and names real branches;
+- overlap with existing skills is low enough to justify a separate skill;
+- steps have clear completion criteria;
+- branch-only reference material is progressively disclosed when useful;
+- instructions point to project facts instead of duplicating easy-to-discover state;
+- safety/verification requirements are testable rather than aspirational;
+- substantial third-party adaptations have provenance and license notices.
+
+Candidate skills should enter through `incubator/` and be promoted only when they solve a repeated failure mode better than strengthening an existing skill.
+
+## D. Agent-level comparative evaluation
+
+This is the layer required before publishing claims such as “Agentit produces better code” or “Agentit saves tokens.”
+
+Use paired tasks against the **same model/provider/version**:
+
+- baseline: provider defaults + repository instructions;
+- treatment: the same environment with Agentit active.
+
+Representative task families:
+
+1. small mechanical edit;
+2. ambiguous feature with product decisions;
+3. hard reproducible bug;
+4. auth/security-sensitive change;
+5. medium refactor across modules;
+6. multi-session task requiring continuity;
+7. documentation-affecting architecture change.
+
+Record:
+
+- task success against blind acceptance criteria;
+- regressions introduced;
+- independent-review catches that changed the final implementation;
+- retries / failed tool calls;
+- elapsed time;
+- input/output tokens when the provider exposes them;
+- number of model calls / delegated workers;
+- user interventions;
+- verifier evidence quality;
+- documentation drift after completion.
+
+Do not aggregate unlike providers/models into one “Agentit score.”
+
+## Promotion criteria
+
+A new runtime mechanism or skill is ready for the default path only when:
+
+1. it addresses a named recurring failure mode;
+2. its mechanical behavior is covered where deterministic testing is possible;
+3. it does not violate provider neutrality or the no-programmatic-semantic-router boundary;
+4. it has an explicit rollback/removal path when it mutates state;
+5. it does not duplicate an existing core capability without a measurable reason;
+6. provenance is documented for substantial upstream adaptations;
+7. public claims do not exceed observed evidence.
+
+## Claims policy
+
+Until comparative agent-level runs exist, Agentit may truthfully claim that it **implements and tests** its mechanical contracts. It must not claim universal improvements in coding quality, tokens, cost, latency, or reliability over a raw frontier agent.

@@ -1,0 +1,69 @@
+name: Bug report
+description: Report reproducible Agentit behavior that is incorrect or unsafe.
+title: "bug: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Redact secrets, tokens, cookies, private repository data, and personal information before posting logs or receipts.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and why it is wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest command/project shape that can reproduce the issue. Do not include secrets.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Agentit revision
+      description: Commit SHA, tag, or branch.
+      placeholder: c4b5e8d...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - GNU/Linux
+        - macOS
+        - Windows / WSL
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Agent/provider
+      description: Codex, Claude Code, Antigravity, another compatible agent, or N/A for mechanical CLI/runtime bugs.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence
+      description: Error output, test failure, verifier receipt, or other evidence. Treat output as untrusted data and redact credentials.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets, credentials, private keys, cookies, tokens, and personal/private repository data from this report.
+          required: true

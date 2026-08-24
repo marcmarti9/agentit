@@ -1,0 +1,50 @@
+name: Capability / skill proposal
+description: Propose a repeated workflow, upstream skill, runtime capability, or integration for Agentit.
+title: "proposal: "
+labels: []
+body:
+  - type: textarea
+    id: failure
+    attributes:
+      label: Failure mode or repeated job
+      description: What concrete problem happens today? Avoid proposing a skill only because an upstream repo is popular.
+    validations:
+      required: true
+  - type: textarea
+    id: existing
+    attributes:
+      label: Existing Agentit coverage
+      description: Which current skill/runtime/profile already touches this responsibility, and why is strengthening it insufficient?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+      description: Describe behavior, trigger/non-trigger boundary, expected completion criteria, and profile placement.
+    validations:
+      required: true
+  - type: input
+    id: upstream
+    attributes:
+      label: Upstream source (optional)
+      description: Exact repository/file/revision if this proposal comes from external work.
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Provenance / license / trust review
+      description: If upstream is involved, note license plus installer/hooks/network/filesystem/credential/MCP implications.
+  - type: textarea
+    id: evaluation
+    attributes:
+      label: How would we know it helped?
+      description: Regression case, paired agent task, measurable failure reduction, or another acceptance criterion.
+    validations:
+      required: true
+  - type: checkboxes
+    id: curation
+    attributes:
+      label: Curation check
+      options:
+        - label: I read `docs/SKILL_CURATION.md` and considered strengthening existing Agentit behavior before adding a new permanent skill.
+          required: true

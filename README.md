@@ -2,81 +2,89 @@
 
 [![CI Status](https://github.com/marcmarti9/agentit/actions/workflows/ci.yml/badge.svg)](https://github.com/marcmarti9/agentit/actions)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/version-v0.3.2--stable-green.svg)](https://github.com/marcmarti9/agentit/releases)
 
-**Agentit is a provider-neutral operating protocol for capable AI coding agents.** It lets the primary model understand a task from real project context, independently review the decision before material execution, load only the knowledge and tools that matter, delegate when useful, execute through verifiable runtime contracts, document durable system knowledge, and ship repository changes through pull requests by default.
+**An open-source, provider-neutral reliability layer for AI coding agents.**
 
-Agentit is designed to remain portable across OpenAI, Anthropic, Google, xAI and compatible future agent environments. Provider-specific workers are execution primitives; the shared protocol is the product.
-
-## Activation
-
-There is one activation concept: tell the agent to use Agentit naturally in your language.
+Agentit does not replace Codex, Claude Code, or another capable coding agent. It gives the agent a shared operating protocol for the parts that still go wrong in real repositories: understanding the actual task, challenging risky decisions, loading only relevant skills, delegating deliberately, preserving state, verifying with fresh evidence, keeping durable documentation aligned, and shipping through reviewable Git changes.
 
 ```text
-usa agentit
-use agentit
-utilise agentit
+You + your coding agent
+          │
+          ▼
+      "use Agentit"
+          │
+          ▼
+inspect real project state
+          │
+          ▼
+primary task decision ──► independent decision audit
+          │                         │
+          │                 challenge / escalate
+          ▼
+JIT skills + tools + bounded delegation
+          │
+          ▼
+Loop / Graph execution contracts
+          │
+          ▼
+fresh verification + docs drift check
+          │
+          ▼
+branch → commits → pull request → human merge decision
 ```
 
-There are no additional powerwords and no keyword/regex classifier in front of the model. The active primary AI owns semantic understanding from the full conversation, repository, files, tools, constraints and prior state.
+> **Status:** Agentit is early-stage and evolving quickly. Its mechanical safety/runtime contracts are tested; it does **not** claim that a prompt harness universally makes every model better, cheaper, or faster. See [Evaluation](#evaluation) for exactly what is and is not measured.
 
-## End-to-end lifecycle
+## Human UX: no terminal ceremony
 
-For substantial work, Agentit follows this lifecycle:
+Agentit is designed to be **operated by the coding agent, not by the human through a CLI**.
+
+For normal use, the human interface should be this simple:
 
 ```text
-inspect facts and existing project state
-        ↓
-primary AI creates TASK_DECISION
-        ↓
-cheap independent decision audit
-        ↓
-CLEAR / CHALLENGE / ESCALATE
-        ↓
-strong independent review when consequences are high
-        ↓
-interview unresolved product decisions when needed
-        ↓
-load the smallest useful skills and tools
-        ↓
-persist continuity state
-        ↓
-execute directly or delegate through Loop / Graph contracts
-        ↓
-document architecture, components, contracts, decisions and failures
-        ↓
-verify with fresh evidence + runtime receipts + documentation-drift check
-        ↓
-branch → commits → pull request → user/reviewer merge decision
+use Agentit
 ```
 
-Small mechanical tasks stay small. Agentit does not create multi-agent theatre or process for its own sake.
+or naturally in another language:
 
-## 1. Primary AI owns the decision
+```text
+usa Agentit
+```
 
-Agentit deliberately has **no programmatic natural-language router**. A script does not know the conversation history, what “fix it” refers to, the current repository state or which constraints were already agreed.
+On first use, if Agentit is not installed/discoverable yet, the user can give the coding agent this repository and ask it to install and use Agentit. The **agent** owns any cloning, bootstrap, profile activation, verification commands, runtime receipts, MCP configuration, or continuity operations that are needed.
 
-The primary model therefore owns `TASK_DECISION`, including:
+The repository does contain command-line interfaces, but they are **agent-facing mechanical APIs and maintainer/debugging surfaces**. They are not intended to become a workflow the human must memorize.
 
-- intended outcome and known facts;
-- material unknowns;
-- domain/category and complexity;
-- `RISK_0..RISK_4` with rationale;
-- reversibility and external effects;
-- required skills and tools;
-- execution topology;
-- specialist ownership boundaries;
-- implementation/investigation plan;
-- verification strategy;
-- backup, dry-run, rollback and post-check requirements when relevant.
+There are no magic powerwords beyond telling the active agent to use the protocol.
 
-Canonical policy: [`skills/task-router/SKILL.md`](skills/task-router/SKILL.md) and [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md).
+## Why Agentit exists
 
-## 2. Independent decision review
+Modern coding agents are already very capable. The remaining failure modes are often process failures rather than code-generation failures:
 
-Before material execution, Agentit asks a second AI to challenge the proposed task decision.
+- the agent solves the wrong interpretation of the task;
+- a plausible first plan is never challenged;
+- every skill/tool is dumped into context whether useful or not;
+- subagents are spawned for theatre, or useful independent review is skipped;
+- a worker loses project rules or prior decisions;
+- "done" is claimed from stale or incomplete evidence;
+- the code changes but architecture/operations docs silently drift;
+- long tasks become impossible to resume cleanly after a context reset.
 
-Ordinary work uses the cheapest capable independent model or endpoint, preferably a semantic `fast` tier. It returns:
+Agentit turns those failure modes into explicit, inspectable contracts while leaving semantic judgment with the model that has the full context.
+
+## What makes it different
+
+### The model decides; Python does not pretend to understand the prompt
+
+Agentit has **no regex/keyword/scoring router for natural-language intent**. The active primary AI owns a structured `TASK_DECISION` from the conversation, repository, files, tools, constraints, and prior state.
+
+Mechanical code starts *after* that decision. It handles things software is actually good at: manifests, profiles, capability inventories, Loop/Graph state, verification receipts, continuity artifacts, MCP configuration, and reversible file operations.
+
+See [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md).
+
+### A second model challenges material decisions
+
+Before material execution, Agentit asks an independent model to return:
 
 ```text
 AUDIT: CLEAR | CHALLENGE | ESCALATE
@@ -87,216 +95,188 @@ SUGGESTED_CHECKS:
 CONFIDENCE: low | medium | high
 ```
 
-The reviewer is not the router and does not take ownership from the primary model. `CHALLENGE` forces reconsideration; unresolved disagreement or `ESCALATE` moves to a stronger independent critic.
+Ordinary work can use a cheap/fast reviewer. High-consequence work—production, destructive operations, auth, payments, secrets, PII, difficult migrations, or major architecture—requires stronger independent review.
 
-Strong review is mandatory for high-risk work such as destructive operations, production changes, auth, payments, secrets, PII, significant migrations, difficult rollback and large structural architecture decisions.
+The reviewer is not another decorative manager. It exists to catch a bad first decision while changing it is still cheap.
 
-See [`skills/task-router/references/economy-reviewer.md`](skills/task-router/references/economy-reviewer.md) and [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md).
+See [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md).
 
-## 3. Interview only when product decisions are actually missing
+### Skills and specialists are just-in-time
 
-For product-affecting work, Agentit inspects discoverable facts first. If material choices still cannot be inferred safely, it asks them in one consolidated batch and recommends sensible defaults.
+Agentit ships a curated skill library, but the whole catalog is not meant to be loaded for every task. `profiles.yaml` groups capabilities and keeps the globally visible `core` bounded; domain/design/release/research packs are opt-in and task-scoped.
 
-The purpose is to avoid both silent invention and twenty-message interrogations.
+A skill only counts as used when the executing model actually receives its body. A specialist only gets the context and capabilities required for its bounded job.
 
-Design work can use **Standard / Polished / Studio** craft depth. Those levels apply to visual/design ambition, not to every engineering task.
+### Execution has receipts
 
-See [`skills/interview-me/SKILL.md`](skills/interview-me/SKILL.md) and [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md).
+For executable work, Agentit separates semantic judgment from mechanical acceptance:
 
-## 4. Skills, tools and delegation are selected just in time
+- **Loop Contract** — observable goal, verifier, stop condition, attempt budget, escalation boundary.
+- **Graph Contract** — explicit DAG, dependencies, write ownership, handoff artifacts, and Loop Contracts for nodes.
 
-Agentit loads the smallest useful knowledge set instead of dumping a full skill catalog into context. A skill counts as used only when its body is actually loaded or injected into the executing model.
-
-Delegation is equally adaptive. Use another worker when independence, parallel investigation, specialist expertise, context isolation, critique or bounded cheap execution creates real value. Stay single-agent when it does not.
-
-`agents/catalog.yaml` defines reusable specialist roles. `profiles.yaml` groups capabilities into profiles such as `core`, `frontend`, `design`, `backend`, `supabase`, `product`, `writing`, `release` and `research`.
-
-Capability resolution is explicit and least-privilege: specialists declare stable capability IDs and the host maps them to actually available MCPs, apps, CLIs or local tools. Missing capabilities are not silently assumed.
-
-See [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md), [`agents/catalog.yaml`](agents/catalog.yaml) and [`profiles.yaml`](profiles.yaml).
-
-## 5. Runtime acceptance: Loop and Graph
-
-Agentit's runtime is mechanical enforcement after the AI has made and reviewed the semantic decision.
-
-### Loop Contract
-
-Every executable unit with a verifiable outcome defines:
-
-- observable goal;
-- verifier;
-- stop condition;
-- bounded attempt budget;
-- escalation boundary.
-
-A direct executable task is accepted only after fresh verifier evidence and a passed **Loop Receipt**.
-
-### Graph Contract
-
-Genuinely multi-node work materializes a DAG before spawning. Dependencies, write ownership, handoff artifacts and node Loop Contracts are explicit. Final acceptance requires a passed **Graph Receipt** backed by current node receipts.
-
-The runtime tracks execution state; it never interprets natural-language intent.
+"The worker says it worked" is not acceptance. Fresh verifier evidence and the applicable receipt are.
 
 See [`docs/RUNTIME_ENGINEERING.md`](docs/RUNTIME_ENGINEERING.md).
 
-## 6. Continuity: sessions are disposable
+### Sessions are disposable; project knowledge is not
 
-Chats, providers and machines can disappear. Substantial work therefore keeps a compact canonical state file at:
+Substantial work maintains a compact canonical state file at `docs/agentit/STATE.md` (or an existing project-equivalent source of truth) so another session/provider can resume without reconstructing the chat.
 
-```text
-docs/agentit/STATE.md
-```
+Durable architecture, component, contract, operations, troubleshooting, and ADR-style knowledge belongs in normal project documentation. Agentit explicitly checks for documentation drift before substantial repository work is considered complete.
 
-or an existing project-equivalent source of truth.
+See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) and [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md).
 
-It records the current objective, constraints, status, durable decisions, branch/PR, important artifacts, latest verification, blockers and next executable actions. It does **not** store secrets, transcripts or private chain-of-thought.
+## First-run/bootstrap contract
 
-A fresh agent should be able to resume without making the user reconstruct the previous session.
+The **human should not need to execute installer commands**. A compatible coding agent should be able to bootstrap Agentit on the user's behalf after being given this repository.
 
-See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md).
+Today, the checked-in `install.sh` / `update.sh` path is still GNU/Linux-oriented and uses Bash 4+ plus GNU utilities. Until the portable bootstrap work lands, an agent running on macOS must treat that limitation as real instead of blindly executing the Linux installer.
 
-## 7. Durable documentation is part of the implementation
+Current implementation prerequisites for the legacy shell bootstrap are:
 
-`STATE.md` explains **where the work is now**. It does not replace permanent documentation explaining **how the system works and why**.
+- Git;
+- Python 3 + PyYAML;
+- Bash 4+;
+- GNU/Linux + GNU utilities.
 
-For substantial repository work, Agentit must keep the relevant Markdown documentation aligned with the implementation:
+The target direction is a portable agent-facing bootstrap that preserves Agentit's plan-first, backup/hash, path/symlink, rollback, and least-privilege guarantees on both Linux and macOS. See the launch-blocker issue in the repository.
 
-- overall architecture, layers, boundaries and end-to-end flows;
-- responsibilities and behavior of non-trivial components;
-- APIs, schemas, events, files, invariants and compatibility contracts;
-- durable non-obvious decisions and their consequences;
-- operational lifecycle, jobs, persistence, retries, fallbacks and observability;
-- troubleshooting paths from symptom → likely cause → evidence → corrective action → verification;
-- commands and tests that reproduce the relevant verification.
+Providers currently represented by adapters/discovery are Claude Code, OpenAI Codex, and Antigravity/Open-Skills-style environments. Provider credentials and machine-local secrets are never portable project state.
 
-When a project lacks a documentation structure, the recommended shape is:
+## The operating lifecycle
 
-```text
-docs/
-  ARCHITECTURE.md
-  components/
-  decisions/
-  OPERATIONS.md
-  TROUBLESHOOTING.md
-  agentit/
-    STATE.md
-```
+For substantial work the policy is:
 
-Existing canonical docs should be reused rather than duplicated. Important decisions can use ADR-style records. Private chain-of-thought is never persisted; only concise rationale, evidence, alternatives and consequences needed by future maintainers.
+1. **Inspect facts first.** Read the actual repo/docs/tool state before asking the user for discoverable information.
+2. **Create `TASK_DECISION`.** Outcome, known facts, unknowns, risk, reversibility, skills/tools, topology, implementation plan, and verification strategy.
+3. **Audit independently.** Cheap capable reviewer for ordinary work; stronger critic when risk or disagreement warrants it.
+4. **Interview only unresolved product decisions.** Ask one consolidated, recommendation-led round instead of silently inventing product intent.
+5. **Load the smallest useful skill/tool set.** Do not spray the catalog into context.
+6. **Persist continuity for substantial work.** Sessions must be replaceable.
+7. **Execute directly or delegate because there is a concrete benefit.** Specialization, isolation, parallel investigation, context separation, or independent judgment—not agent theatre.
+8. **Use Loop/Graph contracts for executable work.** Bounded attempts, explicit verifiers, fail-closed escalation.
+9. **Update durable docs with the implementation.** Architecture/operations/contracts/decisions must not lag behind code.
+10. **Verify from fresh evidence.** No `done`, `fixed`, or `passing` claim from memory, a worker summary, or stale output.
+11. **Ship through reviewable Git by default.** Branch → commits → PR → reviewer/user merge decision.
 
-Substantial work is not complete until Agentit checks for **documentation drift**. If the code and docs disagree, the task is still unfinished.
+Canonical end-to-end playbook: [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md).
 
-See [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md).
+## Agent-facing mechanical interfaces
 
-## 8. Verification before claims
+Humans should not have to drive these manually. They exist so the active agent can turn its semantic decision into deterministic, inspectable operations.
 
-Agentit separates confidence from evidence. No `done`, `fixed`, `passing`, `premium` or equivalent claim is accepted without fresh evidence appropriate to the claim and the applicable runtime receipt.
+Examples of internal surfaces include:
 
-Examples:
+- project profile activation (`status`, `enable`, `disable`);
+- explicit-signal verification (`verify --signal ...`);
+- continuity state/checkpoints;
+- Loop/Graph runtime state and receipts;
+- worker-context construction;
+- MCP status/configuration;
+- capability/inventory resolution.
 
-- code change → relevant tests/runtime checks + Loop Receipt;
-- bug fix → reproduction before and verification after;
-- visual change → rendered/browser evidence at relevant viewport sizes;
-- migration → pre/post evidence + rollback readiness;
-- high-risk change → strong independent review + operational checks;
-- multi-node work → Graph Receipt backed by node Loop Receipts;
-- substantial repository work → documentation-drift check.
+The important boundary is that **the AI decides what the task means and which semantic signals apply; the CLI/runtime only executes explicit mechanical instructions**.
 
-```bash
-agentit verify "task summary" --project .
-agentit verify "task summary" --project . --apply
-```
+For example, a coding agent that has established an auth/API change may internally invoke verification with explicit `auth`/`api` signals. The human should only see the resulting plan/evidence when it is useful, not be asked to type the command.
 
-## 9. Git ownership
+## Profiles
 
-Repository changes default to:
+The default profile is intentionally smaller than the full repository catalog.
 
-```text
-work branch → commits → verification → pull request → review/user merge decision
-```
+| Profile | Intended use |
+|---|---|
+| `core` | orchestration, planning, debugging, review, testing, security, verification |
+| `frontend` | UI engineering, browser/runtime checks, performance, simplification |
+| `backend` | interfaces, observability, performance, simplification |
+| `supabase` | backend + PostgreSQL/Supabase discipline |
+| `product` | intent, specs, product/growth decisions |
+| `writing` | technical docs and editing |
+| `design` | deeper UI/UX research, art direction, motion/spatial craft |
+| `release` | CI, migrations, launch readiness |
+| `research` | source-driven/context-heavy investigation |
+| `growth` / `agency` | productized growth/agency workflows |
+| `all` | every repository skill; explicit use only |
 
-Agentit does not write directly to `main`/`master` or auto-merge unless explicitly authorized for the current task.
+Profiles are inventories/discovery boundaries for the **agent**. They are not configuration choices the human should routinely manage.
 
-## Design intelligence
+## Verification
 
-The `design` profile combines structured UI/UX intelligence, live inspiration research, art direction, implementation guidance, motion/spatial skills and independent critique without loading all of them by default.
+Agentit's verification runtime is signal-gated. Mechanical project facts are detected automatically; semantic facts chosen by the active AI are passed explicitly so Python never becomes a disguised natural-language router.
 
-Notable skills include:
+The current catalog includes project-native tests/build checks, secret scans, acceptance/red→green checks, and task-scoped checks for surfaces such as auth, HTTP, Postgres/Supabase, and browser/UI work.
 
-- `ui-ux-pro-max-intelligence` — JIT structured UI/UX intelligence;
-- `design-inspiration-research` and `design-trend-researcher` — live evidence;
-- `design-taste-frontend` and `impeccable-design` — direction and critique;
-- `emil-design-eng` — interaction/motion quality;
-- GSAP and Three.js specialists for scroll and spatial experiences;
-- Figma workflow support when the official integration is available.
+See [`probes/catalog.yaml`](probes/catalog.yaml).
 
-The upstream UI/UX dataset is treated as an intelligence source, not as an automatic creative director. Attribution lives in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+## Evaluation
 
-## Install
+Agentit intentionally separates **mechanical correctness** from **claims about model quality**.
 
-```bash
-git clone https://github.com/marcmarti9/agentit.git ~/code/agentit
-cd ~/code/agentit
-bash install.sh --provider all --with-guides --apply
-ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
-```
+Mechanical tests cover profile activation, manifests, path/symlink safety, capabilities, MCP state, continuity, worker context, Loop/Graph runtime, verification receipts, and architecture-policy invariants.
 
-Enable project profiles only when needed:
+What the repository does **not** currently prove:
 
-```bash
-agentit enable design --project . --apply
-agentit status --project .
-agentit disable design --project . --apply
-```
+- that Agentit universally improves coding quality versus a raw frontier agent;
+- that it reduces tokens, latency, or cost;
+- that independent review is always worth its extra inference cost;
+- that every provider follows every natural-language policy with equal reliability.
 
-MCP runtime helpers:
+Those claims require agent-level comparative evals, not deterministic prompt classifiers. See [`evals/evaluation-plan.md`](evals/evaluation-plan.md) and [`evals/results.md`](evals/results.md).
 
-```bash
-agentit mcp status
-agentit mcp enable context7 --apply
-agentit mcp enable-stack developer_core --apply
-```
+## Maintainer testing
 
-## Testing
+The repository has deterministic mechanical suites and CI. Maintainers and coding agents may invoke the underlying test commands directly; normal users should not need to.
 
-```bash
-python3 -m unittest discover -s router -p "test_*.py"
-python3 -m unittest discover -s tests
-```
-
-The suite covers mechanical runtime, profiles, capabilities, MCP behavior, continuity, verification, registry/inventory safety and worker-context behavior. It intentionally does not pretend that deterministic prompt classification can benchmark the semantic judgment of the active AI.
+CI validates the runtime/utility suites, shell syntax where applicable, registry YAML/JSON, profile/catalog integrity, and architecture-policy invariants. Public claims should refer to the CI result for the exact commit being discussed, not an old local run.
 
 ## Repository map
 
 | Path | Purpose |
 |---|---|
-| `AGENTS.md` | Global portable Agentit rules |
-| `skills/using-agentit/` | End-to-end activation playbook |
-| `skills/task-router/` | AI-native task decision and reviewer contracts |
-| `skills/` | JIT knowledge modules |
-| `agents/` | Portable specialist catalog |
-| `router/` | Mechanical Loop/Graph/runtime tooling |
-| `profiles.yaml` | Profile composition |
-| `effort/` | Design craft-depth configuration |
-| `docs/` | Architecture, policy, continuity and runtime documentation |
-| `.codex/agents/` | Bounded Codex worker profiles |
+| `AGENTS.md` | portable global operating rules |
+| `skills/using-agentit/` | end-to-end activation playbook |
+| `skills/task-router/` | model-owned task decision + reviewer contracts |
+| `skills/` | curated JIT knowledge modules |
+| `agents/` | portable specialist roles |
+| `router/` | mechanical profiles, capabilities, context, Loop/Graph, MCP and verification runtime |
+| `profiles.yaml` | bounded profile composition |
+| `probes/` | verification catalog + mechanical probes |
+| `docs/` | canonical architecture/policy/runtime/continuity docs |
+| `incubator/` | candidate/rejected capability research |
+| `.codex/agents/` | bounded Codex worker profiles |
+| `reports/` | dated research/history; not all reports describe the current architecture |
+
+## Contributing
+
+Contributions are welcome, especially when they remove a real failure mode without turning Agentit into a giant framework.
+
+Before adding a skill, prefer this order:
+
+```text
+already covered? → strengthen the existing skill
+upstream skill solves it better? → adapt with provenance/license
+truly distinct repeated workflow? → incubate → evaluate → promote
+one-off advice? → do not add a skill
+```
+
+See [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Documentation map
 
 | Document | Purpose |
 |---|---|
 | [`AGENTS.md`](AGENTS.md) | global agent playbook |
-| [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md) | boundary between AI judgment and mechanical software |
-| [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md) | primary decision + second-model review |
-| [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md) | interview and provider semantics |
-| [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) | resumable project-state contract |
-| [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md) | mandatory durable system documentation contract |
+| [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md) | AI judgment vs mechanical software boundary |
+| [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md) | primary decision + independent review |
+| [`docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md`](docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md) | interview/provider semantics |
+| [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) | resumable state contract |
+| [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md) | durable system-documentation contract |
 | [`docs/RUNTIME_ENGINEERING.md`](docs/RUNTIME_ENGINEERING.md) | Loop/Graph execution contracts |
-| [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) | capability resolution and least privilege |
+| [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) | capability resolution / least privilege |
 | [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog/runtime |
-| [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | orchestration topologies and specialist contracts |
-| [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | upstream attribution |
+| [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | orchestration topologies / specialist contracts |
+| [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md) | skill lifecycle, upstream provenance and promotion policy |
+| [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | upstream provenance and licenses |
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE). Third-party integrations retain their applicable notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Agentit is licensed under the [Apache License, Version 2.0](LICENSE). Third-party material retains its applicable notices in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

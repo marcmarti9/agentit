@@ -1,43 +1,42 @@
-# Resultados locales de esta corrección
+# Evaluation results
 
-**Fecha:** 2026-08-03
+## Current evidence status
 
-**Alcance:** repositorio y directorios temporales. No se ejecutaron operaciones de producción, bases de datos, proveedores externos ni scripts con `--apply` sobre el HOME real.
+This file records only evidence that still describes the **current LLM-native architecture**. Historical prompt-router numbers from the pre-refactor implementation are intentionally not carried forward as current results.
 
-## Comandos ejecutados
+### What is mechanically covered by the repository
 
-| Comando | Resultado local observado |
-|---|---|
-| `python3 -m unittest discover -s router -p 'test_*.py' -v` | 61/61 tests OK |
-| `python3 -B -m unittest -v router.test_route router.test_registry router.test_inventory router.test_profiles` | 61/61 tests OK como módulos |
-| suite del router con un `HOME` temporal vacío | 61/61 tests OK; no depende del inventario del autor |
-| `python3 -m unittest discover -s tests -p 'test_*.py' -v` | 17/17 tests OK; los cambios se realizaron en fixtures temporales |
-| `bash -n install.sh update.sh security/harden-local.sh` | exit code 0 |
-| `python3 -c "import yaml; yaml.safe_load(open('registry.yaml', encoding='utf-8'))"` | exit code 0 |
-| `python3 -m json.tool settings.json` | exit code 0 |
-| `python3 -m router.inventory` | generó `reports/local/inventory.yaml` |
-| `git check-ignore -v reports/local/inventory.yaml` | confirmó la regla `reports/local/` de `.gitignore` |
+The current automated test surface includes deterministic contracts for:
 
-La suite del router cubre intención frente a acción, cláusulas mixtas, gates críticos, SQLite frente a PostgreSQL, salida de skills, catálogo portable, carga de `SKILL.md`, symlinks, conflictos, fallo cerrado, inventario, perfiles acotados y activación segura. La suite de scripts cubre rechazo antes del backup, round-trip Antigravity de los `SKILL.md` allowlisted, instalación global del perfil `core` y permisos privados de backups y credenciales; no afirma simetría de árboles completos.
+- bounded skill profiles and safe project activation;
+- capabilities and worker-context projection;
+- MCP catalogs/runtime state;
+- continuity and checkpoint state;
+- context/artifact helpers;
+- Loop/Graph runtime behavior and receipts;
+- verification planning/execution and anti-greenwash receipts;
+- architecture-policy invariants, including the prohibition on programmatic natural-language routing;
+- install/update safety behavior in temporary fixtures;
+- YAML/JSON/catalog validity and shell syntax through CI.
 
-## No afirmado
+The public verification CLI additionally has regression coverage for explicit semantic signals: `--signal auth` can activate an auth-specific probe while natural-language task text alone is not parsed as a semantic router.
 
-- GitHub Actions no se ejecutó desde esta corrección; no se declara un resultado de CI remoto.
-- El inventario local no valida seguridad, funcionamiento ni versiones no observadas.
-- No se midió reducción de contexto, tokens o coste.
-- No se realizó una aprobación final ni se afirma preparación para producción.
+## Evidence that is intentionally not claimed
 
-## Evaluación de perfiles y explicabilidad
+The repository currently does **not** provide a controlled agent-level benchmark proving that Agentit:
 
-**Fecha:** 2026-08-03
+- produces better code than the same frontier model without Agentit;
+- reduces tokens or cost;
+- reduces wall-clock latency;
+- improves every task type or provider equally;
+- makes multi-agent execution worthwhile in all cases.
 
-| Comprobación | Resultado local observado |
-|---|---|
-| `python3 evals/run.py` | 9/9 casos representativos del router OK |
-| Perfil `core` | 10 skills globales; `all` cubre exactamente las 28 skills del repositorio |
-| Activación `agentit enable|disable` | plan por defecto, manifiesto con hashes y rechazo de archivos modificados/no gestionados verificados |
-| Descripciones de descubrimiento | 28 descripciones revisadas; longitud máxima observada: 152 caracteres |
+Those questions require paired real-agent experiments against a baseline as described in [`evaluation-plan.md`](evaluation-plan.md).
 
-Estos resultados prueban regresiones locales del clasificador y del gestor de
-perfiles. No prueban que un agente produzca mejor código, ni reducción de tokens,
-latencia o coste frente a un baseline.
+## Historical results
+
+Older dated reports under `reports/` describe the architecture that existed when those reports were written. Some refer to the retired deterministic/heuristic semantic router and old skill counts. They are retained as project history and research evidence, **not** as documentation of current runtime behavior.
+
+## CI rule
+
+A local run, an old badge, or a historical result must never be represented as proof that current `HEAD` passes. For any public launch/release claim, cite the GitHub Actions result for the exact commit/tag being released.

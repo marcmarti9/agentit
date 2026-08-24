@@ -9,19 +9,37 @@ Product-affecting work is interviewed before planning/implementation. Purely mec
 
 Users need no powerwords beyond natural Agentit activation. Do not require terms such as fan-out, Studio or pipeline.
 
-## One comprehensive round
+## One comprehensive frontier round
 
-Ask **all material questions** that are currently knowable in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a **follow-up batch** only when the first answers reveal **genuinely new material decisions** that could not reasonably have been asked in the first round.
+Before asking anything, build a small **decision tree** for the task: what material choices exist, which are already resolved by evidence/context, which depend on another choice, and which unresolved choices can be answered independently now.
+
+The currently answerable unresolved leaves are the **decision frontier**.
+
+Ask **all material questions on the current decision frontier** in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a follow-up batch only when the first answers expose **genuinely new material decisions** on a branch that could not reasonably have been known before.
+
+This prevents two opposite failures:
+
+- a linear interview that burns one message per independent question;
+- a giant generic questionnaire containing branches that do not apply to this task.
 
 The interview should make a weak prompt usable; it must not transfer the design/product job back to the user. The user may answer **“use your recommendation”** for any or all decisions.
 
 For every product interview also recommend the primary domain pack. Ask craft depth only for genuinely visual/design work. Give a rough **project-aware token estimate** based on risk, complexity, domain, topology, likely specialists/critic and craft depth; state that it is provider-dependent and not a bill.
 
+### Frontier construction rules
+
+1. **Facts are not questions.** Discover repository, product, configuration, docs, analytics or source facts with available tools first.
+2. **Dependent choices wait.** If question B only makes sense after A is decided, do not ask B prematurely just to make the first batch look complete.
+3. **Independent choices batch.** If audience, copy ownership and motion tolerance can all be answered independently, ask them together.
+4. **Recommendations reduce cognitive load.** Give the default you would choose and why in one sentence.
+5. **Materiality is the gate.** Do not ask about a preference that would not change implementation, risk, scope or acceptance.
+6. **Persist the resolved tree.** Another agent should be able to see which branches were decided and which were intentionally left open.
+
 ## Mandatory deep visual interview
 
 A new landing/homepage/public company or brand website/portfolio/storefront/campaign surface, or a request to completely redesign / do a “lavado total de cara” of an existing visual surface, gets a deep interview.
 
-Cover the relevant decisions below in the first batch:
+Cover the relevant decisions below in the first frontier batch when they are independently answerable:
 
 1. **Outcome / conversion.** Recommend the primary action and ask what the surface must make people do or believe.
 2. **Audience.** Recommend the likely primary audience; ask who matters most, what they know already, objections and trust concerns.
@@ -83,11 +101,13 @@ If only one or two genuine user decisions exist, ask both in one short round. Do
 ## After answers
 
 1. Resolve contradictions.
-2. Restate confirmed intent and defaults the user accepted.
-3. Persist state per `docs/PROJECT_CONTINUITY.md` before implementation.
-4. Capture outcome, audience, success criteria, constraints/non-goals, domain pack, applicable craft depth/spend, rough token estimate and critic/specialist expectations.
-5. For public greenfield/total redesign additionally persist brand preserve/replace decisions, visual directions, copy ownership/messages, imagery/assets strategy, IA/story, proof material, motion tolerance and references/dislikes.
-6. Hand that state to research/art-direction stages; do not silently re-decide it during coding.
+2. Update the decision tree/frontier and identify any newly exposed material branches.
+3. If a new material frontier exists, ask one follow-up batch; otherwise stop interviewing.
+4. Restate confirmed intent and defaults the user accepted.
+5. Persist state per `docs/PROJECT_CONTINUITY.md` before implementation.
+6. Capture outcome, audience, success criteria, constraints/non-goals, domain pack, applicable craft depth/spend, rough token estimate and critic/specialist expectations.
+7. For public greenfield/total redesign additionally persist brand preserve/replace decisions, visual directions, copy ownership/messages, imagery/assets strategy, IA/story, proof material, motion tolerance and references/dislikes.
+8. Hand that state to research/art-direction stages; do not silently re-decide it during coding.
 
 ## Mid-task escalation
 
@@ -99,11 +119,13 @@ Do not simulate a fake interview in CI/autonomous execution. When unresolved pro
 
 ## Stop condition
 
-A fresh agent can continue from persisted state without inventing material intent. For greenfield/total visual work, copy strategy, imagery strategy and preservation/replacement scope are explicit enough to create a concrete `DESIGN_DIRECTION`.
+The material decision frontier is empty **for the work currently authorized**, and a fresh agent can continue from persisted state without inventing material intent. For greenfield/total visual work, copy strategy, imagery strategy and preservation/replacement scope are explicit enough to create a concrete `DESIGN_DIRECTION`.
 
 ## Anti-patterns
 
 - one known question per turn;
+- generic questionnaire containing irrelevant branches;
+- asking dependent questions before their parent decision exists;
 - asking only “what vibe?”;
 - asking the user to write all critical copy from scratch;
 - yes/no imagery questions with no recommendation;
@@ -118,9 +140,11 @@ A fresh agent can continue from persisted state without inventing material inten
 
 - [ ] Mechanical vs product-affecting classified.
 - [ ] Discoverable facts inspected first.
-- [ ] All material questions asked in one batch.
+- [ ] Material decision tree/frontier identified.
+- [ ] All material questions on the current frontier asked in one batch.
+- [ ] Dependent branches deferred until meaningful.
 - [ ] Recommendation/default attached to each question.
 - [ ] Domain pack recommended; craft depth only when visual.
 - [ ] Greenfield/total visual work received copy + imagery + preserve/replace questions.
 - [ ] Rough project-aware token estimate supplied.
-- [ ] Confirmed intent persisted before implementation.
+- [ ] Resolved decision tree persisted before implementation.

@@ -1,200 +1,209 @@
 # Adaptive Agent Architecture
 
-## Overview & Core Principles
+## Overview
 
-This system departs from rigid, multi-tier hierarchical delegation models (e.g., Architect → Orchestrator → Supervisor → Worker). Instead, it operates on **intelligent orchestration**: a capable main agent handles tasks directly when that is best, and instantiates multi-agent topologies when justified by context isolation, real parallelism, domain specialization, independent verification/critique, or risk boundaries — without hard min/max subagent quotas and without requiring powerwords.
+Agentit avoids fixed multi-tier hierarchies such as `Architect → Orchestrator → Supervisor → Worker` as mandatory process. A capable primary model owns the user relationship and semantic judgment, then chooses direct execution or a useful multi-node topology from the **actual task context**.
 
-The historical role names (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`) are preserved for capability scoping, but represent transient functions rather than mandatory pipeline checkpoints.
+The historical role names (`architect`, `orchestrator`, `supervisor`, `worker`, `auditor`) are reusable capability scopes, not required checkpoints.
 
-The architecture combines three complementary engineering layers:
+Agentit's architecture separates three concerns:
 
-1. **Harness & Context Engineering**: Environment permissions, tool availability, git worktrees, and context window optimization.
-2. **Loop Engineering**: Local execution loops governing how an individual agent plans, acts, collects empirical evidence, verifies, and halts.
-3. **Graph Engineering**: Multi-agent connection topologies governing dependencies, artifact handoffs, parallel execution, and recovery strategies.
+1. **Semantic decision policy** — the primary AI owns `TASK_DECISION`; an independent reviewer challenges material decisions.
+2. **Loop Engineering** — deterministic runtime contracts govern bounded executable units.
+3. **Graph Engineering** — deterministic runtime contracts govern dependencies, ownership, handoffs, and acceptance for multi-node work.
 
-Graph engineering does not replace the heuristic task router. The router evaluates incoming tasks to determine whether a single execution loop or a multi-node graph is required.
+The boundary is deliberate: **LLMs interpret intent; deterministic code enforces state and invariants after the decision.** There is no heuristic/programmatic natural-language task router deciding risk, topology, skills, or delegation.
 
----
+See [`NO_PROGRAMMATIC_ROUTER.md`](NO_PROGRAMMATIC_ROUTER.md) and [`LLM_NATIVE_DECISION_PROTOCOL.md`](LLM_NATIVE_DECISION_PROTOCOL.md).
 
-## Why Move Away From Fixed Hierarchies?
+## Why adaptive orchestration?
 
-Fixed hierarchical multi-agent pyramids introduce three major failure modes in software engineering:
+Fixed agent pyramids create avoidable failure modes:
 
-1. **Context Bloat & Distortion**: Instructions and context are repeatedly re-summarized across agent layers, degrading fidelity and wasting tokens.
-2. **Latency & Overhead**: Unnecessary agent handoffs introduce significant round-trip latency for tightly coupled tasks.
-3. **Misaligned Decomposability**: High file counts or complex requirements are often conflated with true task independence. Tightly coupled edits across multiple files are faster and safer when owned by a single agent with a coherent plan.
+1. **Context distortion** — requirements are repeatedly summarized across layers.
+2. **Latency/coordination overhead** — handoffs cost time even when the work is tightly coupled.
+3. **False decomposability** — file count or perceived difficulty gets mistaken for independent work.
+4. **Authority ambiguity** — multiple writers or reviewers can silently assume ownership of the same decision/state.
 
-Multi-agent collaboration provides net-positive value strictly under four conditions:
-- **Independent Exploration**: Exploring separate technical approaches without shared state.
-- **Context Isolation**: Reading large documentation sets or log outputs that would contaminate the main working context.
-- **Permission & Tool Boundaries**: Running execution steps under isolated sub-permissions or isolated git worktrees.
-- **Independent Verification**: Performing adversarial code reviews or security audits with fresh, unbiased context.
+Delegation is justified when it creates a concrete benefit such as:
 
----
+- independent exploration of materially different approaches;
+- context isolation for large source/reference sets;
+- specialist expertise or tool access;
+- safe parallelism with disjoint ownership;
+- fresh independent review/critique;
+- read-only investigation that protects the primary model's context.
 
-## Layer 1: Loop Engineering
+A small task can stay direct. A large task can also stay direct when its decisions are too tightly coupled to split safely.
 
-Every execution unit runs inside a local, bounded loop:
+## Semantic decision layer
 
-```
-[ Verifiable Goal ] ──► [ Action ] ──► [ Empirical Evidence ] ──► [ Verification ] ──► [ Converge / Halt ]
-```
+Before material execution, the primary AI creates `TASK_DECISION` from the conversation, repository, files, tools, constraints, and prior state. It includes at least the intended outcome, known facts, material unknowns, risk/reversibility, useful skills/tools, proposed topology, ownership boundaries, implementation plan, and verification strategy.
 
-A valid execution loop must declare before starting:
-- **Observable Completion Criteria**: Exact measurable outcome.
-- **Verifier Engine**: Automated test suite, linter, type-check, empirical command output, or structured diff.
-- **Minimal Persistent State**: Key decisions and milestone artifacts.
-- **Recovery & Fallback Strategy**: Action plan upon verification failure.
-- **Iteration Ceiling**: Maximum loop count (default: 1 automatic retry after a failure).
-- **Escalation Boundary**: Explicit condition for returning control to the primary agent or human operator.
+An independent reviewer returns `CLEAR`, `CHALLENGE`, or `ESCALATE`. High-consequence work or unresolved disagreement gets stronger independent review.
 
-### Loop Execution Rules
+The AI may select `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer`, `audit`, or a custom DAG when justified. The runtime does **not** infer that topology from prompt text.
 
-- **Single Auto-Retry**: A worker is allowed a maximum of one automatic correction attempt following a verifiable test/build failure.
-- **Evidence-Based Retries**: A second retry requires fresh empirical evidence or an alternative implementation strategy.
-- **Bounded Objectives**: Never use open-ended goals such as "continue until perfect".
-- **Writer/Reviewer Separation**: Writer and reviewer roles must be separated when independent context outweighs coordination cost.
-- **Verifier Integrity**: If a verifier fails to detect progress, fix the verifier before proceeding with code changes.
+## Loop Engineering
 
----
+Every executable unit with a verifiable outcome has a bounded Loop Contract:
 
-## Layer 2: Graph Engineering
-
-When a task naturally decomposes into separate work units, the workflow is structured as a Directed Acyclic Graph (DAG). Each node represents a bounded loop containing:
-
-- Specific objective and inputs.
-- Defined file read/write scope and ownership.
-- Expected output artifact or schema.
-- Automated verifier and stop condition.
-
-Edges in the graph represent verified artifact dependencies or completion signals.
-
-```
-                         ┌───────────────────────┐
-                         │   Primary Architect   │
-                         └───────────┬───────────┘
-                                     │ (Plan & Decompose)
-                         ┌───────────┴───────────┐
-                         │   Task DAG Router     │
-                         └───────────┬───────────┘
-                                     │
-           ┌─────────────────────────┼─────────────────────────┐
-           ▼                         ▼                         ▼
-┌────────────────────┐    ┌────────────────────┐    ┌────────────────────┐
-│  Worker A (Module) │    │  Worker B (Module) │    │  Worker C (Tests)  │
-└──────────┬─────────┘    └──────────┬─────────┘    └──────────┬─────────┘
-           │                         │                         │
-           └─────────────────────────┼─────────────────────────┘
-                                     ▼
-                         ┌───────────────────────┐
-                         │  Join & Verification  │
-                         └───────────────────────┘
+```text
+observable goal → action → fresh evidence → verifier → accept / retry / escalate
 ```
 
-### Graph Governance
+A loop declares before execution:
 
-- **Deterministic DAGs**: Prefer linear pipelines and parallel fan-outs. Cycles are strictly restricted to bounded local repair loops around a verifier.
-- **Single-Writer Rule**: Exactly one agent owns write permissions for any given file or contract at a time. Parallel writers must work in isolated git worktrees or branches.
-- **Runtime Precedence**: While LLMs may propose routing, the runtime engine enforces dependency ordering, ownership boundaries, and maximum iteration caps.
+- observable goal;
+- verifier;
+- stop condition;
+- bounded attempt budget;
+- escalation boundary.
 
----
+The default runtime budget is two total attempts unless the semantic decision explicitly justifies another bounded value. A retry needs new evidence or a meaningfully different strategy. Never weaken a verifier to manufacture a pass.
 
-## Supported Topologies
+Example:
 
-| Topology | Best For | Ownership Rule |
+```bash
+python3 ~/code/agentit/router/runtime_cli.py loop-init \
+  --state .agentit/runtime/loops/<node-id>.json \
+  --goal "<observable goal>" \
+  --verifier "<verifier>" \
+  --stop "<stop condition>"
+```
+
+After attempts are recorded, acceptance requires:
+
+```bash
+python3 ~/code/agentit/router/runtime_cli.py loop-check \
+  --state .agentit/runtime/loops/<node-id>.json
+```
+
+Narrative worker success is not acceptance; a passed Loop Receipt is.
+
+## Graph Engineering
+
+When the chosen topology contains more than one execution node, Agentit materializes a DAG before spawning work.
+
+Each node defines:
+
+- stable ID and objective;
+- dependency IDs;
+- explicit read/write ownership;
+- expected handoff artifacts;
+- its own Loop Contract.
+
+Graph initialization/validation:
+
+```bash
+python3 ~/code/agentit/router/runtime_cli.py graph-init \
+  --spec .agentit/runtime/graph-spec.json \
+  --state .agentit/runtime/graph.json
+```
+
+The runtime rejects cycles, unknown/self dependencies, unsafe paths, and overlapping write ownership before execution. Only nodes returned by `graph-ready` may start.
+
+```bash
+python3 ~/code/agentit/router/runtime_cli.py graph-ready \
+  --state .agentit/runtime/graph.json
+```
+
+A completed node must provide its accepted Loop Receipt and required artifacts. Blocked/escalated work is represented explicitly rather than silently routed around.
+
+Final multi-node acceptance requires:
+
+```bash
+python3 ~/code/agentit/router/runtime_cli.py graph-check \
+  --state .agentit/runtime/graph.json
+```
+
+The resulting Graph Receipt must be backed by current node receipts.
+
+## Supported topology patterns
+
+| Pattern | Good fit | Ownership |
 |---|---|---|
-| **Direct** | Focused, small, or tightly coupled edits | Primary agent owns plan, code, & testing |
-| **Plan + Direct** | Sequential multi-step implementations | Single owner with milestone checkpoints |
-| **Probe** | Read-only investigation, bug location | Read-only access; returns evidence |
-| **Fan-Out / Fan-In** | Truly independent modules/files | One owner per isolated file/artifact |
-| **Pipeline** | Sequential stage dependencies | Each stage consumes validated artifacts |
-| **Writer + Reviewers** | Implementation requiring fresh review | Single writer; reviewers read-only |
-| **Orchestrated DAG** | Multi-package features with complex graph | Explicit artifact contracts & worktrees |
-| **Independent Audit** | High-risk (security, auth, migrations) | Read-only auditor with fresh context |
+| `direct` | tightly coupled or small work | primary model owns execution |
+| `probe` | read-only investigation | no write ownership |
+| `fan_out` | independent research/modules/concepts | disjoint writers or read-only nodes |
+| `pipeline` | ordered stages with explicit handoffs | one stage owns each output |
+| `writer_reviewer` | implementation needing fresh critique | one writer, reviewer read-only |
+| `audit` | security/high-impact independent review | auditor read-only |
+| custom DAG | multi-package or dependency-heavy work | explicit dependency + ownership graph |
 
----
+These are vocabulary for the AI's decision, not a deterministic classifier table.
 
-## Delegation Contract
+## Structural design alternatives
 
-Every delegated spawn **must** pass through the Worker Context Contract runtime
-(`router/worker_context.py` / `agentit worker build|render`). Fresh context
-without projecting project instructions is **fresh negligence** (see GSD #671
-class failures).
+When a task changes an expensive-to-reverse public interface, module seam, persistence model, protocol, service boundary, or migration strategy, Agentit compares at least two materially different designs before implementation.
 
-### Required projection (auditable)
+Alternatives should differ in seam/ownership/failure model—not merely naming. Compare interface simplicity, hidden complexity, locality of change, testability, operational risk, reversibility, migration cost, and fit with existing conventions.
 
-Before spawning a worker, produce an auditable `worker_context` object:
+Independent workers can generate alternatives when fresh context helps. The primary model judges and records the chosen direction.
 
-1. Objective and explicit scope / completion criteria.
-2. Project instruction files discovered at the repo root (and optional work subdir):
-   `AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`.
-3. Task-scoped active skills only — never the full global catalog.
-4. Applied user preferences (safe style keys only; no secrets).
-5. Risk classification and mandatory constraints (`no commits` / `no pushes` /
-   `no external changes` unless explicitly authorized).
-6. Allowed read/write paths and recoverable artifact URIs.
-7. Expected output format, verification command, stop / escalation conditions.
+## Worker Context Contract
 
-Precedence when directives conflict:
+Every delegated spawn must pass through the Worker Context Contract (`router/worker_context.py` / `agentit worker build|render`). Fresh context without project rules is not useful isolation.
+
+A worker context projects only what the worker needs:
+
+1. objective and explicit scope/completion criteria;
+2. relevant project instruction files such as `AGENTS.md`, `CLAUDE.md`, `CODEX.md`, or `GEMINI.md` when present;
+3. task-scoped skill **bodies**, not the whole catalog;
+4. safe user preferences when applicable;
+5. risk/constraints supplied by the parent decision;
+6. allowed read/write paths and artifact references;
+7. expected output/evidence, verifier, stop condition, and loop identity;
+8. required/preferred capabilities resolved against the actual host inventory.
+
+Directive precedence:
 
 ```text
 safety > explicit user instruction > project instruction > preferences > defaults
 ```
 
-### Forbidden
+Workers must not silently drop project instructions, receive unrelated secrets, or perform commits/pushes/deployments/external mutations outside their authorized scope.
 
-- Silently dropping project instructions for a “clean” subagent.
-- Dumping every global skill into the worker.
-- Forwarding secrets unrelated to the task.
-- Commits, pushes, or external changes unless the contract authorizes them.
+## Ownership rules
 
-*Subagents do NOT receive full conversation history or unrelated documentation.*
-Large logs or outputs are persisted to disk and passed via file references.
+- **Single writer per shared path/state.** Parallel writers require disjoint ownership or isolated branches/worktrees.
+- **Read-only critics remain read-only.** A reviewer should not mutate the thing it is independently judging unless the parent explicitly changes its role.
+- **Parent owns integration.** Worker summaries are evidence inputs, not authority over final acceptance.
+- **No nested-agent explosion.** Additional delegation from workers needs an explicit reason and compatible ownership, rather than being a default cascade.
 
-Build / inspect:
+## Risk and review
 
-```bash
-agentit worker build "Add settings page" security-and-hardening,frontend-ui-engineering
-agentit worker render "Review auth diff"
-python3 router/worker_context.py build --project . --objective "..." --skill security-and-hardening
-```
+`RISK_0..RISK_4` is selected by the primary AI and challenged by the independent reviewer. Deterministic runtime code does not infer risk from keywords.
 
----
+High-consequence areas commonly include destructive operations, production changes, auth, payments, secrets, PII, difficult-to-reverse migrations, and major structural architecture. These require stronger review and more demanding verification/rollback evidence.
 
-## Operational Budgets & Limits
+## Public visual work
 
-- **Default posture**: intelligent — stay solo when coupled; spawn when structure shows benefit.
-- **No hard min/max subagent caps**: router `subagents.recommended` is advisory only.
-- **Critic gate**: large structural plans require an independent critic before implementation commitment.
-- **Nesting Depth**: 1 level deep by default (subagents do not spawn sub-subagents).
-- **Single Writer**: 1 writer per file, module, or shared contract.
-- **Failure Escalation**: 1 automatic retry per worker failure before escalating back to coordinator.
-- **Craft depth**: Standard/Polished/Studio applies to design/visual work only.
-- **Skill budget**: always_core + task `load_now` only; never the full catalog.
+Public landing/homepage/company/brand/storefront work is design-primary when visual direction is material. Studio-level greenfield/total redesign work commonly benefits from:
 
----
+1. recommendation-led product interview;
+2. independent live reference research;
+3. materially different design concepts;
+4. explicit design-direction selection;
+5. one implementation owner;
+6. fresh independent visual critique;
+7. desktop/mobile runtime verification.
 
-## Risk & Quality Assurance Levels
+Concept competition must produce different visual/narrative theses, not palette swaps.
 
-Verification requirements scale with inferred task risk:
+## Stop delegating when
 
-- **Low Risk (RISK_1)**: Focused implementation checks by primary agent.
-- **Medium Risk (RISK_2)**: Relevant unit/integration tests and diff review by primary agent.
-- **High Risk (RISK_3 / RISK_4)**: Mandatory automated test suites, diff inspection, and independent read-only audit.
+- branches are no longer independent;
+- coordination cost exceeds specialist/context benefit;
+- writers would contend for the same state;
+- the remaining work is one tightly coupled integration decision;
+- another worker would add hierarchy without new evidence or capability.
 
-*High-risk areas include: Authentication, secrets, RLS policies, destructive DB migrations, financial calculations, core domain logic, and public API contracts.*
+## Canonical references
 
----
-
-## References
-
-- Anthropic, *How we built our multi-agent research system*.
-- Anthropic, *Effective context engineering for AI agents*.
-- OpenAI, *How OpenAI uses Codex* & *Symphony*.
-- Google, *Subagents have arrived in Gemini CLI*.
-- Microsoft, *Multi-agent patterns* & *Orchestrator and subagent pattern*.
-- Ruan et al., *AOrchestra: Automating Sub-Agent Creation for Agentic Orchestration*, 2026.
-- Sarker et al., *GraphBit: A Graph-based Agentic Framework for Non-Linear Agent Orchestration*, 2026.
-- Qi et al., *LLM-as-Code Agentic Programming for Agent Harness*, 2026.
-- Xu et al., *Discovering Hierarchical Software Engineering Agents via Bandit Optimization*, ICLR 2026.
-- Park et al., *Capable language models can outgrow the benefits of collaboration*, Nature Machine Intelligence, 2026.
+- [`NO_PROGRAMMATIC_ROUTER.md`](NO_PROGRAMMATIC_ROUTER.md)
+- [`LLM_NATIVE_DECISION_PROTOCOL.md`](LLM_NATIVE_DECISION_PROTOCOL.md)
+- [`RUNTIME_ENGINEERING.md`](RUNTIME_ENGINEERING.md)
+- [`CAPABILITIES.md`](CAPABILITIES.md)
+- [`PROJECT_CONTINUITY.md`](PROJECT_CONTINUITY.md)
+- [`../skills/architect-orchestrator/SKILL.md`](../skills/architect-orchestrator/SKILL.md)

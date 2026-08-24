@@ -1,6 +1,16 @@
-# Third-party design skill notices
+# Third-party notices
 
-Agentit includes or adapts ideas/content from the following projects in its design profile. The repository remains Apache-2.0; the notices below preserve the licenses/attribution applicable to the corresponding adapted material.
+Agentit includes, adapts, or is materially informed by ideas/content from the projects below. Agentit's own code and original material remain Apache-2.0; the notices below preserve the attribution and licenses applicable to corresponding upstream material.
+
+## Matt Pocock / skills
+
+Source: https://github.com/mattpocock/skills
+
+MIT License. Copyright (c) 2026 Matt Pocock.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright and permission notice. The Software is provided "AS IS", without warranty of any kind.
+
+Agentit has adapted or incorporated engineering ideas from the upstream project into existing workflows, especially agent-document writing discipline (context pointers/progressive disclosure/completion criteria), feedback-loop-first debugging, requirements interviewing, and related engineering-process guidance. Agentit does not claim drop-in compatibility with Matt Pocock's command/plugin system and should prefer strengthening an existing Agentit skill over vendoring overlapping skills wholesale.
 
 ## Leonxlnx / taste-skill
 

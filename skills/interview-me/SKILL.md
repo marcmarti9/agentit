@@ -15,7 +15,7 @@ Before asking anything, build a small **decision tree** for the task: what mater
 
 The currently answerable unresolved leaves are the **decision frontier**.
 
-Ask **all material questions on the current decision frontier** in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a follow-up batch only when the first answers expose a genuinely new branch that could not reasonably have been known before.
+Ask **all material questions on the current decision frontier** in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a follow-up batch only when the first answers expose **genuinely new material decisions** on a branch that could not reasonably have been known before.
 
 This prevents two opposite failures:
 

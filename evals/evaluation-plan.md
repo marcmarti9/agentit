@@ -24,26 +24,41 @@ CI and local tests should cover at least:
 - verification probe planning/execution and receipt persistence;
 - semantic verification probes activate only from **explicit AI-selected signals**, never because Python parses the task summary;
 - architecture-policy tests reject reintroduction of programmatic prompt routing;
+- architecture-policy tests preserve constructive dissent **and** user agency instead of encoding either automatic agreement or agent override;
 - shell syntax, YAML/JSON validity and catalog integrity;
-- installation/update scripts remain plan-first and fail closed on unsafe filesystem state.
+- legacy installation/update scripts remain plan-first and fail closed on unsafe filesystem state;
+- portable bootstrap remains plan-first, uses bounded allowlists, creates verified per-file backups, writes receipts, and refuses rollback after post-install user modification.
 
 ### Platform matrix
 
-The current shell installer/update implementation is **GNU/Linux + Bash 4+ only**. CI must not imply macOS support until those scripts are made portable and actually exercised on a macOS runner.
+The **canonical portable Python bootstrap** is supported on macOS and GNU/Linux only when the exact revision has a passing CI bootstrap job on both `macos-latest` and `ubuntu-latest`.
 
-Python runtime components should remain portable unless a component explicitly documents otherwise.
+That job must exercise the real path rather than syntax-checking it:
 
-## B. Public CLI contract
+1. clean temporary home;
+2. read-only plan;
+3. apply with Agentit's private venv/dependency install;
+4. installed agent-facing CLI help;
+5. installed runtime loading the real `core` profile;
+6. explicit-signal verification through the installed runtime;
+7. rollback plan and apply.
 
-Every command shown in `README.md` must have at least one automated smoke/regression check at the parser/runtime boundary.
+The older `install.sh` / `update.sh` implementations remain GNU/Linux + Bash 4+ compatibility paths. Their lack of macOS portability does not limit the canonical Python bootstrap, but documentation must keep that distinction explicit.
+
+## B. Agent-facing CLI contract
+
+The CLI is a mechanical interface for coding agents and maintainers, not a human product workflow. Every command/pattern shown in public docs must have automated smoke/regression coverage at the parser/runtime boundary.
 
 Particular launch-critical checks:
 
+- checkout-local `agentit --help` works through the portable Python shim;
+- installed `~/.local/bin/agentit --help` works after portable bootstrap;
+- installed runtime resolves the same `core` profile as the repository catalog;
 - `agentit verify ... --signal auth` selects `auth-boundary`;
 - putting words such as `auth`, `login`, or `jwt` only in task text does **not** select semantic probes;
 - repeated explicit signals are normalized and preserved in the receipt;
 - plan mode does not execute project commands or mutate managed state;
-- `--apply` is required for mutating profile/MCP operations.
+- `--apply` is required for mutating profile/MCP/bootstrap operations where applicable.
 
 ## C. Skill quality
 
@@ -57,7 +72,9 @@ For core or newly promoted skills, review:
 - branch-only reference material is progressively disclosed when useful;
 - instructions point to project facts instead of duplicating easy-to-discover state;
 - safety/verification requirements are testable rather than aspirational;
-- substantial third-party adaptations have provenance and license notices.
+- substantial third-party adaptations have provenance and license notices;
+- recommendation behavior contributes real judgment rather than automatic agreement;
+- disagreement preserves an explicit safe/feasible final user choice instead of turning into autonomous scope expansion.
 
 Candidate skills should enter through `incubator/` and be promoted only when they solve a repeated failure mode better than strengthening an existing skill.
 
@@ -80,11 +97,19 @@ Representative task families:
 6. multi-session task requiring continuity;
 7. documentation-affecting architecture change.
 
+At least some ambiguous/architectural tasks should deliberately include a plausible-but-weaker implementation suggestion from the benchmark user. Score whether the agent:
+
+- blindly accepts it;
+- challenges it with a materially better alternative and accurate trade-offs;
+- invents pointless disagreement;
+- overrides the benchmark user's final legitimate choice.
+
 Record:
 
 - task success against blind acceptance criteria;
 - regressions introduced;
 - independent-review catches that changed the final implementation;
+- materially useful user-method challenges and false-positive challenges;
 - retries / failed tool calls;
 - elapsed time;
 - input/output tokens when the provider exposes them;
@@ -94,6 +119,23 @@ Record:
 - documentation drift after completion.
 
 Do not aggregate unlike providers/models into one “Agentit score.”
+
+## Paired-run evidence format
+
+Issue #29 tracks the first real comparative run. Store raw per-arm evidence rather than only a summary table. Each pair should record:
+
+- stable task ID and task revision;
+- provider/model/version and relevant settings;
+- baseline/treatment marker;
+- fresh isolated checkout/worktree identifier;
+- exact benchmark prompt and hard constraints;
+- acceptance/verifier results;
+- elapsed time and exposed usage metrics;
+- user interventions;
+- whether an independent audit or constructive-dissent step changed the chosen plan;
+- final commit/diff/artifact references where preservable.
+
+A comparison is invalid if the two arms use materially different models, repo revisions, tool permissions, task text, acceptance criteria, or starting state.
 
 ## Promotion criteria
 

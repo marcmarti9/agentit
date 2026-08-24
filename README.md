@@ -2,7 +2,6 @@
 
 [![CI Status](https://github.com/marcmarti9/agentit/actions/workflows/ci.yml/badge.svg)](https://github.com/marcmarti9/agentit/actions)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/version-v0.3.2--stable-green.svg)](https://github.com/marcmarti9/agentit/releases)
 
 **An open-source, provider-neutral reliability layer for AI coding agents.**
 
@@ -133,7 +132,7 @@ agentit enable backend --project . --apply
 agentit verify "changed the login flow" --project . --signal auth
 agentit verify "changed the login flow" --project . --signal auth --apply
 
-# Continuity state
+# Continuity state (init intentionally creates project state)
 agentit continuity status --project .
 agentit continuity init "ship account settings" --project .
 
@@ -143,7 +142,7 @@ agentit mcp enable context7 --project .
 agentit mcp enable context7 --project . --apply
 ```
 
-`--apply` is intentionally explicit on commands that mutate managed state.
+Managed profile/MCP configuration and verification execution are plan-first where shown; `--apply` is required for those mutations. Continuity `init`/`checkpoint` are explicit state-writing commands by design.
 
 ## Install
 
@@ -289,7 +288,7 @@ truly distinct repeated workflow? → incubate → evaluate → promote
 one-off advice? → do not add a skill
 ```
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md). Third-party adaptations and inspirations are documented in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+See [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Documentation map
 
@@ -305,6 +304,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). Third-party adaptations and inspiratio
 | [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) | capability resolution / least privilege |
 | [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md) | MCP catalog/runtime |
 | [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md) | orchestration topologies / specialist contracts |
+| [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md) | skill lifecycle, upstream provenance and promotion policy |
 | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | upstream provenance and licenses |
 
 ## License

@@ -1,11 +1,12 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env python3
+"""Checkout-local Agentit CLI shim.
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+Normal users should not need to call this directly; coding agents use it as a
+mechanical interface after Agentit activation.
+"""
 
-if [[ "${1:-}" == "verify" ]]; then
-  shift
-  exec python3 "$SCRIPT_DIR/router/verify_cli.py" "$@"
-fi
+from router.entrypoint import main
 
-exec python3 "$SCRIPT_DIR/router/profiles.py" "$@"
+
+if __name__ == "__main__":
+    raise SystemExit(main())

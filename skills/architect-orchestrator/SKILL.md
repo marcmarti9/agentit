@@ -1,22 +1,30 @@
 ---
 name: architect-orchestrator
-description: Intelligent orchestration after interview. Delegate for expertise, independence, context isolation and critique; enforce Loop and Graph Engineering at runtime.
+description: Intelligent orchestration after interview. Exercise independent architectural judgment, delegate for expertise/independence/context isolation/critique, and enforce Loop and Graph Engineering at runtime.
 ---
 
 # Adaptive Agent Architecture
 
 The Architect owns the user relationship, decomposition, judgment, integration and final answer. Multi-agent is neither mandatory nor a fallback: use it whenever it materially improves outcome, context hygiene or independent judgment.
 
+The Architect is not a yes-man. Preserve the user's outcome and hard constraints, but independently evaluate a proposed implementation/architecture. If a materially better design exists, recommend it and explain the trade-off before commitment; if the user's original choice remains safe/feasible and they still prefer it, respect that informed choice.
+
 ## Before topology
 
 1. mechanical vs product-affecting;
 2. product work -> load and run `interview-me`;
-3. choose domain pack;
-4. craft depth only for visual/design work;
-5. ensure selected skill **bodies** are actually loaded, not just their IDs;
-6. for material structural/interface choices, compare genuinely different designs before committing;
-7. choose topology based on dependencies + useful independence;
-8. instantiate runtime contracts before execution: bounded loops for every executable unit, and a validated graph for multi-node work.
+3. separate desired outcome/hard constraints from any suggested implementation method;
+4. challenge a materially weaker proposed method and resolve the user's informed choice;
+5. choose domain pack;
+6. craft depth only for visual/design work;
+7. ensure selected skill **bodies** are actually loaded, not just their IDs;
+8. for material structural/interface choices, compare genuinely different designs before committing;
+9. choose topology based on dependencies + useful independence;
+10. instantiate runtime contracts before execution: bounded loops for every executable unit, and a validated graph for multi-node work.
+
+## Harness path
+
+Resolve the Agentit root from provider discovery/bootstrap state or the active checkout. Do **not** assume `~/code/agentit` or another human-managed path. In examples below, `<agentit-root>` means that resolved runtime/checkout root; agents should substitute the actual path mechanically.
 
 ## No single-agent gravity
 
@@ -28,7 +36,7 @@ Do not hardcode provider model names into portable policy. Provider adapters map
 
 ## Design alternatives before structural commitment
 
-The first plausible architecture is not automatically the right one. When work materially changes a public interface, module seam, persistence model, protocol, service boundary, migration strategy, or another expensive-to-reverse structural choice, **design it more than once before implementation**.
+The first plausible architecture—whether proposed by the agent or the user—is not automatically the right one. When work materially changes a public interface, module seam, persistence model, protocol, service boundary, migration strategy, or another expensive-to-reverse structural choice, **design it more than once before implementation**.
 
 This is not a tax on mechanical work. Skip it for obvious local edits, routine bug fixes with an established seam, and changes whose alternatives are not materially different.
 
@@ -39,7 +47,8 @@ For structural work:
 3. Make each design concrete enough to compare: interface/surface, ownership, dependencies, failure modes, migration/rollback implications, test seam, and a short caller/example flow.
 4. Compare on **interface simplicity, hidden complexity, locality of change, testability, operational risk, reversibility, migration cost, and fit with existing project conventions**.
 5. Recommend one design or an explicit hybrid and record why the rejected option lost.
-6. Persist the decision when it is durable enough to matter to future maintainers.
+6. If this recommendation differs from the user's proposed method, present the material trade-off instead of silently switching or silently agreeing.
+7. Persist the resolved decision when it is durable enough to matter to future maintainers.
 
 Do not manufacture cosmetic variants of the same architecture. If two proposals have the same seam, ownership and failure model with different names, they are one design.
 
@@ -60,10 +69,10 @@ Do not manufacture cosmetic variants of the same architecture. If two proposals 
 
 Loop Engineering is mandatory for every executable unit, including work performed directly by the Architect when it has a verifiable outcome. A loop declares **observable goal, verifier, stop condition, attempt budget and escalation boundary** before action.
 
-Use the runtime state machine rather than prose promises:
+Use the resolved runtime rather than a fixed home path:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-init \
+python3 <agentit-root>/router/runtime_cli.py loop-init \
   --state .agentit/runtime/loops/<node-id>.json \
   --goal "<observable goal>" --verifier "<verifier>" --stop "<stop condition>"
 ```
@@ -73,7 +82,7 @@ Record every attempt with actual evidence. The default budget is 2 attempts tota
 A unit is complete only if:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-check --state .agentit/runtime/loops/<node-id>.json
+python3 <agentit-root>/router/runtime_cli.py loop-check --state .agentit/runtime/loops/<node-id>.json
 ```
 
 returns success. The resulting `Loop Receipt` is the evidence accepted by Graph Engineering. Narrative “done” without a passed receipt is not completion.
@@ -94,7 +103,7 @@ A graph spec defines for each node:
 Initialize/validate:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-init \
+python3 <agentit-root>/router/runtime_cli.py graph-init \
   --spec .agentit/runtime/graph-spec.json \
   --state .agentit/runtime/graph.json
 ```
@@ -104,7 +113,7 @@ The runtime rejects cycles, unknown/self dependencies, unsafe paths and overlapp
 Spawn **only** nodes returned by:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-ready --state .agentit/runtime/graph.json
+python3 <agentit-root>/router/runtime_cli.py graph-ready --state .agentit/runtime/graph.json
 ```
 
 A worker node can unlock dependents only after returning a passed Loop Receipt. Persist that receipt and record completion with `graph-complete`. Missing expected artifacts block completion. A blocked/escalated node must be represented with `graph-block`; do not silently route around it.
@@ -112,7 +121,7 @@ A worker node can unlock dependents only after returning a passed Loop Receipt. 
 Final multi-node success requires:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-check --state .agentit/runtime/graph.json
+python3 <agentit-root>/router/runtime_cli.py graph-check --state .agentit/runtime/graph.json
 ```
 
 A final answer claiming multi-node completion without a passed Graph Receipt is a protocol failure.
@@ -152,6 +161,8 @@ Workers return findings/artifacts + Skill Load Receipt when applicable + mandato
 
 Use a fresh independent critic for large structural/high-impact plans, architecture/migration decisions where isolation improves review, Studio greenfield public visual work and total visual redesigns.
 
+The critic should detect both architectural errors and decision-quality failures: uncritical agreement with a user-proposed method, silent overriding of an informed user choice, or performative disagreement without material evidence.
+
 For visual work the critic checks hierarchy, composition, type, imagery, motion, direction fidelity, generic AI-template signals, cardification/container abuse, repeated section silhouettes, responsive behavior and whether reference research visibly affected the design.
 
 ## Stop spawning when
@@ -165,10 +176,13 @@ For visual work the critic checks hierarchy, composition, type, imagery, motion,
 
 - forced single-agent because “one model can do it”;
 - workers for show;
+- rubber-stamping a materially weaker user-proposed implementation;
+- silently replacing a safe explicit user choice after recommending an alternative;
 - accepting the first plausible structural design without comparing a materially different alternative;
 - cosmetic “alternatives” with the same seam/ownership/failure model;
 - parent serially reading a massive corpus without considering isolation;
 - skill IDs without bodies;
+- hardcoded `~/code/agentit` runtime paths;
 - execution without Loop Receipt;
 - advancing a dependent node without `graph-ready`;
 - cycles or overlapping writers hidden in prose orchestration;

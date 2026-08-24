@@ -11,7 +11,7 @@ Agentit does not replace Codex, Claude Code, or another capable coding agent. It
 You + your coding agent
           │
           ▼
-      use agentit
+      "use Agentit"
           │
           ▼
 inspect real project state
@@ -34,6 +34,28 @@ branch → commits → pull request → human merge decision
 ```
 
 > **Status:** Agentit is early-stage and evolving quickly. Its mechanical safety/runtime contracts are tested; it does **not** claim that a prompt harness universally makes every model better, cheaper, or faster. See [Evaluation](#evaluation) for exactly what is and is not measured.
+
+## Human UX: no terminal ceremony
+
+Agentit is designed to be **operated by the coding agent, not by the human through a CLI**.
+
+For normal use, the human interface should be this simple:
+
+```text
+use Agentit
+```
+
+or naturally in another language:
+
+```text
+usa Agentit
+```
+
+On first use, if Agentit is not installed/discoverable yet, the user can give the coding agent this repository and ask it to install and use Agentit. The **agent** owns any cloning, bootstrap, profile activation, verification commands, runtime receipts, MCP configuration, or continuity operations that are needed.
+
+The repository does contain command-line interfaces, but they are **agent-facing mechanical APIs and maintainer/debugging surfaces**. They are not intended to become a workflow the human must memorize.
+
+There are no magic powerwords beyond telling the active agent to use the protocol.
 
 ## Why Agentit exists
 
@@ -104,77 +126,22 @@ Durable architecture, component, contract, operations, troubleshooting, and ADR-
 
 See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) and [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md).
 
-## 60-second tour
+## First-run/bootstrap contract
 
-After installation, activation is intentionally boring:
+The **human should not need to execute installer commands**. A compatible coding agent should be able to bootstrap Agentit on the user's behalf after being given this repository.
 
-```text
-use agentit
-```
+Today, the checked-in `install.sh` / `update.sh` path is still GNU/Linux-oriented and uses Bash 4+ plus GNU utilities. Until the portable bootstrap work lands, an agent running on macOS must treat that limitation as real instead of blindly executing the Linux installer.
 
-or naturally in another language:
+Current implementation prerequisites for the legacy shell bootstrap are:
 
-```text
-usa agentit
-```
+- Git;
+- Python 3 + PyYAML;
+- Bash 4+;
+- GNU/Linux + GNU utilities.
 
-There are no magic powerwords beyond telling the active agent to use the protocol.
+The target direction is a portable agent-facing bootstrap that preserves Agentit's plan-first, backup/hash, path/symlink, rollback, and least-privilege guarantees on both Linux and macOS. See the launch-blocker issue in the repository.
 
-Useful mechanical commands:
-
-```bash
-# Inspect/enable bounded skill profiles for this project
-agentit status --project .
-agentit enable backend --project .
-agentit enable backend --project . --apply
-
-# Plan verification, then execute it
-agentit verify "changed the login flow" --project . --signal auth
-agentit verify "changed the login flow" --project . --signal auth --apply
-
-# Continuity state (init intentionally creates project state)
-agentit continuity status --project .
-agentit continuity init "ship account settings" --project .
-
-# MCP state remains plan-first
-agentit mcp status --project .
-agentit mcp enable context7 --project .
-agentit mcp enable context7 --project . --apply
-```
-
-Managed profile/MCP configuration and verification execution are plan-first where shown; `--apply` is required for those mutations. Continuity `init`/`checkpoint` are explicit state-writing commands by design.
-
-## Install
-
-### Current prerequisites
-
-- Git
-- Python 3
-- PyYAML
-- Bash 4+
-- **GNU/Linux for the current `install.sh` / `update.sh` implementation**
-
-The shared skills and Python runtime are provider-neutral, but the current shell installer uses GNU-specific utilities. macOS is therefore **not yet a supported installer target**; do not assume the shell scripts are portable merely because the skill format is portable.
-
-```bash
-git clone https://github.com/marcmarti9/agentit.git ~/code/agentit
-cd ~/code/agentit
-python3 -m pip install --user PyYAML
-
-# Preview first: no writes
-bash install.sh --provider codex --with-guides
-
-# Apply after reviewing the plan
-bash install.sh --provider codex --with-guides --apply
-
-# Put the CLI on PATH
-mkdir -p ~/.local/bin
-ln -sf ~/code/agentit/agentit ~/.local/bin/agentit
-```
-
-Providers currently handled by the installer are `claude`, `codex`, and `antigravity`; `all` installs the shared core into all supported targets. Provider-specific local credentials/configuration are intentionally not treated as portable project state.
-
-> Want macOS support? The portability work should land before Agentit is marketed as cross-platform. Until then the limitation is explicit rather than hidden.
+Providers currently represented by adapters/discovery are Claude Code, OpenAI Codex, and Antigravity/Open-Skills-style environments. Provider credentials and machine-local secrets are never portable project state.
 
 ## The operating lifecycle
 
@@ -194,6 +161,24 @@ For substantial work the policy is:
 
 Canonical end-to-end playbook: [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md).
 
+## Agent-facing mechanical interfaces
+
+Humans should not have to drive these manually. They exist so the active agent can turn its semantic decision into deterministic, inspectable operations.
+
+Examples of internal surfaces include:
+
+- project profile activation (`status`, `enable`, `disable`);
+- explicit-signal verification (`verify --signal ...`);
+- continuity state/checkpoints;
+- Loop/Graph runtime state and receipts;
+- worker-context construction;
+- MCP status/configuration;
+- capability/inventory resolution.
+
+The important boundary is that **the AI decides what the task means and which semantic signals apply; the CLI/runtime only executes explicit mechanical instructions**.
+
+For example, a coding agent that has established an auth/API change may internally invoke verification with explicit `auth`/`api` signals. The human should only see the resulting plan/evidence when it is useful, not be asked to type the command.
+
 ## Profiles
 
 The default profile is intentionally smaller than the full repository catalog.
@@ -212,22 +197,11 @@ The default profile is intentionally smaller than the full repository catalog.
 | `growth` / `agency` | productized growth/agency workflows |
 | `all` | every repository skill; explicit use only |
 
-Run the profile manager without a command to inspect resolved skill IDs:
-
-```bash
-python3 router/profiles.py --profile core
-```
+Profiles are inventories/discovery boundaries for the **agent**. They are not configuration choices the human should routinely manage.
 
 ## Verification
 
-`agentit verify` is signal-gated. Mechanical project facts are detected automatically; semantic facts chosen by the active AI are passed explicitly so Python never becomes a disguised natural-language router.
-
-Examples:
-
-```bash
-agentit verify "changed auth middleware" --signal auth --signal api --project .
-agentit verify "changed auth middleware" --signal auth --signal api --project . --apply
-```
+Agentit's verification runtime is signal-gated. Mechanical project facts are detected automatically; semantic facts chosen by the active AI are passed explicitly so Python never becomes a disguised natural-language router.
 
 The current catalog includes project-native tests/build checks, secret scans, acceptance/red→green checks, and task-scoped checks for surfaces such as auth, HTTP, Postgres/Supabase, and browser/UI work.
 
@@ -248,15 +222,11 @@ What the repository does **not** currently prove:
 
 Those claims require agent-level comparative evals, not deterministic prompt classifiers. See [`evals/evaluation-plan.md`](evals/evaluation-plan.md) and [`evals/results.md`](evals/results.md).
 
-## Testing
+## Maintainer testing
 
-```bash
-python3 -m unittest discover -s router -p "test_*.py"
-python3 -m unittest discover -s tests
-bash -n install.sh update.sh security/harden-local.sh
-```
+The repository has deterministic mechanical suites and CI. Maintainers and coding agents may invoke the underlying test commands directly; normal users should not need to.
 
-CI runs the mechanical suites and validates YAML/JSON/catalog integrity. Public claims should refer to the CI result for the exact commit being discussed, not an old local run.
+CI validates the runtime/utility suites, shell syntax where applicable, registry YAML/JSON, profile/catalog integrity, and architecture-policy invariants. Public claims should refer to the CI result for the exact commit being discussed, not an old local run.
 
 ## Repository map
 

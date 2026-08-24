@@ -5,7 +5,7 @@
 
 **An open-source, provider-neutral reliability layer for AI coding agents.**
 
-Agentit does not replace Codex, Claude Code, or another capable coding agent. It gives the agent a shared operating protocol for the parts that still go wrong in real repositories: understanding the actual task, challenging risky decisions, loading only relevant skills, delegating deliberately, preserving state, verifying with fresh evidence, keeping durable documentation aligned, and shipping through reviewable Git changes.
+Agentit does not replace Codex, Claude Code, or another capable coding agent. It gives the agent a shared operating protocol for the parts that still go wrong in real repositories: understanding the actual task, challenging risky or materially weaker decisions, loading only relevant skills, delegating deliberately, preserving state, verifying with fresh evidence, keeping durable documentation aligned, and shipping through reviewable Git changes.
 
 ```text
 You + your coding agent
@@ -17,7 +17,9 @@ You + your coding agent
 inspect real project state
           │
           ▼
-primary task decision ──► independent decision audit
+primary task decision ──► challenge proposed method when warranted
+          │
+          ├──────────────► independent decision audit
           │                         │
           │                 challenge / escalate
           ▼
@@ -51,9 +53,9 @@ or naturally in another language:
 usa Agentit
 ```
 
-On first use, if Agentit is not installed/discoverable yet, the user can give the coding agent this repository and ask it to install and use Agentit. The **agent** owns any cloning, bootstrap, profile activation, verification commands, runtime receipts, MCP configuration, or continuity operations that are needed.
+On first use, if Agentit is not installed/discoverable yet, give the coding agent this repository and ask it to install and use Agentit. The **agent** owns cloning/checking the repo, inspecting the bootstrap plan, applying it when authorized, activating profiles, running verification, maintaining runtime receipts, configuring MCPs, and persisting continuity state.
 
-The repository does contain command-line interfaces, but they are **agent-facing mechanical APIs and maintainer/debugging surfaces**. They are not intended to become a workflow the human must memorize.
+The repository contains command-line interfaces because agents need deterministic mechanical surfaces. They are **agent-facing APIs and maintainer/debugging tools**, not a terminal workflow the human is expected to memorize.
 
 There are no magic powerwords beyond telling the active agent to use the protocol.
 
@@ -62,6 +64,7 @@ There are no magic powerwords beyond telling the active agent to use the protoco
 Modern coding agents are already very capable. The remaining failure modes are often process failures rather than code-generation failures:
 
 - the agent solves the wrong interpretation of the task;
+- the agent rubber-stamps the user's first proposed method even when a materially better route exists;
 - a plausible first plan is never challenged;
 - every skill/tool is dumped into context whether useful or not;
 - subagents are spawned for theatre, or useful independent review is skipped;
@@ -82,6 +85,23 @@ Mechanical code starts *after* that decision. It handles things software is actu
 
 See [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md).
 
+### The agent should disagree when disagreement helps
+
+Agentit is deliberately **not a yes-man protocol**.
+
+If the user says “build X using A”, the agent separates the desired outcome (**X**) from the proposed method (**A**) unless A is an explicit hard requirement. When inspection shows that B is materially better on correctness, simplicity, maintainability, security, reversibility, performance, UX, cost, migration risk, or architecture fit, the agent should say so and recommend B.
+
+The contract is:
+
+```text
+A is workable, but I recommend B because <material reason>.
+A: <main upside> / <main downside>.
+B: <main upside> / <main downside>.
+My recommendation is B. If you still prefer A, I can implement A.
+```
+
+That is **constructive dissent, not insubordination**. The agent does not invent conflict for style, and a strong recommendation does not authorize destructive actions, hidden scope expansion, spend, deploys, or ignoring the user's informed final choice. Safety/authorization constraints remain hard boundaries.
+
 ### A second model challenges material decisions
 
 Before material execution, Agentit asks an independent model to return:
@@ -97,7 +117,7 @@ CONFIDENCE: low | medium | high
 
 Ordinary work can use a cheap/fast reviewer. High-consequence work—production, destructive operations, auth, payments, secrets, PII, difficult migrations, or major architecture—requires stronger independent review.
 
-The reviewer is not another decorative manager. It exists to catch a bad first decision while changing it is still cheap.
+The reviewer is not another decorative manager. It exists to catch a bad first decision while changing it is still cheap, including both uncritical agreement and pointless performative disagreement.
 
 See [`docs/LLM_NATIVE_DECISION_PROTOCOL.md`](docs/LLM_NATIVE_DECISION_PROTOCOL.md).
 
@@ -128,18 +148,53 @@ See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md) and [`docs/DOCUME
 
 ## First-run/bootstrap contract
 
-The **human should not need to execute installer commands**. A compatible coding agent should be able to bootstrap Agentit on the user's behalf after being given this repository.
+The **human should not need to execute installer commands**. A compatible coding agent can bootstrap Agentit on the user's behalf after being given this repository.
 
-Today, the checked-in `install.sh` / `update.sh` path is still GNU/Linux-oriented and uses Bash 4+ plus GNU utilities. Until the portable bootstrap work lands, an agent running on macOS must treat that limitation as real instead of blindly executing the Linux installer.
+The canonical bootstrap is now a **portable Python path for macOS and GNU/Linux**. It does not require Bash 4, GNU coreutils, Homebrew, `sha256sum`, `stat -c`, `mv -T`, or `mapfile`.
 
-Current implementation prerequisites for the legacy shell bootstrap are:
+Internally, an agent can inspect a read-only plan and then apply it:
 
-- Git;
-- Python 3 + PyYAML;
-- Bash 4+;
-- GNU/Linux + GNU utilities.
+```text
+python3 bootstrap.py --provider <claude|codex|antigravity|all>
+python3 bootstrap.py --provider <...> --apply
+```
 
-The target direction is a portable agent-facing bootstrap that preserves Agentit's plan-first, backup/hash, path/symlink, rollback, and least-privilege guarantees on both Linux and macOS. See the launch-blocker issue in the repository.
+Those commands are shown for transparency/maintainers; the user should normally just ask their coding agent to install Agentit.
+
+The bootstrap creates:
+
+- a self-contained runtime at `~/.agentit/runtime`;
+- a private Python environment at `~/.agentit/venv` for runtime dependencies;
+- bounded provider discovery surfaces containing the global `core` skills;
+- provider-specific bounded agent profiles where applicable;
+- an agent-facing CLI shim at `~/.local/bin/agentit`.
+
+The coding agent may call the returned CLI path directly; the human does not need to modify `PATH`.
+
+### Bootstrap safety and rollback
+
+The portable bootstrap is plan-first and uses:
+
+- source/destination symlink rejection;
+- explicit packaging/provider allowlists in `bootstrap-manifest.json`;
+- SHA-256 verification;
+- per-file backup of replaced destinations;
+- atomic replacement;
+- a machine-readable bootstrap receipt;
+- fail-closed rollback if an installed destination changed afterward.
+
+The receipt path returned after apply can be used by the agent to inspect or apply rollback:
+
+```text
+python3 bootstrap.py --rollback <receipt-manifest>
+python3 bootstrap.py --rollback <receipt-manifest> --apply
+```
+
+Rollback intentionally does not recursively delete `~/.agentit/venv` or arbitrary directories. It changes only files proven safe by the receipt.
+
+The normal bootstrap path does **not** overwrite general provider credentials/configuration. Settings/hooks are separate explicit opt-ins, not part of launch installation.
+
+The legacy `install.sh` / `update.sh` path remains GNU/Linux-oriented for compatibility and is no longer the canonical cross-platform bootstrap.
 
 Providers currently represented by adapters/discovery are Claude Code, OpenAI Codex, and Antigravity/Open-Skills-style environments. Provider credentials and machine-local secrets are never portable project state.
 
@@ -149,15 +204,16 @@ For substantial work the policy is:
 
 1. **Inspect facts first.** Read the actual repo/docs/tool state before asking the user for discoverable information.
 2. **Create `TASK_DECISION`.** Outcome, known facts, unknowns, risk, reversibility, skills/tools, topology, implementation plan, and verification strategy.
-3. **Audit independently.** Cheap capable reviewer for ordinary work; stronger critic when risk or disagreement warrants it.
-4. **Interview only unresolved product decisions.** Ask one consolidated, recommendation-led round instead of silently inventing product intent.
-5. **Load the smallest useful skill/tool set.** Do not spray the catalog into context.
-6. **Persist continuity for substantial work.** Sessions must be replaceable.
-7. **Execute directly or delegate because there is a concrete benefit.** Specialization, isolation, parallel investigation, context separation, or independent judgment—not agent theatre.
-8. **Use Loop/Graph contracts for executable work.** Bounded attempts, explicit verifiers, fail-closed escalation.
-9. **Update durable docs with the implementation.** Architecture/operations/contracts/decisions must not lag behind code.
-10. **Verify from fresh evidence.** No `done`, `fixed`, or `passing` claim from memory, a worker summary, or stale output.
-11. **Ship through reviewable Git by default.** Branch → commits → PR → reviewer/user merge decision.
+3. **Challenge the proposed method when warranted.** Preserve user outcome/constraints; surface a materially better alternative instead of rubber-stamping.
+4. **Audit independently.** Cheap capable reviewer for ordinary work; stronger critic when risk or disagreement warrants it.
+5. **Interview only unresolved product decisions.** Ask one consolidated, recommendation-led round instead of silently inventing product intent.
+6. **Load the smallest useful skill/tool set.** Do not spray the catalog into context.
+7. **Persist continuity for substantial work.** Sessions must be replaceable.
+8. **Execute directly or delegate because there is a concrete benefit.** Specialization, isolation, parallel investigation, context separation, or independent judgment—not agent theatre.
+9. **Use Loop/Graph contracts for executable work.** Bounded attempts, explicit verifiers, fail-closed escalation.
+10. **Update durable docs with the implementation.** Architecture/operations/contracts/decisions must not lag behind code.
+11. **Verify from fresh evidence.** No `done`, `fixed`, or `passing` claim from memory, a worker summary, or stale output.
+12. **Ship through reviewable Git by default.** Branch → commits → PR → reviewer/user merge decision.
 
 Canonical end-to-end playbook: [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md).
 
@@ -167,6 +223,7 @@ Humans should not have to drive these manually. They exist so the active agent c
 
 Examples of internal surfaces include:
 
+- portable bootstrap and rollback;
 - project profile activation (`status`, `enable`, `disable`);
 - explicit-signal verification (`verify --signal ...`);
 - continuity state/checkpoints;
@@ -188,7 +245,7 @@ The default profile is intentionally smaller than the full repository catalog.
 | `core` | orchestration, planning, debugging, review, testing, security, verification |
 | `frontend` | UI engineering, browser/runtime checks, performance, simplification |
 | `backend` | interfaces, observability, performance, simplification |
-| `supabase` | backend + PostgreSQL/Supabase discipline |
+| `supabase` | backend + PostgreSQL/Supabase-specific guidance |
 | `product` | intent, specs, product/growth decisions |
 | `writing` | technical docs and editing |
 | `design` | deeper UI/UX research, art direction, motion/spatial craft |
@@ -211,7 +268,7 @@ See [`probes/catalog.yaml`](probes/catalog.yaml).
 
 Agentit intentionally separates **mechanical correctness** from **claims about model quality**.
 
-Mechanical tests cover profile activation, manifests, path/symlink safety, capabilities, MCP state, continuity, worker context, Loop/Graph runtime, verification receipts, and architecture-policy invariants.
+Mechanical tests cover profile activation, manifests, path/symlink safety, capabilities, MCP state, continuity, worker context, Loop/Graph runtime, verification receipts, portable bootstrap/rollback, and architecture-policy invariants.
 
 What the repository does **not** currently prove:
 
@@ -226,13 +283,15 @@ Those claims require agent-level comparative evals, not deterministic prompt cla
 
 The repository has deterministic mechanical suites and CI. Maintainers and coding agents may invoke the underlying test commands directly; normal users should not need to.
 
-CI validates the runtime/utility suites, shell syntax where applicable, registry YAML/JSON, profile/catalog integrity, and architecture-policy invariants. Public claims should refer to the CI result for the exact commit being discussed, not an old local run.
+CI validates runtime/utility suites, legacy shell syntax where applicable, registry YAML/JSON, profile/catalog integrity, architecture-policy invariants, and the **real portable bootstrap on both macOS and Ubuntu**. Public claims should refer to the CI result for the exact commit being discussed, not an old local run.
 
 ## Repository map
 
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | portable global operating rules |
+| `bootstrap.py` / `router/bootstrap.py` | portable agent-facing install/rollback path |
+| `bootstrap-manifest.json` | mechanical runtime/provider packaging manifest |
 | `skills/using-agentit/` | end-to-end activation playbook |
 | `skills/task-router/` | model-owned task decision + reviewer contracts |
 | `skills/` | curated JIT knowledge modules |
@@ -241,6 +300,7 @@ CI validates the runtime/utility suites, shell syntax where applicable, registry
 | `profiles.yaml` | bounded profile composition |
 | `probes/` | verification catalog + mechanical probes |
 | `docs/` | canonical architecture/policy/runtime/continuity docs |
+| `templates/` | explicit non-secret provider templates; machine-local `.local` files stay untracked |
 | `incubator/` | candidate/rejected capability research |
 | `.codex/agents/` | bounded Codex worker profiles |
 | `reports/` | dated research/history; not all reports describe the current architecture |

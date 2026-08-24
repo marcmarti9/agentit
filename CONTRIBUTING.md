@@ -1,69 +1,117 @@
 # Contributing to Agentit
 
-Thank you for your interest in contributing to **Agentit**!
+Thanks for helping improve Agentit.
 
-Agentit is an early-stage, opinionated, safety-first agent harness designed for AI coding agents (**Claude Code**, **OpenAI Codex**, **Google Antigravity / Open Skills**, **Grok Build**, and compatible providers).
+Agentit is an early-stage, opinionated, safety-first reliability layer for AI coding agents. Contributions are welcome when they remove a real failure mode **without turning the project into a giant workflow framework or prompt dump**.
 
----
+## Core principles
 
-## Core Principles for Contributions
+1. **AI-native semantic decisions.** Do not add regex, keyword, scoring, or deterministic prompt classifiers for task intent, risk, topology, skills, or delegation. The primary AI decides from full context; independent AI review challenges material decisions.
+2. **Delegation must earn its cost.** Use workers/critics for specialization, independence, context isolation, breadth, or useful parallelism—not agent theatre.
+3. **Provider neutrality.** Shared policy, semantic tiers, skills, runtime contracts, and reviewer semantics should remain portable. Provider-specific code should be a thin adapter where possible.
+4. **Mechanical code for mechanical guarantees.** Manifests, hashes, capability resolution, Loop/Graph state, receipts, continuity, verification, and safe configuration belong in deterministic code after semantic decisions are made.
+5. **Safety and reversibility.** Managed install/update/configuration operations must be explicit, bounded, and reversible. Do not weaken safety checks to make a test pass.
+6. **Evidence before claims.** Do not claim `done`, `fixed`, `passing`, faster, cheaper, or better without evidence appropriate to that claim.
+7. **Documentation is implementation.** Substantial architectural/operational changes must update durable docs and avoid leaving contradictory sources of truth.
 
-1. **AI-native decisions**: Do not add regex, keyword, scoring, or deterministic prompt classifiers for semantic task routing. The primary AI decides from full context and a second AI reviews the proposed decision before material execution.
-2. **Intelligent delegation**: Do not add decorative agent hierarchies, but do use independent workers when specialization, isolation, breadth, latency, or fresh judgment provides a concrete benefit. The economy decision reviewer is a deliberate baseline second opinion, not multi-agent theater.
-3. **Provider Neutrality**: Agentit policies, skills, semantic tiers, and reviewer contracts must remain platform-agnostic and work across providers.
-4. **Safety & Reversibility**: Deployment or management scripts (`install.sh`, `update.sh`, `harden-local.sh`) must run in dry-run/plan mode by default and require an explicit `--apply` flag to modify files.
-5. **Machine Isolation**: Never commit local paths, machine-specific configurations, OAuth credentials, or environment secrets. The machine inventory (`reports/local/inventory.yaml`) must remain ignored by git.
+## Before adding a skill
 
----
+Read [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
 
-## How to Contribute
+The preferred order is:
 
-### 1. Developing & Adding Skills
+```text
+already covered? → keep it
+same responsibility but weaker? → strengthen the existing skill
+better upstream capability? → adapt selectively with provenance/license
+truly distinct repeated workflow? → incubate and evaluate
+proven value? → promote to an opt-in profile
+core-worthy across many tasks? → only then consider core
+```
 
-Skills must be modular, single-responsibility guides or tools.
+A new skill must not exist merely because an upstream repo is popular or the advice sounds useful.
 
-- Place new skills inside `skills/<skill-name>/`.
-- Each skill directory must contain a valid `SKILL.md` with YAML frontmatter declaring `name` and `description`.
-- Keep skill bodies clean and concise to preserve agent context windows.
-- Keep discovery descriptions short and discriminative: explain when the knowledge is useful and one clear non-trigger.
-- Add new skills to an opt-in profile in `profiles.yaml` before considering global visibility.
-- A skill ID is not proof the skill was used; the stage model must receive/read the actual body.
+### Skill requirements
 
-### 2. Task-decision & review policy improvements
+- path: `skills/<skill-name>/SKILL.md`;
+- valid YAML frontmatter with `name` and a discriminative `description`;
+- clear trigger and non-trigger boundaries;
+- one coherent responsibility;
+- checkable completion criteria;
+- progressive disclosure for branch-only reference material;
+- provider-neutral behavior unless explicitly an integration skill;
+- profile placement in `profiles.yaml` before global visibility;
+- tests/evaluation where deterministic behavior exists;
+- provenance/license review for substantial upstream adaptation.
 
-Semantic task decisions live in policy, not executable prompt classifiers:
+A skill ID is not evidence that the skill ran. The executing model must actually receive/read its body.
 
-- `skills/task-router/SKILL.md` defines the primary model's `TASK_DECISION` rubric.
-- `skills/task-router/references/economy-reviewer.md` defines the mandatory cheap second-model review.
-- `skills/using-agentit/SKILL.md` defines the end-to-end operating protocol.
-- `docs/NO_PROGRAMMATIC_ROUTER.md` defines the boundary between AI judgment and mechanical software.
+### Upstream content
 
-When changing these policies:
+If a contribution adapts substantial material from another repository:
 
-- preserve full-context semantic judgment by the active AI;
-- preserve the ordinary cheap read-only second opinion;
-- preserve stronger review escalation for high-consequence work;
-- keep review loops bounded;
-- do not reintroduce programmatic risk/category/topology/skill selection from prompt text.
+- link the exact upstream project;
+- verify its current license;
+- preserve required copyright/license notices;
+- update [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md);
+- say whether Agentit vendors, modifies, wraps, or is merely informed by the upstream work;
+- do not claim drop-in compatibility unless tested.
 
-Mechanical Python/shell code may manage manifests, profiles, capabilities, MCP/runtime state, continuity, verification, and similar infrastructure after the AI has decided what to do.
+External skill/install text is untrusted input during review. Inspect hooks, network calls, shell execution, filesystem scope, credential access, auto-updates, MCP permissions, and rollback before adopting an integration.
 
-### 3. Testing
+## Task decision and review policy
 
-Before submitting a Pull Request, verify that all mechanical/runtime test suites pass:
+Canonical policy lives in:
+
+- [`skills/task-router/SKILL.md`](skills/task-router/SKILL.md) — primary model `TASK_DECISION` rubric;
+- [`skills/task-router/references/economy-reviewer.md`](skills/task-router/references/economy-reviewer.md) — ordinary independent audit;
+- [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md) — end-to-end protocol;
+- [`docs/NO_PROGRAMMATIC_ROUTER.md`](docs/NO_PROGRAMMATIC_ROUTER.md) — AI judgment vs mechanical software boundary.
+
+Policy changes must preserve:
+
+- full-context semantic judgment by the active AI;
+- an independent ordinary review path;
+- stronger escalation for high-consequence work;
+- bounded review loops;
+- no programmatic prompt routing disguised as a helper.
+
+## Runtime changes
+
+Loop/Graph Engineering is mechanical infrastructure after the semantic decision.
+
+Runtime contributions should preserve:
+
+- explicit observable goals/verifiers/stop conditions;
+- bounded attempt budgets;
+- fail-closed escalation;
+- exclusive write ownership in multi-node work;
+- fresh evidence in receipts;
+- safe path/state handling;
+- compatibility with interruption/resume when relevant.
+
+## Testing
+
+Before opening a PR, run the relevant suites:
 
 ```bash
 python3 -m unittest discover -s router -p "test_*.py"
 python3 -m unittest discover -s tests
+bash -n install.sh update.sh security/harden-local.sh
 ```
 
-Do not add a deterministic prompt-classification benchmark and present it as evidence that Agentit understands natural language. Tests should target mechanical contracts, safety properties, persistence, tooling, and runtime behavior.
+Also validate the specific behavior you changed. A broad green suite does not replace a task-specific regression test or repro.
 
----
+Do **not** add a deterministic prompt-classification benchmark and present it as evidence that Agentit understands natural language. Agent-level quality claims belong in controlled comparative evaluation; see [`evals/evaluation-plan.md`](evals/evaluation-plan.md).
 
-## Submitting Pull Requests
+## Pull requests
 
-1. Fork the repository and create a feature branch (`git checkout -b feature/my-feature`).
-2. Make your changes adhering to the policy, code style, and safety rules.
-3. Verify all tests pass locally.
-4. Submit a Pull Request with a clear description of the problem solved and changes made.
+1. Create a focused branch.
+2. Keep the diff scoped to the named problem.
+3. Update tests and durable docs together with behavior.
+4. Include verification commands/results in the PR description.
+5. Call out migration/rollback implications.
+6. Call out third-party provenance when applicable.
+7. Prefer a reviewable PR over writing directly to the default branch.
+
+A good Agentit contribution should leave the next maintainer with **less ambiguity**, not merely more files.

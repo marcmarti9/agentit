@@ -7,6 +7,8 @@ on:
       - main
       - "feature/**"
       - "refactor/**"
+      - "fix/**"
+      - "audit/**"
 
 permissions:
   contents: read
@@ -32,17 +34,102 @@ jobs:
       - name: Run script tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
-      - name: Check shell syntax
-        run: bash -n install.sh update.sh security/harden-local.sh agentit
+      - name: Check legacy shell syntax
+        run: bash -n install.sh update.sh security/harden-local.sh
+
+      - name: Check portable Python entrypoints
+        run: |
+          python3 -m py_compile agentit bootstrap.py router/entrypoint.py router/bootstrap.py
+          python3 agentit --help >/dev/null
+          python3 bootstrap.py --help >/dev/null
 
       - name: Validate registry YAML
         run: python3 -c "import yaml; yaml.safe_load(open('registry.yaml', encoding='utf-8'))"
 
       - name: Validate settings JSON
-        run: python3 -m json.tool settings.json >/dev/null
+        run: |
+          python3 -m json.tool settings.json >/dev/null
+          python3 -m json.tool templates/claude/settings.local.example.json >/dev/null
+          python3 -m json.tool bootstrap-manifest.json >/dev/null
 
       - name: Validate profile catalog
         run: python3 -c "import yaml; yaml.safe_load(open('profiles.yaml', encoding='utf-8'))"
 
       - name: Validate capability catalog
         run: python3 -c "from router.capabilities import load_capability_catalog; load_capability_catalog()"
+
+  portable-bootstrap:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create clean bootstrap home
+        run: mkdir -p "$RUNNER_TEMP/agentit-home"
+
+      - name: Verify bootstrap plan is read-only
+        run: |
+          python3 bootstrap.py --provider codex --home "$RUNNER_TEMP/agentit-home" > "$RUNNER_TEMP/plan.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          plan = json.loads(Path(os.environ['RUNNER_TEMP'], 'plan.json').read_text())
+          home = Path(os.environ['RUNNER_TEMP'], 'agentit-home')
+          assert plan['mode'] == 'plan'
+          assert not (home / '.agentit').exists()
+          assert not (home / '.codex').exists()
+          PY
+
+      - name: Apply portable bootstrap with real dependency install
+        run: |
+          python3 bootstrap.py --provider codex --home "$RUNNER_TEMP/agentit-home" --apply > "$RUNNER_TEMP/apply.json"
+          cat "$RUNNER_TEMP/apply.json"
+
+      - name: Run installed agent-facing CLI
+        run: |
+          CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"
+          "$CLI" --help >/dev/null
+          "$CLI" --format json > "$RUNNER_TEMP/core.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          core = json.loads(Path(os.environ['RUNNER_TEMP'], 'core.json').read_text())
+          assert 'using-agentit' in core
+          assert 'task-router' in core
+          PY
+
+      - name: Verify explicit signal path through installed runtime
+        run: |
+          CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"
+          "$CLI" verify "changed auth middleware" --project "$GITHUB_WORKSPACE" --signal auth --format json > "$RUNNER_TEMP/verify.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          payload = json.loads(Path(os.environ['RUNNER_TEMP'], 'verify.json').read_text())
+          ids = {probe['id'] for probe in payload['probes']}
+          assert 'auth-boundary' in ids
+          PY
+
+      - name: Exercise fail-closed rollback
+        run: |
+          MANIFEST="$(python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path(os.environ['RUNNER_TEMP'], 'apply.json').read_text())
+          print(data['backup_manifest'])
+          PY
+          )"
+          python3 bootstrap.py --rollback "$MANIFEST" > "$RUNNER_TEMP/rollback-plan.json"
+          python3 bootstrap.py --rollback "$MANIFEST" --apply > "$RUNNER_TEMP/rollback.json"
+          cat "$RUNNER_TEMP/rollback.json"

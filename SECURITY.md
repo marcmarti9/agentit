@@ -6,16 +6,33 @@ Agentit separates **semantic AI judgment** from **deterministic safety controls*
 
 ### Managed configuration and filesystem changes
 
-- `install.sh`, `update.sh`, and `security/harden-local.sh` are **plan-first**. Their managed changes require explicit `--apply`.
+- The canonical `bootstrap.py` / `agentit bootstrap` flow is **plan-first** and requires explicit `--apply` for installation changes.
+- Legacy `install.sh`, `update.sh`, and `security/harden-local.sh` remain plan-first for their managed changes.
 - Profile and MCP enable/disable operations are plan-first and require `--apply` to apply managed configuration.
 - `agentit verify` is plan-first; `verify --apply` executes probes and writes a verification receipt.
 - Continuity commands such as `continuity init` and `continuity checkpoint` are explicit state-writing commands by design and are **not** described as dry-run operations.
 
 Do not generalize a dry-run guarantee to commands whose purpose is explicitly to create project state.
 
+### Portable bootstrap safety
+
+The canonical portable bootstrap uses Python standard-library filesystem primitives rather than GNU-specific shell utilities. Its managed file operations include:
+
+- rejection of symlinked path components in source and destination trees;
+- provider/runtime allowlists from `bootstrap-manifest.json`;
+- a private Agentit runtime under `~/.agentit/runtime`;
+- a private virtual environment under `~/.agentit/venv` for runtime Python dependencies;
+- SHA-256 verification before and after managed copies;
+- per-file backups for pre-existing destinations;
+- atomic temporary-file replacement;
+- a bootstrap receipt containing installed hashes and rollback metadata;
+- fail-closed rollback when an installed destination was modified after installation.
+
+The bootstrap intentionally does **not** recursively delete the private runtime/venv during rollback. It restores/removes only files proven by the receipt to be safe to change.
+
 ### Filesystem safety
 
-For managed install/update paths, Agentit uses controls such as:
+For other managed install/update paths, Agentit uses controls such as:
 
 - rejection of symlinked/unsafe path components where applicable;
 - explicit allowlists instead of arbitrary tree import for sensitive provider state;
@@ -30,9 +47,15 @@ These guarantees apply to the code paths that implement them; they are not a cla
 
 Never commit API keys, OAuth tokens, cookies, private keys, database credentials, `.env` contents, auth headers, or other secret material to Agentit.
 
-Git ignores local report/backups/runtime patterns such as `reports/local/`, `backups/local/`, `.agentit/`, and `*.local.json`. The repository currently contains a tracked baseline `settings.local.json` used only as an **explicit opt-in Claude settings template**; it must remain free of machine secrets. Local secret-bearing customization belongs outside version control.
+Git ignores local report/backups/runtime patterns such as `reports/local/`, `backups/local/`, `.agentit/`, and `*.local.json`. **No file named exactly `settings.local.json` is tracked.** The repository template lives at `templates/claude/settings.local.example.json`; an agent may copy it to a machine-local Claude path only through an explicit opt-in install action.
 
-A future packaging cleanup should rename that tracked baseline to an unambiguously non-local template name so contributors cannot mistake it for safe machine-local storage.
+Machine-local `.local` files remain untracked and must not be treated as safe places to publish or commit secrets merely because Git ignores them.
+
+### Provider configuration
+
+The normal launch/bootstrap path installs Agentit's runtime, core skill discovery surfaces and bounded agent profiles. It does **not** require replacing provider credentials or general provider configuration.
+
+Optional settings/hook installation is deliberately separate from the normal path and must be explicitly requested/reviewed. Credentials and machine-specific secrets are never portable Agentit state.
 
 ### External skills, hooks and MCPs
 
@@ -53,9 +76,11 @@ Before adopting executable/configuration behavior, inspect:
 
 See [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
 
-## Supported installer platform
+## Supported bootstrap platforms
 
-The current `install.sh` and `update.sh` implementations rely on GNU/Linux/Bash 4+ behavior and utilities. **macOS is not currently a supported shell-installer target.** Do not treat provider neutrality as proof of shell-script portability.
+The canonical Python bootstrap is intended for **macOS and GNU/Linux** and is tested in CI on both platforms before the README may claim support.
+
+The older `install.sh` / `update.sh` implementations remain GNU/Linux/Bash-4+-oriented compatibility paths and must not be used as evidence of macOS shell portability.
 
 ## Reporting vulnerabilities
 

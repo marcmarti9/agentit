@@ -9,6 +9,8 @@ description: Break clear requirements into ordered tasks. Use for multi-step wor
 
 Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
 
+Planning is not a rubber-stamp phase. Preserve the user's desired outcome and explicit constraints, but independently evaluate any implementation approach the user proposed. If a materially better route exists, recommend it before turning the weaker route into tasks.
+
 ## When to Use
 
 - You have a spec and need to break it into implementable units
@@ -29,8 +31,25 @@ Before writing any code, operate in read-only mode:
 - Identify existing patterns and conventions
 - Map dependencies between components
 - Note risks and unknowns
+- Separate the user's desired outcome/hard constraints from their suggested implementation method
 
 **Do NOT write code during planning.** The output is a plan document saved to `tasks/plan.md` and a task list saved to `tasks/todo.md`, not implementation.
+
+### Step 1.5: Challenge the proposed method when it matters
+
+Do not automatically convert the user's proposed approach into the plan.
+
+If inspection shows another approach is materially better on correctness, simplicity, maintainability, security, reversibility, performance, UX, cost, migration risk, or fit with the existing architecture:
+
+1. state the concern with the requested approach;
+2. propose the better alternative concretely;
+3. compare the important trade-offs;
+4. recommend one clearly;
+5. if both remain safe and feasible, let the user keep the original approach after seeing the trade-offs.
+
+Do not disagree merely to sound independent. If the user's method is reasonable and no alternative has a material advantage, proceed without ceremony.
+
+Do not silently replace a user-owned decision. A recommendation changes the plan only when the user accepts it, when the method was not actually fixed as a requirement, or when project/safety rules make the original path invalid.
 
 ### Step 2: Identify the Dependency Graph
 
@@ -174,6 +193,9 @@ Create the `tasks/` directory if it does not exist. These paths are the conventi
 - [Key decision 1 and rationale]
 - [Key decision 2 and rationale]
 
+## Alternatives / User trade-offs
+- [If the user's proposed method was challenged, record the original option, recommended alternative, trade-offs and final user choice]
+
 ## Task List
 
 ### Phase 1: Foundation
@@ -219,6 +241,7 @@ When multiple agents or sessions are available:
 
 | Rationalization | Reality |
 |---|---|
+| "The user suggested it, so I should just plan it" | The user owns the outcome and final choice; the agent still owes them technical/product judgment before commitment. |
 | "I'll figure it out as I go" | That's how you end up with a tangled mess and rework. 10 minutes of planning saves hours. |
 | "The tasks are obvious" | Write them down anyway. Explicit tasks surface hidden dependencies and forgotten edge cases. |
 | "Planning is overhead" | Planning is the task. Implementation without a plan is just typing. |
@@ -227,6 +250,8 @@ When multiple agents or sessions are available:
 ## Red Flags
 
 - Starting implementation without a written task list
+- Rubber-stamping a materially weaker user-proposed implementation without surfacing a better alternative
+- Overriding a safe, explicit final user choice merely because the agent prefers another design
 - Tasks that say "implement the feature" without acceptance criteria
 - No verification steps in the plan
 - All tasks are XL-sized
@@ -237,6 +262,9 @@ When multiple agents or sessions are available:
 
 Before starting implementation, confirm:
 
+- [ ] Outcome/constraints are separated from suggested implementation method
+- [ ] Materially better alternatives were surfaced before commitment, if any
+- [ ] The user's final discretionary choice is recorded/respected
 - [ ] Every task has acceptance criteria
 - [ ] Every task has exact verification commands (not "tests pass" alone)
 - [ ] Every task lists write ownership, invariants, and escalate-when conditions

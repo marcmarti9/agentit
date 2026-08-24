@@ -30,7 +30,7 @@ Por defecto no modifica nada y muestra el plan.
   --provider NAME            all|claude|codex|antigravity (por defecto: all)
   --home DIR                 raíz de usuario alternativa para pruebas
   --with-settings            copiar settings.json de Claude (revisar antes)
-  --with-local-settings      copiar settings.local.json (no recomendado)
+  --with-local-settings      copiar la plantilla local explícita a settings.local.json (no recomendado)
   --with-hook                copiar el hook de Claude (opt-in)
   --with-guides              copiar las guías globales a DIR
   --prune-on-demand          retirar copias Agentit exactas fuera de core
@@ -396,7 +396,7 @@ preflight_install() {
     preflight_copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json"
   fi
   if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
-    preflight_copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json"
+    preflight_copy_file "$REPO_DIR/templates/claude/settings.local.example.json" "$USER_HOME/.claude/settings.local.json"
   fi
   if [[ "$WITH_HOOK" == "true" ]]; then
     preflight_copy_file "$REPO_DIR/hooks/precompact-memory.sh" "$USER_HOME/.claude/hooks/precompact-memory.sh"
@@ -487,8 +487,8 @@ if [[ "$WITH_SETTINGS" == "true" ]]; then
   copy_file "$REPO_DIR/settings.json" "$USER_HOME/.claude/settings.json" "claude/settings.json"
 fi
 if [[ "$WITH_LOCAL_SETTINGS" == "true" ]]; then
-  note "ADVERTENCIA: settings.local.json es específico de máquina; se copia solo por petición explícita."
-  copy_file "$REPO_DIR/settings.local.json" "$USER_HOME/.claude/settings.local.json" "claude/settings.local.json"
+  note "ADVERTENCIA: la plantilla settings.local.example.json se copia a estado local solo por petición explícita."
+  copy_file "$REPO_DIR/templates/claude/settings.local.example.json" "$USER_HOME/.claude/settings.local.json" "claude/settings.local.json"
 fi
 if [[ "$WITH_HOOK" == "true" ]]; then
   note "ADVERTENCIA: hook opt-in; no se activa ninguna referencia adicional automáticamente."

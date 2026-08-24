@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "python_dependencies": [
+    "PyYAML>=6.0,<7"
+  ],
+  "runtime_paths": [
+    "agentit",
+    "bootstrap.py",
+    "bootstrap-manifest.json",
+    "profiles.yaml",
+    "registry.yaml",
+    "settings.json",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CODEX.md",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSE",
+    "router",
+    "skills",
+    "agents",
+    ".codex/agents",
+    "mcp",
+    "probes",
+    "capabilities",
+    "docs",
+    "hooks",
+    "templates"
+  ],
+  "runtime_exclude_names": [
+    "__pycache__",
+    ".DS_Store"
+  ],
+  "runtime_exclude_prefixes": [
+    "router/test_"
+  ],
+  "core_skills": [
+    "using-agentit",
+    "task-router",
+    "architect-orchestrator",
+    "using-agent-skills",
+    "mcp-tooling-fit",
+    "long-horizon-recovery",
+    "debugging-and-error-recovery",
+    "code-review-and-quality",
+    "test-driven-development",
+    "security-and-hardening",
+    "planning-and-task-breakdown",
+    "verification-gauntlet"
+  ],
+  "codex_agent_profiles": [
+    "luna-worker.toml",
+    "terra-worker.toml"
+  ],
+  "providers": {
+    "claude": {
+      "skills_root": ".claude/skills",
+      "agents_source": "agents",
+      "agents_root": ".claude/agents"
+    },
+    "codex": {
+      "skills_root": ".codex/skills",
+      "codex_agents_source": ".codex/agents",
+      "agents_root": ".codex/agents"
+    },
+    "antigravity": {
+      "skills_root": ".gemini/config/skills"
+    }
+  },
+  "optional_templates": {
+    "claude_local_settings": {
+      "source": "templates/claude/settings.local.example.json",
+      "destination": ".claude/settings.local.json"
+    },
+    "claude_settings": {
+      "source": "settings.json",
+      "destination": ".claude/settings.json"
+    },
+    "claude_hook": {
+      "source": "hooks/precompact-memory.sh",
+      "destination": ".claude/hooks/precompact-memory.sh",
+      "mode": "0755"
+    }
+  }
+}

@@ -47,13 +47,43 @@ Before executing material work, the primary model determines at least:
 - `parallelism`: why concurrent work is or is not useful;
 - `plan`: concrete execution stages;
 - `verification`: evidence needed before claiming success;
-- `safety`: backup/rollback/dry-run/post-check requirements when applicable.
+- `safety`: backup/rollback/dry-run/post-check requirements when applicable;
+- `user_method_assessment`: whether the user's proposed method is sound, acceptable-with-tradeoffs, or materially weaker than an alternative.
 
 The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
 Use the **same rubric**, not the same answer. Context can legitimately change the classification.
 
-## 3. Risk rubric
+## 3. Constructive dissent and user agency
+
+Agentit is not a yes-man protocol.
+
+A user may specify both **what outcome they want** and **how they think it should be implemented**. Those are not automatically the same kind of instruction. Preserve explicit requirements, constraints and desired outcomes, but evaluate implementation/product strategy independently.
+
+When the proposed method is materially weaker than a realistic alternative, the primary model should:
+
+1. state the concern clearly;
+2. explain the evidence/reasoning at a concise decision-rationale level;
+3. recommend a concrete alternative;
+4. compare material trade-offs;
+5. make a clear recommendation rather than hiding behind “both are valid” when they are not equally good;
+6. preserve the user's ability to choose the original approach when it remains safe, feasible and within scope.
+
+A strong recommendation is not permission to override the user. For ordinary discretionary choices, once the trade-offs are understood and the user explicitly chooses, follow that choice.
+
+Do not manufacture disagreement for personality. Challenge only when the difference matters to correctness, maintainability, product outcome, complexity, cost, security, reversibility, performance, UX, architecture fit, or another material dimension.
+
+A useful interaction shape is:
+
+```text
+I can do A, but I recommend B because <material reason>.
+A gives <benefit> but costs <trade-off>; B gives <benefit> with <trade-off>.
+My recommendation is B. If you still prefer A, I can implement A.
+```
+
+Safety and hard constraints remain different: if a requested path is unsafe, impossible, unauthorized or violates a higher-priority rule, do not frame it as a mere preference choice.
+
+## 4. Risk rubric
 
 `RISK_0` — read-only explanation, research or inspection with no meaningful mutation.
 
@@ -67,7 +97,7 @@ Use the **same rubric**, not the same answer. Context can legitimately change th
 
 An explicit safety/risk requirement can raise the floor; confidence does not lower it.
 
-## 4. Topology rubric
+## 5. Topology rubric
 
 `direct` — one execution owner is clearer and delegation adds no concrete benefit.
 
@@ -83,7 +113,7 @@ An explicit safety/risk requirement can raise the floor; confidence does not low
 
 Do not force multi-agent because a task is large. Do not force single-agent because one strong model could technically do everything. Delegate when independence, specialization, context isolation, breadth, latency or fresh judgment actually helps.
 
-## 5. Mandatory cheap-model audit
+## 6. Mandatory cheap-model audit
 
 Before the primary model executes material changes, send the proposed `TASK_DECISION` to an independent read-only audit model.
 
@@ -123,7 +153,9 @@ It must actively look for:
 - dependency mistakes;
 - weak verification;
 - missing rollback/backup/post-check;
-- a plan shaped by prompt words rather than the actual problem.
+- a plan shaped by prompt words rather than the actual problem;
+- uncritical agreement with a user-proposed method when evidence supports a materially better alternative;
+- disagreement that is performative rather than material.
 
 `CLEAR` means the auditor found no material objection. It is not a correctness guarantee.
 
@@ -133,7 +165,7 @@ It must actively look for:
 
 Ordinary audit/reconsideration is bounded to two cycles. If disagreement still matters, escalate to a stronger critic or surface the uncertainty rather than looping.
 
-## 6. Strong-model arbitration
+## 7. Strong-model arbitration
 
 A cheap auditor is useful for catching omissions, but it is not trusted as the final judge when consequences or disagreement are substantial.
 
@@ -155,7 +187,7 @@ For high-ambition public visual work, use independent design critique plus brows
 
 If a separate model cannot be spawned, use an isolated fresh context with the same bounded audit contract when possible. For high-risk work, do not pretend a same-context self-review is equivalent to independent judgment; record the limitation and take the conservative path or request the missing review/user decision.
 
-## 7. Skills are chosen by the primary AI
+## 8. Skills are chosen by the primary AI
 
 Profiles and metadata are knowledge inventories, not a classifier.
 
@@ -165,7 +197,7 @@ A skill is not “used” merely because its ID appears somewhere: the stage mod
 
 Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 
-## 8. Public visual surfaces
+## 9. Public visual surfaces
 
 A landing page, homepage, brand/company website, portfolio, storefront, campaign site or total visual redesign is design-primary even if the implementation language is React/CSS/etc.
 
@@ -175,7 +207,7 @@ Greenfield or total public redesign normally follows:
 
 Do not reduce a design problem to a frontend keyword.
 
-## 9. What remains deterministic
+## 10. What remains deterministic
 
 Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task plan.
 
@@ -193,4 +225,6 @@ The boundary is:
 - no cheap model acting as the semantic decision owner;
 - no cheap-model disagreement being treated as authoritative arbitration;
 - no blind trust in one model when a cheap second opinion is available;
+- no automatic agreement with the user's proposed implementation method;
+- no performative disagreement for its own sake;
 - no safety downgrade because any model sounds confident.

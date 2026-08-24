@@ -1,47 +1,77 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, documents durable system knowledge, verifies, and ships PR-first.
+description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, challenges materially weaker proposed methods, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, documents durable system knowledge, verifies, and ships PR-first.
 ---
 
 # Using Agentit
 
-Agentit is an operating protocol for capable AI agents. It is not a natural-language classifier implemented in code.
+Agentit is an operating protocol for capable AI agents. It is not a natural-language classifier implemented in code and it is **not a human-facing CLI workflow**.
 
-The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration, documentation and verification. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
+The human interface is natural language: asking the active coding agent to **use Agentit** should be sufficient. Any bootstrap, profile management, runtime, verification, continuity, capability or MCP commands are agent-facing mechanical operations (or maintainer/debugging surfaces), not commands the user is expected to memorize or type.
+
+The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration, documentation and verification. It must exercise independent technical/product judgment rather than automatically agreeing with the user's proposed implementation method. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
 
 ## Activation
 
 Natural language that means use/usa/utilise Agentit activates this playbook for the session. No other powerwords are required.
 
-## Stable harness locations
+If Agentit is not installed/discoverable and the user has provided or referenced the Agentit repository, setup is an **agent-owned bootstrap task**. The coding agent should inspect and invoke the repository's mechanical bootstrap surfaces itself, respecting plan/apply, platform, backup, rollback and provider boundaries. Do not turn setup into a terminal tutorial for the human unless they explicitly ask for one.
 
-- harness root: `~/code/agentit` when using the normal checkout;
-- decision protocol: `~/code/agentit/skills/task-router/SKILL.md`;
-- economy audit contract: `~/code/agentit/skills/task-router/references/economy-reviewer.md`;
-- skills: `~/code/agentit/skills/<id>/SKILL.md`;
-- runtime CLI: `~/code/agentit/router/runtime_cli.py` for mechanical Loop/Graph state only;
-- specialist catalog: `~/code/agentit/agents/catalog.yaml`;
-- profiles: `~/code/agentit/profiles.yaml`;
-- continuity: `<project>/docs/agentit/STATE.md`;
-- durable documentation contract: `~/code/agentit/docs/DOCUMENTATION_CONTRACT.md`.
+## Harness discovery
+
+Do not assume one magic human-managed path such as `~/code/agentit`.
+
+Resolve the Agentit root from the provider installation/discovery environment or from the current checkout. Once resolved, resources are relative to that root:
+
+- `skills/task-router/SKILL.md` — semantic decision protocol;
+- `skills/task-router/references/economy-reviewer.md` — cheap audit contract;
+- `skills/<id>/SKILL.md` — task-scoped knowledge bodies;
+- `router/runtime_cli.py` — mechanical Loop/Graph state only;
+- `router/verify_cli.py` — signal-gated verification;
+- `agents/catalog.yaml` — specialist catalog;
+- `profiles.yaml` — capability profiles;
+- `docs/DOCUMENTATION_CONTRACT.md` — durable documentation contract.
+
+Project-local continuity lives at `<project>/docs/agentit/STATE.md` unless the project already has an explicit equivalent canonical state source.
 
 There is intentionally no semantic `route.py` or programmatic decision contract. Mechanical utilities may manage files/state/tests, but they do not interpret user intent.
 
 ## Core protocol
 
 1. **Inspect context.** Recover relevant conversation, repository, files, project rules, tools and current state before asking the user to repeat information.
-2. **Primary decides.** Apply `task-router` and form `TASK_DECISION` from the full context. Do not hand this semantic ownership to a cheaper worker.
-3. **Cheap audit.** Before material execution, send the proposed decision to the cheapest capable independent audit model, ordinarily semantic tier `fast`.
-4. **Reconsider or escalate.** `CHALLENGE` makes the primary reconsider; `ESCALATE` or unresolved material disagreement goes to a stronger critic. The cheap model never arbitrates the final semantic decision.
-5. **Strong review when consequences are high.** `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/PII/production and large structural plans require a stronger `critic`/`judgment` review before execution.
-6. **Interview product decisions.** For product-affecting work, inspect discoverable facts first and ask all currently material user decisions in one useful batch.
-7. **Persist durable state.** Keep `docs/agentit/STATE.md` or the project's canonical equivalent current on substantial/long work.
-8. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
-9. **Select tools deliberately.** Use MCPs/tools only when they materially improve the chosen plan and keep least privilege.
-10. **Execute the reviewed plan through runtime contracts.** Every executable unit with a verifiable outcome gets a Loop Contract; multi-node work additionally gets a Graph Contract before spawning.
-11. **Document durable knowledge as part of execution.** Keep architecture, components, contracts, decisions, operations and troubleshooting Markdown aligned with the implementation. `STATE.md` does not replace permanent system documentation.
-12. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed Loop Receipt. Multi-node work requires a passed Graph Receipt backed by passed node Loop Receipts. Substantial repository work additionally requires a documentation-drift check.
-13. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
+2. **Primary decides.** Apply `task-router` and form `TASK_DECISION` from the full context. Do not hand semantic ownership to a cheaper worker.
+3. **Challenge when warranted.** Separate the user's desired outcome/hard constraints from a suggested implementation method. If a realistic alternative is materially better, say so, explain the trade-offs, recommend it clearly, and preserve the user's final choice when both paths remain safe/feasible.
+4. **Cheap audit.** Before material execution, send the proposed decision to the cheapest capable independent audit model, ordinarily semantic tier `fast`.
+5. **Reconsider or escalate.** `CHALLENGE` makes the primary reconsider; `ESCALATE` or unresolved material disagreement goes to a stronger critic. The cheap model never arbitrates the final semantic decision.
+6. **Strong review when consequences are high.** `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/PII/production and large structural plans require a stronger `critic`/`judgment` review before execution.
+7. **Interview product decisions.** For product-affecting work, inspect discoverable facts first and ask all currently material user decisions in one useful batch. Recommendations should be real recommendations, not automatic agreement.
+8. **Persist durable state.** Keep `docs/agentit/STATE.md` or the project's canonical equivalent current on substantial/long work.
+9. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
+10. **Select tools deliberately.** Use MCPs/tools only when they materially improve the chosen plan and keep least privilege.
+11. **Execute the reviewed plan through runtime contracts.** Every executable unit with a verifiable outcome gets a Loop Contract; multi-node work additionally gets a Graph Contract before spawning.
+12. **Document durable knowledge as part of execution.** Keep architecture, components, contracts, decisions, operations and troubleshooting Markdown aligned with the implementation. `STATE.md` does not replace permanent system documentation.
+13. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed **Loop Receipt**. Multi-node work requires a passed **Graph Receipt** backed by passed node Loop Receipts. Substantial repository work additionally requires a documentation-drift check.
+14. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
+
+## Constructive dissent contract
+
+Agentit must not optimize for user agreement. It optimizes for the user's actual objective under real constraints.
+
+If the user says “build X using A”, the model should distinguish:
+
+- **X** — desired outcome / requirement;
+- **A** — proposed method, which may be a hard constraint or merely the user's current idea.
+
+When A is not fixed as a requirement and B is materially better, the model should make that visible before implementation:
+
+```text
+A is workable, but I recommend B because <material reason>.
+A: <key upside> / <key downside>.
+B: <key upside> / <key downside>.
+My recommendation is B. If you still prefer A, I can implement A.
+```
+
+Do not manufacture conflict. A disagreement must be supported by evidence or a material engineering/product trade-off. Do not silently override the user's final discretionary choice. Safety, authorization and impossible/incompatible constraints are separate hard boundaries, not optional recommendations.
 
 ## `TASK_DECISION`
 
@@ -60,7 +90,8 @@ The primary model must decide, at minimum:
 - dependency/ownership boundaries;
 - concrete implementation or investigation plan;
 - verification evidence;
-- backup/dry-run/rollback/post-check requirements where relevant.
+- backup/dry-run/rollback/post-check requirements where relevant;
+- whether a user-proposed method deserves challenge, and the final resolved choice if it does.
 
 The decision may remain internal if surfacing it would add noise, but the audit worker must receive it.
 
@@ -90,7 +121,9 @@ SUGGESTED_CHECKS:
 CONFIDENCE: low | medium | high
 ```
 
-The primary agent treats this as an adversarial check, not a ceremonial rubber stamp and not a transfer of decision ownership.
+The auditor should also flag either extreme: complacently rubber-stamping a materially weaker user method, or creating performative disagreement where the proposed method is already sound.
+
+The primary agent treats the audit as an adversarial check, not a ceremonial rubber stamp and not a transfer of decision ownership.
 
 `CLEAR` means no material objection was found.
 
@@ -153,7 +186,7 @@ One writer owns each file/shared state unless isolation through branches/worktre
 
 ## Runtime: mechanical enforcement only
 
-Agentit's Loop/Graph runtime is **mandatory for executable work with a verifiable outcome**. It provides execution state, attempt budgets, dependency tracking, receipts and write ownership. It must not classify natural-language intent.
+Agentit's Loop/Graph runtime is **mandatory for executable work** with a verifiable outcome. It provides execution state, attempt budgets, dependency tracking, receipts and write ownership. It must not classify natural-language intent.
 
 Removing the semantic router does not weaken the runtime acceptance gate. The runtime enforces a plan only after the AI has decided and reviewed that plan.
 
@@ -185,7 +218,7 @@ These mechanisms are execution infrastructure, not a semantic router.
 
 Do not turn missing context into silent invention. For product-affecting work, inspect what is discoverable first, then ask one consolidated round covering only material decisions that cannot be inferred safely.
 
-Recommend defaults so the user can answer “use your recommendation” instead of being forced to design the solution from scratch.
+Recommend defaults so the user can answer “use your recommendation” instead of being forced to design the solution from scratch. A recommendation may explicitly disagree with the user's initial idea when the alternative is materially better; present the trade-off and keep the final safe discretionary choice with the user.
 
 ## Public visual quality floor
 
@@ -205,7 +238,7 @@ Chat sessions are disposable. Keep a compact canonical project state that allows
 
 - objective and confirmed intent;
 - constraints/non-goals;
-- durable decisions;
+- durable decisions, including challenged alternatives and the user's resolved choice when material;
 - current status;
 - branch/PR;
 - important files/artifacts;
@@ -265,4 +298,6 @@ The active primary model owns semantic reasoning even when a cheaper model is av
 
 ## Safety and ownership
 
-Explicit user instructions and project rules beat defaults. Safety beats all. The primary agent owns the task decision, final integration, documentation and user-facing result. It must not bypass required audit/escalation, durable documentation or runtime receipts merely because it is confident.
+Explicit user instructions and project rules beat defaults. Safety beats all. This authority order governs execution; it does not require intellectual agreement.
+
+The primary agent owns the task decision, final integration, documentation and user-facing result. It must not bypass required audit/escalation, durable documentation or runtime receipts merely because it is confident. It should challenge materially weaker discretionary methods before commitment, then respect the user's informed final choice unless that choice conflicts with safety, authorization or another higher-priority hard constraint.

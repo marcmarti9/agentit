@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agentit paired real-agent evaluation result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "pair_id",
+    "task_id",
+    "arm",
+    "provider",
+    "model",
+    "model_version",
+    "repo_revision",
+    "starting_state_sha256",
+    "prompt_sha256",
+    "success",
+    "regressions",
+    "elapsed_seconds",
+    "model_calls",
+    "user_interventions",
+    "verifier_evidence"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "pair_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "arm": {"enum": ["baseline", "treatment"]},
+    "provider": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "model_version": {"type": "string", "minLength": 1},
+    "repo_revision": {"type": "string", "minLength": 1},
+    "starting_state_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "success": {"type": "boolean"},
+    "regressions": {"type": "integer", "minimum": 0},
+    "elapsed_seconds": {"type": "number", "minimum": 0},
+    "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "model_calls": {"type": "integer", "minimum": 0},
+    "delegated_workers": {"type": "integer", "minimum": 0},
+    "user_interventions": {"type": "integer", "minimum": 0},
+    "audit_changed_plan": {"type": ["boolean", "null"]},
+    "constructive_dissent": {
+      "enum": [
+        "not_applicable",
+        "no_challenge",
+        "useful_challenge",
+        "false_positive_challenge",
+        "overrode_user_choice"
+      ]
+    },
+    "verifier_evidence": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "notes": {"type": "string"},
+    "artifact_refs": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": false
+}

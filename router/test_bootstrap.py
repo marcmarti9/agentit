@@ -44,6 +44,16 @@ class PortableBootstrapTests(unittest.TestCase):
                 destinations,
             )
 
+    def test_antigravity_uses_canonical_global_skill_discovery_path(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            plan = build_install_plan(home=home, source_root=ROOT, provider="antigravity")
+            destinations = {item["destination"] for item in plan["operations"]}
+            canonical = home / ".gemini" / "config" / "skills" / "using-agentit" / "SKILL.md"
+            legacy = home / ".agents" / "skills" / "using-agentit" / "SKILL.md"
+            self.assertIn(str(canonical), destinations)
+            self.assertNotIn(str(legacy), destinations)
+
     def test_apply_installs_runtime_provider_surfaces_and_cli(self):
         with tempfile.TemporaryDirectory() as temporary:
             home = Path(temporary)

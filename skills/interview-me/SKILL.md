@@ -15,7 +15,7 @@ Before asking anything, build a small **decision tree** for the task: what mater
 
 The currently answerable unresolved leaves are the **decision frontier**.
 
-Ask the whole material frontier in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a follow-up batch only when the first answers expose a genuinely new branch that could not reasonably have been known before.
+Ask **all material questions on the current decision frontier** in **one numbered batch**, not one question per message. Every question gets a recommendation/default. Use a follow-up batch only when the first answers expose a genuinely new branch that could not reasonably have been known before.
 
 This prevents two opposite failures:
 
@@ -141,7 +141,7 @@ The material decision frontier is empty **for the work currently authorized**, a
 - [ ] Mechanical vs product-affecting classified.
 - [ ] Discoverable facts inspected first.
 - [ ] Material decision tree/frontier identified.
-- [ ] Independent frontier questions asked in one batch.
+- [ ] All material questions on the current frontier asked in one batch.
 - [ ] Dependent branches deferred until meaningful.
 - [ ] Recommendation/default attached to each question.
 - [ ] Domain pack recommended; craft depth only when visual.

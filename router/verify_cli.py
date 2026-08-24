@@ -32,6 +32,12 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--signal",
         action="append",
         default=[],
@@ -64,6 +70,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     task_text = " ".join(args.task).strip()
     explicit_signals = [signal.strip().lower() for signal in args.signal if signal.strip()]
+
+    # ``--repo-root`` is a deprecated compatibility flag retained for callers
+    # from the pre-split CLI. Runtime code now resolves its own harness root;
+    # semantic routing never depends on this value.
+    _ = args.repo_root
 
     try:
         if args.apply:

@@ -63,7 +63,7 @@
       "agents_root": ".codex/agents"
     },
     "antigravity": {
-      "skills_root": ".agents/skills"
+      "skills_root": ".gemini/config/skills"
     }
   },
   "optional_templates": {

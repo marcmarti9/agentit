@@ -1,0 +1,38 @@
+schema_version: 1
+stacks:
+  frontend:
+    append_servers: [21st]
+  design_studio:
+    append_servers: [21st]
+servers:
+  - id: 21st
+    name: 21st.dev MCP
+    tier: recommended
+    category: design
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Search real UI components, inspect/retrieve code, generate variants, and optionally publish/manage UI through 21st's agent catalog instead of inventing every component from memory."
+    homepage: https://docs.21st.dev/mcp
+    remote_url: https://21st.dev/api/mcp
+    package: "@21st-dev/cli"
+    requires_secret: true
+    secret_env: API_KEY_21ST
+    write_capable: true
+    evidence:
+      - "Official 21st MCP docs: https://docs.21st.dev/mcp"
+      - "Official single-endpoint/client setup: https://21st.dev/blog/introducing-agents-cli"
+    # Generic HTTP clients can use the endpoint plus x-api-key; OAuth-capable clients
+    # may avoid a pasted key. Agentit intentionally avoids hardcoding a provider-specific
+    # auth snippet that may drift; use current official setup docs at activation time.
+    mcp_json_remote:
+      url: https://21st.dev/api/mcp
+    codex_note: |
+      # 21st's current Codex setup uses https://21st.dev/api/mcp plus a bearer-token
+      # environment variable. Re-fetch https://docs.21st.dev/mcp before writing config,
+      # set API_KEY_21ST outside the repository, and never commit the token.
+    safety_notes:
+      - "Use current official setup because OAuth/header details vary by client and can change."
+      - "Never commit API_KEY_21ST; prefer OAuth where the client supports it."
+      - "Search/show candidates before installation when design choice matters."
+      - "Inspect component code, declared dependencies, accessibility, reduced-motion behavior, and project-token fit before adoption."
+      - "Publishing/edit/delete tools are write-capable external effects; do not invoke them merely to consume components."

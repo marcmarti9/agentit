@@ -33,28 +33,29 @@ class ArchitecturePolicyTests(unittest.TestCase):
 
     def test_using_agentit_preserves_runtime_receipt_gate(self):
         text = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("passed **Loop Receipt**", text)
-        self.assertIn("passed **Graph Receipt**", text)
-        self.assertIn("mandatory for executable work", text)
+        self.assertIn("Loop/Graph runtime", text)
+        self.assertIn("require fresh evidence before success", text)
+        self.assertIn("Do not weaken a verifier", text)
 
     def test_agentit_is_agent_operated_not_human_cli_driven(self):
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
         harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("operated by the coding agent", readme)
-        self.assertIn("not a human-facing CLI workflow", harness)
-        self.assertIn("agent-facing mechanical operations", harness)
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("The user should not need to know or type Agentit CLI commands", harness)
+        self.assertIn("Mechanical commands are agent-facing implementation details", harness)
+        self.assertIn("DISPATCH_DECISION: bare | agentit", agents)
+        self.assertIn("If genuinely uncertain, choose Agentit", agents)
 
     def test_constructive_dissent_preserves_user_agency(self):
-        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
         planning = (
             ROOT / "skills" / "planning-and-task-breakdown" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("no seas un yes-man", agents)
-        self.assertIn("Conserva la agencia del usuario", agents)
-        self.assertIn("Agentit is not a yes-man protocol", task_router)
-        self.assertIn("preserve the user's ability to choose the original approach", task_router)
+        self.assertIn("Constructive dissent", harness)
+        self.assertIn("Preserve the user's final safe discretionary choice", harness)
+        self.assertIn("Constructive dissent", task_router)
+        self.assertIn("preserve the user's final safe discretionary choice", task_router)
         self.assertIn("Planning is not a rubber-stamp phase", planning)
         self.assertIn("let the user keep the original approach", planning)
 

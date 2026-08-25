@@ -42,7 +42,7 @@ Before executing material work, the primary model determines at least:
 - `external_effects`: production, network, account, financial, data or other side effects;
 - `skills`: smallest useful knowledge bodies to load;
 - `tools`: only tools that materially help;
-- `reference_plan`: whether external references materially help, and if so the explicit pack/source IDs, purpose, authority/freshness requirements and project provenance output; semantic source selection remains owned by the primary AI;
+- `reference_plan`: explicit contextual source decision using `mode: none | catalog | live | mixed`, plus reason and, when relevant, pack/source IDs, domain, purpose, authority/freshness requirements and provenance output;
 - `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
 - `workers`: useful specialist roles, if any;
 - `parallelism`: why concurrent work is or is not useful;
@@ -51,7 +51,32 @@ Before executing material work, the primary model determines at least:
 - `safety`: backup/rollback/dry-run/post-check requirements when applicable;
 - `user_method_assessment`: whether the user's proposed method is sound, acceptable-with-tradeoffs, or materially weaker than an alternative.
 
-`reference_plan` should normally be `needed: no` when live/current/external material would not change the decision. Do not perform research for ceremony. When it is needed, use the smallest useful explicit pack/source set and follow `reference-intelligence`; programs may resolve those explicit IDs mechanically but may not infer them from task text.
+The primary AI owns semantic reference selection. Programs may resolve explicitly selected catalog IDs or execute explicitly chosen search/fetch operations, but may not infer relevant references from natural-language prompt keywords.
+
+`reference_plan` examples:
+
+```text
+# Repository-local trivial/bounded change
+reference_plan:
+  mode: none
+  reason: repository-local truth is sufficient; no external/current contract matters
+
+# Public website
+reference_plan:
+  mode: mixed
+  pack_or_sources: [web-design-studio]
+  purpose: design DNA + implementable component discovery + UX QA
+  authority_needed: inspiration + current canonical implementation docs
+
+# Current domain with no curated pack, e.g. tax/legal
+reference_plan:
+  mode: live
+  domain: <jurisdiction/topic>
+  purpose: current correctness
+  authority_needed: primary/canonical domain sources
+```
+
+Do not perform research for ceremony. `mode: none` is correct when external knowledge would not materially improve the result. But the absence of a curated Agentit pack is **not** a reason to use model memory for a current or domain-specific task: choose `live` and discover appropriate authoritative sources.
 
 The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
@@ -128,7 +153,7 @@ Give it:
 
 - exact user request and material constraints;
 - relevant facts already established;
-- proposed `TASK_DECISION`;
+- proposed `TASK_DECISION` including `reference_plan`;
 - this protocol or the bounded rules needed to audit it.
 
 Use the detailed contract in `references/economy-reviewer.md`.
@@ -157,9 +182,11 @@ It must actively look for:
 - weak verification;
 - missing rollback/backup/post-check;
 - a plan shaped by prompt words rather than the actual problem;
-- reference overload or missing material external evidence;
+- unjustified `reference_plan.mode: none` when current/domain-specific/external knowledge materially affects correctness or quality;
+- using model memory merely because Agentit has no pre-curated pack for the domain;
+- reference overload or failure to actually load selected references;
 - a creator/vendor claim being treated as canonical/corroborated evidence;
-- stale setup/API/pricing/platform assumptions that should be re-verified;
+- stale setup/API/regulatory/tax/pricing/platform assumptions that should be re-verified;
 - design cloning or dependency adoption without provenance/license/fit review;
 - uncritical agreement with a user-proposed method when evidence supports a materially better alternative;
 - disagreement that is performative rather than material.
@@ -200,7 +227,7 @@ Profiles, skill metadata and reference packs are knowledge inventories, not clas
 
 The primary model decides which skills and external reference packs/sources are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing/excessive choice or an authority/freshness mistake, but the primary model resolves it.
 
-A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “evidence” merely because its URL is in the catalog: the stage model must classify its authority and verify it to the degree the decision requires.
+A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “used” merely because its ID appears in `reference_plan`: the stage model must load/inspect it (or retrieve live sources), classify its authority, and extract the material facts/principles before relying on it.
 
 Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 

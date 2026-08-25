@@ -59,6 +59,44 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("Planning is not a rubber-stamp phase", planning)
         self.assertIn("let the user keep the original approach", planning)
 
+    def test_runtime_packs_are_flat_and_skill_count_is_model_owned(self):
+        paths = [
+            ROOT / "AGENTS.md",
+            ROOT / "skills" / "using-agentit" / "SKILL.md",
+            ROOT / "skills" / "using-agent-skills" / "SKILL.md",
+            ROOT / "skills" / "using-agent-skills" / "references" / "packs.md",
+            ROOT / "skills" / "task-router" / "SKILL.md",
+            ROOT / "skills" / "task-router" / "references" / "economy-reviewer.md",
+        ]
+        combined = "\n".join(path.read_text(encoding="utf-8") for path in paths)
+
+        forbidden = (
+            "pack_depth",
+            "**essential candidates**",
+            "**standard candidates**",
+            "**deep candidates**",
+            "choose depth:",
+            "Usually 1–2",
+            "Usually 2–4",
+            "pack + depth",
+        )
+        for needle in forbidden:
+            self.assertNotIn(needle, combined, f"rigid pack tier/count policy returned: {needle}")
+
+        using_skills = (ROOT / "skills" / "using-agent-skills" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        packs = (
+            ROOT / "skills" / "using-agent-skills" / "references" / "packs.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("no fixed skill counts and no pack levels", using_skills)
+        self.assertIn("no fixed minimum or maximum", task_router)
+        self.assertIn("no minimum, maximum, default count, level, or required order", packs)
+
     def test_legacy_mcp_helper_is_exact_stack_only(self):
         self.assertEqual(recommend_for_task("developer_core")["stack"], "developer_core")
         with self.assertRaises(McpCatalogError):

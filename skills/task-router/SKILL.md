@@ -1,166 +1,159 @@
 ---
 name: task-router
-description: AI-native Agentit task-decision protocol. The primary model owns semantic classification and strategy; a cheap second model only audits the decision, with strong-model escalation for high risk or unresolved disagreement.
+description: Compact AI-native decision protocol used after Agentit dispatch. The primary model chooses pack/depth, JIT skills/tools/references, risk and topology; cheap AI audits and strong AI arbitrates high-risk or unresolved disagreement.
 ---
 
 # AI-native task decision protocol
 
-Agentit has **no programmatic semantic router**.
+This skill runs **after** `using-agentit` has selected `DISPATCH_DECISION=agentit`.
 
-Do not call Python, regexes, keyword tables, scoring code, decision validators or any other deterministic classifier to work out what the user means. The active primary model has the richest task context and owns the semantic decision.
+Agentit has no programmatic semantic router. Do not use Python, regexes, keyword tables, scoring code or a cheap model to decide what the request means. The active primary model owns semantic interpretation because it has the richest task/project context.
 
-The purpose of this skill is not to route the model. It gives the primary model a mandatory, repeatable decision framework and adds independent AI auditing without handing decision ownership to a weaker model.
+## Inspect first
 
-## 1. Inspect before deciding
+Use materially available context before deciding or asking:
 
-Use all materially available context:
-
-- exact current request;
-- relevant earlier conversation;
-- repository/project state;
-- files and docs already inspected;
-- user and project instructions;
-- available tools/capabilities;
-- known environment and deployment state;
+- exact request and prior conversation;
+- repository/project state and local instructions;
+- relevant files/docs already inspected;
+- tools/capabilities actually available;
+- current deployment/environment state;
 - unresolved assumptions.
 
-A follow-up such as “fix it” must be interpreted from context, not from those two words.
+Anything quickly discoverable from the project should normally be inspected instead of turned into a user question.
 
-## 2. The primary model owns `TASK_DECISION`
+## `TASK_DECISION`
 
-The model currently responsible for the task is the **decision owner**. Do not delegate semantic classification or execution strategy to a cheaper reviewer merely to save tokens.
-
-Before executing material work, the primary model determines at least:
-
-- `intent`: what outcome the user is actually asking for;
-- `known_facts`: evidence already established;
-- `unknowns`: assumptions that could materially change the plan;
-- `category/domain_pack`: engineering, frontend, design, backend, data, product, writing, release, research, etc.;
-- `complexity`: trivial, bounded, substantial, structural;
-- `risk`: `RISK_0..RISK_4` with reasoning;
-- `reversibility`: how easily the action can be undone;
-- `external_effects`: production, network, account, financial, data or other side effects;
-- `skills`: smallest useful knowledge bodies to load;
-- `tools`: only tools that materially help;
-- `reference_plan`: explicit contextual source decision using `mode: none | curated | live | both`, plus reason and, when relevant, domain, curated skill/reference paths, purpose, authority/freshness requirements and provenance output;
-- `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
-- `workers`: useful specialist roles, if any;
-- `parallelism`: why concurrent work is or is not useful;
-- `plan`: concrete execution stages;
-- `verification`: evidence needed before claiming success;
-- `safety`: backup/rollback/dry-run/post-check requirements when applicable;
-- `user_method_assessment`: whether the user's proposed method is sound, acceptable-with-tradeoffs, or materially weaker than an alternative.
-
-The primary AI owns semantic reference selection. It may read `references/INDEX.md`, relevant skill `references/*.md` files, and live authoritative sources as needed. No program should infer relevant references from prompt keywords.
-
-`reference_plan` examples:
+Before material execution, decide at least:
 
 ```text
-# Repository-local trivial/bounded change
-reference_plan:
-  mode: none
-  reason: repository-local truth is sufficient; no external/current contract matters
-
-# Public Studio website
-reference_plan:
-  mode: both
-  curated:
-    - skills/design-inspiration-research/references/premium-web-production.md
-  purpose: art direction + production/QA discipline
-  live: current project/category references + current framework docs where material
-  authority_needed: inspiration + canonical implementation docs
-
-# Current domain with no curated Agentit material, e.g. tax/legal
-reference_plan:
-  mode: live
-  domain: <jurisdiction/topic>
-  purpose: current correctness
-  authority_needed: primary/canonical domain sources
+intent / desired outcome
+known_facts
+material_unknowns
+pack
+pack_depth: essential | standard | deep
+complexity: trivial | bounded | substantial | structural
+risk: RISK_0..RISK_4
+reversibility / external_effects
+selected_skills
+selected_tools
+reference_plan
+execution_topology
+workers / ownership / parallelism
+plan
+verification
+safety / rollback / post-check
+user_method_assessment
 ```
 
-Do not perform research for ceremony. `mode: none` is correct when external knowledge would not materially improve the result. But the absence of curated Agentit material is **not** a reason to use model memory for a current or domain-specific task: choose `live` and discover appropriate authoritative sources.
+### Pack + depth
 
-The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
+Read `skills/using-agent-skills/references/packs.md` only when pack discovery detail is needed.
 
-Use the **same rubric**, not the same answer. Context can legitimately change the classification.
+The pack is the domain search scope. The depth expands the **candidate pool**, never the automatic context payload.
 
-## 3. Constructive dissent and user agency
+Prefer one primary pack per stage. Add a secondary pack only for a real cross-domain need.
 
-Agentit is not a yes-man protocol.
+Select the smallest concrete skill set that materially improves the stage. Do not load every skill up to the chosen depth.
 
-A user may specify both **what outcome they want** and **how they think it should be implemented**. Those are not automatically the same kind of instruction. Preserve explicit requirements, constraints and desired outcomes, but evaluate implementation/product strategy independently.
-
-When the proposed method is materially weaker than a realistic alternative, the primary model should:
-
-1. state the concern clearly;
-2. explain the evidence/reasoning at a concise decision-rationale level;
-3. recommend a concrete alternative;
-4. compare material trade-offs;
-5. make a clear recommendation rather than hiding behind “both are valid” when they are not equally good;
-6. preserve the user's ability to choose the original approach when it remains safe, feasible and within scope.
-
-A strong recommendation is not permission to override the user. For ordinary discretionary choices, once the trade-offs are understood and the user explicitly chooses, follow that choice.
-
-Do not manufacture disagreement for personality. Challenge only when the difference matters to correctness, maintainability, product outcome, complexity, cost, security, reversibility, performance, UX, architecture fit, or another material dimension.
-
-A useful interaction shape is:
+Examples:
 
 ```text
-I can do A, but I recommend B because <material reason>.
-A gives <benefit> but costs <trade-off>; B gives <benefit> with <trade-off>.
-My recommendation is B. If you still prefer A, I can implement A.
+pack: engineering
+pack_depth: essential
+selected_skills:
+- debugging-and-error-recovery
 ```
 
-Safety and hard constraints remain different: if a requested path is unsafe, impossible, unauthorized or violates a higher-priority rule, do not frame it as a mere preference choice.
+```text
+pack: design
+pack_depth: deep
+selected_skills:
+- design-inspiration-research
+- scrollytelling-web
+- browser-testing-with-devtools
+```
 
-## 4. Risk rubric
+A `deep` task with three selected skills is healthier than a `standard` task that dumps twelve bodies into context.
 
-`RISK_0` — read-only explanation, research or inspection with no meaningful mutation.
+## Reference plan
 
-`RISK_1` — local, small, clearly reversible mutation with negligible blast radius.
+Decide:
 
-`RISK_2` — meaningful but bounded implementation/product change.
+```text
+reference_plan.mode: none | curated | live | both
+```
 
-`RISK_3` — auth/security, payments, secrets, PII, significant data/schema work, infrastructure, external side effects, or another boundary where a bad decision has serious consequences.
+Use `none` when external/current knowledge would not materially improve correctness or quality.
 
-`RISK_4` — destructive production action, plausible data loss, irreversible/high-blast-radius operation, or comparable consequence.
+Use `curated` for relevant Agentit/project reference material, `live` for current/domain-specific authoritative sources, and `both` when each contributes something distinct.
 
-An explicit safety/risk requirement can raise the floor; confidence does not lower it.
+If mode is not `none`, load `reference-intelligence` JIT. It is intentionally not part of the global core.
 
-## 5. Topology rubric
+The absence of a curated pack is not permission to use stale model memory for current tax/legal/API/regulatory/platform facts.
 
-`direct` — one execution owner is clearer and delegation adds no concrete benefit.
+Do not research for ceremony and do not load irrelevant references merely because Agentit has them.
 
-`probe` — investigate/read first, then decide.
+## Tools
 
-`fan_out` — two or more genuinely independent branches benefit from isolation or parallel work.
+Choose tools/MCPs only after the semantic task/pack decision. Load `mcp-tooling-fit` JIT when tool selection itself needs judgment. Prefer least privilege and current verified setup.
 
-`pipeline` — dependent stages with explicit handoffs.
+## Risk
 
-`writer_reviewer` — one implementation owner plus independent review.
+- `RISK_0` — read-only explanation/inspection with no meaningful mutation.
+- `RISK_1` — tiny clearly reversible local mutation.
+- `RISK_2` — meaningful but bounded implementation/product change.
+- `RISK_3` — auth/security/payments/secrets/PII/significant data/infrastructure/external side effects.
+- `RISK_4` — destructive production action, plausible data loss, irreversible/high-blast-radius operation.
 
-`audit` — inspection/critique is the primary task.
+Confidence never lowers the actual risk floor.
 
-Do not force multi-agent because a task is large. Do not force single-agent because one strong model could technically do everything. Delegate when independence, specialization, context isolation, breadth, latency or fresh judgment actually helps.
+## Topology
 
-## 6. Mandatory cheap-model audit
+- `direct` — one owner; delegation adds no real value.
+- `probe` — investigate first, then decide.
+- `fan_out` — independent branches benefit from isolation/parallelism.
+- `pipeline` — dependent stages with explicit handoffs.
+- `writer_reviewer` — one implementation owner + independent review.
+- `audit` — inspection/critique is the task.
 
-Before the primary model executes material changes, send the proposed `TASK_DECISION` to an independent read-only audit model.
+Do not force agents for show. Do not avoid useful delegation just because the primary model is strong.
 
-For ordinary tasks choose the **cheapest model that is competent to audit the bounded proposal**, typically semantic tier `fast`. When practical and similarly cheap, prefer a different model family from the primary model.
+## Constructive dissent
 
-This model is a **critic, not a router and not a decision owner**. It must not replace the primary model's classification, assign an authoritative alternative category/risk/topology, or silently rewrite the plan. Its job is to find reasons the primary should reconsider or escalate.
+Separate the user's desired outcome from a suggested implementation method.
 
-Give it:
+If a realistic alternative is materially better for correctness, simplicity, cost, maintenance, security, UX, performance or reversibility:
 
-- exact user request and material constraints;
-- relevant facts already established;
-- proposed `TASK_DECISION` including `reference_plan`;
-- this protocol or the bounded rules needed to audit it.
+1. explain the concrete issue;
+2. recommend the alternative;
+3. compare the material trade-off;
+4. preserve the user's final safe discretionary choice.
 
-Use the detailed contract in `references/economy-reviewer.md`.
+Do not manufacture disagreement for personality.
 
-The audit returns:
+## Cheap independent audit
+
+Before material execution, give the proposed `TASK_DECISION` to the cheapest competent independent read-only model, normally semantic tier `fast`.
+
+Use `references/economy-reviewer.md` for the detailed contract.
+
+The auditor should challenge:
+
+- misunderstood intent or hidden constraints;
+- risk classified too low;
+- wrong pack or unjustified depth;
+- too many or too few selected skills;
+- full-pack/context dumping;
+- missing relevant references or unnecessary reference overload;
+- stale/current-source mistakes or creator claims promoted to facts;
+- wrong/excessive tools or permissions;
+- unnecessary/missing delegation;
+- unsafe write ownership;
+- weak verification/rollback;
+- uncritical acceptance of a materially worse proposed method.
+
+Expected result:
 
 ```text
 AUDIT: CLEAR | CHALLENGE | ESCALATE
@@ -171,101 +164,40 @@ SUGGESTED_CHECKS:
 CONFIDENCE: low | medium | high
 ```
 
-It must actively look for:
+`CHALLENGE` makes the primary reconsider; it does not transfer decision ownership. If material disagreement remains, escalate.
 
-- misunderstood intent;
-- risk possibly classified too low;
-- missing production/auth/payment/PII/destructive implications;
-- unjustified assumptions;
-- wrong or excessive skills/tools;
-- missing useful delegation or pointless delegation;
-- unsafe parallel writers/shared state;
-- dependency mistakes;
-- weak verification;
-- missing rollback/backup/post-check;
-- a plan shaped by prompt words rather than the actual problem;
-- unjustified `reference_plan.mode: none` when current/domain-specific/external knowledge materially affects correctness or quality;
-- using model memory merely because Agentit has no pre-curated material for the domain;
-- reference overload or failure to actually read selected curated/live sources;
-- stopping at a social post when its underlying article/repository contains the useful substance;
-- a creator/vendor claim being treated as canonical/corroborated evidence;
-- stale setup/API/regulatory/tax/pricing/platform assumptions that should be re-verified;
-- design cloning or dependency adoption without provenance/license/fit review;
-- uncritical agreement with a user-proposed method when evidence supports a materially better alternative;
-- disagreement that is performative rather than material.
+## Strong review
 
-`CLEAR` means the auditor found no material objection. It is not a correctness guarantee.
+Use an independent `critic`/`judgment` tier before execution for:
 
-`CHALLENGE` means the primary model must reconsider the findings. The primary remains the decision owner: it may revise the decision or retain it with an explicit reason grounded in evidence. If material disagreement remains after reconsideration, escalate instead of letting the cheap model arbitrate.
+- `RISK_3/RISK_4`;
+- destructive/difficult rollback work;
+- auth/payments/secrets/PII/production;
+- large structural architecture/product commitments;
+- an auditor `ESCALATE`;
+- unresolved material disagreement.
 
-`ESCALATE` means the auditor found uncertainty or consequence that deserves a stronger independent model. Do not let the cheap model resolve that dispute itself.
+Require backup/rollback/post-check where relevant; use preview/dry-run for `RISK_4` when technically meaningful.
 
-Ordinary audit/reconsideration is bounded to two cycles. If disagreement still matters, escalate to a stronger critic or surface the uncertainty rather than looping.
+## Worker context
 
-## 7. Strong-model arbitration
+When spawning, project only bounded task context plus:
 
-A cheap auditor is useful for catching omissions, but it is not trusted as the final judge when consequences or disagreement are substantial.
+```text
+role/objective
+pack + depth
+selected skill bodies
+selected references if any
+allowed tools/permissions
+read/write ownership
+expected handoff
+verification / stop condition
+```
 
-Use an independent `critic`/`judgment` tier model when:
+The parent keeps broader context and integration responsibility.
 
-- `RISK_3` or `RISK_4`;
-- the cheap auditor returns `ESCALATE`;
-- a material `CHALLENGE` remains unresolved after primary reconsideration;
-- destructive or hard-to-reverse data work is involved;
-- auth, payments, secrets, PII or production migrations are involved;
-- a large structural architecture/product plan is about to be committed to;
-- another explicit safety boundary requires stronger judgment.
+## Mechanical boundary
 
-The strong critic reviews the primary decision plus the cheap auditor's findings. It does not become the implementation owner, but for these cases it acts as the **independent judgment gate**: material execution waits until critical objections are resolved, the plan is revised, or required user input is obtained.
+Programs may resolve explicit IDs, copy files, manage state/manifests, run tests and enforce Loop/Graph contracts. They must not infer semantic pack/skill/reference/tool choices from natural-language task text.
 
-For destructive data operations require verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
-
-For high-ambition public visual work, use independent design critique plus browser/rendered evidence.
-
-If a separate model cannot be spawned, use an isolated fresh context with the same bounded audit contract when possible. For high-risk work, do not pretend a same-context self-review is equivalent to independent judgment; record the limitation and take the conservative path or request the missing review/user decision.
-
-## 8. Skills and references are chosen by the primary AI
-
-Profiles, skill metadata and curated reference files are knowledge inventories, not classifiers.
-
-The primary model decides which skills and external references are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing/excessive choice or an authority/freshness mistake, but the primary model resolves it.
-
-A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “used” merely because its path/URL appears in `reference_plan`: the stage model must inspect it, classify its authority, and extract the material facts/principles before relying on it.
-
-Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
-
-## 9. Public visual surfaces
-
-A landing page, homepage, brand/company website, portfolio, storefront, campaign site or total visual redesign is design-primary even if the implementation language is React/CSS/etc.
-
-Greenfield or total public redesign normally follows:
-
-`interview -> curated/live reference research -> design-DNA synthesis -> direction/concept -> component/tool discovery where useful -> implementation -> independent visual/UX critique -> desktop/mobile browser verification -> project provenance`
-
-Do not reduce a design problem to a frontend keyword. Do not treat design references as conversion evidence or clone targets.
-
-## 10. What remains deterministic
-
-Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task/reference plan.
-
-When reference evidence is material to acceptance, include it in the **existing Loop/Graph verifier** rather than adding a second reference-specific runtime.
-
-The boundary is:
-
-> **Primary AI decides; cheap AI audits; strong AI arbitrates when needed; software performs mechanical operations afterward.**
-
-## Non-goals
-
-- no `route.py`;
-- no semantic `decision_contract.py`;
-- no regex/keyword risk inference;
-- no programmatic reference recommender from prompt text;
-- no bespoke reference CLI/router required for normal use;
-- no executable router evals pretending to benchmark language understanding;
-- no script that chooses category/topology/skills/references from prompt text;
-- no cheap model acting as the semantic decision owner;
-- no cheap-model disagreement being treated as authoritative arbitration;
-- no blind trust in one model when a cheap second opinion is available;
-- no automatic agreement with the user's proposed implementation method;
-- no performative disagreement for its own sake;
-- no safety downgrade because any model sounds confident.
+> **Primary AI decides; cheap AI audits; strong AI arbitrates when warranted; software performs the reviewed mechanical plan.**

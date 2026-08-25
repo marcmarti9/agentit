@@ -56,6 +56,8 @@ Deep recurring knowledge belongs **next to the skill that uses it**, for example
 
 - `skills/design-inspiration-research/references/premium-web-production.md`
 - `skills/marketing-and-growth/references/marketing-operating-system.md`
+- `skills/marketing-and-growth/references/seo-growth-loop.md`
+- `skills/marketing-and-growth/references/launch-content-system.md`
 
 This is intentional progressive disclosure:
 

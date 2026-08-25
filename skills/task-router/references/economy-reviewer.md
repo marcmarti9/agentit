@@ -25,7 +25,7 @@ Do not give it write credentials or ask it to execute the task.
 The auditor must **not**:
 
 - become the semantic router;
-- infer a domain/reference pack from prompt keywords as an authoritative decision;
+- infer a domain/reference set from prompt keywords as an authoritative decision;
 - issue an authoritative replacement `TASK_DECISION`;
 - silently change category, risk, topology, skills, references, tools or execution plan;
 - decide that its own alternative plan must be followed;
@@ -42,23 +42,26 @@ Challenge the proposal rather than rubber-stamping it:
 3. Are production, auth, payments, secrets, PII, migrations, destructive operations, or external side effects being missed?
 4. Are important project facts or uncertainties missing?
 5. Is the chosen domain/skill set inappropriate, excessive, or obviously missing something?
-6. Is `reference_plan` explicit (`none | catalog | live | mixed`) and justified?
+6. Is `reference_plan` explicit (`none | curated | live | both`) and justified?
 7. If `reference_plan.mode == none`, does the task nevertheless depend materially on current, jurisdiction-specific, regulatory, fiscal/legal, security, financial, unfamiliar, comparative, market, ecosystem, or visual/design knowledge?
-8. If no Agentit reference pack fits, has the primary planned live discovery of appropriate current canonical/domain sources instead of relying on model memory?
-9. Are selected references actually going to be loaded/inspected before the relevant decision/output, rather than merely named in the plan?
-10. Is source authority classified correctly (canonical/licensed/corroborated/creator-claim/inspiration/unverified)?
-11. Are creator/vendor claims being promoted into facts or benchmarks without corroboration?
-12. Do dynamic sources—APIs, regulations, tax rules, prices, platform behavior, package/license/security state—need freshness verification?
-13. Is the reference set too large for the decision, creating context noise rather than value?
-14. Is a dependency/tool/component being adopted without license, maintenance, security and project-fit review?
-15. Is design/reference work drifting into cloning rather than principle extraction/synthesis?
-16. Does material external influence need durable project provenance (`docs/agentit/REFERENCES.md` or equivalent) or answer-level citations?
-17. Is delegation actually useful, or is useful delegation being omitted?
-18. Is the chosen topology sensible for dependencies and shared state?
-19. Could two workers write the same state/file unsafely?
-20. Are verification and rollback/backup requirements strong enough?
-21. Is the plan solving the requested problem rather than a keyword-shaped approximation of it?
-22. Is there enough uncertainty or consequence that a stronger reviewer should arbitrate?
+8. If no curated Agentit material fits, has the primary planned live discovery of appropriate current canonical/domain sources instead of relying on model memory?
+9. If a curated bookmark points to a richer article/repo/course/prompt collection, is the primary actually reading the underlying material when it matters rather than stopping at the social-post summary?
+10. Are selected references actually going to be inspected before the relevant decision/output, rather than merely named in the plan?
+11. Is source authority classified correctly (canonical/licensed/corroborated/creator-claim/inspiration/internal evidence)?
+12. Are creator/vendor claims being promoted into facts or benchmarks without corroboration?
+13. Do dynamic sources—APIs, regulations, tax rules, prices, platform behavior, package/license/security state—need freshness verification?
+14. Is the reference set too large for the decision, creating context noise rather than value?
+15. Has a giant prompt/example corpus been distilled into reusable procedures instead of dumped into task context?
+16. Is a dependency/tool/component being adopted without license, maintenance, security and project-fit review?
+17. Is design/reference work drifting into cloning rather than principle extraction/synthesis?
+18. Does material external influence need durable project provenance (`docs/agentit/REFERENCES.md` or equivalent) or answer-level citations?
+19. Is delegation actually useful, or is useful delegation being omitted?
+20. Is the chosen topology sensible for dependencies and shared state?
+21. Could two workers write the same state/file unsafely?
+22. Are verification and rollback/backup requirements strong enough?
+23. If references materially affect acceptance, are they represented in the normal Loop/Graph verifier rather than assumed to be self-validating?
+24. Is the plan solving the requested problem rather than a keyword-shaped approximation of it?
+25. Is there enough uncertainty or consequence that a stronger reviewer should arbitrate?
 
 Important: **do not challenge `reference_plan.mode == none` merely because references exist.** The goal is contextual use, not ceremonial browsing. A local rename, formatting edit, or self-contained repo-only change can legitimately need no external references.
 

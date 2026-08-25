@@ -4,50 +4,10 @@ policy:
   local_models_first_class: true
   notes: |
     Capability tiers describe what a model endpoint is good for, not brand prestige.
-    General Agentit procedures are model/provider-neutral. A compatible local or
-    remote model may execute a role when it satisfies the role's real capability,
-    tool, context, modality, privacy and verification requirements.
-    Provider/model names may appear in adapters, endpoint configuration/examples,
-    current benchmark observations, or provenance; they are not global Agentit
-    requirements. Never silently downgrade a high-judgment role to a weak endpoint.
+    Local models are first-class: use them when they meet the role's capability bar.
+    Cloud models are optional. Never silently downgrade a high-judgment role to a
+    weak local model without disclosing the limitation.
 
-selection_policy:
-  hardcoded_best_model: false
-  primary_rule: "route by accepted task outcomes and role fit, not brand loyalty"
-  consider:
-    - task_fit
-    - verifier_success
-    - tool_and_function_calling_support
-    - context_fit
-    - modality_support
-    - reliability_refusal_and_truncation
-    - latency
-    - cost_per_accepted_result
-    - privacy_and_locality
-    - independence_when_reviewing
-  evidence_hierarchy:
-    - "representative project/task verifier evidence in the real harness"
-    - "current endpoint capability probes"
-    - "current official model/provider documentation for hard capabilities"
-    - "representative external benchmarks as priors"
-    - "anecdotal/social comparisons as hypotheses only"
-  evaluation_rules:
-    - "When model choice materially matters and multiple candidates are plausible, run a small representative head-to-head when feasible."
-    - "Keep task instructions, tools, context, verifier and retry policy comparable when technically possible."
-    - "Prefer objective verifiers; for subjective quality use independent review and reduce identity/order bias when practical."
-    - "Measure accepted success, retries, tool-use failures, refusals/truncation, latency and cost per accepted result rather than nominal token price alone."
-    - "Keep insufficient evidence explicit instead of forcing a winner from noisy or tiny samples."
-    - "Re-evaluate after material model, provider, harness, tool, workload or pricing changes."
-  provider_binding:
-    general_agentit_contracts_require_specific_provider: false
-    model_names_allowed_for:
-      - provider_specific_adapters
-      - endpoint_configuration
-      - examples
-      - current_benchmark_observations
-      - provenance
-
-# These are semantic capability labels, not provider/model rankings.
 tiers:
   judgment:
     label: High judgment
@@ -57,7 +17,7 @@ tiers:
       - independent critic
       - security review
       - hard product tradeoffs
-    local_ok_when: "local model demonstrated strong reasoning on similar tasks; otherwise prefer a stronger compatible endpoint"
+    local_ok_when: "local model demonstrated strong reasoning on similar tasks; otherwise prefer stronger endpoint"
   coding:
     label: Strong coding
     use_for:
@@ -73,14 +33,14 @@ tiers:
       - variants
       - repetitive QA loops
       - browser iteration
-    local_ok_when: "useful local or remote role when latency/cost matter and the task is bounded"
+    local_ok_when: "ideal local use-case when latency/cost matter and task is bounded"
   critic:
     label: Adversarial / diverse critic
     use_for:
       - independent plan critique
       - design competition jury
       - security second opinion
-    local_ok_when: "prefer a different competent model family than the writer when available and useful"
+    local_ok_when: "prefer a different model family than the writer when available (local or cloud)"
 
 roles_default_tier:
   architect: judgment
@@ -102,21 +62,21 @@ local:
     - sufficient context window for projected worker contract
     - deterministic stop on verifier failure
   routing_rules:
-    - "If a local endpoint meets the role contract, it may be preferred for cost, latency or privacy."
-    - "If a local endpoint lacks tools, context or demonstrated quality, fall back or keep work in the parent with disclosure."
+    - "If local endpoint meets tier for the role, it may be preferred for cost/latency."
+    - "If local endpoint lacks tools or context, fall back or keep work in parent with disclosure."
     - "RISK_3/4 critic/auditor should not silently use an unproven weak local model."
     - "Never claim local parity without a fresh capability check on the current machine."
 
 endpoints_schema_example:
   - id: local-coding
     base_url: "http://127.0.0.1:11434/v1"
-    model: "<configured-coding-model>"
+    model: "qwen2.5-coder"
     tier: coding
     tools: true
     context_tokens: 32768
   - id: local-fast
     base_url: "http://127.0.0.1:11434/v1"
-    model: "<configured-fast-model>"
+    model: "llama3.2"
     tier: fast
     tools: true
     context_tokens: 16000

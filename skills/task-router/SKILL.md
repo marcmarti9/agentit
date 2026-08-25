@@ -1,6 +1,6 @@
 ---
 name: task-router
-description: Compact AI-native decision protocol used after Agentit dispatch. The primary model chooses pack/depth, JIT skills/tools/references, risk and topology; cheap AI audits and strong AI arbitrates high-risk or unresolved disagreement.
+description: Compact AI-native decision protocol used after Agentit dispatch. The primary model chooses relevant semantic packs and any justified JIT skill/tool/reference set; cheap AI audits and strong AI arbitrates high-risk or unresolved disagreement.
 ---
 
 # AI-native task decision protocol
@@ -30,8 +30,7 @@ Before material execution, decide at least:
 intent / desired outcome
 known_facts
 material_unknowns
-pack
-pack_depth: essential | standard | deep
+relevant_packs
 complexity: trivial | bounded | substantial | structural
 risk: RISK_0..RISK_4
 reversibility / external_effects
@@ -46,35 +45,42 @@ safety / rollback / post-check
 user_method_assessment
 ```
 
-### Pack + depth
+## Packs and skill selection
 
-Read `skills/using-agent-skills/references/packs.md` only when pack discovery detail is needed.
+Read `skills/using-agent-skills/references/packs.md` when pack discovery detail is useful.
 
-The pack is the domain search scope. The depth expands the **candidate pool**, never the automatic context payload.
+A pack is only a **semantic discovery map**. It describes an area and the skills that may be relevant there. It has no levels, no fixed ordering, and no prescribed skill count.
 
-Prefer one primary pack per stage. Add a secondary pack only for a real cross-domain need.
+The primary AI decides:
 
-Select the smallest concrete skill set that materially improves the stage. Do not load every skill up to the chosen depth.
+- which pack(s), if any, are useful discovery scopes;
+- which concrete skill bodies to load;
+- how many to load;
+- whether to add/remove skills later as evidence changes.
+
+There is **no fixed minimum or maximum** and no `essential / standard / deep` hierarchy.
 
 Examples:
 
 ```text
-pack: engineering
-pack_depth: essential
+relevant_packs:
+- engineering
 selected_skills:
 - debugging-and-error-recovery
 ```
 
 ```text
-pack: design
-pack_depth: deep
+relevant_packs:
+- design
+- frontend
 selected_skills:
 - design-inspiration-research
-- scrollytelling-web
 - browser-testing-with-devtools
 ```
 
-A `deep` task with three selected skills is healthier than a `standard` task that dumps twelve bodies into context.
+A different design task may justify one skill or seven. The pack never decides that number.
+
+Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage.
 
 ## Reference plan
 
@@ -90,13 +96,13 @@ Use `curated` for relevant Agentit/project reference material, `live` for curren
 
 If mode is not `none`, load `reference-intelligence` JIT. It is intentionally not part of the global core.
 
-The absence of a curated pack is not permission to use stale model memory for current tax/legal/API/regulatory/platform facts.
+The absence of curated Agentit material is not permission to use stale model memory for current tax/legal/API/regulatory/platform facts.
 
 Do not research for ceremony and do not load irrelevant references merely because Agentit has them.
 
 ## Tools
 
-Choose tools/MCPs only after the semantic task/pack decision. Load `mcp-tooling-fit` JIT when tool selection itself needs judgment. Prefer least privilege and current verified setup.
+Choose tools/MCPs only after the semantic task decision. Load `mcp-tooling-fit` JIT when tool selection itself needs judgment. Prefer least privilege and current verified setup.
 
 ## Risk
 
@@ -142,8 +148,9 @@ The auditor should challenge:
 
 - misunderstood intent or hidden constraints;
 - risk classified too low;
-- wrong pack or unjustified depth;
-- too many or too few selected skills;
+- wrong/missing semantic pack(s);
+- selected skills that are unjustified, redundant, or missing a material capability;
+- any fixed-count/tier logic replacing model judgment;
 - full-pack/context dumping;
 - missing relevant references or unnecessary reference overload;
 - stale/current-source mistakes or creator claims promoted to facts;
@@ -185,7 +192,7 @@ When spawning, project only bounded task context plus:
 
 ```text
 role/objective
-pack + depth
+relevant pack(s) as discovery labels
 selected skill bodies
 selected references if any
 allowed tools/permissions
@@ -198,6 +205,6 @@ The parent keeps broader context and integration responsibility.
 
 ## Mechanical boundary
 
-Programs may resolve explicit IDs, copy files, manage state/manifests, run tests and enforce Loop/Graph contracts. They must not infer semantic pack/skill/reference/tool choices from natural-language task text.
+Programs may resolve explicit IDs, copy files, manage state/manifests, run tests and enforce Loop/Graph contracts. They must not infer semantic pack/skill/reference/tool choices or skill counts from natural-language task text.
 
 > **Primary AI decides; cheap AI audits; strong AI arbitrates when warranted; software performs the reviewed mechanical plan.**

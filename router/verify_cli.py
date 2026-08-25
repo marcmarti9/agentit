@@ -1,9 +1,8 @@
 """Dedicated public CLI for Agentit's signal-gated verification runtime.
 
 Semantic task interpretation stays with the active AI. This CLI accepts only
-explicit semantic signals and reference decisions selected by that AI plus
-mechanical project facts that ``router.verify`` can detect without parsing the
-task text.
+explicit semantic signals selected by that AI plus mechanical project facts
+that ``router.verify`` can detect without parsing the task text.
 """
 
 from __future__ import annotations
@@ -13,21 +12,9 @@ import json
 from pathlib import Path
 
 try:
-    from router.verify import (
-        VALID_REFERENCE_MODES,
-        VerifyError,
-        apply_verification,
-        format_plan,
-        plan_verification,
-    )
+    from router.verify import VerifyError, apply_verification, format_plan, plan_verification
 except ImportError:  # direct execution from router/
-    from verify import (  # type: ignore
-        VALID_REFERENCE_MODES,
-        VerifyError,
-        apply_verification,
-        format_plan,
-        plan_verification,
-    )
+    from verify import VerifyError, apply_verification, format_plan, plan_verification
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -35,7 +22,7 @@ def _parser() -> argparse.ArgumentParser:
         prog="agentit verify",
         description=(
             "Plan or run Agentit verification. Natural-language task text is receipt "
-            "context only; semantic verification signals/reference mode must be passed explicitly."
+            "context only; semantic verification signals must be passed explicitly."
         ),
     )
     parser.add_argument(
@@ -59,43 +46,6 @@ def _parser() -> argparse.ArgumentParser:
             "Explicit semantic signal chosen by the active AI, e.g. auth, api, "
             "frontend, postgres. Repeat for multiple signals."
         ),
-    )
-    parser.add_argument(
-        "--reference-mode",
-        choices=tuple(sorted(VALID_REFERENCE_MODES)),
-        default="none",
-        help=(
-            "Explicit reference decision from TASK_DECISION: none, catalog, live, or mixed. "
-            "The CLI never infers this from task text."
-        ),
-    )
-    parser.add_argument(
-        "--reference-source",
-        action="append",
-        default=[],
-        metavar="ID_OR_URL",
-        help="Reference pack/source ID or live URL actually selected/inspected. Repeat as needed.",
-    )
-    parser.add_argument(
-        "--reference-evidence",
-        action="append",
-        default=[],
-        metavar="TEXT",
-        help=(
-            "Compact evidence of what was actually inspected/verified and how it affected the work. "
-            "Required by --apply when reference-mode is not none."
-        ),
-    )
-    parser.add_argument(
-        "--reference-provenance",
-        default=None,
-        metavar="PATH_OR_CITATIONS",
-        help="Ledger path, citation record, or equivalent provenance output.",
-    )
-    parser.add_argument(
-        "--reference-provenance-required",
-        action="store_true",
-        help="Require provenance output before a passing apply receipt.",
     )
     parser.add_argument(
         "--apply",
@@ -127,27 +77,20 @@ def main(argv: list[str] | None = None) -> int:
     _ = args.repo_root
 
     try:
-        common = {
-            "task_text": task_text,
-            "explicit_signals": explicit_signals,
-            "include_advisory": not args.no_advisory,
-            "reference_mode": args.reference_mode,
-            "reference_sources": args.reference_source,
-            "reference_provenance_required": args.reference_provenance_required,
-        }
         if args.apply:
             payload = apply_verification(
                 args.project,
-                **common,
-                reference_evidence=args.reference_evidence,
-                reference_provenance=args.reference_provenance,
+                task_text=task_text,
+                explicit_signals=explicit_signals,
+                include_advisory=not args.no_advisory,
             )
         else:
-            if args.reference_evidence or args.reference_provenance:
-                parser.error(
-                    "--reference-evidence/--reference-provenance are apply-time evidence; use --apply"
-                )
-            payload = plan_verification(args.project, **common)
+            payload = plan_verification(
+                args.project,
+                task_text=task_text,
+                explicit_signals=explicit_signals,
+                include_advisory=not args.no_advisory,
+            )
     except VerifyError as exc:
         parser.error(str(exc))
         return 2

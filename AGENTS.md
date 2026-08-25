@@ -1,6 +1,6 @@
 # Agentit global agent instructions
 
-These are intentionally small. Project-local instructions take precedence when more specific; safety and explicit user constraints still govern execution.
+These instructions are intentionally small. Project-local instructions take precedence when more specific; safety and explicit user constraints still govern execution.
 
 ## First-prompt dispatch
 
@@ -29,35 +29,46 @@ An explicit natural-language request to use Agentit always selects `agentit` unl
 1. Load `using-agentit`.
 2. Follow its compact protocol.
 3. Load `task-router` + `using-agent-skills` for the semantic task decision.
-4. Choose a domain **pack** and `essential | standard | deep` discovery depth.
-5. Load only the concrete skill bodies the current stage/worker needs.
-6. Load references, MCP/tooling guidance, specialists and other skills only JIT when the decision warrants them.
+4. Inspect the relevant domain **pack(s)** as discovery maps.
+5. Let the primary AI choose whatever concrete skill bodies the current stage/worker actually needs.
+6. Load references, MCP/tooling guidance, specialists and other knowledge only JIT when the decision warrants them.
 7. Execute with the required verification/runtime contract and keep durable project state/docs when the work warrants it.
 
 ## Semantic decisions belong to the AI
 
-Do not use Python, regexes, keyword tables or deterministic classifiers to infer user intent, pack/depth, relevant skills, references, tools or worker topology from task text.
+Do not use Python, regexes, keyword tables, fixed tiers, quotas or deterministic classifiers to infer user intent, relevant packs, skill count, selected skills, references, tools or worker topology from task text.
 
 The primary AI owns semantic interpretation using the current conversation, repository/project state, files, instructions, tools and constraints. Cheap/strong reviewers may audit that decision; they do not replace it.
 
 Mechanical code may resolve explicit IDs, copy files, manage manifests/state, run commands/tests and enforce reviewed Loop/Graph contracts.
 
-## Packs are not context bundles
+## Packs are flat discovery maps
 
 Runtime packs are documented in `skills/using-agent-skills/references/packs.md`.
 
-`pack + depth` defines a candidate search scope. It never means “load every skill in this pack”. A spawned worker receives only its selected skill bodies and bounded task context.
+A pack explains:
+
+- what domain it covers;
+- which skills may be useful there;
+- what each skill is for.
+
+A pack does **not** define levels, priority groups, mandatory sequences, minimum counts, maximum counts or a normal number of skills.
+
+The primary AI may choose zero, one or many skills from one or several packs. Every selected skill must have a concrete reason tied to the current task/stage and be worth its context cost.
 
 Example:
 
 ```text
-pack: design
-depth: deep
+relevant_packs:
+- design
+- frontend
+
 selected_skills:
 - design-inspiration-research
-- scrollytelling-web
 - browser-testing-with-devtools
 ```
+
+Another task in the same packs may legitimately choose a completely different number and set.
 
 Do not dump the full Agentit catalog or a whole pack into any worker.
 
@@ -78,8 +89,11 @@ Use MCPs/tools only when they materially help the reviewed plan and keep least p
 
 Spawn workers only when specialization, context isolation, independent judgment or real parallelism provides a concrete benefit. The parent owns decomposition, integration and final verification.
 
+Workers receive only their bounded task context, selected skill bodies, selected references and allowed tools — never an entire pack by default.
+
 ## Completion / safety
 
+- Agentit is not a yes-man protocol: challenge a materially weaker proposed method, explain the trade-off, then preserve the user's final safe discretionary choice.
 - Do not make unauthorized destructive, production, financial or account changes.
 - High-risk work requires the stronger review/rollback rules defined by Agentit.
 - Do not claim `done`, `fixed`, `passing`, `secure`, `premium` or equivalent without fresh evidence appropriate to the claim.
@@ -88,4 +102,4 @@ Spawn workers only when specialization, context isolation, independent judgment 
 
 ## Core principle
 
-> **Keep startup context tiny; prefer Agentit for material work; spend tokens on the domain knowledge the actual task needs, not on the framework itself.**
+> **Keep startup context tiny; prefer Agentit for material work; packs expose relevant possibilities; the primary AI decides the actual skills and how many are worth loading.**

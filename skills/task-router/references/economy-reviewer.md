@@ -24,12 +24,12 @@ Challenge material issues such as:
 
 1. misunderstood intent or hidden hard constraint;
 2. risk/reversibility/external effects classified too lightly;
-3. wrong primary pack for the current stage;
-4. `deep` depth selected without a real specialist/high-risk/high-craft reason;
-5. depth too shallow for an obviously advanced/high-risk task;
-6. selected skills that are redundant, excessive or missing one essential capability;
-7. whole-pack/catalog dumping instead of JIT selected bodies;
-8. a skill included merely because it is globally installed/discoverable;
+3. wrong or missing semantic pack(s) for discovery;
+4. selected skills that are redundant, unjustified, or missing a material capability;
+5. arbitrary skill-count, tier or ordering rules replacing the primary AI's judgment;
+6. whole-pack/catalog dumping instead of JIT selected bodies;
+7. a skill included merely because it is globally installed/discoverable or listed in a pack;
+8. a useful skill omitted merely to satisfy an artificial context quota;
 9. unjustified `reference_plan.mode: none` when current/domain-specific/external knowledge materially affects correctness or quality;
 10. irrelevant reference overload or selected sources that will not actually be inspected;
 11. stopping at a social post when its linked article/repository contains the useful substance;
@@ -45,17 +45,21 @@ Challenge material issues such as:
 
 ## Context-budget check
 
-Agentit is supposed to **save** context by loading knowledge JIT.
+Agentit should spend context deliberately, not minimize it blindly.
 
 Ask explicitly:
 
 ```text
-Could this stage succeed with fewer skill bodies, references or workers?
-Did every selected skill earn its token cost?
-Did pack + depth define a candidate scope rather than an injected bundle?
+Did every selected skill earn its token cost for this stage?
+Is any selected skill redundant or irrelevant?
+Is any useful skill missing only because of an arbitrary count/tier/quota?
+Did packs remain discovery maps rather than injected bundles?
+Could references or worker context be reduced without losing material capability?
 ```
 
-Do not challenge a small context merely because more Agentit skills exist.
+There is no target number of skills. A large justified set can be correct; a zero-skill set can also be correct.
+
+Do not challenge a small context merely because more Agentit skills exist, and do not challenge a larger set merely because it is large. Challenge the **reasoning and relevance**.
 
 ## Reference nuance
 

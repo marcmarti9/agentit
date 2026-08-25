@@ -23,11 +23,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         return bootstrap_main(args[1:])
 
-    if args and args[0] in {"refs", "references"}:
-        from router.reference_catalog import main as references_main
-
-        return references_main(args[1:])
-
     from router.profiles import main as profiles_main
 
     return profiles_main(args)

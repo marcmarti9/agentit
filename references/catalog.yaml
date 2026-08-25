@@ -1,0 +1,540 @@
+schema_version: 1
+purpose: >-
+  Mechanical, provenance-aware catalog of external references that Agentit can load after
+  the primary AI has decided which domain/reference pack is useful. This catalog is not a
+  natural-language router and does not turn social-media claims into facts.
+policy:
+  semantic_selection_owner: primary_ai
+  software_role: mechanical_index_only
+  prefer_primary_sources: true
+  distinguish_creator_claims: true
+  require_provenance_for_material_influence: true
+  require_license_review_for_code_or_skill_reuse: true
+  design_references_are_pattern_inspiration_not_clone_targets: true
+  reverify_dynamic_sources_when_material: true
+  default_project_ledger: docs/agentit/REFERENCES.md
+  notes: |
+    A reference may influence a decision without being authoritative evidence. The agent must
+    preserve the distinction between a creator claim, an independently corroborated claim,
+    canonical documentation, and a reusable licensed artifact. Load the smallest useful pack.
+    If a source materially shapes architecture, product behavior, design, process, or a new
+    dependency, record source -> extracted principle -> project decision -> affected paths in
+    the project's reference ledger.
+
+evidence_levels:
+  canonical: "Official documentation, specification, or canonical repository for the thing being used."
+  licensed_artifact: "Inspectable reusable artifact with a reviewed license; attribution may be required."
+  corroborated: "Material claim supported by independent or multiple credible sources."
+  creator_claim: "Claim made by the creator/vendor/post author; useful as a lead, not independent proof."
+  inspiration: "Reference used for patterns/taste/ideas rather than factual authority."
+  unverified: "Could not verify enough of the underlying claim; do not treat as evidence."
+
+packs:
+  engineering-discipline:
+    description: "Small composable skills, inspect-first planning, bounded feedback loops, and harness/model separation."
+    sources: [matt-pocock-skills, minchoi-senior-engineer, precisox-self-improving-agents, adiix-claude-router]
+  web-design-studio:
+    description: "Reference-first art direction, structural variety, implementable components, UX QA, motion, and premium visual storytelling."
+    sources: [roundtable-reference-library, nett0eth-design-sources, fermin-checklist-design, ericksky-hallmark, monokern-21st-dev, midudev-liquid-ui, midudev-dark-transition, midudev-border-beam, heynavtoor-cinematic-web, xiathis-cinematic-web, csaba-oss-resources]
+  growth-seo:
+    description: "SEO/marketing work grounded in live data, specialized skills, and feedback loops rather than prompt dumps."
+    sources: [bloggersarvesh-grok-seo, seijin-helena-mcp, cyril-fable-prompts, precisox-self-improving-agents]
+  launch-content:
+    description: "Research proven launch patterns, produce assets efficiently, distribute, measure, and learn."
+    sources: [okara-launch-library, motion-product-video, jokker-youtube-pipeline, cyril-fable-prompts]
+  build-vs-buy:
+    description: "Search reusable infrastructure and approved tooling before inventing commodity functionality."
+    sources: [chddaniel-chatpack, midudev-free-dev-resources, csaba-oss-resources, monokern-21st-dev]
+  ai-systems-learning:
+    description: "Deep model/inference knowledge and experimental local-model systems; useful for R&D rather than product claims."
+    sources: [roh-anthropic-career, datachaz-colibri, adiix-claude-router]
+  agency-economics:
+    description: "Use AI to compress delivery cost while pricing around outcomes, scope, risk, craft, and market value—not tweet screenshots."
+    sources: [bateshkaaa-premium-web, xiathis-cinematic-web, heynavtoor-cinematic-web]
+
+sources:
+  - id: jokker-youtube-pipeline
+    title: "Claude Code assisted faceless-video production pipeline"
+    url: https://x.com/0xJokker/status/2091895032580112862
+    kind: social_post
+    domains: [content, automation, video]
+    tags: [youtube, script, voice, timestamps, image-generation, editing]
+    evidence_level: creator_claim
+    verification_status: partially_verified
+    checked_at: 2026-08-25
+    summary: >-
+      Demonstrates a pipeline that decomposes video production into script/voice/timestamps,
+      scene-aligned visual generation, and assembly. Treat revenue screenshots/estimates as
+      marketing claims unless independently verified.
+    durable_takeaways:
+      - "Automate asset synchronization and repetitive assembly before automating editorial judgment."
+      - "Represent a video as a scene plan with timestamps so workers can generate assets independently."
+      - "Keep factual claims, rights, pacing, and final editorial approval under an explicit review gate."
+    cautions:
+      - "Do not infer creator earnings from third-party estimate tools."
+      - "Avoid low-information content farms; automation should raise throughput without removing quality control."
+    integration:
+      disposition: adapted
+      targets: ["reference pack launch-content", "content/video project playbooks"]
+
+  - id: roundtable-reference-library
+    title: "Agent-oriented website reference library"
+    url: https://x.com/RoundtableSpace/status/2091522093032866280
+    kind: social_post
+    domains: [design, frontend]
+    tags: [references, inspiration, websites, agents]
+    evidence_level: inspiration
+    verification_status: partially_verified
+    checked_at: 2026-08-25
+    summary: "Use real websites as concrete design input instead of asking an agent for an abstract 'modern' aesthetic."
+    durable_takeaways:
+      - "Extract layout, typography, motion, hierarchy, and interaction signals separately."
+      - "Synthesize several references into an original design thesis; do not clone one site."
+    cautions: ["Reference libraries are inspiration, not evidence of conversion or business performance."]
+    integration:
+      disposition: adopted
+      targets: ["skills/design-taste-frontend", "reference pack web-design-studio"]
+
+  - id: bloggersarvesh-grok-seo
+    title: "Grok Bot SEO prompt/workflow collection"
+    url: https://x.com/bloggersarvesh/status/2090789546925642183
+    kind: social_post
+    domains: [seo, marketing, automation]
+    tags: [seo, prompts, audit, competitor-gap, schema]
+    evidence_level: creator_claim
+    verification_status: partially_verified
+    checked_at: 2026-08-25
+    summary: "A prompt-heavy SEO workflow covering audits, competitors, keywords, schema, and content work."
+    durable_takeaways:
+      - "Promote repeatable SEO procedures into skills with inputs, evidence, outputs, and verification instead of preserving magic prompts."
+      - "Use Search Console/analytics and measured follow-ups so SEO is a closed loop."
+    cautions: ["Agency-price comparisons do not establish equivalent outcomes.", "SEO recommendations go stale; re-check current search-engine guidance."]
+    integration:
+      disposition: adapted
+      targets: ["growth/SEO skill curation", "Digitem SEO operating playbook"]
+
+  - id: okara-launch-library
+    title: "Okara Launch Library"
+    url: https://x.com/askOkara/status/2090804619626860811
+    canonical_url: https://okara.ai/launch-library
+    kind: reference_library
+    domains: [launch, marketing, research]
+    tags: [x, launches, swipe-file, positioning, distribution]
+    evidence_level: inspiration
+    verification_status: verified_underlying_product
+    checked_at: 2026-08-25
+    summary: "Browsable collection of product launches on X for studying hooks, formats, positioning, proof, and distribution patterns."
+    durable_takeaways:
+      - "Before a material launch, inspect several comparable launches and document patterns that actually affect the launch plan."
+      - "Separate pattern research from copying wording or brand assets."
+    cautions: ["A successful-looking post is not causal proof that its format caused the outcome."]
+    integration:
+      disposition: adopted
+      targets: ["reference pack launch-content", "shipping-and-launch research stage"]
+
+  - id: bateshkaaa-premium-web
+    title: "AI-compressed premium website delivery"
+    url: https://x.com/bateshkaaa/status/2079218516150862086
+    kind: social_post
+    domains: [agency, design, economics]
+    tags: [premium-web, pricing, ai-leverage, delivery]
+    evidence_level: creator_claim
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Frames agentic coding/design as a way to compress delivery time for high-craft websites."
+    durable_takeaways:
+      - "Measure AI leverage as lower production cost and faster iteration, not as entitlement to a quoted market price."
+      - "Premium pricing must be justified by outcome, craft, risk, strategy, scope, support, and market demand."
+    cautions: ["Tweet price anchors are not market validation.", "Do not fake premium value with ornamental motion alone."]
+    integration:
+      disposition: reference_only
+      targets: ["Digitem service packaging", "reference pack agency-economics"]
+
+  - id: seijin-helena-mcp
+    title: "Helena marketing agent / MCP architecture"
+    url: https://x.com/SeijinJung/status/2087909540679540898
+    canonical_url: https://www.enrichlabs.ai/
+    kind: product_architecture_reference
+    domains: [marketing, agents, analytics, automation]
+    tags: [mcp, ga4, gsc, ads, cms, email, scheduled-loops]
+    evidence_level: creator_claim
+    verification_status: verified_product_creator_claims
+    checked_at: 2026-08-25
+    summary: >-
+      Marketing-agent architecture combining specialized procedures with live integrations,
+      scheduled follow-up checks, persistent learning state, and self-review.
+    durable_takeaways:
+      - "Model + domain skills + live connectors + scheduled evaluation + persistent learnings is stronger than one general marketing prompt."
+      - "Every autonomous marketing action needs an outcome metric and a later review point."
+      - "Read-only analytics and staged proposals should precede high-impact ad/CMS mutations."
+    cautions: ["Vendor performance figures are not independent benchmarks.", "Do not catalog an installable MCP endpoint until current setup/auth docs are verified."]
+    integration:
+      disposition: adapted
+      targets: ["marketing feedback-loop pattern", "Digitem marketing automation architecture", "incubator"]
+
+  - id: midudev-liquid-ui
+    title: "Liquid UI microinteraction reference"
+    url: https://x.com/midudev/status/2087541694480695749
+    kind: design_reference
+    domains: [frontend, design]
+    tags: [microinteraction, liquid, motion, polish]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "A visual microinteraction reference for expressive controls and navigation."
+    durable_takeaways: ["Treat signature motion as a scarce accent tied to hierarchy, not decoration applied everywhere."]
+    cautions: ["Respect reduced motion, input latency, and mobile performance."]
+    integration:
+      disposition: reference_only
+      targets: ["web-design-studio reference pack"]
+
+  - id: mdancho-agent-company
+    title: "Company functions represented as specialized agent definitions"
+    url: https://x.com/mdancho84/status/2086413720335307073
+    kind: architecture_idea
+    domains: [agents, organization, orchestration]
+    tags: [roles, departments, markdown, specialization]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Represents engineering/marketing/design/ops/testing responsibilities as inspectable agent definitions."
+    durable_takeaways:
+      - "Separate role identity from reusable procedure skills, tools, and acceptance loops."
+      - "Version operational knowledge as files so it can be reviewed and improved."
+      - "Use specialists only where context isolation or expertise helps; do not emulate an org chart for show."
+    cautions: ["A folder of personas is not an autonomous company and does not remove accountability or judgment gates."]
+    integration:
+      disposition: already_covered
+      targets: ["agents/catalog.yaml", "skills/architect-orchestrator", "TASK_DECISION worker roles"]
+
+  - id: nett0eth-design-sources
+    title: "Large website inspiration/source collection"
+    url: https://x.com/nett0eth/status/2085661117741711667
+    kind: reference_collection
+    domains: [design, frontend]
+    tags: [inspiration, galleries, typography, motion]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Broadens the reference pool available before committing to a visual direction."
+    durable_takeaways: ["Curate references by use-case and agent readability; a huge undifferentiated list is context debt."]
+    cautions: ["Do not fetch every gallery for every task; use progressive disclosure."]
+    integration:
+      disposition: adopted
+      targets: ["skills/design-taste-frontend/references/inspiration-sources.md", "web-design-studio pack"]
+
+  - id: fermin-checklist-design
+    title: "Checklist Design UX/UI checklists"
+    url: https://x.com/ferminrp/status/2086067951736639534
+    canonical_url: https://www.checklist.design/
+    kind: reference_library
+    domains: [ux, design, qa]
+    tags: [checklists, flows, components, screens, qa]
+    evidence_level: inspiration
+    verification_status: verified_underlying_product
+    checked_at: 2026-08-25
+    summary: "Screen/component/flow checklists that can act as an external QA prompt after implementation."
+    durable_takeaways:
+      - "QA should be flow-specific: checkout, auth, pricing, forms, settings, etc. have distinct failure modes."
+      - "Convert relevant checklist items into verifiable acceptance criteria instead of blindly copying the full list."
+    cautions: ["External checklist guidance does not override accessibility standards, project requirements, or rendered testing."]
+    integration:
+      disposition: adopted
+      targets: ["design QA reference stage", "web-design-studio pack"]
+
+  - id: chddaniel-chatpack
+    title: "Chatpack open-source chat infrastructure"
+    url: https://x.com/chddaniel/status/2085785307585417494
+    canonical_url: https://github.com/chddaniel/chatpack
+    kind: software_project
+    domains: [frontend, chat, infrastructure]
+    tags: [chat, open-source, build-vs-buy]
+    evidence_level: licensed_artifact
+    verification_status: verified_repository
+    checked_at: 2026-08-25
+    summary: "Reusable open-source chat infrastructure that should be evaluated before building commodity chat UX/infrastructure from scratch."
+    durable_takeaways: ["For non-differentiating infrastructure, run adopt/extend/compose/build evaluation before custom implementation."]
+    cautions: ["Review current license, maintenance, dependencies, accessibility, and project fit before adopting."]
+    integration:
+      disposition: candidate
+      targets: ["build-vs-buy pack", "projects that add conversational UI"]
+
+  - id: matt-pocock-skills
+    title: "Skills For Real Engineers"
+    url: https://x.com/mattpocockuk/status/2084192339937948048
+    canonical_url: https://github.com/mattpocock/skills
+    kind: skill_repository
+    domains: [engineering, agents, process]
+    tags: [skills, tdd, debugging, research, domain-modeling, composability]
+    evidence_level: licensed_artifact
+    verification_status: verified_repository
+    checked_at: 2026-08-25
+    summary: "Small, editable, composable engineering skills emphasizing alignment, shared vocabulary, feedback loops, and codebase design."
+    durable_takeaways:
+      - "Prefer small composable skills over a monolithic methodology."
+      - "Inspect/interview at decision frontiers, create fast feedback loops, and keep project vocabulary/decisions durable."
+      - "Avoid duplicate installs/adaptations that create competing process owners."
+    cautions: ["Adapt selectively into Agentit's existing responsibilities; preserve MIT attribution for reused material."]
+    integration:
+      disposition: adapted
+      targets: ["existing Agentit engineering skills", "THIRD_PARTY_NOTICES.md"]
+
+  - id: motion-product-video
+    title: "Motion product-URL to launch-video workflow"
+    url: https://x.com/motion_so/status/2083992227114520576
+    kind: product_reference
+    domains: [video, launch, content]
+    tags: [product-url, script, voice, render, revisions]
+    evidence_level: creator_claim
+    verification_status: verified_product_creator_claims
+    checked_at: 2026-08-25
+    summary: "Uses product context plus natural-language direction to produce and revise launch-video assets."
+    durable_takeaways:
+      - "Generate/review a scene plan and factual script before expensive rendering."
+      - "Treat a product URL as context, not as a complete creative brief."
+      - "Run factual, rights, brand, and CTA review before publication."
+    cautions: ["Do not invent product claims from sparse site context.", "Verify current product/API availability before automating around it."]
+    integration:
+      disposition: reference_only
+      targets: ["launch-content pack", "content production playbooks"]
+
+  - id: cyril-fable-prompts
+    title: "Large Fable marketing-prompt collection"
+    url: https://x.com/cyrilXBT/status/2083235395236495817
+    kind: prompt_collection
+    domains: [marketing, content]
+    tags: [prompts, marketing, copy, campaigns]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Large prompt corpus marketed as agency-like leverage."
+    durable_takeaways: ["Mine prompt corpora for recurring procedures, then promote only stable procedures into skills with evidence and acceptance criteria."]
+    cautions: ["Hundreds of prompts are not a maintainable operating system.", "Agency-equivalence claims require outcome evidence."]
+    integration:
+      disposition: distill_only
+      targets: ["marketing skill curation"]
+
+  - id: minchoi-senior-engineer
+    title: "Inspect-first senior-engineer agent instruction pattern"
+    url: https://x.com/minchoi/status/2083394791652688208
+    kind: process_reference
+    domains: [engineering, agents]
+    tags: [inspect-first, questions, assumptions, plan, verification]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Instruction pattern that makes the agent inspect the repository, clarify only blocking unknowns, expose falsifiable assumptions, plan proportionally, and prove the result."
+    durable_takeaways:
+      - "A question answerable from the repo is avoidable user work."
+      - "Record material assumptions in falsifiable form and verify them early."
+      - "Scale planning ceremony with risk/complexity and require evidence before completion claims."
+    cautions: ["Do not turn every tiny edit into heavyweight ceremony."]
+    integration:
+      disposition: adapted
+      targets: ["task-router", "planning-and-task-breakdown", "verification-gauntlet"]
+
+  - id: heynavtoor-cinematic-web
+    title: "Cinematic / 3D product-web reference"
+    url: https://x.com/heynavtoor/status/2083221614595051602
+    kind: design_reference
+    domains: [design, frontend, threejs]
+    tags: [3d, cinematic, apple-like, storytelling]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "High-motion product storytelling using depth, camera, scenes, and spatial transitions."
+    durable_takeaways: ["Use cinematic/3D mechanics only when the product story benefits enough to justify runtime, asset, accessibility, and maintenance cost."]
+    cautions: ["Not a default for local-business websites or information-heavy product UI."]
+    integration:
+      disposition: already_covered
+      targets: ["threejs-product-storytelling", "scrollytelling-web", "visual-storytelling-director"]
+
+  - id: midudev-dark-transition
+    title: "Native dark-mode transition microinteraction"
+    url: https://x.com/midudev/status/2074842216896299385
+    kind: implementation_reference
+    domains: [frontend, design]
+    tags: [view-transitions, dark-mode, microinteraction]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Small visual polish technique for theme transitions using modern browser capabilities."
+    durable_takeaways: ["Prefer native platform primitives for polish when support/fallback behavior is acceptable."]
+    cautions: ["Verify current browser support and reduced-motion behavior before production use."]
+    integration:
+      disposition: reference_only
+      targets: ["web-design-studio pack"]
+
+  - id: midudev-free-dev-resources
+    title: "Free developer-resource/tool collection"
+    url: https://x.com/midudev/status/2080277706713821552
+    kind: tool_collection
+    domains: [engineering, tooling]
+    tags: [free-tier, api, hosting, analytics, models]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "A broad discovery list of developer tools/free tiers."
+    durable_takeaways: ["Turn repeated tool discovery into an approved, periodically revalidated toolbox; do not couple projects to a free tier without checking limits and exit cost."]
+    cautions: ["Pricing/free tiers and terms change; re-verify before a project depends on them."]
+    integration:
+      disposition: reference_only
+      targets: ["build-vs-buy pack", "tool scouting"]
+
+  - id: midudev-border-beam
+    title: "Border Beam UI microinteraction"
+    url: https://x.com/midudev/status/2079568447940243923
+    kind: implementation_reference
+    domains: [frontend, design]
+    tags: [border, animation, component, polish]
+    evidence_level: inspiration
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Animated border treatment useful as an occasional focus/hero accent."
+    durable_takeaways: ["Decorative effects should reinforce hierarchy and reuse existing project tokens rather than become the design system."]
+    cautions: ["Verify the actual package/source/license before adding a dependency."]
+    integration:
+      disposition: reference_only
+      targets: ["web-design-studio pack"]
+
+  - id: roh-anthropic-career
+    title: "Deep-LLM-engineering career anecdote"
+    url: https://x.com/RohOnChain/status/2078533887383556335
+    kind: career_reference
+    domains: [ai, learning, career]
+    tags: [llm, fundamentals, training, inference, hiring]
+    evidence_level: creator_claim
+    verification_status: claim_not_independently_verified
+    checked_at: 2026-08-25
+    summary: "Uses a high-compensation hiring anecdote to argue for understanding LLM systems rather than only consuming AI tools."
+    durable_takeaways: ["Deep knowledge of training, inference, evals, systems, and model behavior is strategically distinct from prompt fluency."]
+    cautions: ["Do not use the quoted compensation or hiring story as verified labor-market evidence without independent corroboration."]
+    integration:
+      disposition: learning_only
+      targets: ["ai-systems-learning pack"]
+
+  - id: xiathis-cinematic-web
+    title: "AI-assisted cinematic website production"
+    url: https://x.com/xiathis/status/2077468692493791353
+    kind: design_process_reference
+    domains: [agency, design, frontend]
+    tags: [cinematic, premium-web, ai, fable]
+    evidence_level: creator_claim
+    verification_status: post_level_only
+    checked_at: 2026-08-25
+    summary: "Shows AI-assisted production of high-craft cinematic marketing sites and frames them as premium agency output."
+    durable_takeaways:
+      - "Create a separate high-craft delivery mode with stronger art direction, assets, motion, and browser QA."
+      - "Price/value claims must come from market evidence and client outcomes, not the complexity of the generated frontend."
+    cautions: ["Do not equate visual complexity with conversion or business value."]
+    integration:
+      disposition: adapted
+      targets: ["design Studio depth", "Digitem premium-web service definition"]
+
+  - id: adiix-claude-router
+    title: "Claude Code harness with alternative model providers"
+    url: https://x.com/adiix_official/status/2077379229331689595
+    kind: architecture_reference
+    domains: [agents, models, tooling]
+    tags: [claude-code, router, model-provider, portability, local-models]
+    evidence_level: inspiration
+    verification_status: underlying_pattern_verified
+    checked_at: 2026-08-25
+    summary: "Highlights separating an agent harness/workflow from the concrete model endpoint so different providers can execute the same operating protocol."
+    durable_takeaways:
+      - "Route by semantic capability tiers instead of hardcoding one vendor/model throughout the protocol."
+      - "Run provider compatibility evals for tool use, context, reliability, cost, and latency before substitution."
+    cautions: ["'Free' tiers and zero-downgrade claims are not durable guarantees.", "Provider adapters can fail on tool schemas/session semantics even when text generation works."]
+    integration:
+      disposition: already_covered
+      targets: ["Agentit provider-neutral semantic tiers", "local-model-routing"]
+
+  - id: csaba-oss-resources
+    title: "Open-source developer/design resource bundle"
+    url: https://x.com/csaba_kissi/status/2076565335684059214
+    kind: tool_collection
+    domains: [engineering, design, tooling]
+    tags: [lobehub, 60fps, icons, monitoring, open-source]
+    evidence_level: inspiration
+    verification_status: partially_verified_crosspost
+    checked_at: 2026-08-25
+    summary: "Collection of open-source resources; especially useful as leads for agent organization and motion/UI reference discovery."
+    durable_takeaways: ["Promote individual tools only after fit/license/maintenance review; retain the collection itself as discovery input."]
+    cautions: ["A listicle mention is not enough evidence to add a dependency or global agent capability."]
+    integration:
+      disposition: reference_only
+      targets: ["build-vs-buy pack", "web-design-studio pack"]
+
+  - id: precisox-self-improving-agents
+    title: "Bounded self-improving agent loop"
+    url: https://x.com/precisox/status/2076152320585343132
+    kind: architecture_reference
+    domains: [agents, memory, evaluation]
+    tags: [loop, rag, memory, feedback, stop-condition, self-review]
+    evidence_level: inspiration
+    verification_status: partially_verified
+    checked_at: 2026-08-25
+    summary: "Agent architecture centered on selective context, persistent learnings, execution/evaluation loops, and explicit stop conditions."
+    durable_takeaways:
+      - "Every self-correcting loop needs observable success criteria, bounded attempts, fresh evidence, and an escalation boundary."
+      - "Persist compact learnings/state rather than replaying entire histories."
+      - "An evaluator should be able to reject a worker result without weakening the acceptance criterion."
+    cautions: ["'Self-improving' should mean improving stored procedure/context/strategy from evidence, not silently mutating safety boundaries."]
+    integration:
+      disposition: already_covered_and_extended
+      targets: ["Loop/Graph runtime", "long-horizon-recovery", "reference learning ledger"]
+
+  - id: datachaz-colibri
+    title: "Colibrì mixture-of-experts offload/runtime experiment"
+    url: https://x.com/DataChaz/status/2076229374924534171
+    kind: research_project
+    domains: [ai, inference, local-models, systems]
+    tags: [moe, offload, disk, ram, vram, inference]
+    evidence_level: creator_claim
+    verification_status: underlying_project_partially_verified
+    checked_at: 2026-08-25
+    summary: "Explores running very large MoE models by treating storage/RAM/VRAM as a hierarchy and loading only required expert weights."
+    durable_takeaways: ["Memory capacity and interactive throughput are different constraints; offloading can make a model runnable without making it operationally useful."]
+    cautions: ["Benchmark real tokens/sec, latency, memory traffic, and quality before considering production use."]
+    integration:
+      disposition: learning_only
+      targets: ["ai-systems-learning pack", "local-model R&D"]
+
+  - id: ericksky-hallmark
+    title: "Hallmark anti-AI-slop design skill"
+    url: https://x.com/ErickSky/status/2075968875607269569
+    canonical_url: https://github.com/Nutlope/hallmark
+    kind: skill_repository
+    domains: [design, frontend, agents]
+    tags: [anti-slop, study, audit, redesign, structural-variety, tokens, responsive]
+    evidence_level: licensed_artifact
+    verification_status: verified_repository
+    checked_at: 2026-08-25
+    summary: "MIT-licensed design skill with build/audit/redesign/study flows, structural-variety discipline, reference-DNA extraction, self-critique, truthful content, token coherence, and responsive/component-state checks."
+    durable_takeaways:
+      - "Study references as design DNA—structure, archetypes, type/color/motion signals—rather than copying pixels."
+      - "Audit structural repetition, fabricated proof, fake chrome, token drift, mobile behavior, and interaction states before calling a UI polished."
+      - "Preserve existing implementation boundaries during redesign unless a rebuild/deletion plan is explicitly approved."
+    cautions: ["Do not globally install a duplicate design-process owner when Agentit can selectively adapt compatible rules.", "Preserve MIT attribution for reused material."]
+    integration:
+      disposition: adapted
+      targets: ["design-taste-frontend", "design reference study", "THIRD_PARTY_NOTICES.md"]
+
+  - id: monokern-21st-dev
+    title: "21st.dev agent component/reference discovery"
+    url: https://x.com/monokern/status/2074889830501155091
+    canonical_url: https://21st.dev/mcp
+    kind: mcp_and_component_catalog
+    domains: [design, frontend, agents]
+    tags: [mcp, components, semantic-search, react, tailwind, references]
+    evidence_level: canonical
+    verification_status: verified_current_product_docs
+    checked_at: 2026-08-25
+    summary: "Agent-accessible component/UI catalog and MCP workflow for discovering real implementable references before generating interface code."
+    durable_takeaways:
+      - "Search for suitable existing component patterns before inventing commodity UI."
+      - "Treat external components as candidates: inspect code/license/dependencies and adapt to project tokens/a11y instead of pasting blindly."
+    cautions: ["Authentication/config differs by client and can change; use current official setup docs.", "Community component quality is variable; browser verification remains mandatory."]
+    integration:
+      disposition: adopted
+      targets: ["MCP catalog", "web-design-studio pack", "design-taste-frontend references"]

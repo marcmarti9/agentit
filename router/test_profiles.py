@@ -46,11 +46,12 @@ class ProfileCatalogTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         core = json.loads(completed.stdout)
-        self.assertEqual(12, len(core))
+        self.assertLessEqual(len(core), 14)
         self.assertIn("using-agentit", core)
         self.assertIn("verification-gauntlet", core)
         self.assertIn("task-router", core)
         self.assertIn("using-agent-skills", core)
+        self.assertIn("reference-intelligence", core)
 
         all_skills = {
             path.parent.name

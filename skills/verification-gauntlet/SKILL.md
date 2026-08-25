@@ -24,8 +24,7 @@ Inspired by craft practice (hard constraints over line-by-line code reading): ag
 | L1 | Change contract: acceptance criteria + red→green for behavior |
 | L2 | Stack probes from `probes/catalog.yaml` (only if signals match) |
 | L3 | Anti-greenwash rules (cannot skip to look good) |
-| L4 | Reference/provenance integrity when `TASK_DECISION.reference_plan.mode != none` |
-| L5 | Human/strong-model gate RISK_3/4 (existing router policy) |
+| L4 | Human gate RISK_3/4 (existing router policy) |
 
 ## Process
 
@@ -60,39 +59,7 @@ For each pending checklist (examples):
 
 Do **not** mark pass without a command, path, or observed behavior.
 
-### 4. Reference/provenance integrity — conditional but real
-
-If the reviewed `TASK_DECISION` resolved:
-
-```text
-reference_plan.mode: catalog | live | mixed
-```
-
-then the close-out must contain evidence that the references were **actually used**, not merely selected.
-
-Minimum evidence:
-
-```text
-REFERENCES:
-- plan mode: catalog | live | mixed
-- sources/packs actually inspected: <ids/URLs>
-- authority/freshness result: <what was verified>
-- decision impact: <what the sources changed, or explicit "no change after inspection">
-- provenance: <docs/agentit/REFERENCES.md / equivalent / answer citations / n/a with reason>
-```
-
-Block a completion claim when any of these apply:
-
-- `reference_plan` named sources/packs but the stage model never loaded/inspected them;
-- the task required current domain evidence but the result relied on model memory;
-- a creator/vendor claim was presented as canonical/corroborated fact;
-- a dynamic rule/API/tax/legal/platform/dependency assumption was not re-verified when material;
-- adapted external code/skill/component lacks required license/attribution review;
-- a material reference-driven project decision has no durable provenance when the documentation contract requires it.
-
-If `reference_plan.mode: none`, **do not invent a reference requirement at close-out**. The decision audit is the place to challenge an unjustified `none`; verification checks that the reviewed plan was actually followed.
-
-### 5. Anti-greenwash (non-negotiable)
+### 4. Anti-greenwash (non-negotiable)
 
 - Do not delete, skip, or weaken probes to claim green
 - Do not treat agent-authored unit tests as the whole gauntlet when other probes apply
@@ -100,17 +67,15 @@ If `reference_plan.mode: none`, **do not invent a reference requirement at close
 - “200 tests passed” without receipt path / probe statuses is not completion
 - If the working tree changed after tests, re-run verification on the **final** tree
 - Router field `verification.claims_without_evidence: forbidden` applies to all done/fixed/passing claims
-- A reference pack/source ID in `TASK_DECISION` is not evidence that its contents were read
 - Programmatic gate (optional): `router.verify.evaluate_done_claims(claims, receipt=…)`
 
-### 6. Close-out shape
+### 5. Close-out shape
 
-```text
+```
 VERIFY:
 - receipt: .agentit/verify/…
 - blocking probes: pass/fail list
 - checklists: evidence summary
-- references: none | inspected + provenance summary
 - residual risk: …
 ```
 
@@ -129,7 +94,6 @@ Only then may you claim done (`verification-before-completion` still requires fr
 - **`verification-before-completion`** — iron law of evidence; this skill defines *which* external gates exist
 - **`test-driven-development`** — produces red→green for behavior; gauntlet checks you actually observed it
 - **`security-and-hardening`** — deeper auth/secrets work; probes are minimum smoke
-- **`reference-intelligence`** — decides/executes contextual source use; gauntlet checks selected references were actually consumed/provenanced
 - **`using-agentit`** — session close-out should include verify receipt when this skill applied
 
 ## Red flags
@@ -139,8 +103,6 @@ Only then may you claim done (`verification-before-completion` still requires fr
 - Disabling RLS / auth to green tests
 - Only running the happy-path tests the agent just invented
 - Claiming browser polish with no build/serve/browser note
-- Claiming current fiscal/legal/API correctness after choosing references but never inspecting authoritative current sources
-- Naming a reference pack in the plan and never loading it
 
 ## Verification of this skill
 
@@ -148,5 +110,4 @@ Only then may you claim done (`verification-before-completion` still requires fr
 - [ ] `--apply` run when runnable probes exist
 - [ ] Receipt path cited
 - [ ] Every blocking checklist has evidence or an explicit residual gap
-- [ ] If references were required, actual inspected sources + authority/freshness + provenance are evidenced
 - [ ] No done claim while blocking probes failed

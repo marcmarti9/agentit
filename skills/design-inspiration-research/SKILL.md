@@ -9,6 +9,8 @@ Research exists to change design decisions, not to produce a link dump.
 
 This skill works with `reference-intelligence`. Hallmark's MIT-licensed `study` discipline materially informed the explicit **design-DNA** extraction below; Agentit keeps its own research/orchestration model and does not vendor Hallmark wholesale.
 
+For premium/Studio public web work, also read `references/premium-web-production.md`. That file distills the useful production workflow from the bookmarked “$10k website” / cinematic-web articles; quoted price claims are deliberately not treated as evidence.
+
 ## Required by default
 
 Run this pass before art direction/code for:
@@ -32,7 +34,7 @@ When current web/browser tooling is available:
 6. Cluster observations into 2–4 patterns and identify what has become cliché.
 7. Synthesize 2–3 original project-specific directions from multiple principles.
 
-When Agentit's reference catalog already contains a useful source or pack, start there but re-verify live/current details when the decision depends on them. Do not fetch every catalog item simply because it exists.
+When Agentit's curated references already contain a useful source or playbook, start there but re-verify live/current details when the decision depends on them. Curated references are accelerators, not an exhaustive knowledge base. Do not load every stored reference simply because it exists.
 
 ## Design-DNA extraction
 
@@ -110,7 +112,7 @@ Only durable influences belong there; do not dump the research browsing history.
 
 Feed `INSPIRATION_SYNTHESIS` and `REFERENCE_TO_DECISION_MAP` into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the principles that shaped it.
 
-Before inventing commodity UI primitives, inspect the project's own component system first. If the primary AI explicitly selects external component discovery, sources such as 21st.dev can provide real candidates; inspect and adapt them to project tokens/accessibility instead of pasting blindly.
+Before inventing commodity UI primitives, inspect the project's own component system first. External component catalogs such as 21st.dev are discovery/reference candidates when useful; inspect and adapt candidates to project tokens/accessibility instead of requiring a custom Agentit runtime integration merely to know they exist.
 
 If the final design would plausibly look the same without this research, the research failed. Extract stronger principles or explicitly state that the references did not improve the direction.
 

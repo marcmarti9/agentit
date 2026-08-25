@@ -6,6 +6,22 @@ The core rule is:
 
 > **The model decides what knowledge it needs; Agentit supplies curated knowledge where useful, live research where needed, and existing runtime/verification primitives for execution.**
 
+## Startup context stays tiny
+
+Reference Intelligence is **not globally loaded**.
+
+A fresh Agentit installation exposes only the minimal navigation core:
+
+- `using-agentit`;
+- `task-router`;
+- `using-agent-skills`.
+
+The first prompt is semantically dispatched as `bare | agentit`. Material work prefers Agentit; trivial work may stay bare. Once Agentit is selected, the model chooses a domain pack/depth and concrete skills JIT.
+
+If `reference_plan.mode != none`, `reference-intelligence` is then loaded as one of those concrete JIT skills.
+
+This keeps reference discipline available without paying its context cost on every prompt.
+
 ## Why this exists
 
 Without an explicit reference discipline, agents tend to fail in opposite directions:
@@ -26,10 +42,17 @@ Reference Intelligence addresses those failures primarily through **agent instru
 ```text
 user task + project context
         ↓
+first-prompt dispatch
+   bare | agentit
+        ↓ agentit
 primary AI TASK_DECISION
+        ↓
+pack + depth + selected skills
         ↓
 references needed?
   none | curated | live | both
+        ↓ if needed
+load reference-intelligence JIT
         ↓
 read only the useful material
         ↓
@@ -44,7 +67,29 @@ verify actual outcome
 record durable provenance when it matters
 ```
 
-The cheap independent auditor challenges obviously weak reference decisions. It does not become the semantic router.
+The cheap independent auditor challenges obviously weak task/reference decisions. It does not become the semantic router.
+
+## Relationship to skill packs
+
+Runtime packs are defined in `skills/using-agent-skills/references/packs.md`.
+
+Packs are semantic discovery scopes, not bundles injected into context. Each task/stage chooses:
+
+```text
+pack: <domain>
+depth: essential | standard | deep
+selected_skills:
+- <small concrete subset>
+```
+
+Reference Intelligence is a cross-cutting candidate that becomes relevant when external/current knowledge or provenance matters. For example:
+
+- `design:standard/deep` may load design references;
+- `seo:standard` may combine curated SEO procedure + live search/platform evidence;
+- `research:standard/deep` may load source/provenance discipline;
+- a current fiscal report with no pre-curated Agentit pack can still use authoritative live fiscal sources.
+
+Choosing a deep pack does not imply loading Reference Intelligence—or any other skill—unless the task earns it.
 
 ## Curated knowledge structure
 
@@ -62,8 +107,9 @@ Deep recurring knowledge belongs **next to the skill that uses it**, for example
 This is intentional progressive disclosure:
 
 ```text
-core skill metadata
--> relevant skill
+minimal Agentit dispatcher
+-> pack/depth
+-> selected skill
 -> relevant deep reference
 -> live source only when needed
 ```
@@ -201,17 +247,6 @@ References are inputs, not proof that the result works.
 
 If reference use is material to acceptance, the primary AI includes it in the **existing Loop/Graph verifier** alongside the real outcome checks.
 
-Example for a public website:
-
-```text
-verifier:
-- relevant design/reference playbook was applied
-- current framework facts came from current docs where needed
-- desktop/mobile browser result was inspected
-- accessibility/performance constraints pass
-- material external influences are documented
-```
-
 No second reference-specific Python verification system is necessary.
 
 ## What belongs in Agentit
@@ -237,4 +272,4 @@ When deciding between adding agent guidance and adding framework code, prefer th
 
 In short:
 
-> **Use code to make execution reliable; use the model to make semantic decisions.**
+> **Use code to make execution reliable; use the model to make semantic decisions; spend context only on knowledge the current task has earned.**

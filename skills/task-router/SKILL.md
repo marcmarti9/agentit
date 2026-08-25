@@ -42,6 +42,7 @@ Before executing material work, the primary model determines at least:
 - `external_effects`: production, network, account, financial, data or other side effects;
 - `skills`: smallest useful knowledge bodies to load;
 - `tools`: only tools that materially help;
+- `reference_plan`: whether external references materially help, and if so the explicit pack/source IDs, purpose, authority/freshness requirements and project provenance output; semantic source selection remains owned by the primary AI;
 - `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
 - `workers`: useful specialist roles, if any;
 - `parallelism`: why concurrent work is or is not useful;
@@ -49,6 +50,8 @@ Before executing material work, the primary model determines at least:
 - `verification`: evidence needed before claiming success;
 - `safety`: backup/rollback/dry-run/post-check requirements when applicable;
 - `user_method_assessment`: whether the user's proposed method is sound, acceptable-with-tradeoffs, or materially weaker than an alternative.
+
+`reference_plan` should normally be `needed: no` when live/current/external material would not change the decision. Do not perform research for ceremony. When it is needed, use the smallest useful explicit pack/source set and follow `reference-intelligence`; programs may resolve those explicit IDs mechanically but may not infer them from task text.
 
 The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
@@ -154,6 +157,10 @@ It must actively look for:
 - weak verification;
 - missing rollback/backup/post-check;
 - a plan shaped by prompt words rather than the actual problem;
+- reference overload or missing material external evidence;
+- a creator/vendor claim being treated as canonical/corroborated evidence;
+- stale setup/API/pricing/platform assumptions that should be re-verified;
+- design cloning or dependency adoption without provenance/license/fit review;
 - uncritical agreement with a user-proposed method when evidence supports a materially better alternative;
 - disagreement that is performative rather than material.
 
@@ -187,13 +194,13 @@ For high-ambition public visual work, use independent design critique plus brows
 
 If a separate model cannot be spawned, use an isolated fresh context with the same bounded audit contract when possible. For high-risk work, do not pretend a same-context self-review is equivalent to independent judgment; record the limitation and take the conservative path or request the missing review/user decision.
 
-## 8. Skills are chosen by the primary AI
+## 8. Skills and references are chosen by the primary AI
 
-Profiles and metadata are knowledge inventories, not a classifier.
+Profiles, skill metadata and reference packs are knowledge inventories, not classifiers.
 
-The primary model decides which skills are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing or excessive skill choice, but the primary model resolves it.
+The primary model decides which skills and external reference packs/sources are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing/excessive choice or an authority/freshness mistake, but the primary model resolves it.
 
-A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body.
+A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “evidence” merely because its URL is in the catalog: the stage model must classify its authority and verify it to the degree the decision requires.
 
 Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 
@@ -203,13 +210,13 @@ A landing page, homepage, brand/company website, portfolio, storefront, campaign
 
 Greenfield or total public redesign normally follows:
 
-`interview -> live reference research -> direction/concept -> implementation -> independent visual critique -> desktop/mobile browser verification`
+`interview -> live/reference-pack research -> design-DNA synthesis -> direction/concept -> component/tool discovery where useful -> implementation -> independent visual/UX critique -> desktop/mobile browser verification -> project provenance`
 
-Do not reduce a design problem to a frontend keyword.
+Do not reduce a design problem to a frontend keyword. Do not treat design references as conversion evidence or clone targets.
 
 ## 10. What remains deterministic
 
-Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task plan.
+Mechanical programs may still copy files, manage manifests, resolve explicitly chosen source/pack IDs, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task/reference plan.
 
 The boundary is:
 
@@ -220,8 +227,9 @@ The boundary is:
 - no `route.py`;
 - no semantic `decision_contract.py`;
 - no regex/keyword risk inference;
+- no programmatic reference recommender from prompt text;
 - no executable router evals pretending to benchmark language understanding;
-- no script that chooses category/topology/skills from prompt text;
+- no script that chooses category/topology/skills/references from prompt text;
 - no cheap model acting as the semantic decision owner;
 - no cheap-model disagreement being treated as authoritative arbitration;
 - no blind trust in one model when a cheap second opinion is available;

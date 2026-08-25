@@ -244,22 +244,6 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 ---
 
-## models
-
-**Use for:** choosing, comparing, routing or re-evaluating compatible model endpoints for Agentit roles when model choice materially affects quality, tool use, context fit, privacy, latency or cost.
-
-**Skills in this pack:**
-
-- `local-model-routing` — despite its legacy ID, this is the provider-neutral local/remote model-selection procedure: define the role contract, inspect compatible endpoints, use representative evidence and route by accepted task outcomes rather than brand.
-- `context-engineering` — useful when candidate models differ materially in context capacity or when projected context must be adapted without losing task-critical information.
-- `mcp-tooling-fit` — useful when model choice depends on whether an endpoint can reliably use required MCPs/tools, not merely whether its API syntax looks compatible.
-- `doubt-driven-development` — challenge noisy, cherry-picked or vendor-specific benchmark conclusions before making a consequential routing decision.
-- `verification-before-completion` — require fresh evidence before claiming a model/route is suitable for a role.
-
-The `models` pack is deliberately **not** a leaderboard. It must not encode a permanent “best model” or preferred vendor. Model names may appear in current evaluation evidence, endpoint configuration, provider adapters or provenance, but general Agentit procedures remain provider/model-neutral.
-
----
-
 ## release
 
 **Use for:** CI/CD, deployments, migrations, launches, operational readiness and rollback planning.

@@ -10,6 +10,7 @@ profiles:
       - task-router
       - architect-orchestrator
       - using-agent-skills
+      - reference-intelligence
       - mcp-tooling-fit
       - long-horizon-recovery
       - debugging-and-error-recovery
@@ -96,11 +97,12 @@ profiles:
       - documentation-and-adrs
       - verification-before-completion
   research:
-    description: "Core plus context, specifications, and adversarial review."
+    description: "Core plus context, specifications, authoritative source work, and adversarial review."
     extends:
       - core
     skills:
       - context-engineering
+      - source-driven-development
       - doubt-driven-development
       - spec-driven-development
       - verification-before-completion
@@ -157,6 +159,7 @@ profiles:
       - observability-and-instrumentation
       - performance-optimization
       - planning-and-task-breakdown
+      - reference-intelligence
       - scrollytelling-web
       - security-and-hardening
       - shipping-and-launch

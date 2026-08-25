@@ -1,6 +1,6 @@
 ---
 name: using-agentit
-description: Lightweight default entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then load task-router, one domain pack/depth and only the concrete skills/tools/references needed JIT.
+description: Lightweight default entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then use domain packs only to discover and load the concrete skills/tools/references the primary AI decides are worth their context cost.
 ---
 
 # Using Agentit
@@ -34,21 +34,21 @@ Bare does **not** mean careless. System/user/project rules still apply.
 
 Use Agentit for material work: non-trivial implementation, debugging, design, research, source-sensitive/current domains, multi-step changes, ambiguous product decisions, tool/MCP decisions, high-risk work, long-running work, or anything where JIT expertise/review/verification materially improves the outcome.
 
-**When genuinely uncertain between `bare` and `agentit`, prefer `agentit`.** The point of the minimal bootstrap is to make Agentit cheap enough that the safer choice does not require loading 20 skills.
+**When genuinely uncertain between `bare` and `agentit`, prefer `agentit`.** The minimal bootstrap exists so the safer path does not require preloading the whole framework.
 
 An explicit natural-language request to use Agentit always selects `agentit` unless impossible or conflicting with a higher-priority rule.
 
 ## Minimal bootstrap
 
-A globally discoverable Agentit installation should expose only the minimum navigation skills:
+A globally discoverable Agentit installation should expose only:
 
 - `using-agentit` — this dispatcher/protocol;
 - `task-router` — full semantic `TASK_DECISION` once Agentit is selected;
-- `using-agent-skills` — pack/depth discovery and JIT skill projection.
+- `using-agent-skills` — semantic pack discovery and JIT skill projection.
 
 Everything else is JIT.
 
-In particular, do **not** globally preload debugging, TDD, security, planning, code review, design, references, MCP fit, orchestration, long-horizon recovery or verification specialist skills. Load them only when the task/stage needs them.
+Do **not** globally preload debugging, TDD, security, planning, code review, design, references, MCP fit, orchestration, long-horizon recovery or verification specialist skills. Load them only when the current task/stage actually needs them.
 
 ## Agentit path after dispatch
 
@@ -58,8 +58,8 @@ When `DISPATCH_DECISION=agentit`:
 inspect context
 -> load task-router + using-agent-skills
 -> TASK_DECISION
--> choose pack + depth
--> choose smallest concrete skill set
+-> inspect relevant semantic pack(s)
+-> primary AI chooses any justified skill subset
 -> choose references/tools only if material
 -> cheap independent audit
 -> strong review if risk/disagreement requires it
@@ -71,45 +71,37 @@ inspect context
 
 The user should not need to know or type Agentit CLI commands. Mechanical commands are agent-facing implementation details.
 
-## Pack + depth selection
+## Packs: maps, not levels
 
 Canonical runtime map: `skills/using-agent-skills/references/packs.md`.
 
-Choose a primary semantic pack for the current stage, for example:
+Packs such as `engineering`, `frontend`, `design`, `backend`, `data`, `product`, `marketing`, `seo`, `research`, `writing`, `release`, and `agency` exist to answer:
 
-- engineering;
-- frontend;
-- design;
-- backend;
-- data;
-- product;
-- marketing;
-- seo;
-- research;
-- writing;
-- release;
-- agency overlay.
+> **What capabilities/skills live around this domain, and when might each one help?**
 
-Then choose depth:
+They do **not** answer:
 
-- `essential` — minimum useful domain process;
-- `standard` — normal production candidate pool;
-- `deep` — advanced/high-risk/high-craft/niche candidate pool.
+- how many skills must be loaded;
+- which skill must come first;
+- what “level” the task belongs to;
+- whether every skill in the pack should be used.
 
-**A pack/depth is a discovery scope, not a context bundle.** Never inject every skill in the pack. Select only the concrete bodies needed by the current stage/worker.
+There are no pack tiers such as `essential / standard / deep` and no fixed minimum/maximum skill count.
+
+The primary AI may select zero, one, or many skills from one or more packs. It should select only skills it can justify for the current stage.
 
 Example:
 
 ```text
-pack: design
-depth: deep
+packs:
+- design
+- frontend
 selected_skills:
-  - design-inspiration-research
-  - scrollytelling-web
-  - browser-testing-with-devtools
+- design-inspiration-research
+- browser-testing-with-devtools
 ```
 
-That worker gets those skills, not the entire design catalog.
+Another design task might legitimately select six skills; a small one might select one. **The agent decides.**
 
 ## `TASK_DECISION`
 
@@ -118,7 +110,7 @@ After Agentit activation, the primary AI uses `task-router` and decides at least
 ```text
 intent / outcome
 known facts / material unknowns
-pack + depth
+relevant pack(s)
 complexity
 risk / reversibility / external effects
 selected skills
@@ -131,13 +123,13 @@ safety / rollback / post-check
 user-method assessment
 ```
 
-Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, which skill is relevant, or which source should be trusted.
+Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, how many skills to load, which skill is relevant, or which source should be trusted.
 
 ## References are JIT
 
 `reference-intelligence` is deliberately **not** part of the global core.
 
-If `TASK_DECISION.reference_plan.mode != none`, load it JIT and then inspect the smallest useful curated/live source set.
+If `TASK_DECISION.reference_plan.mode != none`, load it JIT and inspect the smallest useful curated/live source set.
 
 Examples:
 
@@ -146,7 +138,7 @@ Examples:
 - SEO -> SEO/growth references + live search/platform evidence;
 - current Spanish tax report -> current authoritative tax/legal sources, regardless of whether Agentit already has a tax pack.
 
-The absence of a curated pack is never permission to rely on stale model memory for a current/domain-specific claim.
+The absence of curated Agentit material is never permission to rely on stale model memory for a current/domain-specific claim.
 
 ## Tools/MCPs are JIT
 
@@ -156,7 +148,7 @@ The absence of a curated pack is never permission to rely on stale model memory 
 
 For material Agentit work, the reviewed `TASK_DECISION` gets a bounded read-only second opinion from the cheapest competent independent model, normally semantic tier `fast`.
 
-The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong pack/depth, skill/context overload, missing expertise, risk underestimation, weak verification, unsafe effects, bad reference/source choices, and unnecessary or missing delegation.
+The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong/missing packs, unjustified or missing skills, context bloat, risk underestimation, weak verification, unsafe effects, bad reference/source choices, and unnecessary or missing delegation.
 
 Use `task-router/references/economy-reviewer.md` for the detailed contract.
 
@@ -170,7 +162,7 @@ A worker receives bounded context:
 
 ```text
 role/objective
-pack + depth
+relevant pack(s) as discovery labels
 selected skill bodies
 selected references if any
 project constraints
@@ -180,7 +172,7 @@ expected handoff
 verification / stop condition
 ```
 
-Never dump the global catalog or whole pack into every worker. One writer owns shared files/state unless branch/worktree isolation makes parallel writes safe.
+Never dump the global catalog or whole pack into a worker. One writer owns shared files/state unless branch/worktree isolation makes parallel writes safe.
 
 ## Runtime enforcement
 
@@ -225,4 +217,4 @@ No `done`, `fixed`, `passing`, `premium`, `secure` or equivalent claim without f
 
 ## Core invariant
 
-> **Keep the bootstrap tiny. Prefer Agentit for material work. Load domain knowledge, references, tools and specialists only when the task earns their token cost.**
+> **Keep the bootstrap tiny. Prefer Agentit for material work. Packs expose options; the primary AI decides the actual skill set and its size.**

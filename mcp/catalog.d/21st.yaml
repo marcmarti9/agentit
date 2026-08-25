@@ -21,15 +21,16 @@ servers:
     evidence:
       - "Official 21st MCP docs: https://docs.21st.dev/mcp"
       - "Official single-endpoint/client setup: https://21st.dev/blog/introducing-agents-cli"
-    # Generic HTTP clients can use the endpoint plus x-api-key; OAuth-capable clients
-    # may avoid a pasted key. Agentit intentionally avoids hardcoding a provider-specific
-    # auth snippet that may drift; use current official setup docs at activation time.
+    # Official 21st guidance documents `init --client claude` as the client-aware
+    # setup path. Authentication details can change; the CLI owns current config shape.
+    claude_add: "npx -y @21st-dev/cli@latest init --client claude"
     mcp_json_remote:
       url: https://21st.dev/api/mcp
     codex_note: |
       # 21st's current Codex setup uses https://21st.dev/api/mcp plus a bearer-token
       # environment variable. Re-fetch https://docs.21st.dev/mcp before writing config,
       # set API_KEY_21ST outside the repository, and never commit the token.
+      # The official client-aware helper is: npx -y @21st-dev/cli@latest init --client codex
     safety_notes:
       - "Use current official setup because OAuth/header details vary by client and can change."
       - "Never commit API_KEY_21ST; prefer OAuth where the client supports it."

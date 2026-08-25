@@ -130,13 +130,13 @@ Do not infer: visual complexity alone creates conversion value or proves $10k/$5
 
 Use for positioning, customer research, content strategy, copy, SEO, email, campaigns, launch strategy, CRO or marketing automation.
 
-### Deep playbook — marketing operating system
+### Deep playbooks — load only what applies
 
-Read for substantial marketing work:
+- Broad marketing/copy/positioning/email/content: `skills/marketing-and-growth/references/marketing-operating-system.md`
+- SEO/search/agentic growth loops: `skills/marketing-and-growth/references/seo-growth-loop.md`
+- Product/feature launches + video/content production: `skills/marketing-and-growth/references/launch-content-system.md`
 
-- `skills/marketing-and-growth/references/marketing-operating-system.md`
-
-This is the distilled version of the bookmarked 500-prompt article. It converts the prompt corpus into reusable capabilities: ICP research, competitor/category analysis, positioning/message house, content strategy, copy, repurposing, SEO briefs, email lifecycle, campaigns/launches, and analytics/CRO loops.
+The broad marketing playbook is the distilled version of the bookmarked 500-prompt article. The SEO playbook distills the Grok SEO + Helena cluster. The launch/content playbook distills Okara + Motion + faceless-video workflows.
 
 ### Cyril — large marketing prompt corpus
 
@@ -163,7 +163,7 @@ This is the distilled version of the bookmarked 500-prompt article. It converts 
 
 ## Launch / content production
 
-Use when launching a product/feature or building a repeatable content-production pipeline.
+Use `skills/marketing-and-growth/references/launch-content-system.md` when the task actually involves a product/feature launch, launch research, short-form/product video, or repeatable content-production pipeline.
 
 ### Okara Launch Library
 

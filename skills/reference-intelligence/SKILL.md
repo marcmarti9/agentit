@@ -1,329 +1,227 @@
 ---
 name: reference-intelligence
-description: Decide whether a task materially benefits from external references, then use the smallest domain-appropriate set as traceable evidence, inspiration, reusable artifacts, or architecture input without confusing those roles. Uses Agentit packs when they fit, discovers current canonical sources when they do not, re-verifies dynamic claims, records provenance, and prevents reference-driven cloning or unsupported claims.
+description: Decide whether a task materially benefits from external references, then use the smallest domain-appropriate curated/live set. Distinguish authority, actually read material sources, distill useful knowledge into existing skills, and record durable provenance without making the user re-paste references.
 ---
 
 # Reference Intelligence
 
-External references are useful only when the agent knows **when they matter, what authority each source actually has, and how the source changed the work**.
+The purpose of this skill is simple:
 
-The key rule is:
+> **Always decide whether references would materially improve the task; do not always load references.**
 
-> **Always evaluate whether references are needed; do not always load references.**
+The primary AI owns that judgment. Agentit must not recreate it with keyword classifiers, scoring code, or a bespoke reference router.
 
-A tiny local refactor, rename, formatting change, or self-contained bug may need no external references. A public website, fiscal/legal report, current framework integration, SEO plan, security-sensitive implementation, market comparison, launch strategy, or unfamiliar domain usually does.
+## 1. Decide the reference mode
 
-The user must **not** need to paste the references again in the task prompt when Agentit already has a relevant pack/source or can discover the required current canonical sources.
-
-Agentit ships a mechanical reference catalog at `references/catalog.yaml`. The active primary AI chooses sources/packs after understanding the task. `agentit refs` may list, filter, validate, or load an explicitly selected source/pack; it must never infer semantic relevance from free-text task input.
-
-The catalog is a **curated accelerator, not a closed universe**. If no Agentit pack covers the domain, the primary AI must discover the appropriate live/canonical sources when references are materially required.
-
-This skill complements `source-driven-development`:
-
-- `source-driven-development` owns authoritative current framework/library/standard documentation for implementation correctness;
-- `reference-intelligence` owns the broader decision of what external knowledge the task needs: design inspiration, official domain sources, regulations, process ideas, products/tools, architecture patterns, launch examples, research leads, creator claims, reusable artifacts, and comparable evidence.
-
-When both apply, authoritative implementation/domain sources outrank inspiration.
-
-## 1. Mandatory reference decision gate
-
-For every **material** task, `TASK_DECISION` must explicitly resolve one of these states:
+For every material `TASK_DECISION`, choose one:
 
 ```text
-reference_plan:
-  mode: none | catalog | live | mixed
-  reason: <why references are or are not useful>
+references:
+  mode: none | curated | live | both
+  why: <short reason>
+  curated: <relevant Agentit index/playbook entries, if any>
+  authority_needed: <canonical / licensed artifact / corroborated / inspiration / mixed>
+  provenance: <whether a durable project reference record is useful>
 ```
 
-Use `mode: none` only when external knowledge would not materially improve correctness, freshness, design quality, decision quality, or verification.
+### `none`
+
+Correct when outside material knowledge would not change the result.
 
 Examples:
 
-### No references needed
+- rename a local private function;
+- formatting/cleanup;
+- self-contained bug fully explained by repository evidence;
+- small mechanical edit.
 
-```text
-Task: rename a private helper and update its local tests
-reference_plan:
-  mode: none
-  reason: repository-local behavior is sufficient; no external contract changed
-```
+Do not research for ceremony.
 
-### Web/design task
+### `curated`
 
-```text
-Task: design and implement a high-quality public landing page
-reference_plan:
-  mode: mixed
-  pack_or_sources: [web-design-studio]
-  live_sources: current framework/component docs as needed
-  purpose: design DNA + component discovery + UX QA + implementation correctness
-```
-
-### Fiscal/legal/current-domain task
-
-```text
-Task: prepare a Spanish corporate-tax report
-reference_plan:
-  mode: live
-  domain: Spanish corporate taxation
-  authority_needed: primary/canonical legal and tax sources
-  likely_sources: current legislation + Agencia Tributaria + other official guidance where relevant
-  reason: correctness depends on current jurisdiction-specific rules; no generic Agentit pack is enough
-```
-
-### Current framework/API task
-
-```text
-Task: implement auth using the project's current framework version
-reference_plan:
-  mode: live
-  authority_needed: current official framework/provider docs
-  reason: API and recommended patterns may have changed
-```
-
-An auditor must challenge `mode: none` when the task materially depends on current, jurisdiction-specific, external, unfamiliar, comparative, visual, regulatory, security, financial, or ecosystem knowledge.
-
-## 2. Select the smallest domain-appropriate reference set
-
-After `TASK_DECISION`:
-
-### If a curated Agentit pack fits
-
-1. inspect `agentit refs packs` or catalog metadata;
-2. choose one explicit named pack or a small set of explicit source IDs;
-3. load only those entries;
-4. re-fetch/re-verify current underlying sources where freshness matters;
-5. stop when the reference set is sufficient.
-
-Typical packs include:
-
-- `engineering-discipline`;
-- `web-design-studio`;
-- `growth-seo`;
-- `launch-content`;
-- `build-vs-buy`;
-- `ai-systems-learning`;
-- `agency-economics`.
-
-### If no curated pack fits
-
-Do **not** fall back to model memory merely because the catalog lacks that domain.
-
-The primary AI should discover live sources using the authority hierarchy appropriate to the domain. Examples:
-
-- fiscal/tax -> current legislation, tax authority, official administrative guidance;
-- legal/compliance -> statute/regulator/official guidance first;
-- medicine/health -> authoritative clinical/public-health sources appropriate to the question;
-- standards -> current specification/standards body;
-- framework/library/API -> current official docs/changelog;
-- security -> primary vendor/advisory/CVE/standard sources;
-- finance/economics -> primary data issuer/regulator/official statistics where possible;
-- product/market comparison -> vendor docs + independent evidence where claims matter;
-- design -> current real references + canonical implementation docs;
-- travel/local -> current official/local/business sources as appropriate.
-
-The AI chooses the source family semantically. Programs may execute search/fetch after that decision, but may not infer the domain from prompt keywords.
-
-Do not dump an entire field into context. **Progressive disclosure applies to references too.**
-
-## 3. Classify the role before trusting the source
-
-Every materially used reference has one primary role:
-
-- **canonical** — official docs/spec/legislation/regulator/canonical repository for the thing being used;
-- **licensed artifact** — inspectable reusable code/skill/design artifact with a reviewed license;
-- **corroborated evidence** — a material factual claim supported independently;
-- **creator claim** — the creator/vendor/post author says it; useful as a lead, not independent proof;
-- **inspiration** — used for patterns/taste/ideas, not factual authority;
-- **unverified lead** — insufficient evidence; never convert it into a factual premise.
-
-A source can be excellent inspiration and terrible evidence at the same time.
+Use when Agentit already contains a useful recurring playbook/reference. Start at `references/INDEX.md`, then read the linked domain skill/reference file that matters.
 
 Examples:
 
-- a beautiful landing page can inspire composition without proving its conversion rate;
-- a founder thread can expose a useful automation architecture without proving the revenue screenshot;
-- an MIT-licensed skill can be adapted with attribution after inspecting the actual repository;
-- official framework docs can establish an API contract but do not establish that the API is the right product decision;
-- an official tax authority can be authoritative about administrative guidance while the underlying statute still matters for the legal rule itself.
+- premium public website -> design reference index + `premium-web-production.md`;
+- substantial marketing work -> `marketing-operating-system.md`.
 
-## 4. Actually load/use the references before execution
+### `live`
 
-A selected reference ID or pack name inside `TASK_DECISION` is **not evidence of use**.
+Use when the answer depends on current or domain-specific authority not pre-curated in Agentit.
 
-When `reference_plan.mode != none`, before implementation or final analysis the responsible model must actually:
+Examples:
 
-1. load/fetch the selected references;
-2. inspect the material portions;
-3. classify authority;
-4. extract the relevant principles/facts;
-5. use them in the decision or explicitly conclude that they did not change it.
+- Spanish fiscal report -> current legislation / tax authority / authoritative fiscal sources;
+- current framework/API integration -> current official docs;
+- current legal/security/platform requirements -> current authoritative sources.
 
-If the source is unavailable, stale, inaccessible, or insufficient, either replace it with a suitable source or record the gap. Do not silently continue as though it had been read.
+Agentit does **not** need a prebuilt pack for every possible human domain. The model can research the correct sources when the task requires them.
 
-This is the same principle Agentit applies to skills: **an ID is discovery metadata, not activation**.
+### `both`
 
-## 5. Extract principles, not vibes
+Use when a curated procedure improves how to work while live sources establish current facts.
 
-For each selected source, produce a compact internal extraction:
+Example:
 
 ```text
-REFERENCE EXTRACTION
-source: <id + URL>
-role: canonical | licensed artifact | corroborated | creator claim | inspiration | unverified
-what is observable: <facts directly supported>
-principle/fact worth keeping: <portable idea or authoritative fact>
-project consequence: <specific decision/change, or none>
-what NOT to infer: <unsupported claim / cloning boundary / stale assumption>
+SEO task
+curated -> how to structure the audit/feedback loop
+live -> Search Console data, current SERP/platform guidance, current site evidence
 ```
 
-A reference that produces no durable project consequence should usually remain out of permanent project documentation.
+## 2. Prefer underlying material over the social post
 
-For design references, separate the DNA into dimensions such as:
+A bookmark often points to the real asset:
 
-- macrostructure / section rhythm;
-- hierarchy / composition;
-- typography roles;
-- color/material system;
-- component archetypes;
-- imagery/artifact strategy;
-- interaction/motion role;
-- responsive behavior;
-- accessibility/performance constraints.
+- article/thread;
+- repository;
+- course;
+- prompt collection;
+- launch library;
+- component catalog;
+- official product docs.
 
-Synthesize multiple signals into an original project thesis. Never copy pixels, proprietary assets, logos, copy, or a distinctive page wholesale merely because it was supplied as a reference.
+When the underlying material contains substantially more useful knowledge, **read it**. Do not stop at the tweet summary.
 
-## 6. Build-vs-buy / adopt-vs-adapt gate
-
-When a reference exposes a tool, package, skill, MCP, component library, or codebase that might become a dependency, apply the search-first decision used by `source-driven-development`:
-
-- **ADOPT** — maintained exact fit, acceptable license/security/dependency cost;
-- **ADAPT** — useful licensed base, but Agentit/project needs a deliberate local variant;
-- **COMPOSE** — combine smaller existing pieces;
-- **REFERENCE ONLY** — the idea is useful but the artifact should not enter the runtime;
-- **INCUBATE** — promising but missing evidence/license/config/fit;
-- **REJECT** — cost/risk/overlap exceeds value;
-- **BUILD** — nothing suitable remains after search.
-
-Never globally install a second process owner merely because it is popular. Agentit prefers strengthening an existing skill over creating overlapping instructions that can disagree silently.
-
-## 7. Evidence/freshness gate
-
-Re-verify before material reliance when any of these are true:
-
-- the source describes a current API, product, MCP endpoint, price, free tier, model, regulation, browser support, platform behavior, tax rule, policy, rate, deadline, or legal requirement;
-- the catalog marks `creator_claim`, `unverified`, `partially_verified`, or equivalent;
-- a dependency/security/license decision will be made;
-- the source's factual claim is important to business/revenue/product strategy;
-- the source is old enough that change is plausible.
-
-Prefer current primary/canonical sources for correctness-sensitive claims. Preserve creator claims as claims even when they come from the vendor itself.
-
-Do not turn a viral price/revenue/hiring anecdote into a benchmark without independent evidence.
-
-## 8. Project provenance ledger
-
-If external references **materially influence** architecture, product behavior, visual direction, process, dependency selection, or a durable business/technical decision, ensure the project has a canonical reference ledger.
-
-Reuse an existing equivalent if present. Otherwise use:
-
-`docs/agentit/REFERENCES.md`
-
-Recommended structure:
-
-```markdown
-# Project reference ledger
-
-## <decision / feature / design direction>
-
-| Source | Role | Extracted principle | Project decision | Affected paths | Verified |
-| --- | --- | --- | --- | --- | --- |
-| <URL or Agentit source id> | inspiration | ... | ... | ... | YYYY-MM-DD |
-
-### Boundaries
-- What was intentionally not copied/inferred.
-- License/attribution requirements when an artifact was adapted.
-- Re-verification trigger for dynamic assumptions.
-```
-
-The ledger is not a browser-history dump. Record only references that affected a durable decision.
-
-For one-off analytical answers/reports that do not mutate a repository, normal inline citations/source notes may be the correct provenance output instead of creating project files.
-
-When a code/skill artifact is substantially adapted, also preserve the license/attribution in the project's appropriate third-party notice/license location.
-
-## 9. Reference-aware planning
-
-For material work, `TASK_DECISION` carries the explicit decision even when the answer is `none`:
+Then decide where the durable knowledge belongs:
 
 ```text
-reference_plan:
-  mode: none | catalog | live | mixed
-  reason: ...
-  pack_or_sources: [...]        # when catalog/mixed
-  domain: ...                   # when live/mixed and useful
-  purpose: ...
-  authority_needed: ...
-  freshness_check: ...
-  provenance_output: ...
+one-off fact -> use/cite in current task
+recurring procedure -> existing skill or its references/*.md
+reusable licensed artifact -> evaluate adopt/adapt/compose
+reference library/tool -> index as a discovery source
+current domain truth -> research live when needed
+hype / unrelated curiosity -> do not promote into Agentit core
 ```
 
-The cheap auditor should challenge:
+This is why the bookmarked premium-web articles and large marketing prompt corpus are distilled inside the relevant design/marketing skills rather than existing only as URLs in a catalog.
 
-- `mode: none` despite material dependence on external/current/domain-specific knowledge;
-- a creator claim being treated as fact;
-- stale/unverified setup instructions;
-- unnecessary reference overload;
-- failure to actually load a selected pack/source;
-- a dependency adopted without license/maintenance/security review;
-- design cloning instead of synthesis;
-- a material external influence missing from durable project provenance.
+## 3. Distinguish source roles
 
-## 10. Reference-first design workflow
+A source's role determines what can be inferred from it.
 
-For serious public visual work, combine this skill with the design profile:
+- **canonical** — official docs/specification/source of truth for the thing being used;
+- **licensed artifact** — reusable code/skill/assets whose license has been inspected;
+- **corroborated evidence** — factual claim supported independently;
+- **creator/vendor claim** — useful lead but not independent proof;
+- **inspiration** — pattern/taste/process input, not factual authority;
+- **internal evidence** — project/client data that establishes what happened in this system.
 
-`brief/existing truth -> reference study -> design DNA -> original design thesis -> component/tool discovery -> implementation -> anti-slop/UX audit -> desktop/mobile browser verification`
+Examples:
 
-Useful reference types are intentionally different:
+- a beautiful site can influence composition but does not prove conversion;
+- a vendor article can reveal a useful agent architecture but its ROAS claim remains a vendor claim;
+- an MIT skill can be selectively adapted with attribution;
+- current official tax guidance can establish a fiscal rule, while a design bookmark obviously cannot.
 
-- gallery/site examples for composition and visual language;
-- real component catalogs for implementable primitives;
-- UX checklists for flow-specific failure modes;
-- official browser/framework docs for correctness;
-- rendered project evidence for the final acceptance claim.
+## 4. Distill, do not hoard
 
-Do not confuse any one of these with the others.
+The valuable Agentit unit is normally **a capability/procedure**, not the original prompt wording.
 
-## 11. Reference-first launch/content workflow
+When a source contains many prompts/examples:
 
-For material launches/content campaigns:
+1. identify recurring jobs;
+2. group near-duplicates;
+3. extract required inputs;
+4. extract useful intermediate artifacts/decisions;
+5. extract QA/evidence expectations;
+6. turn genuinely reusable gaps into the existing domain skill/reference;
+7. preserve source provenance;
+8. discard redundant wording and hype.
 
-`comparable launch research -> positioning/hook patterns -> factual brief -> asset/scene plan -> production -> human claim/rights/brand review -> distribution -> analytics -> later evaluation -> learnings`
+Do not put 500 prompts into every marketing context. Teach the agent the marketing operating system behind them.
 
-A product URL is context, not a complete creative brief. A viral launch is a reference, not proof that copying its wording will reproduce its results.
+Likewise, a “$10k website” article should become a production playbook, not the instruction “make this look expensive”.
 
-## 12. Closed-loop marketing/reference learning
+## 5. Curated index is intentionally small
 
-When a marketing/SEO reference inspires automation, make the loop explicit:
+`references/INDEX.md` is an agent-readable discovery map. It is not a database and has no custom Python runtime.
 
-`observe real data -> diagnose -> propose/execute within permissions -> define metric -> schedule review -> evaluate -> update compact learnings -> retry/stop/escalate`
+Keep something there only when it is broadly useful enough to accelerate future tasks.
 
-Self-improvement means improving stored procedure/context/strategy from evidence. It never means silently loosening safety, approval, budget, factuality, or verification boundaries.
+Do **not** globally carry interesting-but-specialized bookmarks merely because they exist. If a future task specifically concerns an omitted topic, research it live then.
 
-## Completion checks
+Default preference:
 
-Before claiming material work complete:
+> enrich an existing skill with a deep `references/*.md` file instead of creating another top-level system.
 
-- [ ] `reference_plan` was explicitly resolved to `none`, `catalog`, `live`, or `mixed`.
-- [ ] `none` has a defensible reason; it was not chosen merely to save effort.
-- [ ] When references were required, the selected sources were actually loaded/inspected before the relevant decision/output.
-- [ ] When no Agentit pack fit, current domain-appropriate sources were discovered instead of relying on memory.
-- [ ] Every material source has the correct authority/evidence role.
-- [ ] Dynamic or high-impact claims were re-verified where needed.
-- [ ] Reused code/skills/components received license/dependency/security review.
-- [ ] Design work synthesizes patterns rather than cloning protected expression/assets.
-- [ ] Unsupported creator claims did not become project facts.
-- [ ] The project reference ledger or answer citations record every durable/material external influence that matters.
-- [ ] The implementation/output is still verified against its own acceptance criteria; references are not proof that the result works.
+## 6. References must actually affect the work
+
+A reference is not “used” because its name appears in a plan.
+
+For each material reference, the working agent should be able to state compactly:
+
+```text
+source:
+role:
+what I actually learned/observed:
+what decision it changed:
+what I deliberately did not infer/copy:
+```
+
+If it changed nothing, it normally does not belong in project provenance.
+
+## 7. Durable project provenance
+
+When external knowledge materially changes architecture, product behavior, visual direction, process, dependency selection, or another expensive-to-rediscover decision, update the project's existing canonical reference/decision documentation.
+
+If there is no equivalent, `docs/agentit/REFERENCES.md` is the default lightweight ledger.
+
+Record:
+
+```text
+source -> role -> extracted principle/evidence -> project decision -> affected area -> verified date
+```
+
+Do not turn the ledger into browsing history, a transcript, or chain-of-thought.
+
+For reused code/skills/assets, preserve required license/attribution in the appropriate project notice as well.
+
+## 8. Verification uses Agentit's existing runtime
+
+Reference Intelligence does **not** need a second bespoke Python verifier.
+
+When references are material to acceptance, bind the evidence into the existing Loop/Graph contract and verifier, for example:
+
+```text
+goal:
+  implement the approved public landing-page direction
+
+verifier includes:
+  - required current docs were inspected where implementation depends on them
+  - premium-web reference playbook/design research was actually used
+  - rendered desktop/mobile result passes project checks
+  - material external influences are recorded in project provenance
+```
+
+The existing runtime enforces the verifier/receipt. The model decides **what evidence matters**; software mechanically enforces the chosen acceptance contract.
+
+## 9. Auditor responsibilities
+
+The independent decision auditor should challenge:
+
+- `none` when current/domain knowledge obviously matters;
+- loading unrelated references;
+- relying on model memory for dynamic/high-stakes facts;
+- stopping at a tweet when its linked article/repo contains the real substance;
+- creator/vendor claims promoted to facts;
+- 500-prompt/context dumps instead of distilled procedures;
+- design cloning;
+- dependency/artifact reuse without license/fit review;
+- claiming a reference was used when it produced no traceable decision/evidence.
+
+The auditor challenges; it does not become the semantic router.
+
+## Completion check
+
+For substantial reference-driven work:
+
+- [ ] reference mode was chosen contextually;
+- [ ] only relevant sources were loaded;
+- [ ] underlying material was inspected when it contained the useful substance;
+- [ ] current authoritative sources were used when required;
+- [ ] reusable knowledge was distilled into the appropriate domain skill/reference rather than duplicated blindly;
+- [ ] source roles/claims were not confused;
+- [ ] durable material influences were documented where useful;
+- [ ] the actual result was verified independently of the references.

@@ -7,7 +7,15 @@ description: Growth engineering, conversion rate optimization (CRO), technical S
 
 Marketing work should be driven by **business truth + customer evidence + current channel data + measurement**, not by a pile of clever prompts.
 
-For substantial marketing work, read `references/marketing-operating-system.md`. It distills the useful procedures behind the bookmarked “500 prompts / replace an agency” article into reusable capabilities and workflow chains instead of preserving hundreds of prompts verbatim.
+Use deep references **JIT**, not all at once:
+
+- broad/substantial marketing strategy, research, positioning, copy, email, content systems -> `references/marketing-operating-system.md`;
+- SEO/search/growth-loop work -> `references/seo-growth-loop.md`;
+- product/feature launches, launch research, video/content production, repurposing -> `references/launch-content-system.md`.
+
+The first reference distills the useful procedures behind the bookmarked “500 prompts / replace an agency” article into reusable capabilities and workflow chains instead of preserving hundreds of prompts verbatim. The other two distill the Grok SEO/Helena and Okara/Motion/faceless-video bookmark clusters respectively.
+
+Load only the reference(s) that actually apply to the current task.
 
 ## Core principles
 
@@ -123,7 +131,7 @@ When external sources materially affect a durable marketing decision:
 - re-verify dynamic facts when needed;
 - update the project's reference ledger when the influence is durable.
 
-The original “500 prompts” corpus is treated as **source material for procedures**, not a runtime prompt dependency. Its agency-replacement/pricing framing is not treated as verified outcome evidence.
+Large prompt/source collections are treated as **source material for procedures**, not runtime dependencies. Agency-replacement/pricing framing is not treated as verified outcome evidence.
 
 ## Completion questions
 

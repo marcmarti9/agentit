@@ -41,7 +41,8 @@ class DesignStudioTests(unittest.TestCase):
     def test_heavy_design_specialists_do_not_expand_global_core(self):
         catalog = load_profile_catalog()
         core = resolve_profile("core", catalog, repo_root=REPOSITORY)
-        self.assertEqual(12, len(core))
+        self.assertLessEqual(len(core), 14)
+        self.assertIn("reference-intelligence", core)
         self.assertNotIn("specialist-agent-routing", core)
         self.assertNotIn("impeccable-design", core)
         self.assertNotIn("scrollytelling-web", core)

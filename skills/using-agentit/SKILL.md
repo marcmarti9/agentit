@@ -1,11 +1,11 @@
 ---
 name: using-agentit
-description: Lightweight default entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then use domain packs only to discover and load the concrete skills/tools/references the primary AI decides are worth their context cost.
+description: Lightweight provider-neutral entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then use domain packs only to discover and load the concrete skills/tools/references the primary AI decides are worth their context cost.
 ---
 
 # Using Agentit
 
-Agentit is a reliability/orchestration protocol for capable AI agents. It should improve a task **without filling the context window with its whole framework**.
+Agentit is a **provider/model-neutral** reliability/orchestration protocol for capable AI agents. It should improve a task **without filling the context window with its whole framework** or binding general workflows to one model vendor.
 
 The active model owns semantic judgment. Programs remain mechanical: state, files, receipts, manifests, commands and other deterministic execution support.
 
@@ -61,6 +61,7 @@ inspect context
 -> inspect relevant semantic pack(s)
 -> primary AI chooses any justified skill subset
 -> choose references/tools only if material
+-> choose compatible model endpoint(s) only if model routing itself matters
 -> cheap independent audit
 -> strong review if risk/disagreement requires it
 -> execute through Loop/Graph contracts
@@ -71,11 +72,29 @@ inspect context
 
 The user should not need to know or type Agentit CLI commands. Mechanical commands are agent-facing implementation details.
 
+## Provider/model-neutral invariant
+
+General Agentit behavior must not depend on Claude, Codex, Gemini, Kimi, or any other named model/provider.
+
+A compatible model can use Agentit when it can:
+
+- receive/read the relevant Agentit instructions/skill bodies;
+- access the context and files required by the task;
+- use the required tools/modalities when the task needs them;
+- obey the applicable permissions/safety boundaries;
+- produce evidence that satisfies the verifier.
+
+Named providers/models are valid in **provider-specific adapters, endpoint configuration, current evaluation evidence, or provenance**. They are not valid as hidden requirements inside a general skill merely because the source article used that model.
+
+When a source teaches a useful workflow with one named model, extract the workflow and keep the model-specific wording only as provenance unless the technique genuinely relies on a provider-specific capability.
+
+When model selection itself matters, inspect the `models` pack and use `local-model-routing` JIT. Despite the legacy skill ID, that procedure compares compatible **local or remote** endpoints and routes by task evidence rather than brand.
+
 ## Packs: maps, not levels
 
 Canonical runtime map: `skills/using-agent-skills/references/packs.md`.
 
-Packs such as `engineering`, `frontend`, `design`, `backend`, `data`, `product`, `marketing`, `seo`, `research`, `writing`, `release`, and `agency` exist to answer:
+Packs such as `engineering`, `frontend`, `design`, `backend`, `data`, `product`, `marketing`, `seo`, `research`, `writing`, `models`, `release`, and `agency` exist to answer:
 
 > **What capabilities/skills live around this domain, and when might each one help?**
 
@@ -123,7 +142,7 @@ safety / rollback / post-check
 user-method assessment
 ```
 
-Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, how many skills to load, which skill is relevant, or which source should be trusted.
+Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, how many skills to load, which skill is relevant, which model is universally best, or which source should be trusted.
 
 ## References are JIT
 
@@ -148,7 +167,7 @@ The absence of curated Agentit material is never permission to rely on stale mod
 
 For material Agentit work, the reviewed `TASK_DECISION` gets a bounded read-only second opinion from the cheapest competent independent model, normally semantic tier `fast`.
 
-The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong/missing packs, unjustified or missing skills, context bloat, risk underestimation, weak verification, unsafe effects, bad reference/source choices, and unnecessary or missing delegation.
+The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong/missing packs, unjustified or missing skills, context bloat, risk underestimation, weak verification, unsafe effects, bad reference/source choices, model-routing assumptions when material, and unnecessary or missing delegation.
 
 Use `task-router/references/economy-reviewer.md` for the detailed contract.
 
@@ -173,6 +192,8 @@ verification / stop condition
 ```
 
 Never dump the global catalog or whole pack into a worker. One writer owns shared files/state unless branch/worktree isolation makes parallel writes safe.
+
+The worker contract is provider-neutral. Provider-specific worker spawning mechanics may differ, but that must not change the semantic role, bounded context, ownership or verification contract.
 
 ## Runtime enforcement
 
@@ -217,4 +238,4 @@ No `done`, `fixed`, `passing`, `premium`, `secure` or equivalent claim without f
 
 ## Core invariant
 
-> **Keep the bootstrap tiny. Prefer Agentit for material work. Packs expose options; the primary AI decides the actual skill set and its size.**
+> **Keep the bootstrap tiny. Keep general Agentit model-neutral. Prefer Agentit for material work. Packs expose options; the primary AI decides the actual skill set and its size.**

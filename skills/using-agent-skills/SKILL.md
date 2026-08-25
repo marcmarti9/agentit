@@ -1,13 +1,13 @@
 ---
 name: using-agent-skills
-description: Discover Agentit skills through semantic packs and depth levels, then load only the smallest concrete skill set needed by the current stage or worker.
+description: Discover Agentit skills through semantic packs, then let the primary AI choose any concrete subset that materially helps the current stage or worker.
 ---
 
 # Using Agent Skills
 
 Skills are **JIT knowledge**, not a context dump.
 
-The goal is not to make every agent know every Agentit skill. The goal is to let the primary AI quickly discover the right domain family, choose an appropriate depth, and project only the few skill bodies that materially improve the current task.
+A pack is only a semantic map of an area. It helps the model discover what skills exist and what each one is useful for. It does **not** prescribe a level, order, minimum, maximum, or normal number of skills.
 
 Canonical runtime pack map: `references/packs.md`.
 
@@ -17,58 +17,45 @@ For an Agentit task/stage:
 
 ```text
 understand task
--> choose primary pack
--> choose depth: essential | standard | deep
--> inspect candidate skills for that pack/depth
--> select smallest useful concrete subset
--> load those SKILL.md bodies
+-> inspect the relevant pack(s)
+-> read candidate descriptions
+-> AI chooses any number of skills that materially help
+-> load only those SKILL.md bodies
 -> execute / verify
--> escalate depth or add one skill only when evidence shows a gap
+-> add or remove skills later if new evidence changes the need
 ```
 
-A pack is a **search scope**, not a bundle injection.
+The primary AI owns the selection. There are intentionally **no fixed skill counts and no pack levels**.
 
-Choosing:
+A task may legitimately use:
 
 ```text
-pack: design
-depth: deep
+selected_skills: []
 ```
 
-does **not** mean load every design skill. It means advanced design skills are eligible candidates. A worker might still receive only:
+or:
 
 ```text
 selected_skills:
-- design-inspiration-research
-- scrollytelling-web
-- browser-testing-with-devtools
+- debugging-and-error-recovery
 ```
 
-## Depth levels
+or several skills from one or more packs when the work genuinely spans those concerns.
 
-### `essential`
+The deciding question is not “what level is this task?” but:
 
-Minimum useful domain process for bounded work. Prefer this first when the task is straightforward.
-
-### `standard`
-
-Normal production depth. Use when common implementation/review concerns matter.
-
-### `deep`
-
-Specialist/high-risk/high-craft/niche candidate pool. Use only when the task actually requires advanced expertise or the current pass proves insufficient.
-
-Depth may increase during work. Do not start at `deep` for ceremony.
+> **Which skill bodies would materially improve this specific stage, and are they worth their context cost?**
 
 ## Selection rules
 
-1. **One primary pack per stage when possible.** Add a secondary pack only when the stage genuinely crosses a domain boundary.
-2. **Load bodies, not IDs.** A skill is active only when the executing model reads its `SKILL.md` or receives equivalent provider-native injection.
-3. **Never project a whole pack to a worker.** Project only selected skill bodies plus bounded task/project context.
-4. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and deep verification are JIT when their conditions actually apply.
-5. **Project-local skills win.** Prefer the project's own compatible instructions/skills over generic global guidance.
-6. **Do not force a pack onto an unrelated domain.** If Agentit lacks a tax/legal/database/etc. pack, use authoritative live sources and discover/adapt a real skill if the procedure is durable.
-7. **Escalate by evidence.** Add depth/skills because a concrete gap appeared, not because more context feels safer.
+1. **Use packs as discovery maps, not bundles.** Never inject a whole pack merely because its domain matches.
+2. **No quotas.** Do not target 1, 3, 5, or any other predetermined number of skills.
+3. **Load bodies, not IDs.** A skill is active only when the executing model reads its `SKILL.md` or receives equivalent provider-native injection.
+4. **Cross-pack selection is allowed.** A task can pull from `frontend` + `design`, `backend` + `security` concerns inside engineering, `marketing` + `seo`, etc., when the actual problem warrants it.
+5. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and advanced verification remain JIT.
+6. **Project-local skills win.** Prefer compatible project-local instructions/skills over generic global guidance.
+7. **Do not force an unrelated pack.** If Agentit lacks a tax/legal/database/etc. pack, use authoritative live sources and discover/adapt a real skill only if a durable procedure is missing.
+8. **Selection can change during work.** Add a skill when a concrete gap appears; remove/stop carrying one when it no longer helps.
 
 ## References are also JIT
 
@@ -78,7 +65,7 @@ When `TASK_DECISION.reference_plan.mode != none`, load `reference-intelligence` 
 
 ## Tools are also JIT
 
-Do not load `mcp-tooling-fit` or enable MCPs merely because they exist. Select tools after the semantic task/pack decision and only when they materially improve execution.
+Do not load `mcp-tooling-fit` or enable MCPs merely because they exist. Select tools only when they materially improve the reviewed plan.
 
 ## Worker Context Contract
 
@@ -86,9 +73,8 @@ A spawned worker should receive only what it needs to succeed:
 
 ```text
 role / objective
-pack
-depth
-selected_skills
+relevant pack(s) as discovery labels
+selected skill bodies
 selected references (if any)
 project constraints/instructions
 allowed tools/permissions
@@ -97,11 +83,13 @@ expected output/handoff
 verification / stop condition
 ```
 
+`pack` is explanatory metadata. `selected skill bodies` are the actual context payload.
+
 The parent keeps the broader catalog and integration responsibility.
 
 ## Missing capability
 
-If the current pack does not contain an adequate skill:
+If the current pack(s) do not expose an adequate skill:
 
 1. inspect project-local skills/instructions;
 2. inspect another genuinely relevant Agentit pack;
@@ -113,25 +101,25 @@ Do not create a new skill for a one-off fact lookup.
 
 ## Anti-patterns
 
-- all skills globally installed as if they must all be read;
+- fixed `essential/standard/deep` pack tiers;
+- hardcoded minimum/maximum skill counts;
 - loading every skill in the selected pack;
 - spawning every worker with the same giant context;
-- choosing `deep` by default;
-- using a pack name as a substitute for reading the selected skill bodies;
+- using a pack name as a substitute for reading selected skill bodies;
+- adding skills “just in case” without a concrete reason;
 - loading PostgreSQL guidance for a random database task;
 - loading design references into a fiscal report;
-- loading security/performance/orchestration skills when there is no corresponding problem;
-- keeping a huge lifecycle recipe in context when the current stage needs only one procedure.
+- keeping a huge lifecycle recipe in context when one procedure would suffice.
 
 ## Completion check
 
 Before execution/spawn, the parent should be able to answer:
 
 ```text
-Why this pack?
-Why this depth?
+Why these pack(s)?
 Why each selected skill?
+Why is each selected skill worth its token cost now?
 What useful context did we deliberately NOT load?
 ```
 
-If the answer to the last question is “nothing, we loaded everything”, skill selection probably failed.
+There is no correct skill count. The correct set is whatever the primary AI can justify from the actual task.

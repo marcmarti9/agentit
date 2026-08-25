@@ -1,240 +1,238 @@
 # Reference Intelligence architecture
 
-Agentit treats external references as a first-class, traceable input to engineering, design, product, marketing, launch, research, and tool-selection work.
+Agentit should make an agent **better at using external knowledge**, not wrap the agent in a second knowledge engine implemented in Python.
 
-The goal is **not** to accumulate links. The goal is to turn useful external knowledge into durable project decisions without losing provenance, authority, freshness, licensing, or the boundary between inspiration and evidence.
+The core rule is:
+
+> **The model decides what knowledge it needs; Agentit supplies curated knowledge where useful, live research where needed, and existing runtime/verification primitives for execution.**
 
 ## Why this exists
 
-Agents commonly fail around external references in several predictable ways:
+Without an explicit reference discipline, agents tend to fail in opposite directions:
 
-1. a viral social post is silently promoted into a factual premise;
-2. a good-looking design is copied rather than analyzed and synthesized;
-3. hundreds of prompts/resources are dumped into context instead of distilled into procedures;
-4. an external package/skill/MCP is installed because it looks useful without checking overlap, license, maintenance, security, or project fit;
-5. a reference materially shapes a project but the next agent cannot discover where the decision came from;
-6. dynamic configuration/pricing/API claims become stale while the repository keeps treating them as current.
+- ignore useful references unless the user re-pastes them;
+- load too many references into every task;
+- stop at a social post instead of reading the underlying article/repository;
+- treat creator/vendor claims as facts;
+- accumulate giant prompt libraries without converting them into reusable capability;
+- copy designs instead of extracting principles;
+- use stale memory for laws, APIs, prices, standards or current platform behavior;
+- forget where a durable project decision came from.
 
-Reference Intelligence creates explicit structure for those problems.
+Reference Intelligence addresses those failures primarily through **agent instructions and domain skills**, not bespoke routing code.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  U[User task + project context] --> P[Primary AI TASK_DECISION]
-  P -->|explicit source/pack choice| C[references/catalog.yaml]
-  C --> R[Live/canonical re-verification when material]
-  R --> X[Reference extraction]
-  X --> D[Project decision / design direction / tool decision]
-  D --> E[Execution through Agentit Loop/Graph]
-  D --> L[docs/agentit/REFERENCES.md]
-  E --> V[Tests / browser / metrics / verification]
-  V --> L
-
-  A[Cheap audit / strong review] -. challenges weak evidence, stale claims, cloning, unsafe adoption .-> P
+```text
+user task + project context
+        ↓
+primary AI TASK_DECISION
+        ↓
+references needed?
+  none | curated | live | both
+        ↓
+read only the useful material
+        ↓
+extract evidence / principles / procedure
+        ↓
+apply through the relevant domain skill
+        ↓
+execute with normal Agentit Loop/Graph contracts
+        ↓
+verify actual outcome
+        ↓
+record durable provenance when it matters
 ```
 
-### Semantic ownership
+The cheap independent auditor challenges obviously weak reference decisions. It does not become the semantic router.
 
-The **primary AI** owns semantic source/pack selection. `router/reference_catalog.py` is intentionally mechanical. It can:
+## Curated knowledge structure
 
-- validate the catalog;
-- list/filter source metadata by explicit fields;
-- return one explicit source;
-- return one explicit named pack;
-- summarize counts/policy.
+Agentit keeps a small human/agent-readable discovery index:
 
-It cannot take arbitrary natural-language task text and decide which references apply. That would recreate the programmatic semantic router Agentit deliberately removed.
+- `references/INDEX.md`
 
-### Catalog
+Deep recurring knowledge belongs **next to the skill that uses it**, for example:
 
-`references/catalog.yaml` contains:
+- `skills/design-inspiration-research/references/premium-web-production.md`
+- `skills/marketing-and-growth/references/marketing-operating-system.md`
 
-- source identity and URLs;
-- domain/tags;
-- evidence role;
-- verification status/date;
-- a concise summary;
-- durable takeaways;
-- cautions / non-inferences;
-- integration disposition/targets;
-- named packs that compress many bookmarks into a few reusable contexts.
-
-The initial catalog is deliberately seeded with the 27-source X bookmark research that motivated this layer. New references should be added because they improve a durable workflow, not because a feed produced another interesting link.
-
-### Evidence roles
-
-Agentit distinguishes:
-
-- **canonical** — official docs/spec/canonical repository for the thing being used;
-- **licensed artifact** — inspectable reusable artifact with reviewed license;
-- **corroborated** — factual claim independently supported;
-- **creator claim** — creator/vendor/post author says it; useful lead, not independent proof;
-- **inspiration** — pattern/taste/idea source, not factual authority;
-- **unverified** — insufficient evidence for a project premise.
-
-This classification is part of the decision, not decorative metadata.
-
-## Project-local provenance
-
-When external material **materially changes** architecture, product behavior, visual direction, process, dependency selection, or a durable business/technical decision, Agentit must leave a reference ledger.
-
-Reuse an existing project equivalent when present. Otherwise the default is:
+This is intentional progressive disclosure:
 
 ```text
-docs/agentit/REFERENCES.md
+core skill metadata
+-> relevant skill
+-> relevant deep reference
+-> live source only when needed
 ```
 
-A template lives at `templates/project/REFERENCES.md`.
+The global index should not become a 10,000-link database.
 
-The ledger records:
+## Why no reference router / CLI
+
+The active model understands the task better than a keyword classifier or a custom Python scoring layer.
+
+Agentit therefore does **not** need a bespoke runtime that tries to infer:
+
+- this is fiscal, therefore load pack X;
+- this is frontend, therefore load links Y/Z;
+- this prompt contains “SEO”, therefore inject every marketing reference.
+
+The primary AI already makes that semantic choice inside `TASK_DECISION`.
+
+Software remains useful for mechanical work Agentit already owns: bootstrap, state, commands, Loop/Graph execution, receipts, tool configuration and other deterministic operations.
+
+## Reference modes
+
+### `none`
+
+External knowledge would not materially change the result.
+
+Examples: local rename, formatting, self-contained repository bug.
+
+### `curated`
+
+Agentit already contains a useful playbook/reference for a recurring problem.
+
+Example: a Studio website can load the premium-web production reference.
+
+### `live`
+
+The task needs current/domain authority not pre-curated in Agentit.
+
+Example: a Spanish fiscal report should use current legislation/tax-authority sources. Agentit does not need a permanent fiscal pack to be capable of this.
+
+### `both`
+
+A curated procedure helps structure the work, while current sources establish facts.
+
+Example: SEO uses a curated audit/feedback procedure plus current site/GSC/search evidence.
+
+## Read the underlying asset
+
+For bookmarks, the social post is often only the pointer. If it links to a richer article, repository, course, prompt collection, component library or documentation site, the agent should inspect the useful underlying material before deciding what to preserve.
+
+Promotion path:
 
 ```text
-source -> authority role -> extracted principle -> project decision -> affected paths -> verification date
+bookmark
+-> underlying asset
+-> durable insight?
+   no  -> keep out of core
+   yes -> already covered by a skill?
+          yes -> enrich that skill / references/*.md
+          no  -> add the smallest new capability that is actually missing
 ```
 
-It also records anti-copy/non-inference boundaries, attribution/license obligations, and re-verification triggers where relevant.
+This is how the bookmark batch should evolve over time.
 
-The ledger is **not** a transcript, browser history, raw chain-of-thought, or giant list of links.
+## Prompt libraries
 
-## Relationship to other Agentit systems
+Large prompt collections are treated as **source datasets**, not Agentit's runtime interface.
 
-### `source-driven-development`
-
-Authoritative implementation correctness. Framework/library/standard behavior should still be checked against current official docs. Reference Intelligence does not downgrade that hierarchy.
-
-### Design stack
-
-`design-inspiration-research` consumes references as design DNA and produces `INSPIRATION_SYNTHESIS` plus `REFERENCE_TO_DECISION_MAP`. `design-taste-frontend` / `impeccable-design` own art direction and critique. Browser tooling owns rendered evidence.
-
-External galleries, 21st.dev, Checklist Design, Hallmark-derived discipline, and microinteraction collections therefore have distinct jobs rather than becoming one giant design prompt.
-
-### MCP catalog
-
-MCPs are tools, not references. A reference can reveal a useful MCP, but catalog promotion requires current setup/auth/security evidence. `mcp/catalog.d/*.yaml` allows reviewed optional additions without inflating the monolithic base catalog.
-
-21st.dev is the first overlay introduced by the bookmark audit because its current official MCP/CLI is directly useful to Agentit's frontend/design workflow. Helena remains an architecture/candidate reference until its current installable integration contract is verified well enough for Agentit's MCP catalog.
-
-### Loop/Graph runtime
-
-References influence **how we choose a plan**; receipts verify **whether the executed plan worked**. A reference is never a substitute for a verifier.
-
-### Documentation contract
-
-The reference ledger complements architecture/ADR/component/operations documentation. It answers a different question:
-
-> Which external knowledge materially shaped this decision, what exactly did we take from it, and what did we deliberately not infer/copy?
-
-## Adoption lifecycle for external artifacts
+The useful transformation is:
 
 ```text
-DISCOVER -> VERIFY -> CLASSIFY -> COMPARE -> ADOPT / ADAPT / COMPOSE / REFERENCE / INCUBATE / REJECT / BUILD
+many prompts
+-> repeated jobs/capabilities
+-> inputs
+-> intermediate decisions/artifacts
+-> outputs
+-> evidence/QA
+-> reusable procedure
 ```
 
-### ADOPT
+For example, the bookmarked 500-marketing-prompt corpus is distilled into customer research, positioning, content, copy, SEO, email, campaign and analytics procedures inside the marketing skill instead of being copied verbatim.
 
-Use largely as-is after maintenance/license/security/dependency/project-fit review.
+## Design references
 
-### ADAPT
+Design references are decomposed into dimensions such as:
 
-Reuse licensed material but deliberately integrate it into an existing Agentit/project responsibility. Preserve attribution.
+- structure and rhythm;
+- hierarchy/composition;
+- typography;
+- color/material;
+- imagery/artifacts;
+- component archetypes;
+- interaction/motion;
+- responsive behavior.
 
-### COMPOSE
+Then they are recombined around the target project's own content/brand/constraints.
 
-Use smaller existing pieces instead of a monolithic external solution.
+A reference can inspire a layout without proving conversion. Price/revenue claims attached to “premium website” posts remain creator claims.
 
-### REFERENCE ONLY
+## Source roles
 
-Keep the principle/reference without introducing runtime dependencies or competing process ownership.
+Keep the distinction between:
 
-### INCUBATE
+- canonical/current authority;
+- licensed reusable artifact;
+- corroborated evidence;
+- creator/vendor claim;
+- inspiration;
+- internal project/client evidence.
 
-Promising, but not ready because setup, evidence, license, security, overlap, or current availability is unresolved.
+Authority is contextual. Official API documentation can establish API behavior but not whether using that API is a good product decision.
 
-### REJECT
+## Project provenance
 
-The cost/risk/overlap is greater than the value.
+If an external source materially changes an expensive-to-rediscover decision, reuse the project's canonical decision/reference docs or default to:
 
-### BUILD
+`docs/agentit/REFERENCES.md`
 
-Custom implementation only after credible existing options were searched and rejected.
-
-## Freshness rules
-
-Re-verify a source when the decision depends on information that can plausibly change, especially:
-
-- current APIs/MCP endpoints/auth;
-- prices/free tiers/rate limits;
-- model names/capabilities;
-- browser support;
-- regulations/platform rules;
-- package maintenance/license/security state;
-- vendor/product availability.
-
-The catalog's `checked_at` is evidence of the last review, not a permanent truth certificate.
-
-## Design anti-copy contract
-
-Design references are decomposed into dimensions—structure, hierarchy, type, material, imagery, interaction, motion, responsive strategy—and recombined around the target project's own content/brand/constraints.
-
-Do not:
-
-- clone a distinctive site wholesale;
-- copy proprietary assets or copy;
-- invent metrics/testimonials/logos to satisfy a borrowed composition;
-- redraw fake product/browser/phone chrome as evidence;
-- treat a design gallery as proof of conversion/business performance.
-
-## Marketing and launch feedback contract
-
-Marketing/reference workflows become valuable when they close the loop:
+Record only what matters:
 
 ```text
-observe real data
-  -> diagnose
-  -> propose/execute within permissions
-  -> define outcome metric
-  -> schedule follow-up
-  -> evaluate
-  -> update compact learning
-  -> retry / stop / escalate
+source
+-> role
+-> principle/evidence actually used
+-> project decision
+-> affected area
+-> date / recheck trigger when relevant
 ```
 
-A 'self-improving' workflow may improve stored strategy/procedure/context from measured evidence. It must not silently weaken budget, factuality, approval, security, or verification boundaries.
+Do not store browser history, transcripts or private reasoning.
 
-## CLI
+## Verification
 
-Examples for agents/maintainers:
+References are inputs, not proof that the result works.
 
-```bash
-agentit refs summary
-agentit refs packs
-agentit refs pack web-design-studio
-agentit refs show matt-pocock-skills
-agentit refs list --domain design
-agentit refs list --evidence-level canonical
-agentit refs validate
-```
+If reference use is material to acceptance, the primary AI includes it in the **existing Loop/Graph verifier** alongside the real outcome checks.
 
-There is intentionally no command such as:
+Example for a public website:
 
 ```text
-agentit refs recommend "build me a premium landing page"
+verifier:
+- relevant design/reference playbook was applied
+- current framework facts came from current docs where needed
+- desktop/mobile browser result was inspected
+- accessibility/performance constraints pass
+- material external influences are documented
 ```
 
-Semantic reference selection belongs to the primary AI after inspecting the actual task/project context.
+No second reference-specific Python verification system is necessary.
 
-## Adding a new reference
+## What belongs in Agentit
 
-A new catalog entry should answer:
+Promote a reference when it gives Agentit something durable:
 
-1. What is the source?
-2. What authority does it actually have?
-3. What did we verify, and when?
-4. What durable principle survives beyond the post/tool hype cycle?
-5. What must we **not** infer from it?
-6. Does it change an existing pack/workflow?
-7. Is it reference-only, adapted, adopted, incubating, rejected, or learning-only?
-8. If code/skills are reused, is the license compatible and attribution preserved?
+- a recurring procedure;
+- a strong reusable reference library;
+- an external artifact worth evaluating;
+- a domain workflow that improves an existing skill;
+- a repeated source of truth.
 
-If those questions cannot be answered, leaving the URL in personal bookmarks is better than putting it into Agentit's operating system.
+Do not promote something globally just because it is interesting. Experimental local-inference projects, salary anecdotes and one-off hype can be researched live when a future task actually concerns them.
+
+## Design principle for future Agentit work
+
+When deciding between adding agent guidance and adding framework code, prefer this order:
+
+1. Can the capable model reason about this directly?
+2. Can a skill/reference teach it the missing durable knowledge?
+3. Can the existing Agentit runtime enforce the resulting acceptance contract?
+4. Only then add new deterministic code if there is a genuinely mechanical invariant the model should not own.
+
+In short:
+
+> **Use code to make execution reliable; use the model to make semantic decisions.**

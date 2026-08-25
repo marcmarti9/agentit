@@ -3,6 +3,12 @@
 Plan-first by default. Probe selection uses only mechanical project facts plus
 explicit signals supplied by the AI after TASK_DECISION/review. Natural-language
 task text is retained only as receipt context and is never parsed for routing.
+
+Reference semantics follow the same boundary: the AI explicitly chooses
+``none|catalog|live|mixed`` and the selected sources. The verifier never decides
+whether references are relevant; it only enforces that a non-``none`` decision
+is backed by inspected-source evidence before a passing receipt can be issued.
+
 Execute only when apply=True. Persist a receipt under .agentit/verify/.
 """
 
@@ -17,7 +23,7 @@ import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 try:
     import yaml
@@ -26,10 +32,11 @@ except ImportError:  # pragma: no cover
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CATALOG = REPO_ROOT / "probes" / "catalog.yaml"
+VALID_REFERENCE_MODES = {"none", "catalog", "live", "mixed"}
 
 
 class VerifyError(RuntimeError):
-    """Invalid catalog, project, or probe execution."""
+    """Invalid catalog, project, probe execution, or explicit verification contract."""
 
 
 def _load_catalog(path: Path | None = None) -> dict[str, Any]:
@@ -42,6 +49,72 @@ def _load_catalog(path: Path | None = None) -> dict[str, Any]:
     if not isinstance(data, dict) or not isinstance(data.get("probes"), list):
         raise VerifyError("probe catalog must define a probes list")
     return data
+
+
+def _clean_strings(values: Sequence[str] | None) -> list[str]:
+    return [str(value).strip() for value in (values or ()) if str(value).strip()]
+
+
+def _reference_plan(
+    *,
+    reference_mode: str,
+    reference_sources: Sequence[str] | None,
+    reference_provenance_required: bool,
+) -> dict[str, Any]:
+    mode = str(reference_mode or "none").strip().lower()
+    if mode not in VALID_REFERENCE_MODES:
+        raise VerifyError(
+            "reference_mode must be one of: " + ", ".join(sorted(VALID_REFERENCE_MODES))
+        )
+    sources = _clean_strings(reference_sources)
+    if mode == "none" and sources:
+        raise VerifyError("reference sources cannot be supplied when reference_mode=none")
+    return {
+        "mode": mode,
+        "required": mode != "none",
+        "selected_sources": sources,
+        "provenance_required": bool(reference_provenance_required),
+        "status": "not_required" if mode == "none" else "planned",
+    }
+
+
+def _reference_apply_gate(
+    plan: dict[str, Any],
+    *,
+    reference_evidence: Sequence[str] | None,
+    reference_provenance: str | None,
+) -> dict[str, Any]:
+    gate = dict(plan)
+    evidence = _clean_strings(reference_evidence)
+    provenance = str(reference_provenance or "").strip()
+    gate["evidence"] = evidence
+    gate["provenance"] = provenance or None
+    violations: list[str] = []
+
+    if not gate["required"]:
+        if evidence or provenance:
+            violations.append(
+                "reference evidence/provenance supplied while reference_mode=none; "
+                "use catalog/live/mixed if references were materially used"
+            )
+    else:
+        if not gate["selected_sources"]:
+            violations.append(
+                "reference_plan selected catalog/live/mixed but no inspected source IDs/URLs were recorded"
+            )
+        if not evidence:
+            violations.append(
+                "reference_plan selected catalog/live/mixed but no inspected-source evidence was recorded"
+            )
+        if gate["provenance_required"] and not provenance:
+            violations.append(
+                "reference provenance is required but no ledger/citation output was recorded"
+            )
+
+    gate["violations"] = violations
+    gate["passed"] = not violations
+    gate["status"] = "passed" if not violations else "failed"
+    return gate
 
 
 def detect_signals(
@@ -158,6 +231,9 @@ def plan_verification(
     explicit_signals: list[str] | tuple[str, ...] | None = None,
     catalog_path: Path | None = None,
     include_advisory: bool = True,
+    reference_mode: str = "none",
+    reference_sources: Sequence[str] | None = None,
+    reference_provenance_required: bool = False,
 ) -> dict[str, Any]:
     root = Path(project_root).resolve()
     if not root.is_dir() or root.is_symlink():
@@ -165,6 +241,11 @@ def plan_verification(
     catalog = _load_catalog(catalog_path)
     signals = detect_signals(root, explicit_signals)
     probes = select_probes(catalog, signals, include_advisory=include_advisory)
+    reference_gate = _reference_plan(
+        reference_mode=reference_mode,
+        reference_sources=reference_sources,
+        reference_provenance_required=reference_provenance_required,
+    )
     planned: list[dict[str, Any]] = []
     for probe in probes:
         entry: dict[str, Any] = {
@@ -202,6 +283,7 @@ def plan_verification(
         "task_text": task_text,
         "explicit_signals": sorted({str(s).strip().lower() for s in (explicit_signals or ()) if str(s).strip()}),
         "signals": signals,
+        "reference_gate": reference_gate,
         "anti_greenwash": catalog.get("anti_greenwash") or [],
         "probes": planned,
         "blocking_ids": [
@@ -242,6 +324,11 @@ def apply_verification(
     catalog_path: Path | None = None,
     include_advisory: bool = True,
     run_project_commands: bool = True,
+    reference_mode: str = "none",
+    reference_sources: Sequence[str] | None = None,
+    reference_evidence: Sequence[str] | None = None,
+    reference_provenance_required: bool = False,
+    reference_provenance: str | None = None,
 ) -> dict[str, Any]:
     plan = plan_verification(
         project_root,
@@ -249,6 +336,9 @@ def apply_verification(
         explicit_signals=explicit_signals,
         catalog_path=catalog_path,
         include_advisory=include_advisory,
+        reference_mode=reference_mode,
+        reference_sources=reference_sources,
+        reference_provenance_required=reference_provenance_required,
     )
     root = Path(plan["project_root"])
     results: list[dict[str, Any]] = []
@@ -288,10 +378,19 @@ def apply_verification(
             blocking_failed = True
         results.append(item)
 
+    reference_gate = _reference_apply_gate(
+        plan["reference_gate"],
+        reference_evidence=reference_evidence,
+        reference_provenance=reference_provenance,
+    )
+    if not reference_gate["passed"]:
+        blocking_failed = True
+
     receipt = {
         **plan,
         "mode": "apply",
         "probes": results,
+        "reference_gate": reference_gate,
         "blocking_failed": blocking_failed,
         "passed": not blocking_failed,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -301,6 +400,7 @@ def apply_verification(
         "evidence_policy": {
             "claims_without_fresh_output": "forbidden",
             "agent_authored_tests_alone": "insufficient",
+            "selected_references_without_inspection_evidence": "forbidden",
             "require_receipt_for_done": True,
         },
     }
@@ -339,6 +439,10 @@ def evaluate_done_claims(
             violations.append("receipt.passed is false")
         if not receipt.get("receipt_path") and not receipt.get("created_at"):
             violations.append("receipt missing path/timestamp")
+        reference_gate = receipt.get("reference_gate") or {}
+        if reference_gate.get("required") and not reference_gate.get("passed"):
+            details = reference_gate.get("violations") or ["reference evidence gate failed"]
+            violations.extend(f"reference gate: {item}" for item in details)
         pending = receipt.get("pending_checklists") or []
         if pending:
             violations.append(f"pending checklists still open: {', '.join(map(str, pending))}")
@@ -350,7 +454,7 @@ def evaluate_done_claims(
         "applicable": True,
         "allowed": not violations,
         "violations": violations,
-        "notes": "fresh command evidence required after last relevant edit",
+        "notes": "fresh command/reference evidence required after last relevant edit",
     }
 
 
@@ -377,15 +481,29 @@ def _write_receipt(project_root: Path, receipt: dict[str, Any]) -> Path:
 
 
 def format_plan(plan: dict[str, Any]) -> str:
+    reference_gate = plan.get("reference_gate") or {}
     lines = [
         f"mode: {plan.get('mode')}",
         f"project: {plan.get('project_root')}",
         f"signals: {', '.join(plan.get('signals') or [])}",
+        (
+            "references: "
+            f"{reference_gate.get('mode', 'none')} "
+            f"({reference_gate.get('status', 'unknown')})"
+        ),
         f"blocking: {', '.join(plan.get('blocking_ids') or []) or '(none)'}",
         f"runnable: {', '.join(plan.get('runnable_ids') or []) or '(none)'}",
         f"checklists: {', '.join(plan.get('checklist_ids') or []) or '(none)'}",
         "probes:",
     ]
+    if reference_gate.get("selected_sources"):
+        lines.append(
+            "reference_sources: " + ", ".join(reference_gate["selected_sources"])
+        )
+    if reference_gate.get("violations"):
+        lines.append("reference_violations:")
+        for violation in reference_gate["violations"]:
+            lines.append(f"  - {violation}")
     for probe in plan.get("probes") or []:
         cmd = " ".join(probe.get("command") or []) if probe.get("command") else probe.get("kind")
         lines.append(

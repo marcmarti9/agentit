@@ -24,8 +24,12 @@ servers:
     # Official 21st guidance documents `init --client claude` as the client-aware
     # setup path. Authentication details can change; the CLI owns current config shape.
     claude_add: "npx -y @21st-dev/cli@latest init --client claude"
-    mcp_json_remote:
+    # Generic HTTP clients use the single endpoint with x-api-key. Keep only an env
+    # placeholder in generated config; the real key stays outside the repository.
+    mcp_json:
       url: https://21st.dev/api/mcp
+      headers:
+        x-api-key: "${API_KEY_21ST}"
     codex_note: |
       # 21st's current Codex setup uses https://21st.dev/api/mcp plus a bearer-token
       # environment variable. Re-fetch https://docs.21st.dev/mcp before writing config,

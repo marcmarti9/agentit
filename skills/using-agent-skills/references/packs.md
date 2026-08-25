@@ -1,281 +1,301 @@
 # Agentit runtime skill packs
 
-Packs are **semantic discovery scopes**, not automatic context bundles.
+Packs are **flat semantic discovery maps**, not context bundles, tiers, curricula, priority lists, or routing code.
 
-The parent/primary AI chooses a pack and depth, then selects the smallest concrete skill subset that the stage or worker actually needs. Never inject an entire pack merely because it was selected.
+Their only job is to let a capable agent quickly answer:
 
-## Depth model
+1. what domain am I working in?
+2. what Agentit skills exist around that domain?
+3. what problem does each skill solve?
 
-### `essential`
+The primary AI then decides which skill bodies to load and **how many**. There is no minimum, maximum, default count, level, or required order.
 
-Smallest useful domain vocabulary/process. Default for bounded work. Usually 1–2 concrete skills.
-
-### `standard`
-
-Normal production depth. Adds the common implementation/review skills that materially improve a real task. Usually 2–4 concrete skills total after selection.
-
-### `deep`
-
-Specialist, high-stakes, niche, high-craft or structurally difficult work. Expands the **candidate pool**, not the context payload. Select only the few advanced skills actually needed.
-
-Depth is allowed to increase during execution when evidence shows the current skill set is insufficient. Do not start at `deep` to look impressive.
+A pack with twenty listed skills can still lead to `selected_skills: []` or one selected skill. Another task may justify many. That decision belongs to the model looking at the actual task.
 
 ## Worker projection contract
 
 A spawned worker should receive something conceptually equivalent to:
 
 ```text
-pack: design
-depth: deep
+relevant_packs:
+- design
+- frontend
+
 selected_skills:
-  - design-inspiration-research
-  - scrollytelling-web
-  - browser-testing-with-devtools
+- design-inspiration-research
+- browser-testing-with-devtools
+
 references:
-  - <only relevant curated/live material>
+- <only relevant curated/live material>
 ```
 
-`pack` and `depth` explain the domain/context budget. `selected_skills` are the only skill bodies that should be projected unless the worker discovers a concrete missing need and asks/escalates.
+The pack names are discovery/provenance labels. **Only the selected skill bodies consume worker skill context.**
 
-## Pack index
+Do not infer a skill count from pack size, task size, risk label, or worker title.
 
-### engineering
+---
 
-**Use for:** general implementation, bug fixes, refactors, repository changes and code quality.
+## engineering
 
-**essential candidates**
-- `incremental-implementation` — small verifiable slices.
-- `debugging-and-error-recovery` — reproduce/localize/fix/guard when something is broken.
+**Use for:** general implementation, bugs, refactors, repository changes, code quality, architecture, testing, debugging, security-sensitive code, performance work and engineering delivery.
 
-**standard candidates**
-- `planning-and-task-breakdown` — non-trivial decomposition.
-- `test-driven-development` — behavioral proof while implementing.
-- `code-review-and-quality` — independent correctness/quality review.
-- `code-simplification` — remove unnecessary complexity after correctness.
-- `verification-before-completion` / `verification-gauntlet` — evidence before done claims.
+**Skills in this pack:**
 
-**deep candidates**
-- `doubt-driven-development` — adversarial review for unfamiliar/high-impact decisions.
-- `security-and-hardening` — threat/security-sensitive work.
-- `performance-optimization` — measurement-led performance work.
-- `source-driven-development` — current external framework/library contract matters.
-- `architect-orchestrator` / `specialist-agent-routing` — structural or multi-agent work.
+- `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
+- `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
+- `planning-and-task-breakdown` — decompose non-trivial work when an explicit execution plan would help.
+- `test-driven-development` — use behavioral tests to drive or prove implementation when TDD fits the change.
+- `code-review-and-quality` — independent correctness/quality review before accepting meaningful code changes.
+- `code-simplification` — reduce unnecessary complexity while preserving proven behavior.
+- `verification-before-completion` — fresh evidence before done/fixed/passing claims.
+- `verification-gauntlet` — broader verification discipline when multiple evidence surfaces matter.
+- `doubt-driven-development` — adversarially challenge unfamiliar, risky or consequential engineering decisions.
+- `security-and-hardening` — threat modeling, trust boundaries, auth, secrets, input handling and hardening when security is materially involved.
+- `performance-optimization` — measure and optimize real bottlenecks rather than guessing.
+- `source-driven-development` — current official framework/library/protocol documentation materially affects correctness.
+- `architect-orchestrator` — structural decomposition, architectural ownership or multi-stage coordination when one direct execution path is insufficient.
+- `specialist-agent-routing` — spawn bounded specialists only when specialization, independence or context isolation is useful.
+- `context-engineering` — control large or fragmented engineering context deliberately.
+- `git-workflow-and-versioning` — branch/commit/history discipline when Git handoff matters.
+- `documentation-and-adrs` — preserve durable architecture/decision knowledge when it would be expensive to rediscover.
+- `observability-and-instrumentation` — logs, metrics, traces and operational diagnostics when runtime behavior matters.
+- `ci-cd-and-automation` — CI/CD and automated quality gates.
+- `deprecation-and-migration` — safely retire or migrate interfaces/systems while preserving compatibility requirements.
 
-### frontend
+---
 
-**Use for:** application UI implementation, browser behavior, accessibility, frontend performance and maintenance.
+## frontend
 
-**essential candidates**
-- `frontend-ui-engineering` — production UI implementation baseline.
+**Use for:** application UI implementation, browser behavior, accessibility, frontend architecture, runtime verification and frontend performance.
 
-**standard candidates**
-- `browser-testing-with-devtools` — rendered/runtime verification.
-- `performance-optimization` — measured frontend performance work.
-- `anti-ai-slop-design` — lightweight visual/brand anti-cliche pass.
-- `code-simplification` — keep component architecture lean.
+**Skills in this pack:**
 
-**deep candidates**
-- `source-driven-development` — current framework/browser contracts.
-- `security-and-hardening` — auth/session/input-sensitive frontend surfaces.
-- use the `design` pack as the primary or secondary pack when visual art direction is material.
+- `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
+- `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
+- `performance-optimization` — measure and improve frontend performance when evidence shows a bottleneck.
+- `code-simplification` — keep component/state architecture lean.
+- `anti-ai-slop-design` — lightweight guard against generic visual clichés and fabricated content.
+- `design-taste-frontend` — stronger visual judgment when implementation also needs art-direction sensitivity.
+- `source-driven-development` — current framework/browser/API behavior matters.
+- `security-and-hardening` — auth/session/input/trust-boundary work in frontend surfaces.
+- `test-driven-development` — component/behavior tests when useful.
+- `verification-before-completion` — fresh runtime/build/test evidence before completion claims.
 
-### design
+If visual direction is material, inspect the `design` pack too. That does not require loading the whole design pack.
 
-**Use for:** public websites, landing pages, brand/product visual systems, high-craft UI, motion, scrollytelling and spatial experiences.
+---
 
-**essential candidates**
-- `design-taste-frontend` — visual direction and anti-generic design baseline.
-- `anti-ai-slop-design` — truthfulness/cliche guard.
+## design
 
-**standard candidates**
-- `design-inspiration-research` — current references, design DNA and provenance.
-- `impeccable-design` — structured critique/polish.
-- `browser-testing-with-devtools` — rendered desktop/mobile evidence.
-- `frontend-ui-engineering` — implementation/accessibility bridge.
-- `figma-design-workflow` — when Figma is a real source/handoff surface.
+**Use for:** public websites, landing pages, product/brand visual systems, visual direction, interaction design, motion, scrollytelling, Figma work and spatial/3D experiences.
 
-**deep candidates**
-- `ui-ux-pro-max-intelligence` — broader design intelligence when needed.
-- `emil-design-eng` — interaction craft/design-engineering judgment.
-- `design-trend-researcher` — current visual/interaction landscape.
-- `creative-web-experiences` — unconventional interactive web concepts.
-- `visual-storytelling-director` — narrative/visual sequencing.
-- `creative-tool-scout` — tool choice for unusual creative requirements.
-- `delight-and-whimsy` — deliberate delight, not decoration everywhere.
-- `scrollytelling-web` — narrative scroll architecture.
-- `gsap-scrolltrigger` / `gsap-performance` — advanced timeline/scroll motion.
-- `threejs-spatial-experiences` / `threejs-product-storytelling` — real 3D/spatial work.
+**Skills in this pack:**
 
-### backend
+- `design-taste-frontend` — visual direction, hierarchy, composition and anti-generic frontend design judgment.
+- `anti-ai-slop-design` — detect cliché AI aesthetics, fabricated proof and generic structural repetition.
+- `design-inspiration-research` — research references, extract design DNA, synthesize rather than clone, and preserve provenance. Its references include the distilled premium/high-craft website production playbook.
+- `impeccable-design` — structured visual critique and polish passes.
+- `ui-ux-pro-max-intelligence` — broader UI/UX pattern intelligence when the task benefits from it.
+- `emil-design-eng` — interaction craft and design-engineering judgment.
+- `design-trend-researcher` — investigate current visual/interaction patterns when freshness matters.
+- `creative-web-experiences` — unconventional interactive web concepts when a standard page is not enough.
+- `visual-storytelling-director` — narrative sequencing, visual story structure and presentation rhythm.
+- `creative-tool-scout` — choose creative tools when unusual visual requirements make tooling selection material.
+- `delight-and-whimsy` — deliberate moments of delight when they serve the experience rather than decorate everything.
+- `figma-design-workflow` — Figma as a real source, collaboration or handoff surface.
+- `scrollytelling-web` — narrative scroll experiences and section/state choreography.
+- `gsap-scrolltrigger` — ScrollTrigger/timeline mechanics when GSAP is the right implementation tool.
+- `gsap-performance` — keep advanced GSAP motion performant.
+- `threejs-spatial-experiences` — interactive spatial/3D web experiences.
+- `threejs-product-storytelling` — 3D specifically as a product/narrative device.
+- `frontend-ui-engineering` — bridge visual direction into production-quality accessible UI.
+- `browser-testing-with-devtools` — rendered desktop/mobile/browser evidence.
+- `performance-optimization` — visual/motion work where runtime cost needs measurement.
+- `reference-intelligence` — use only when external/current references materially affect the design decision or provenance.
 
-**Use for:** APIs, services, integrations, server-side architecture and operational behavior.
+The design pack intentionally has many possibilities. **Do not subdivide them into basic/advanced tiers and do not infer that ambitious design work must load more of them.**
 
-**essential candidates**
-- `api-and-interface-design` — contracts and boundaries.
+---
 
-**standard candidates**
-- `observability-and-instrumentation` — logs/metrics/traces/diagnostics.
-- `test-driven-development` — service behavior proof.
+## backend
+
+**Use for:** APIs, integrations, services, server-side architecture, runtime operations and backend trust boundaries.
+
+**Skills in this pack:**
+
+- `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
+- `observability-and-instrumentation` — logs, metrics, traces and diagnostics.
+- `test-driven-development` — service/API behavior proof when useful.
 - `code-simplification` — avoid accidental service/framework complexity.
-- `verification-before-completion` — runtime evidence.
+- `verification-before-completion` — fresh runtime/test evidence.
+- `security-and-hardening` — auth, secrets, PII, permissions and trust boundaries.
+- `performance-optimization` — measured server/data-path optimization.
+- `source-driven-development` — current protocols/framework/provider contracts.
+- `architect-orchestrator` — structural or multi-service work.
+- `debugging-and-error-recovery` — reproduce/localize backend failures.
+- `deprecation-and-migration` — interface/service migration and compatibility work.
 
-**deep candidates**
-- `security-and-hardening` — auth/secrets/PII/trust boundaries.
-- `performance-optimization` — measured service/data-path performance.
-- `source-driven-development` — external protocols/framework contracts.
-- `architect-orchestrator` — structural multi-service changes.
+---
 
-### data
+## data
 
-**Use for:** databases, schemas, persistence, migrations and data-heavy application work.
+**Use for:** databases, persistence, schemas, queries, migrations and data-heavy application work.
 
-**essential candidates**
-- `supabase-postgres-best-practices` — only when PostgreSQL/Supabase context is real.
-- `source-driven-development` — current DB/platform contract when applicable.
+**Skills in this pack:**
 
-**standard candidates**
-- `test-driven-development` — migration/query/data behavior proof.
-- `observability-and-instrumentation` — runtime/data-path diagnostics.
-- `security-and-hardening` — access/PII/row-level/security boundaries.
-
-**deep candidates**
-- `performance-optimization` — query/storage performance measured first.
-- `doubt-driven-development` — destructive/structural migration review.
+- `supabase-postgres-best-practices` — PostgreSQL/Supabase-specific guidance **only when that stack is actually present**.
+- `source-driven-development` — current database/platform docs and contracts.
+- `test-driven-development` — prove query/migration/data behavior when appropriate.
+- `observability-and-instrumentation` — data-path/runtime diagnostics.
+- `security-and-hardening` — access controls, PII, row-level security and data trust boundaries.
+- `performance-optimization` — measure query/storage/index performance before changing it.
+- `doubt-driven-development` — adversarial review for destructive or structurally risky migrations.
 - `architect-orchestrator` — multi-stage migrations and dependent systems.
+- `deprecation-and-migration` — compatibility and rollout/rollback for schema/system migration.
+- `verification-before-completion` — pre/post evidence for data changes.
 
-If no existing data skill fits the actual engine/domain, discover a better skill or use live canonical sources rather than forcing PostgreSQL guidance onto unrelated databases.
+If no existing data skill fits the actual engine/domain, discover a better skill or use current canonical sources. Never force PostgreSQL guidance onto an unrelated database because it happens to be the nearest pack entry.
 
-### product
+---
 
-**Use for:** product discovery, ambiguous feature decisions, requirements, specifications and prioritization.
+## product
 
-**essential candidates**
-- `interview-me` — unresolved user/product decisions.
-- `idea-refine` — explore/refine an early concept.
+**Use for:** product discovery, ambiguous feature decisions, requirements, specifications, prioritization and product/technical trade-offs.
 
-**standard candidates**
-- `spec-driven-development` — explicit requirements/acceptance criteria.
-- `planning-and-task-breakdown` — executable decomposition.
-- `documentation-and-adrs` — durable decisions.
+**Skills in this pack:**
 
-**deep candidates**
-- `doubt-driven-development` — challenge high-impact product/architecture assumptions.
-- `reference-intelligence` — market/product/reference evidence materially affects the decision.
-- `architect-orchestrator` — broad product+technical decomposition.
+- `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
+- `idea-refine` — explore and refine an early concept before committing to one shape.
+- `spec-driven-development` — explicit requirements, scope and acceptance criteria.
+- `planning-and-task-breakdown` — turn a decided outcome into executable units when useful.
+- `documentation-and-adrs` — preserve durable product/architecture decisions.
+- `doubt-driven-development` — challenge high-impact assumptions and alternatives.
+- `reference-intelligence` — market/product/comparable evidence materially affects the decision.
+- `architect-orchestrator` — broad product + technical decomposition or multi-stage ownership.
+- `marketing-and-growth` — product positioning/growth concerns are genuinely part of the decision.
 
-### marketing
+---
 
-**Use for:** positioning, ICP, copy, campaigns, content strategy, email, CRO and launch planning.
+## marketing
 
-**essential candidates**
-- `marketing-and-growth` — main marketing operating skill.
+**Use for:** ICP/customer research, positioning, copy, campaigns, content strategy, email, CRO, launch planning and marketing operations.
 
-**standard candidates**
-- `shipping-and-launch` — launch/distribution readiness.
-- `anti-ai-slop-writing` — brand-authentic copy refinement.
-- `reference-intelligence` — current market/competitor/launch evidence.
+**Skills in this pack:**
 
-**deep candidates**
-- `source-driven-development` — platform/API/policy behavior matters.
-- `doubt-driven-development` — high-impact strategy/claim review.
-- relevant deep references inside `marketing-and-growth/references/`, especially the marketing operating system and launch content system.
+- `marketing-and-growth` — main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.
+- `shipping-and-launch` — launch/distribution readiness and operational launch checks.
+- `anti-ai-slop-writing` — remove generic/robotic marketing prose and preserve brand voice.
+- `reference-intelligence` — current competitor/market/launch evidence and source provenance.
+- `source-driven-development` — current platform/API/policy behavior when it affects execution.
+- `doubt-driven-development` — challenge high-impact strategy, claims or unsupported assumptions.
+- `context-engineering` — large customer/competitor/content evidence sets.
+- `documentation-and-adrs` — durable campaign/positioning decisions when worth preserving.
 
-### seo
+---
 
-**Use for:** technical SEO, search opportunity discovery, schema, content/search gaps and measurable organic-growth loops.
+## seo
 
-**essential candidates**
-- `marketing-and-growth` — load its SEO-specific reference `references/seo-growth-loop.md`.
+**Use for:** technical SEO, search opportunity discovery, schema, search/content gaps, indexability and measurable organic-growth loops.
 
-**standard candidates**
-- `source-driven-development` — current search/platform/structured-data docs.
-- `context-engineering` — large GSC/site/query evidence sets.
-- `reference-intelligence` — current competitor/search evidence and provenance.
+**Skills in this pack:**
 
-**deep candidates**
-- `performance-optimization` — Core Web Vitals/performance when evidence points there.
+- `marketing-and-growth` — load its `references/seo-growth-loop.md` when that procedure is useful.
+- `source-driven-development` — current search engine, structured-data and platform documentation.
+- `context-engineering` — large GSC/site/query/competitor evidence sets.
+- `reference-intelligence` — current competitor/search evidence, authority classification and provenance.
+- `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
 - `browser-testing-with-devtools` — rendered/indexability/runtime checks.
-- `doubt-driven-development` — risky migrations/canonicals/programmatic SEO/large-scale changes.
+- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO or large-scale changes.
+- `verification-before-completion` — evidence that technical changes actually landed and behave as expected.
 
-### research
+---
 
-**Use for:** factual research, technical research, reports, unfamiliar domains and source-heavy synthesis.
+## research
 
-**essential candidates**
-- `source-driven-development` — authoritative/canonical source hierarchy.
+**Use for:** factual or technical research, reports, unfamiliar domains, source-heavy synthesis and current-domain investigations.
 
-**standard candidates**
-- `reference-intelligence` — contextual source roles, curated vs live, provenance.
-- `context-engineering` — large source/context sets.
+**Skills in this pack:**
+
+- `source-driven-development` — establish authoritative/canonical source hierarchy and verify current contracts.
+- `reference-intelligence` — decide curated vs live sources, distinguish source roles and preserve provenance.
+- `context-engineering` — manage large source/context sets without flooding the synthesis model.
 - `verification-before-completion` — evidence-backed final claims.
-
-**deep candidates**
 - `doubt-driven-development` — adversarial source/assumption review.
-- `architect-orchestrator` — parallel independent research branches and synthesis.
+- `architect-orchestrator` — parallel independent research branches and synthesis when that actually helps.
+- `documentation-and-adrs` — preserve durable research decisions/knowledge when relevant to a project.
 
-For current legal, tax, regulatory, medical, financial or other domain-specific work, curated Agentit material is optional; live authoritative domain sources are mandatory when correctness depends on them.
+For current legal, tax, regulatory, medical, financial or other domain-specific work, Agentit does **not** need a permanent domain pack first. Use live authoritative domain sources whenever correctness depends on them.
 
-### writing
+---
 
-**Use for:** documentation, technical prose, reports and externally visible written material.
+## writing
 
-**essential candidates**
-- `anti-ai-slop-writing` — remove generic/robotic prose.
+**Use for:** documentation, technical prose, reports, explanations and externally visible written material.
 
-**standard candidates**
-- `documentation-and-adrs` — durable technical/project documentation.
+**Skills in this pack:**
+
+- `anti-ai-slop-writing` — remove generic, repetitive or robotic prose.
+- `documentation-and-adrs` — durable technical/project documentation and decision records.
 - `source-driven-development` — factual/current source-grounded writing.
+- `reference-intelligence` — multi-source reports, source roles and provenance.
+- `doubt-driven-development` — adversarial factual/argument review when stakes warrant it.
+- `context-engineering` — large source sets or long documents.
+- `verification-before-completion` — evidence before factual completion claims.
 
-**deep candidates**
-- `reference-intelligence` — complex multi-source reports/provenance.
-- `doubt-driven-development` — adversarial factual/argument review.
+---
 
-### release
+## release
 
-**Use for:** CI/CD, deployments, migrations, launches and operational readiness.
+**Use for:** CI/CD, deployments, migrations, launches, operational readiness and rollback planning.
 
-**essential candidates**
-- `shipping-and-launch` — release readiness and rollback thinking.
+**Skills in this pack:**
 
-**standard candidates**
-- `ci-cd-and-automation` — pipeline automation/gates.
-- `verification-before-completion` / `verification-gauntlet` — fresh release evidence.
-- `observability-and-instrumentation` — know whether the release is healthy.
-
-**deep candidates**
-- `deprecation-and-migration` — compatibility/retirement/migration plans.
+- `shipping-and-launch` — release readiness, launch checks and rollback thinking.
+- `ci-cd-and-automation` — pipeline automation and quality gates.
+- `verification-before-completion` — fresh release evidence.
+- `verification-gauntlet` — multiple release verification surfaces when useful.
+- `observability-and-instrumentation` — know whether a release is healthy after change.
+- `deprecation-and-migration` — compatibility, retirement and migration plans.
 - `security-and-hardening` — production/security boundaries.
 - `doubt-driven-development` — high-risk rollout review.
-- `architect-orchestrator` — multi-stage releases/migrations.
+- `architect-orchestrator` — multi-stage releases/migrations and dependency coordination.
+- `git-workflow-and-versioning` — clean release/merge history and handoff.
 
-### agency
+---
 
-**Use for:** client delivery workflows combining product/growth/engineering handoffs rather than one technical domain.
+## agency
 
-**essential candidates**
-- choose the actual delivery pack first (`design`, `marketing`, `seo`, `engineering`, etc.).
-- `git-workflow-and-versioning` when repository handoff is involved.
+**Use for:** client delivery where several domains, handoffs, documentation, review and shipping concerns interact.
 
-**standard candidates**
-- `incremental-implementation` — bounded client delivery.
-- `documentation-and-adrs` — durable handoff/context.
+`agency` is an **overlay/map**, not a mandatory parent pack. A client task can inspect `agency` plus `design`, `marketing`, `seo`, `engineering`, or any other domain that actually applies.
+
+**Skills in this pack:**
+
+- `git-workflow-and-versioning` — reviewable repository handoff.
+- `incremental-implementation` — bounded client delivery and staged implementation.
+- `documentation-and-adrs` — durable client/project handoff context.
 - `shipping-and-launch` — deployment/launch readiness.
+- `architect-orchestrator` — multi-domain client programs when orchestration is useful.
+- `specialist-agent-routing` — cleanly separated workers when specialization/parallelism pays off.
+- `reference-intelligence` — competitor, market, design or source-heavy client work.
+- `marketing-and-growth` — marketing/growth delivery.
+- `verification-before-completion` — prove client-facing changes before claiming completion.
 
-**deep candidates**
-- `architect-orchestrator` — multi-domain client program.
-- `specialist-agent-routing` — cleanly separated domain workers.
-- `reference-intelligence` — competitor/market/design/source-heavy work.
-
-`agency` should rarely be the only semantic pack; it is usually an operating overlay on the actual domain pack.
+---
 
 ## Cross-cutting rules
 
-- `reference-intelligence` is **JIT**, not global. Load it when `reference_plan.mode != none` or source/provenance judgment is material.
-- `mcp-tooling-fit` is JIT when external tools/MCP selection matters.
-- `security-and-hardening` is JIT when there is an actual security/trust boundary, not for every code edit.
-- `verification-*` can be loaded at the stage that needs deeper verification discipline; the base Agentit protocol still requires evidence/receipts.
-- `architect-orchestrator` and `specialist-agent-routing` are for structural/multi-agent work, not default ceremony.
-- `long-horizon-recovery` is for long/resumable work, not every task.
+- A skill may appear in multiple packs. Packs are **views over capabilities**, not ownership boundaries.
+- Pack order does not imply priority.
+- Skill order inside a pack does not imply priority or execution sequence.
+- There are no hidden pack levels or recommended counts.
+- The primary AI may inspect multiple packs and choose any justified subset.
+- `reference-intelligence` is JIT, not global. Load it when source/provenance judgment is material.
+- `mcp-tooling-fit` is JIT when external tool/MCP selection itself needs judgment.
+- `security-and-hardening` is JIT when a real security/trust boundary exists, not for every code edit.
+- `architect-orchestrator` / `specialist-agent-routing` are JIT when orchestration/delegation actually helps.
+- `long-horizon-recovery` is JIT for long/resumable work.
+- The base Agentit protocol still requires appropriate verification even when no dedicated verification skill body is selected.
 
 ## Missing pack or skill
 
@@ -287,4 +307,4 @@ If no pack covers the domain well:
 4. use `find-skills` / approved skill discovery if a reusable specialist procedure would materially help;
 5. create/adapt a new skill only when the procedure is durable and likely to recur.
 
-Packs are a map, not a prison.
+> **Packs are a map, not a prison. The model decides the route and how much knowledge it needs.**

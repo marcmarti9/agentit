@@ -42,6 +42,21 @@ The primary AI owns semantic interpretation using the current conversation, repo
 
 Mechanical code may resolve explicit IDs, copy files, manage manifests/state, run commands/tests and enforce reviewed Loop/Graph contracts.
 
+## Provider/model neutrality
+
+General Agentit contracts, packs, skills, references, Loop/Graph execution and verification are **provider/model-neutral**.
+
+A compatible model may execute a general Agentit skill when it can receive/read the required instructions and context and satisfy the task's real tool, modality, permission and verification requirements.
+
+Provider/model names are allowed only when the real subject requires them, such as:
+
+- provider-specific adapters or APIs;
+- endpoint configuration/examples;
+- current benchmark/evaluation observations;
+- source provenance.
+
+A source saying “use Claude”, “use Kimi”, “use Codex”, or another named model does **not** make that model a general Agentit dependency. Distill the durable procedure and keep the source-specific model name as provenance unless the capability is genuinely provider-specific.
+
 ## Packs are flat discovery maps
 
 Runtime packs are documented in `skills/using-agent-skills/references/packs.md`.

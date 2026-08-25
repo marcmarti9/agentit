@@ -42,7 +42,7 @@ Before executing material work, the primary model determines at least:
 - `external_effects`: production, network, account, financial, data or other side effects;
 - `skills`: smallest useful knowledge bodies to load;
 - `tools`: only tools that materially help;
-- `reference_plan`: explicit contextual source decision using `mode: none | catalog | live | mixed`, plus reason and, when relevant, pack/source IDs, domain, purpose, authority/freshness requirements and provenance output;
+- `reference_plan`: explicit contextual source decision using `mode: none | curated | live | both`, plus reason and, when relevant, domain, curated skill/reference paths, purpose, authority/freshness requirements and provenance output;
 - `topology`: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` or `audit`;
 - `workers`: useful specialist roles, if any;
 - `parallelism`: why concurrent work is or is not useful;
@@ -51,7 +51,7 @@ Before executing material work, the primary model determines at least:
 - `safety`: backup/rollback/dry-run/post-check requirements when applicable;
 - `user_method_assessment`: whether the user's proposed method is sound, acceptable-with-tradeoffs, or materially weaker than an alternative.
 
-The primary AI owns semantic reference selection. Programs may resolve explicitly selected catalog IDs or execute explicitly chosen search/fetch operations, but may not infer relevant references from natural-language prompt keywords.
+The primary AI owns semantic reference selection. It may read `references/INDEX.md`, relevant skill `references/*.md` files, and live authoritative sources as needed. No program should infer relevant references from prompt keywords.
 
 `reference_plan` examples:
 
@@ -61,14 +61,16 @@ reference_plan:
   mode: none
   reason: repository-local truth is sufficient; no external/current contract matters
 
-# Public website
+# Public Studio website
 reference_plan:
-  mode: mixed
-  pack_or_sources: [web-design-studio]
-  purpose: design DNA + implementable component discovery + UX QA
-  authority_needed: inspiration + current canonical implementation docs
+  mode: both
+  curated:
+    - skills/design-inspiration-research/references/premium-web-production.md
+  purpose: art direction + production/QA discipline
+  live: current project/category references + current framework docs where material
+  authority_needed: inspiration + canonical implementation docs
 
-# Current domain with no curated pack, e.g. tax/legal
+# Current domain with no curated Agentit material, e.g. tax/legal
 reference_plan:
   mode: live
   domain: <jurisdiction/topic>
@@ -76,7 +78,7 @@ reference_plan:
   authority_needed: primary/canonical domain sources
 ```
 
-Do not perform research for ceremony. `mode: none` is correct when external knowledge would not materially improve the result. But the absence of a curated Agentit pack is **not** a reason to use model memory for a current or domain-specific task: choose `live` and discover appropriate authoritative sources.
+Do not perform research for ceremony. `mode: none` is correct when external knowledge would not materially improve the result. But the absence of curated Agentit material is **not** a reason to use model memory for a current or domain-specific task: choose `live` and discover appropriate authoritative sources.
 
 The primary model may keep this structure internal when showing it would add noise, but it must actually make the decision.
 
@@ -183,8 +185,9 @@ It must actively look for:
 - missing rollback/backup/post-check;
 - a plan shaped by prompt words rather than the actual problem;
 - unjustified `reference_plan.mode: none` when current/domain-specific/external knowledge materially affects correctness or quality;
-- using model memory merely because Agentit has no pre-curated pack for the domain;
-- reference overload or failure to actually load selected references;
+- using model memory merely because Agentit has no pre-curated material for the domain;
+- reference overload or failure to actually read selected curated/live sources;
+- stopping at a social post when its underlying article/repository contains the useful substance;
 - a creator/vendor claim being treated as canonical/corroborated evidence;
 - stale setup/API/regulatory/tax/pricing/platform assumptions that should be re-verified;
 - design cloning or dependency adoption without provenance/license/fit review;
@@ -223,11 +226,11 @@ If a separate model cannot be spawned, use an isolated fresh context with the sa
 
 ## 8. Skills and references are chosen by the primary AI
 
-Profiles, skill metadata and reference packs are knowledge inventories, not classifiers.
+Profiles, skill metadata and curated reference files are knowledge inventories, not classifiers.
 
-The primary model decides which skills and external reference packs/sources are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing/excessive choice or an authority/freshness mistake, but the primary model resolves it.
+The primary model decides which skills and external references are relevant after inspecting the actual task. Neither the cheap auditor nor a script owns this selection. The auditor may challenge an obviously missing/excessive choice or an authority/freshness mistake, but the primary model resolves it.
 
-A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “used” merely because its ID appears in `reference_plan`: the stage model must load/inspect it (or retrieve live sources), classify its authority, and extract the material facts/principles before relying on it.
+A skill is not “used” merely because its ID appears somewhere: the stage model must read its `SKILL.md` or receive provider-native injection of the same body. A reference is not “used” merely because its path/URL appears in `reference_plan`: the stage model must inspect it, classify its authority, and extract the material facts/principles before relying on it.
 
 Choose the smallest useful set. Domain-specific guidance requires real evidence that the domain applies. For example, PostgreSQL-specific guidance needs actual PostgreSQL/psql/Supabase context, not the word “database” alone.
 
@@ -237,13 +240,15 @@ A landing page, homepage, brand/company website, portfolio, storefront, campaign
 
 Greenfield or total public redesign normally follows:
 
-`interview -> live/reference-pack research -> design-DNA synthesis -> direction/concept -> component/tool discovery where useful -> implementation -> independent visual/UX critique -> desktop/mobile browser verification -> project provenance`
+`interview -> curated/live reference research -> design-DNA synthesis -> direction/concept -> component/tool discovery where useful -> implementation -> independent visual/UX critique -> desktop/mobile browser verification -> project provenance`
 
 Do not reduce a design problem to a frontend keyword. Do not treat design references as conversion evidence or clone targets.
 
 ## 10. What remains deterministic
 
-Mechanical programs may still copy files, manage manifests, resolve explicitly chosen source/pack IDs, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task/reference plan.
+Mechanical programs may still copy files, manage manifests, run tests, persist state or execute explicitly chosen tooling. They must not interpret natural-language intent or decide the semantic task/reference plan.
+
+When reference evidence is material to acceptance, include it in the **existing Loop/Graph verifier** rather than adding a second reference-specific runtime.
 
 The boundary is:
 
@@ -255,6 +260,7 @@ The boundary is:
 - no semantic `decision_contract.py`;
 - no regex/keyword risk inference;
 - no programmatic reference recommender from prompt text;
+- no bespoke reference CLI/router required for normal use;
 - no executable router evals pretending to benchmark language understanding;
 - no script that chooses category/topology/skills/references from prompt text;
 - no cheap model acting as the semantic decision owner;

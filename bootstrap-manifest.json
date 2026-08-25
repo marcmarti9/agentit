@@ -22,6 +22,7 @@
     "mcp",
     "probes",
     "capabilities",
+    "references",
     "docs",
     "hooks",
     "templates"
@@ -38,6 +39,7 @@
     "task-router",
     "architect-orchestrator",
     "using-agent-skills",
+    "reference-intelligence",
     "mcp-tooling-fit",
     "long-horizon-recovery",
     "debugging-and-error-recovery",

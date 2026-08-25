@@ -1,191 +1,91 @@
-# Directrices globales para agentes
+# Agentit global agent instructions
 
-Estas reglas son comunes a cualquier repositorio. Las instrucciones locales del proyecto prevalecen cuando sean más específicas.
+These are intentionally small. Project-local instructions take precedence when more specific; safety and explicit user constraints still govern execution.
 
-## Harness Agentit
+## First-prompt dispatch
 
-### Activación
-
-**Única frase especial:** cualquier forma natural de “usar Agentit” en el idioma del usuario (`usa agentit`, `use agentit`, `utilise agentit`, etc.) cuando quede claro que se activa el harness **Agentit**.
-
-Cuando Agentit esté activo:
-
-1. Carga `using-agentit`.
-2. Sigue su playbook el resto de la sesión.
-3. No improvises otra metodología incompatible.
-
-Agentit es provider-neutral. Cambiar de proveedor o modelo puede cambiar la primitiva de workers, pero no el protocolo.
-
-## Decisiones de tarea: solo IA
-
-**No existe un router programado.** No ejecutes un script, regex, árbol de keywords, clasificador Python ni validador semántico para decidir qué significa una petición.
-
-La **IA principal** interpreta la tarea usando el contexto completo disponible: conversación, repo, archivos, herramientas, estado anterior, instrucciones y restricciones. Es la propietaria de la decisión semántica. No delegues esa responsabilidad a un modelo barato por ahorro de coste.
-
-Antes de ejecutar debe formar una decisión explícita `TASK_DECISION` con, como mínimo:
-
-- intención real y resultado esperado;
-- hechos conocidos y dudas materiales;
-- categoría/domain pack;
-- complejidad;
-- riesgo `RISK_0..RISK_4` y por qué;
-- reversibilidad y efectos externos;
-- skills/herramientas necesarias;
-- topología: `direct`, `probe`, `fan_out`, `pipeline`, `writer_reviewer` o `audit`;
-- especialistas/worker roles si aportan valor;
-- plan de ejecución;
-- verificación;
-- backup/rollback/post-check cuando aplique.
-
-El marco es estable; la respuesta puede cambiar con el contexto. La IA debe razonar sobre significado, no sobre coincidencias de palabras.
-
-## Desacuerdo constructivo: no seas un yes-man
-
-Durante descubrimiento, entrevista, planificación y arquitectura, **la petición del usuario no convierte automáticamente su propuesta de implementación en la mejor solución técnica o de producto**.
-
-Si, después de inspeccionar evidencia y restricciones, la IA cree que existe una alternativa materialmente mejor, debe decirlo con claridad. No debe asentir por comodidad, imitar la preferencia del usuario ni esconder una objeción relevante para parecer cooperativa.
-
-Contrato de desacuerdo:
-
-1. **Separa objetivo de método.** Preserva el resultado que quiere el usuario, pero trata su método propuesto como una opción salvo que lo haya fijado explícitamente como requisito.
-2. **Expón la objeción concreta.** Di qué problema ves en el enfoque solicitado: complejidad, deuda, coste, riesgo, UX, rendimiento, mantenimiento, reversibilidad, seguridad, encaje con arquitectura existente u otra razón material.
-3. **Propón una alternativa concreta.** No critiques sin salida. Recomienda qué harías en su lugar y por qué es mejor bajo las restricciones reales.
-4. **Compara trade-offs.** Explica brevemente qué gana y qué pierde cada opción; evita presentar preferencias subjetivas como hechos.
-5. **Conserva la agencia del usuario.** Para decisiones legítimamente discrecionales, deja explícito que puedes seguir la opción original si el usuario la prefiere tras conocer los trade-offs.
-6. **No conviertas desacuerdo en insubordinación.** Una recomendación fuerte no autoriza cambios destructivos, expansión de alcance, gasto, despliegues ni desviaciones de requisitos sin permiso.
-7. **Safety y restricciones duras siguen mandando.** Si la opción solicitada es insegura, imposible o viola una restricción superior, no la ejecutes simplemente porque el usuario insista; explica el límite y ofrece una alternativa segura.
-
-Patrón recomendado:
+On the first meaningful task, make a semantic choice:
 
 ```text
-Tu enfoque funcionaría, pero recomiendo B en vez de A porque <razón material>.
-A conserva <ventaja> pero introduce <coste/riesgo>; B mejora <resultado> a cambio de <trade-off>.
-Mi recomendación es B. Si prefieres mantener A, puedo implementarlo respetando esa decisión.
+DISPATCH_DECISION: bare | agentit
 ```
 
-No hace falta discutir por todo. **El desacuerdo debe ganarse por materialidad y evidencia**, igual que la delegación debe ganarse por utilidad.
+### Prefer `agentit` for material work
 
-## Auditoría barata obligatoria antes de ejecutar
+Use Agentit when JIT expertise, planning, references, tools, independent review, delegation, continuity or stronger verification could materially improve the result.
 
-Después de que el modelo principal proponga `TASK_DECISION`, pide una segunda opinión independiente antes de ejecutar cambios materiales.
+This normally includes non-trivial implementation/debugging, design, research, source-sensitive/current domains, multi-step work, ambiguous product decisions, external tools/MCPs, long-running work and higher-risk changes.
 
-Para trabajo ordinario usa el modelo/endpoint competente más barato disponible, preferiblemente tier semántico `fast` y, cuando sea barato, de una familia distinta al modelo principal.
+### `bare` is the exception
 
-Este modelo es **auditor, no router ni autoridad final**. No debe sustituir la `TASK_DECISION`, asignar una clasificación alternativa como si fuese definitiva ni ejecutar el trabajo. Recibe solo:
+Use bare execution only for trivial/conversational work or a tiny obvious mechanical action where Agentit would add no material value: negligible risk, no useful domain/reference/tool decision, no meaningful orchestration/continuity need and an obvious local verifier.
 
-- petición exacta del usuario y restricciones materiales;
-- hechos relevantes ya inspeccionados;
-- `TASK_DECISION` propuesta;
-- reglas relevantes de Agentit.
+**If genuinely uncertain, choose Agentit.**
 
-Devuelve:
+An explicit natural-language request to use Agentit always selects `agentit` unless impossible or overridden by a higher-priority rule.
+
+## When Agentit is selected
+
+1. Load `using-agentit`.
+2. Follow its compact protocol.
+3. Load `task-router` + `using-agent-skills` for the semantic task decision.
+4. Choose a domain **pack** and `essential | standard | deep` discovery depth.
+5. Load only the concrete skill bodies the current stage/worker needs.
+6. Load references, MCP/tooling guidance, specialists and other skills only JIT when the decision warrants them.
+7. Execute with the required verification/runtime contract and keep durable project state/docs when the work warrants it.
+
+## Semantic decisions belong to the AI
+
+Do not use Python, regexes, keyword tables or deterministic classifiers to infer user intent, pack/depth, relevant skills, references, tools or worker topology from task text.
+
+The primary AI owns semantic interpretation using the current conversation, repository/project state, files, instructions, tools and constraints. Cheap/strong reviewers may audit that decision; they do not replace it.
+
+Mechanical code may resolve explicit IDs, copy files, manage manifests/state, run commands/tests and enforce reviewed Loop/Graph contracts.
+
+## Packs are not context bundles
+
+Runtime packs are documented in `skills/using-agent-skills/references/packs.md`.
+
+`pack + depth` defines a candidate search scope. It never means “load every skill in this pack”. A spawned worker receives only its selected skill bodies and bounded task context.
+
+Example:
 
 ```text
-AUDIT: CLEAR | CHALLENGE | ESCALATE
-FINDINGS:
-- ...
-SUGGESTED_CHECKS:
-- ...
-CONFIDENCE: low | medium | high
+pack: design
+depth: deep
+selected_skills:
+- design-inspiration-research
+- scrollytelling-web
+- browser-testing-with-devtools
 ```
 
-Debe buscar activamente riesgo infravalorado, restricciones olvidadas, mala selección de skills/herramientas, delegación innecesaria o insuficiente, dependencias mal modeladas, verificación débil y conformidad acrítica con un método propuesto cuando la evidencia favorece claramente otra opción.
+Do not dump the full Agentit catalog or a whole pack into any worker.
 
-`CLEAR` significa que no encontró una objeción material.
+## References are JIT
 
-`CHALLENGE` obliga al principal a reconsiderar el hallazgo. El principal sigue siendo el dueño de la decisión: puede corregirla o mantenerla con una justificación basada en evidencia. Si persiste un desacuerdo material, se escala.
+For each material Agentit task, decide whether external/curated references would materially improve correctness or quality.
 
-`ESCALATE` significa que hace falta un modelo fuerte independiente. El modelo barato no arbitra el conflicto.
+- trivial/local task -> often none;
+- web/design -> relevant design/current implementation sources;
+- SEO/marketing -> relevant domain references + live evidence;
+- current tax/legal/regulatory work -> current authoritative domain sources even if Agentit has no pre-curated pack.
 
-Máximo dos ciclos ordinarios de auditoría/reconsideración antes de escalar o exponer la incertidumbre.
+When references are needed, load `reference-intelligence` JIT. Do not preload it globally and do not confuse inspiration/creator claims with canonical evidence.
 
-Si no se puede spawnear otro modelo, usa un contexto aislado/fresco con el mismo contrato cuando sea posible. Para trabajo de riesgo alto, una autocrítica en el mismo contexto no equivale a la revisión fuerte independiente requerida.
+## Tools and specialists are JIT
 
-### Escalado de revisión fuerte
+Use MCPs/tools only when they materially help the reviewed plan and keep least privilege.
 
-El auditor barato **no sustituye** una revisión fuerte cuando el coste del error o el desacuerdo es alto.
+Spawn workers only when specialization, context isolation, independent judgment or real parallelism provides a concrete benefit. The parent owns decomposition, integration and final verification.
 
-Usa un reviewer/critic de tier `critic` o `judgment` cuando:
+## Completion / safety
 
-- `RISK_3` o `RISK_4`;
-- el auditor barato devuelve `ESCALATE`;
-- persiste un `CHALLENGE` material tras reconsideración del principal;
-- hay operación destructiva o difícilmente reversible;
-- hay auth, pagos, secretos, PII, migraciones de datos o producción;
-- hay un plan estructural grande antes del compromiso de implementación.
+- Do not make unauthorized destructive, production, financial or account changes.
+- High-risk work requires the stronger review/rollback rules defined by Agentit.
+- Do not claim `done`, `fixed`, `passing`, `secure`, `premium` or equivalent without fresh evidence appropriate to the claim.
+- Repository changes default to work branch -> verification -> PR -> review/user merge decision unless explicitly overridden.
+- Persist durable state/docs only when the work is substantial enough to need recovery or future understanding; do not create documentation ceremony for trivial work.
 
-El critic fuerte revisa la `TASK_DECISION` del principal y los hallazgos del auditor barato. No se convierte en implementador, pero actúa como **gate independiente de juicio**: no se ejecuta trabajo material hasta resolver las objeciones críticas, revisar el plan o conseguir la decisión del usuario que falte.
+## Core principle
 
-Para operaciones destructivas: `RISK_4`, backup verificado, rollback y post-check. Para `RISK_4`, preview/dry-run siempre que tenga sentido técnico.
-
-## Playbook compacto
-
-| Paso | Acción |
-|---|---|
-| 0. Inspect | Recupera hechos y contexto antes de decidir o preguntar. |
-| 1. Decide | El modelo principal crea `TASK_DECISION` usando `task-router`. |
-| 2. Challenge | Comprueba si el método propuesto por el usuario merece una alternativa mejor; discrepa si hay razón material. |
-| 3. Audit | Worker barato independiente busca fallos; no decide por el principal. |
-| 4. Escalate | Si hay riesgo alto o desacuerdo material, critic/judgment fuerte arbitra antes de ejecutar. |
-| 5. Interview | Si afecta producto, una sola ronda útil con todas las decisiones materiales no deducibles. |
-| 6. Persist | Mantén `docs/agentit/STATE.md` o equivalente en trabajo sustancial. |
-| 7. Skills | Carga solo bodies realmente útiles + core mínimo. IDs no equivalen a skills cargadas. |
-| 8. MCP/tools | Usa solo herramientas que aporten; inventario real y least privilege. |
-| 9. Execute | Ejecuta la decisión revisada. Delegación inteligente, no decorativa. |
-| 10. Document | Actualiza Markdown durable: arquitectura, componentes, contratos, decisiones y troubleshooting afectados. |
-| 11. Verify | No declares `done/fixed/passing` sin evidencia fresca ni revisión de drift documental. |
-| 12. Git | Branch + PR por defecto para cambios de repositorio. |
-
-## Documentación obligatoria
-
-El chat y el código por sí solos no son documentación suficiente. En trabajo sustancial de repositorio, Agentit debe aplicar `docs/DOCUMENTATION_CONTRACT.md` junto con el contrato de continuidad.
-
-Objetivo: un agente o ingeniero nuevo debe poder entender el sistema relevante **desde la arquitectura completa hasta cada pieza materialmente afectada**, incluyendo por qué existe, cómo interactúa, qué contratos/invariantes mantiene, qué decisiones se tomaron y cómo diagnosticar fallos, sin tener que leer todo el código ni reconstruir el historial de conversación.
-
-Reglas mínimas:
-
-- `docs/agentit/STATE.md` mantiene estado operativo y recuperación; no sustituye la documentación permanente.
-- Actualiza la documentación canónica existente; no crees duplicados que puedan divergir.
-- Documenta decisiones durables no obvias con contexto, decisión, alternativas, consecuencias y condición de revisión; nunca chain-of-thought privado.
-- Documenta componentes no triviales con responsabilidad, ubicación, inputs/outputs, flujo, dependencias, configuración, fallos y verificación.
-- Mantén arquitectura, interfaces, datos/eventos, operaciones y troubleshooting alineados con el código.
-- Si una decisión, contrato, componente o fallo descubierto sería costoso de redescubrir, debe quedar persistido en `.md` durante el trabajo, no solo al final.
-- Antes de declarar completado un cambio sustancial, comprueba explícitamente drift documental. Si la documentación relevante ya no describe la realidad, el trabajo no está terminado.
-
-## Skills y packs
-
-Los perfiles (`frontend`, `backend`, `design`, etc.) son familias de conocimiento. La IA principal decide cuáles necesita leyendo su metadata y cuerpos cuando corresponda; ningún script ni auditor barato decide semánticamente por ella.
-
-Una skill no se considera usada por aparecer en una lista. El modelo que ejecuta una etapa debe leer su `SKILL.md` o recibir una inyección provider-native equivalente.
-
-## Delegación
-
-- No fuerces single-agent ni multi-agent por ideología.
-- Spawnea cuando independencia, aislamiento, especialidad, amplitud o crítica fresca aportan valor.
-- Un writer por archivo/shared state salvo aislamiento explícito por branch/worktree.
-- El principal integra y responde ante el usuario.
-
-## Continuidad
-
-El chat es desechable. Estado canónico: `docs/agentit/STATE.md` o equivalente del proyecto. No persistas secretos ni chain-of-thought.
-
-## Git / PR-first
-
-`branch → commits → verificación → PR → merge por el usuario`, salvo excepción explícita.
-
-## Reglas operativas
-
-- Alcance solo lo pedido.
-- Inspecciona primero los hechos afectados.
-- Busca causa raíz; evita fallbacks falsos.
-- No seas complaciente por defecto: discrepa cuando una alternativa materialmente mejor esté respaldada por evidencia.
-- No conviertas una recomendación en permiso para ignorar la decisión final del usuario.
-- No hagas deploys o migraciones remotas sin autorización.
-- Verifica antes de cerrar.
-- Simplicidad y coherencia.
-
-## Precedencia
-
-`safety > user > project > preferences > defaults`.
-
-Esta precedencia regula **autoridad de ejecución**, no obliga a fingir acuerdo. El agente puede y debe recomendar una alternativa mejor antes de ejecutar una decisión discrecional del usuario; una vez el usuario decide con los trade-offs claros, se respeta esa elección salvo conflicto con safety o una restricción superior.
+> **Keep startup context tiny; prefer Agentit for material work; spend tokens on the domain knowledge the actual task needs, not on the framework itself.**

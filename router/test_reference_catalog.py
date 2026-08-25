@@ -1,4 +1,4 @@
-"""Tests for the provenance-aware reference catalog."""
+"""Tests for the provenance-aware reference catalog and activation contract."""
 
 from __future__ import annotations
 
@@ -110,6 +110,42 @@ class ReferenceCatalogTests(unittest.TestCase):
         data = yaml.safe_load((ROOT / "references" / "catalog.yaml").read_text(encoding="utf-8"))
         self.assertIsInstance(data, dict)
         self.assertIn("sources", data)
+
+    def test_reference_intelligence_is_core_and_bootstrapped(self) -> None:
+        profiles = yaml.safe_load((ROOT / "profiles.yaml").read_text(encoding="utf-8"))
+        self.assertIn("reference-intelligence", profiles["profiles"]["core"]["skills"])
+
+        manifest = json.loads((ROOT / "bootstrap-manifest.json").read_text(encoding="utf-8"))
+        self.assertIn("reference-intelligence", manifest["core_skills"])
+        self.assertIn("references", manifest["runtime_paths"])
+
+    def test_task_router_requires_explicit_reference_plan(self) -> None:
+        text = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("reference_plan", text)
+        self.assertIn("none | catalog | live | mixed", text)
+        self.assertIn("no programmatic reference recommender", text)
+
+    def test_reference_skill_requires_contextual_not_global_loading(self) -> None:
+        text = (ROOT / "skills" / "reference-intelligence" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Always evaluate whether references are needed; do not always load references", text)
+        self.assertIn("curated accelerator, not a closed universe", text)
+        self.assertIn("do not fall back to model memory", text)
+        self.assertIn("fiscal/tax", text)
+
+    def test_economy_auditor_checks_missing_or_fake_reference_use(self) -> None:
+        text = (
+            ROOT / "skills" / "task-router" / "references" / "economy-reviewer.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("reference_plan", text)
+        self.assertIn("mode == none", text)
+        self.assertIn("actually going to be loaded/inspected", text)
+        self.assertIn("creator/vendor claims", text)
+
+    def test_verification_blocks_named_but_unread_references(self) -> None:
+        text = (ROOT / "skills" / "verification-gauntlet" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Reference/provenance integrity", text)
+        self.assertIn("never loaded/inspected", text)
+        self.assertIn("A reference pack/source ID in `TASK_DECISION` is not evidence", text)
 
 
 if __name__ == "__main__":

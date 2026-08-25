@@ -1,238 +1,122 @@
-# Agentit reference index
+# Agentit curated reference index
 
-This is a **small discovery map for the agent**, not a database and not a router.
+This is a **small discovery map**, not a database and not an always-loaded context bundle.
 
-The primary model decides whether a task needs external references at all. If it does, use the smallest relevant curated set below and/or search live authoritative sources for the actual domain. Curated references accelerate recurring work; they are not an exhaustive knowledge base.
-
-For material current facts, laws, APIs, prices, platform behavior, regulations, standards, security guidance, or other changing claims, use current authoritative sources even when a curated reference exists.
-
-## How to use this index
+The normal path is:
 
 ```text
-understand task
--> references needed? none | curated | live | both
--> choose the relevant domain/reference
--> actually read the linked deep playbook/source when it matters
--> extract only principles/evidence that change the work
--> execute
--> verify result
--> record durable external influence in project provenance when useful
+first-prompt dispatch
+-> Agentit if material
+-> pack + depth
+-> selected skill
+-> selected deep reference(s)
+-> live sources only when needed
 ```
 
-Do not load every section. Do not treat X posts as authoritative simply because they are indexed here.
+Runtime pack/depth discovery lives in:
 
----
+- `skills/using-agent-skills/references/packs.md`
+
+Reference handling discipline lives in:
+
+- `skills/reference-intelligence/SKILL.md` — JIT; load only when references matter.
 
 ## Engineering / agent discipline
 
-Use when the task is substantial engineering, agent architecture, planning, or long-running autonomous work.
+Durable ideas from the original bookmark audit are integrated into existing procedures rather than kept as social-post prompts:
 
-### Matt Pocock — composable engineering skills
+- inspect discoverable repository context before asking avoidable questions;
+- assumptions should be falsifiable and planning proportional to risk;
+- skills are composable procedures, not mega-prompts;
+- agent loops need explicit state/evidence/stop conditions;
+- roles, skills, tools and verifiers are distinct responsibilities.
 
-- Source: https://x.com/mattpocockuk/status/2084192339937948048
-- Canonical repo: https://github.com/mattpocock/skills
-- Role: licensed artifact / engineering reference.
-- Keep: small composable skills; inspect and align before acting; fast feedback loops; shared project language; avoid mega-methodologies that take over the whole agent.
-- Agentit integration: existing engineering skills + third-party attribution.
+Useful upstream sources include Matt Pocock's composable skills, Min Choi's inspect-first engineering contract, self-correcting-agent loop material and versioned-agent-role patterns. Treat social-post claims as leads unless independently supported; licensed adapted material keeps attribution in the relevant notices.
 
-### Min Choi — inspect-first senior-engineer contract
+## Design / premium web
 
-- Source: https://x.com/minchoi/status/2083394791652688208
-- Role: process inspiration.
-- Keep: inspect repo before asking avoidable questions; expose falsifiable assumptions; ask only blockers; scale planning ceremony with risk; prove the outcome with evidence.
-- Agentit integration: `task-router`, planning and verification behavior.
-
-### Self-correcting agent loop
-
-- Source: https://x.com/precisox/status/2076152320585343132
-- Role: architecture/process inspiration.
-- Keep: execute -> observe -> evaluate -> correct -> persist compact learning -> retry/stop; explicit success/stop conditions and bounded attempts.
-- Agentit integration: existing Loop/Graph runtime and long-horizon recovery.
-
-### Agent roles as versioned files
-
-- Source: https://x.com/mdancho84/status/2086413720335307073
-- Role: architecture inspiration.
-- Keep: operational knowledge and bounded specialist roles can live in inspectable/versioned files.
-- Do not infer: a folder of personas replaces real judgment, accountability, tools, or verification.
-- Agentit integration: existing agent/skill separation.
-
----
-
-## Web design / frontend craft
-
-Use for public websites, landing pages, major redesigns, high-craft frontend, or visual direction. Do not use this pack for unrelated backend/reporting work.
-
-### Deep playbook — premium website production
-
-Read first for Studio/high-craft work:
+Primary deep playbook:
 
 - `skills/design-inspiration-research/references/premium-web-production.md`
 
-It distills the useful workflow from the bookmarked “$10k/$50k website” articles: section-level reference mapping, design DNA, decision-frontier questions, vertical slice, signature interaction, rendered defect pass, polish pass, mobile/performance/accessibility QA. Dollar-price headlines remain creator claims, not evidence.
+It distills the useful workflow behind the bookmarked “$10k/$50k website” material: section-level references, design DNA, decision-frontier questions, vertical slice, one intentional signature interaction when justified, rendered defect pass, polish pass and real desktop/mobile/performance/accessibility QA.
 
-### Real website reference libraries
+Useful external discovery/reference sources from the audit include:
 
-- https://x.com/RoundtableSpace/status/2091522093032866280
-- https://x.com/nett0eth/status/2085661117741711667
-- Role: inspiration/discovery.
-- Keep: concrete references beat vague “make it modern”; synthesize several sources rather than cloning one.
+- real-site inspiration collections;
+- Hallmark-style design study/anti-slop discipline;
+- Checklist Design;
+- 21st.dev component discovery;
+- selected microinteraction/motion references;
+- cinematic/3D production examples.
 
-### Hallmark — anti-AI-slop design discipline
-
-- Source: https://x.com/ErickSky/status/2075968875607269569
-- Canonical repo: https://github.com/Nutlope/hallmark
-- Role: MIT-licensed design skill/reference.
-- Keep: design-DNA study, structural variety, truthful proof/content, anti-template auditing, implementation-boundary preservation.
-- Agentit integration: selectively adapted into `design-inspiration-research`; see third-party notice.
-
-### Checklist Design
-
-- Source: https://x.com/ferminrp/status/2086067951736639534
-- Canonical: https://www.checklist.design/
-- Role: UX QA reference.
-- Keep: screens/components/flows fail differently; use relevant checklist items to seed acceptance criteria.
-- Do not infer: a checklist replaces WCAG, project requirements, or rendered browser testing.
-
-### 21st.dev
-
-- Source: https://x.com/monokern/status/2074889830501155091
-- Current product/docs: https://21st.dev/
-- Role: component/reference discovery candidate.
-- Keep: search real implementable component patterns before inventing commodity UI, then inspect/adapt to project tokens, dependencies and accessibility.
-- No special Agentit runtime integration is required merely to know/use this resource. If an MCP/tool connection is useful for a real task, verify current official setup then.
-
-### Microinteraction references
-
-Use only when they fit the design thesis:
-
-- Liquid UI: https://x.com/midudev/status/2087541694480695749
-- Native dark-mode/view transition: https://x.com/midudev/status/2074842216896299385
-- Border Beam: https://x.com/midudev/status/2079568447940243923
-
-Keep: polished motion is a scarce accent tied to hierarchy/feedback; verify browser support, reduced motion and performance.
-
-### Cinematic / high-craft references
-
-- https://x.com/heynavtoor/status/2083221614595051602
-- https://x.com/xiathis/status/2077468692493791353
-- https://x.com/bateshkaaa/status/2079218516150862086
-
-Role: production/design/economics inspiration.
-
-Keep: AI can reduce production cost for ambitious motion/3D/art-directed websites; use a separate Studio mode where the project justifies it.
-
-Do not infer: visual complexity alone creates conversion value or proves $10k/$50k pricing.
-
----
+These are **design/process inputs**, not conversion or pricing evidence. Re-verify current tool/setup details live before depending on them.
 
 ## Marketing / growth / SEO
 
-Use for positioning, customer research, content strategy, copy, SEO, email, campaigns, launch strategy, CRO or marketing automation.
+Load only the playbook that matches the current pack/stage:
 
-### Deep playbooks — load only what applies
+- `skills/marketing-and-growth/references/marketing-operating-system.md`
+  - distilled from the large marketing-prompt corpus into reusable customer research, positioning, content, copy, email, campaign and analytics procedures instead of hundreds of literal prompts.
 
-- Broad marketing/copy/positioning/email/content: `skills/marketing-and-growth/references/marketing-operating-system.md`
-- SEO/search/agentic growth loops: `skills/marketing-and-growth/references/seo-growth-loop.md`
-- Product/feature launches + video/content production: `skills/marketing-and-growth/references/launch-content-system.md`
+- `skills/marketing-and-growth/references/seo-growth-loop.md`
+  - data-first technical/search audit, gap/intent/schema/content opportunity, bounded changes, measurement windows and compact learnings.
 
-The broad marketing playbook is the distilled version of the bookmarked 500-prompt article. The SEO playbook distills the Grok SEO + Helena cluster. The launch/content playbook distills Okara + Motion + faceless-video workflows.
+- `skills/marketing-and-growth/references/launch-content-system.md`
+  - launch research, factual brief, scene plan, asset/assembly workflow, claims/rights/brand QA, platform variants and learning loop.
 
-### Cyril — large marketing prompt corpus
+The Grok SEO and Helena material contributes workflow architecture; vendor/creator performance figures remain claims, not independent benchmarks.
 
-- Source: https://x.com/cyrilXBT/status/2083235395236495817
-- Role: creator guidance / discovery corpus.
-- Keep: the recurring procedures and context patterns.
-- Do not keep: hundreds of near-duplicate prompt wordings or claims that prompt count equals an agency outcome.
+## Launch / content references
 
-### Grok SEO workflow collection
+The launch/content playbook can draw on:
 
-- Source: https://x.com/bloggersarvesh/status/2090789546925642183
-- Role: creator workflow lead.
-- Keep: technical audit, competitor/content gaps, search intent/keywords, schema, briefs, then measurement.
-- Use live GSC/search/platform evidence and current official guidance rather than treating prompts as SEO truth.
+- Okara Launch Library for comparable launch patterns;
+- Motion/product-video workflows for production acceleration;
+- faceless-video automation patterns for script/timestamps/scene-aligned asset assembly.
 
-### Helena marketing-agent architecture
+Automate mechanical production, not factual/editorial/rights judgment. Revenue headlines attached to creator workflows are not proof of actual earnings.
 
-- Source: https://x.com/SeijinJung/status/2087909540679540898
-- Role: vendor/creator architecture reference.
-- Keep: model + specialized procedures + live data/connectors + scheduled follow-up + compact persistent learnings.
-- Do not infer: vendor performance figures are independent benchmarks.
+## Build-vs-buy / tool discovery
 
----
+Useful references can reveal component catalogs, chat infrastructure, creative-video systems or developer resource lists. Discovery does not equal adoption.
 
-## Launch / content production
+Use:
 
-Use `skills/marketing-and-growth/references/launch-content-system.md` when the task actually involves a product/feature launch, launch research, short-form/product video, or repeatable content-production pipeline.
+```text
+need
+-> inspect existing project capability
+-> verify canonical/current external option
+-> license/security/maintenance/dependency fit
+-> ADOPT | ADAPT | COMPOSE | REFERENCE | INCUBATE | REJECT | BUILD
+```
 
-### Okara Launch Library
+Do not promote a tool into global Agentit context merely because a bookmark made it look interesting.
 
-- Source: https://x.com/askOkara/status/2090804619626860811
-- Product: https://okara.ai/launch-library
-- Role: launch inspiration library.
-- Keep: study several comparable launches for hook, proof, format, CTA and follow-up patterns before choosing an original launch direction.
+## What deliberately stays out of the core
 
-### Motion product-video workflow
+Specialized or hype-heavy material that does not improve the general operating protocol should be researched live only when relevant.
 
-- Source: https://x.com/motion_so/status/2083992227114520576
-- Role: product/workflow reference.
-- Keep: product context -> factual brief -> scene plan -> generated/revised video -> human factual/rights/brand QA.
-- Re-verify current product/integration details before depending on them.
-
-### Faceless video automation pipeline
-
-- Source: https://x.com/0xJokker/status/2091895032580112862
-- Role: creator workflow reference.
-- Keep: script/voice -> timestamps -> scene-aligned assets -> assembly; automate repetitive production, not editorial/factual judgment.
-- Do not infer: third-party revenue estimates prove creator earnings.
-
----
-
-## Build vs buy / tool discovery
-
-Use when the project is about to reimplement commodity infrastructure or repeatedly research tooling.
-
-### Chatpack
-
-- Source: https://x.com/chddaniel/status/2085785307585417494
-- Canonical: https://github.com/chddaniel/chatpack
-- Role: open-source candidate.
-- Keep: evaluate existing chat infrastructure before custom-building non-differentiating pieces; review current license/maintenance/dependencies/fit.
-
-### Developer resource collections
-
-- https://x.com/midudev/status/2080277706713821552
-- https://x.com/csaba_kissi/status/2076565335684059214
-- Role: discovery lists.
-- Keep: useful leads only; every tool/free tier must be re-verified when a project might depend on it.
-
----
-
-## What is intentionally not promoted into Agentit core knowledge
-
-Some bookmarks can be interesting personally without improving Agentit's general operating system. They should not consume core context merely because they were in the original bookmark batch.
-
-Examples deliberately left out of active packs include:
+Examples deliberately not carried in active packs include:
 
 - experimental huge-model offloading / Colibrì;
 - salary/hiring anecdotes used mainly as attention hooks;
-- model-provider/free-tier hype that does not create a durable Agentit procedure.
+- temporary model-provider/free-tier hype.
 
-If a future task is specifically about local inference or those systems, research them live in that task instead of carrying them globally.
+## Adding future bookmarks
 
----
+Do not just append URLs.
 
-## Adding future references
+```text
+bookmark
+-> inspect underlying article/repo/video/docs
+-> durable insight?
+   no -> leave it out
+   yes -> existing responsible skill?
+          yes -> enrich that skill or references/*.md
+          no -> add the smallest missing reusable capability
+```
 
-Before promoting a new bookmark, ask:
+The promotion test is not “interesting”. It is:
 
-1. Does it add a durable procedure, source of truth, reference library, reusable artifact, or genuinely useful tool?
-2. Is that capability already covered by an existing skill/reference?
-3. Should its content be **distilled into that existing skill** instead of adding another top-level item?
-4. Is the underlying article/repo/video more valuable than the social post linking to it? If yes, read the underlying material.
-5. What should the agent explicitly **not infer** from it?
-6. Is it useful often enough to curate, or should it simply be researched live when needed?
-
-Default preference:
-
-> enrich existing skills with deep reference files; keep the global index small.
+> **Will this reliably improve recurring future work without wasting context?**

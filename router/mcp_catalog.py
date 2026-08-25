@@ -3,6 +3,10 @@
 Opt-in only: list named stacks/servers, show entries, and emit provider snippets.
 Never installs packages, never writes client configs, never activates servers,
 and never infers a tool stack from natural-language task text.
+
+The first-party catalog may be extended by small files under ``mcp/catalog.d``.
+Overlays are mechanical data extensions: they may append named servers to named
+stacks, but they do not perform semantic routing.
 """
 
 from __future__ import annotations
@@ -18,29 +22,87 @@ except ImportError:  # pragma: no cover
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CATALOG = REPO_ROOT / "mcp" / "catalog.yaml"
+DEFAULT_OVERLAY_DIR = REPO_ROOT / "mcp" / "catalog.d"
 
 VALID_PROVIDERS = ("claude", "cursor", "codex", "json")
 
 
 class McpCatalogError(ValueError):
-    """Invalid catalog path, server id, stack, or provider."""
+    """Invalid catalog path, server id, stack, provider, or overlay."""
 
 
-def _load_yaml(path: Path) -> dict[str, Any]:
+def _load_yaml(path: Path, *, require_servers: bool = True) -> dict[str, Any]:
     if yaml is None:
-        raise McpCatalogError("PyYAML is required to load mcp/catalog.yaml")
+        raise McpCatalogError("PyYAML is required to load MCP catalog YAML")
     if not path.is_file() or path.is_symlink():
         raise McpCatalogError(f"MCP catalog not found or symlink rejected: {path}")
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise McpCatalogError("MCP catalog root must be a mapping")
-    if not isinstance(data.get("servers"), list):
+    if require_servers and not isinstance(data.get("servers"), list):
         raise McpCatalogError("MCP catalog must define a servers list")
     return data
 
 
+def _merge_overlay(catalog: dict[str, Any], overlay: dict[str, Any], *, source: Path) -> None:
+    if overlay.get("schema_version") != 1:
+        raise McpCatalogError(f"MCP overlay must use schema_version: 1: {source}")
+
+    existing_servers = {
+        str(item.get("id")): item
+        for item in catalog.get("servers", [])
+        if isinstance(item, dict) and item.get("id")
+    }
+    new_servers = overlay.get("servers") or []
+    if not isinstance(new_servers, list):
+        raise McpCatalogError(f"MCP overlay servers must be a list: {source}")
+    for server in new_servers:
+        if not isinstance(server, dict) or not server.get("id"):
+            raise McpCatalogError(f"MCP overlay server must have an id: {source}")
+        server_id = str(server["id"])
+        if server_id in existing_servers:
+            raise McpCatalogError(f"duplicate MCP server id '{server_id}' from overlay {source}")
+        catalog.setdefault("servers", []).append(server)
+        existing_servers[server_id] = server
+
+    stacks = catalog.get("stacks") or {}
+    if not isinstance(stacks, dict):
+        raise McpCatalogError("MCP catalog stacks must be a mapping")
+    overlay_stacks = overlay.get("stacks") or {}
+    if not isinstance(overlay_stacks, dict):
+        raise McpCatalogError(f"MCP overlay stacks must be a mapping: {source}")
+    for stack_id, patch in overlay_stacks.items():
+        if stack_id not in stacks:
+            raise McpCatalogError(f"MCP overlay references unknown stack '{stack_id}': {source}")
+        if not isinstance(patch, dict):
+            raise McpCatalogError(f"MCP overlay stack patch must be a mapping: {source}")
+        append_servers = patch.get("append_servers") or []
+        if not isinstance(append_servers, list) or not all(
+            isinstance(item, str) for item in append_servers
+        ):
+            raise McpCatalogError(f"MCP overlay append_servers must be a string list: {source}")
+        unknown = [server_id for server_id in append_servers if server_id not in existing_servers]
+        if unknown:
+            raise McpCatalogError(
+                f"MCP overlay stack '{stack_id}' references unknown servers {unknown}: {source}"
+            )
+        current = stacks[stack_id].get("servers") or []
+        for server_id in append_servers:
+            if server_id not in current:
+                current.append(server_id)
+        stacks[stack_id]["servers"] = current
+
+
 def load_catalog(path: Path | None = None) -> dict[str, Any]:
-    return _load_yaml(path or DEFAULT_CATALOG)
+    target = path or DEFAULT_CATALOG
+    data = _load_yaml(target)
+    # Custom test/consumer catalogs stay self-contained. Only the canonical Agentit
+    # catalog receives first-party overlays from mcp/catalog.d.
+    if path is None and DEFAULT_OVERLAY_DIR.is_dir() and not DEFAULT_OVERLAY_DIR.is_symlink():
+        for overlay_path in sorted(DEFAULT_OVERLAY_DIR.glob("*.yaml")):
+            overlay = _load_yaml(overlay_path, require_servers=False)
+            _merge_overlay(data, overlay, source=overlay_path)
+    return data
 
 
 def _servers_by_id(catalog: dict[str, Any]) -> dict[str, dict[str, Any]]:

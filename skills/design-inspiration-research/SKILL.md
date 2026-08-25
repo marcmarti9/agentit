@@ -1,11 +1,13 @@
 ---
 name: design-inspiration-research
-description: Research current visual and interaction references before public greenfield or total-redesign art direction.
+description: Research current visual and interaction references before public greenfield or total-redesign art direction; extract design DNA, synthesize original directions, and keep provenance traceable.
 ---
 
 # Design Inspiration Research
 
 Research exists to change design decisions, not to produce a link dump.
+
+This skill works with `reference-intelligence`. Hallmark's MIT-licensed `study` discipline materially informed the explicit **design-DNA** extraction below; Agentit keeps its own research/orchestration model and does not vendor Hallmark wholesale.
 
 ## Required by default
 
@@ -30,19 +32,50 @@ When current web/browser tooling is available:
 6. Cluster observations into 2–4 patterns and identify what has become cliché.
 7. Synthesize 2–3 original project-specific directions from multiple principles.
 
-## What to extract
+When Agentit's reference catalog already contains a useful source or pack, start there but re-verify live/current details when the decision depends on them. Do not fetch every catalog item simply because it exists.
 
-For each useful reference capture only what may change the project:
+## Design-DNA extraction
 
-- first-impression hook;
+For each useful reference, extract **dimensions**, not pixels. Keep only signals that may change the project:
+
+- macrostructure and section rhythm;
+- first-impression hook and hierarchy;
 - composition/grid/scale/whitespace/depth;
-- typography;
+- component or interaction archetypes;
+- typography roles/pairing/measure;
+- color anchor, tonal system and material language;
 - imagery/crop/artifact strategy;
 - interaction and motion grammar;
 - narrative/reveal pacing;
+- responsive behavior worth preserving conceptually;
 - likely implementation family;
 - why the principle fits this project;
-- what should not be copied.
+- what should **not** be copied.
+
+For an inspectable URL, exact CSS facts such as a font family or color value may be observable. That still does not make the source a template to clone. For a screenshot, infer the visual relationship rather than pretending to know invisible implementation details.
+
+## Structural variety gate
+
+A redesign is not original merely because the palette changed. Before selecting a direction, compare the **structure** of candidate references and the proposed page:
+
+- hero archetype;
+- section order/rhythm;
+- repeated card/grid patterns;
+- placement of proof and artifacts;
+- CTA cadence;
+- navigation/footer voice;
+- motion/storytelling stages.
+
+If the proposal is still `centered hero -> logo row -> three equal cards -> testimonials -> CTA` with cosmetic changes, the research has not done enough work.
+
+## Truth and ownership boundaries
+
+Reference research never grants permission to fabricate proof or reproduce protected expression.
+
+- Do not invent metrics, testimonials, customer logos, traction, awards, or product screenshots to make a reference-derived layout work.
+- Do not copy proprietary copy, brand assets, illustrations, photos, or a distinctive page wholesale.
+- Preserve the target project's routes/component ownership/content truth during a redesign unless a rebuild or deletion plan is explicitly approved.
+- Reusable code/components discovered through a reference still require dependency, license, accessibility, and project-fit review.
 
 ## Required deliverables
 
@@ -61,13 +94,31 @@ Map candidate/chosen decisions back to observed principles and state the project
 - motion/interaction;
 - narrative, proof and CTA presentation.
 
+For every material source state its role (`inspiration`, `canonical`, `licensed artifact`, etc.) so a gallery reference never masquerades as factual/business evidence.
+
 Do not claim a reference influenced the design when the effect cannot be explained. Do not copy distinctive brand assets/content/layouts.
 
-## Handoff
+### PROJECT PROVENANCE
 
-Feed both artifacts into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the reference principles that shaped it.
+When references materially shape the final direction, update the project's canonical reference ledger (normally `docs/agentit/REFERENCES.md`) with:
+
+`source -> extracted principle -> project decision -> affected paths -> verification date`
+
+Only durable influences belong there; do not dump the research browsing history.
+
+## Implementation handoff
+
+Feed `INSPIRATION_SYNTHESIS` and `REFERENCE_TO_DECISION_MAP` into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the principles that shaped it.
+
+Before inventing commodity UI primitives, inspect the project's own component system first. If the primary AI explicitly selects external component discovery, sources such as 21st.dev can provide real candidates; inspect and adapt them to project tokens/accessibility instead of pasting blindly.
 
 If the final design would plausibly look the same without this research, the research failed. Extract stronger principles or explicitly state that the references did not improve the direction.
+
+## QA handoff
+
+After implementation, use rendered/browser evidence plus the project's design/accessibility skills. Flow-specific external checklists such as Checklist Design may seed acceptance criteria for the relevant screen/flow, but they do not replace WCAG, project requirements, interaction judgment, or actual browser verification.
+
+For interactive components, verify the states that materially exist in the product—normally default, hover where applicable, focus-visible, active/pressed, disabled, loading, error and success where semantics support them. Do not invent meaningless states merely to fill a checklist.
 
 ## Parallel research
 
@@ -77,6 +128,9 @@ Reference research is a strong delegation boundary because it is read-only and c
 
 - link dump with no synthesis;
 - copying one fashionable site;
+- treating a creator's business claim as evidence because its design is attractive;
 - forcing every trendy technique into one page;
 - doing research only after the visual direction is already fixed;
-- invisible research with no traceable impact on design.
+- installing a component/tool before checking project primitives and license/dependency fit;
+- invisible research with no traceable impact on design;
+- final design influenced by external work with no project provenance record.

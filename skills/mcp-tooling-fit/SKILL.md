@@ -49,6 +49,7 @@ Map needs to Agentit stacks when possible:
 | coding baseline | `developer_core` (agentit-manager, context7, github, playwright) |
 | frontend/UI verify | `frontend` / playwright, chrome-devtools, figma |
 | design craft | `design_studio` |
+| mobile / Expo / RN UI | `mobile_design` (appllama + context7; paid credits) |
 | data/schema | `backend_data` (staging/read-only creds only) |
 | research | `research` |
 | product ops | `product_ops` |

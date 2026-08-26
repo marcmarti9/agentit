@@ -12,6 +12,7 @@ __pycache__/
 *.secrets
 reports/local/
 backups/local/
+# Agentit runtime/working state is intentionally project-local.
 .agentit/
 
 # Machine-local MCP runtime artifacts

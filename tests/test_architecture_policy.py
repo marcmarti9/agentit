@@ -11,12 +11,16 @@ class ArchitecturePolicyTests(unittest.TestCase):
         active_files = [
             ROOT / "AGENTS.md",
             ROOT / "README.md",
+            ROOT / "ABOUT.md",
             ROOT / "CONTRIBUTING.md",
+            ROOT / "references" / "INDEX.md",
             ROOT / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md",
             ROOT / "docs" / "PROJECT_CONTINUITY.md",
             ROOT / "docs" / "REFERENCE_INTELLIGENCE.md",
             ROOT / "skills" / "using-agentit" / "SKILL.md",
             ROOT / "skills" / "using-agent-skills" / "SKILL.md",
+            ROOT / "skills" / "interview-me" / "SKILL.md",
+            ROOT / "skills" / "architect-orchestrator" / "SKILL.md",
             ROOT / "skills" / "specialist-agent-routing" / "SKILL.md",
         ]
         forbidden = (
@@ -59,12 +63,16 @@ class ArchitecturePolicyTests(unittest.TestCase):
     def test_runtime_packs_are_flat_and_skill_count_is_model_owned(self):
         paths = [
             ROOT / "AGENTS.md",
+            ROOT / "ABOUT.md",
             ROOT / "agents" / "catalog.yaml",
+            ROOT / "references" / "INDEX.md",
             ROOT / "docs" / "REFERENCE_INTELLIGENCE.md",
             ROOT / "skills" / "using-agentit" / "SKILL.md",
             ROOT / "skills" / "using-agent-skills" / "SKILL.md",
             ROOT / "skills" / "using-agent-skills" / "references" / "packs.md",
             ROOT / "skills" / "task-router" / "SKILL.md",
+            ROOT / "skills" / "interview-me" / "SKILL.md",
+            ROOT / "skills" / "architect-orchestrator" / "SKILL.md",
             ROOT / "skills" / "specialist-agent-routing" / "SKILL.md",
         ]
         combined = "\n".join(path.read_text(encoding="utf-8") for path in paths)
@@ -77,9 +85,12 @@ class ArchitecturePolicyTests(unittest.TestCase):
             "Usually 1–2",
             "Usually 2–4",
             "pack + depth",
+            "craft depth",
+            "always_core",
+            "Studio default",
         )
         for needle in forbidden:
-            self.assertNotIn(needle, combined, f"rigid pack tier/count policy returned: {needle}")
+            self.assertNotIn(needle, combined, f"rigid pack/tier policy returned: {needle}")
         self.assertIn(
             "no fixed skill counts and no pack levels",
             (ROOT / "skills" / "using-agent-skills" / "SKILL.md").read_text(encoding="utf-8"),
@@ -116,6 +127,15 @@ class ArchitecturePolicyTests(unittest.TestCase):
             self.assertNotIn(legacy, text)
         self.assertIn("relevant_packs", text)
         self.assertIn("references_projected", text)
+
+    def test_interview_is_jit_not_mandatory_product_ceremony(self):
+        text = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("all material questions", text)
+        self.assertIn("one numbered batch", text)
+        self.assertIn("follow-up batch", text)
+        self.assertIn("genuinely new material decisions", text)
+        self.assertIn("If none remain, do not interview", text)
+        self.assertNotIn("Product-affecting work is interviewed before", text)
 
     def test_legacy_mcp_helper_is_exact_stack_only(self):
         self.assertEqual(recommend_for_task("developer_core")["stack"], "developer_core")

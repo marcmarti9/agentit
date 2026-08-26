@@ -48,6 +48,7 @@ Example curated stacks may include:
 | repository/docs/browser baseline | `developer_core` |
 | frontend/browser verification | `frontend` |
 | design inspection | `design_studio` |
+| mobile / Expo / RN UI | `mobile_design` (appllama + context7; paid credits) |
 | backend/data work | `backend_data` |
 | current-source research | `research` |
 | product operations | `product_ops` |

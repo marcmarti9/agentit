@@ -76,6 +76,15 @@ profiles:
       - gsap-performance
       - threejs-spatial-experiences
       - threejs-product-storytelling
+      - mobile-native-app-design
+  mobile:
+    description: "Expo/React Native product UI: study shipped mobile winners, then implement native-feeling screens. Installation/discovery bundle only; workers still load the selected skill JIT."
+    extends:
+      - frontend
+    skills:
+      - mobile-native-app-design
+      - anti-ai-slop-design
+      - design-inspiration-research
   release:
     description: "Core plus CI, migration, launch, and operational readiness."
     extends:
@@ -146,6 +155,7 @@ profiles:
       - local-model-routing
       - long-horizon-recovery
       - marketing-and-growth
+      - mobile-native-app-design
       - observability-and-instrumentation
       - performance-optimization
       - planning-and-task-breakdown

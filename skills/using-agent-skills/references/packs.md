@@ -112,8 +112,25 @@ If visual direction is material, inspect the `design` pack too. That does not re
 - `browser-testing-with-devtools` — rendered desktop/mobile/browser evidence.
 - `performance-optimization` — visual/motion work where runtime cost needs measurement.
 - `reference-intelligence` — use only when external/current references materially affect the design decision or provenance.
+- `mobile-native-app-design` — inspect only when the actual surface is native Expo/React Native product UI; it is not a default web-design dependency.
 
 The design pack intentionally has many possibilities. **Do not subdivide them into basic/advanced tiers and do not infer that ambitious design work must load more of them.**
+
+---
+
+## mobile
+
+**Use for:** Expo/React Native, iOS/Android product UI, onboarding, paywalls, native navigation, sheets/modals, mobile state design and simulator-verified interaction work.
+
+**Skills in this pack:**
+
+- `mobile-native-app-design` — study shipped mobile winners when useful, extract patterns rather than pixels, implement native-feeling Expo/React Native UI and verify whole flows in a simulator/emulator.
+- `anti-ai-slop-design` — prevent generic AI styling and fabricated visual proof without importing the whole web-design pack.
+- `source-driven-development` — use current Expo/React Native/platform documentation when API or platform behavior materially affects implementation.
+- `mcp-tooling-fit` — inspect/enable the situational `mobile_design` MCP stack only when Appllama research would materially help and the user has/wants access.
+- `verification-before-completion` — require fresh simulator/build/runtime evidence before claiming mobile UI behavior is complete.
+
+Appllama is **optional, paid and credit-metered**. Its presence never makes `mobile-native-app-design` global/core, and the pack itself never auto-enables the MCP or dictates a fixed skill count.
 
 ---
 

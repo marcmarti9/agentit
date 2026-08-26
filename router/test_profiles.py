@@ -25,7 +25,7 @@ class ProfileCatalogTests(unittest.TestCase):
         self.assertIn("incremental-implementation", agency)
         self.assertIn("git-workflow-and-versioning", agency)
 
-    def test_core_profile_is_bounded_and_all_repository_skills_remain_catalogued(self):
+    def test_core_profile_is_minimal_and_all_repository_skills_remain_catalogued(self):
         completed = subprocess.run(
             [
                 "python3",
@@ -46,11 +46,9 @@ class ProfileCatalogTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         core = json.loads(completed.stdout)
-        self.assertEqual(12, len(core))
-        self.assertIn("using-agentit", core)
-        self.assertIn("verification-gauntlet", core)
-        self.assertIn("task-router", core)
-        self.assertIn("using-agent-skills", core)
+        self.assertEqual(
+            ["using-agentit", "task-router", "using-agent-skills"], core
+        )
 
         all_skills = {
             path.parent.name
@@ -300,3 +298,7 @@ class ProjectProfileCliTests(unittest.TestCase):
         self.assertEqual(installed_hash, after["skills"]["task-router"]["installed_sha256"])
         self.assertNotEqual(installed_hash, after["skills"]["task-router"]["source_sha256"])
         self.assertEqual(0, run_fixture("disable", "core", "--apply").returncode)
+
+
+if __name__ == "__main__":
+    unittest.main()

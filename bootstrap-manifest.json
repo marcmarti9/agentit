@@ -22,6 +22,7 @@
     "mcp",
     "probes",
     "capabilities",
+    "references",
     "docs",
     "hooks",
     "templates"
@@ -36,16 +37,7 @@
   "core_skills": [
     "using-agentit",
     "task-router",
-    "architect-orchestrator",
-    "using-agent-skills",
-    "mcp-tooling-fit",
-    "long-horizon-recovery",
-    "debugging-and-error-recovery",
-    "code-review-and-quality",
-    "test-driven-development",
-    "security-and-hardening",
-    "planning-and-task-breakdown",
-    "verification-gauntlet"
+    "using-agent-skills"
   ],
   "codex_agent_profiles": [
     "luna-worker.toml",

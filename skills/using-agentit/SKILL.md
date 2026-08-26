@@ -1,303 +1,241 @@
 ---
 name: using-agentit
-description: Activate Agentit end-to-end. The primary AI owns task understanding and strategy, challenges materially weaker proposed methods, a cheap independent AI audits that decision, strong AI arbitrates high-risk/disputed cases, then Agentit interviews, loads skills, delegates, executes through mandatory Loop/Graph runtime contracts, documents durable system knowledge, verifies, and ships PR-first.
+description: Lightweight provider-neutral entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then use domain packs only to discover and load the concrete skills/tools/references the primary AI decides are worth their context cost.
 ---
 
 # Using Agentit
 
-Agentit is an operating protocol for capable AI agents. It is not a natural-language classifier implemented in code and it is **not a human-facing CLI workflow**.
+Agentit is a **provider/model-neutral** reliability/orchestration protocol for capable AI agents. It should improve a task **without filling the context window with its whole framework** or binding general workflows to one model vendor.
 
-The human interface is natural language: asking the active coding agent to **use Agentit** should be sufficient. Any bootstrap, profile management, runtime, verification, continuity, capability or MCP commands are agent-facing mechanical operations (or maintainer/debugging surfaces), not commands the user is expected to memorize or type.
+The active model owns semantic judgment. Programs remain mechanical: state, files, receipts, manifests, commands and other deterministic execution support.
 
-The primary model owns context recovery, task interpretation, planning, skill/tool selection, delegation, integration, documentation and verification. It must exercise independent technical/product judgment rather than automatically agreeing with the user's proposed implementation method. A cheap second model audits the proposed decision before material execution; it does not become the router. High-risk or materially disputed decisions escalate to a stronger independent critic/judgment model.
+## First-prompt dispatch
 
-## Activation
-
-Natural language that means use/usa/utilise Agentit activates this playbook for the session. No other powerwords are required.
-
-If Agentit is not installed/discoverable and the user has provided or referenced the Agentit repository, setup is an **agent-owned bootstrap task**. The coding agent should inspect and invoke the repository's mechanical bootstrap surfaces itself, respecting plan/apply, platform, backup, rollback and provider boundaries. Do not turn setup into a terminal tutorial for the human unless they explicitly ask for one.
-
-## Harness discovery
-
-Do not assume one magic human-managed path such as `~/code/agentit`.
-
-Resolve the Agentit root from the provider installation/discovery environment or from the current checkout. Once resolved, resources are relative to that root:
-
-- `skills/task-router/SKILL.md` — semantic decision protocol;
-- `skills/task-router/references/economy-reviewer.md` — cheap audit contract;
-- `skills/<id>/SKILL.md` — task-scoped knowledge bodies;
-- `router/runtime_cli.py` — mechanical Loop/Graph state only;
-- `router/verify_cli.py` — signal-gated verification;
-- `agents/catalog.yaml` — specialist catalog;
-- `profiles.yaml` — capability profiles;
-- `docs/DOCUMENTATION_CONTRACT.md` — durable documentation contract.
-
-Project-local continuity lives at `<project>/docs/agentit/STATE.md` unless the project already has an explicit equivalent canonical state source.
-
-There is intentionally no semantic `route.py` or programmatic decision contract. Mechanical utilities may manage files/state/tests, but they do not interpret user intent.
-
-## Core protocol
-
-1. **Inspect context.** Recover relevant conversation, repository, files, project rules, tools and current state before asking the user to repeat information.
-2. **Primary decides.** Apply `task-router` and form `TASK_DECISION` from the full context. Do not hand semantic ownership to a cheaper worker.
-3. **Challenge when warranted.** Separate the user's desired outcome/hard constraints from a suggested implementation method. If a realistic alternative is materially better, say so, explain the trade-offs, recommend it clearly, and preserve the user's final choice when both paths remain safe/feasible.
-4. **Cheap audit.** Before material execution, send the proposed decision to the cheapest capable independent audit model, ordinarily semantic tier `fast`.
-5. **Reconsider or escalate.** `CHALLENGE` makes the primary reconsider; `ESCALATE` or unresolved material disagreement goes to a stronger critic. The cheap model never arbitrates the final semantic decision.
-6. **Strong review when consequences are high.** `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/PII/production and large structural plans require a stronger `critic`/`judgment` review before execution.
-7. **Interview product decisions.** For product-affecting work, inspect discoverable facts first and ask all currently material user decisions in one useful batch. Recommendations should be real recommendations, not automatic agreement.
-8. **Persist durable state.** Keep `docs/agentit/STATE.md` or the project's canonical equivalent current on substantial/long work.
-9. **Load real skill bodies.** IDs alone are not activation. Load only the smallest useful set.
-10. **Select tools deliberately.** Use MCPs/tools only when they materially improve the chosen plan and keep least privilege.
-11. **Execute the reviewed plan through runtime contracts.** Every executable unit with a verifiable outcome gets a Loop Contract; multi-node work additionally gets a Graph Contract before spawning.
-12. **Document durable knowledge as part of execution.** Keep architecture, components, contracts, decisions, operations and troubleshooting Markdown aligned with the implementation. `STATE.md` does not replace permanent system documentation.
-13. **Verify through receipts + fresh evidence.** Direct/single-unit executable work requires fresh verifier evidence and a passed **Loop Receipt**. Multi-node work requires a passed **Graph Receipt** backed by passed node Loop Receipts. Substantial repository work additionally requires a documentation-drift check.
-14. **Git PR-first.** Repository changes default to a work branch and pull request unless explicitly overridden.
-
-## Constructive dissent contract
-
-Agentit must not optimize for user agreement. It optimizes for the user's actual objective under real constraints.
-
-If the user says “build X using A”, the model should distinguish:
-
-- **X** — desired outcome / requirement;
-- **A** — proposed method, which may be a hard constraint or merely the user's current idea.
-
-When A is not fixed as a requirement and B is materially better, the model should make that visible before implementation:
+A fresh agent should make one semantic choice before loading the rest of Agentit:
 
 ```text
-A is workable, but I recommend B because <material reason>.
-A: <key upside> / <key downside>.
-B: <key upside> / <key downside>.
-My recommendation is B. If you still prefer A, I can implement A.
+DISPATCH_DECISION: bare | agentit
 ```
 
-Do not manufacture conflict. A disagreement must be supported by evidence or a material engineering/product trade-off. Do not silently override the user's final discretionary choice. Safety, authorization and impossible/incompatible constraints are separate hard boundaries, not optional recommendations.
+### `bare`
+
+Use bare execution only when Agentit would add no material value. Typical conditions:
+
+- trivial/conversational answer;
+- tiny obvious mechanical edit;
+- negligible risk and blast radius;
+- no useful domain skill/reference/tool/delegation decision;
+- no meaningful continuity, multi-step orchestration or independent review need;
+- verification is obvious and local.
+
+Bare does **not** mean careless. System/user/project rules still apply.
+
+### `agentit`
+
+Use Agentit for material work: non-trivial implementation, debugging, design, research, source-sensitive/current domains, multi-step changes, ambiguous product decisions, tool/MCP decisions, high-risk work, long-running work, or anything where JIT expertise/review/verification materially improves the outcome.
+
+**When genuinely uncertain between `bare` and `agentit`, prefer `agentit`.** The minimal bootstrap exists so the safer path does not require preloading the whole framework.
+
+An explicit natural-language request to use Agentit always selects `agentit` unless impossible or conflicting with a higher-priority rule.
+
+## Minimal bootstrap
+
+A globally discoverable Agentit installation should expose only:
+
+- `using-agentit` — this dispatcher/protocol;
+- `task-router` — full semantic `TASK_DECISION` once Agentit is selected;
+- `using-agent-skills` — semantic pack discovery and JIT skill projection.
+
+Everything else is JIT.
+
+Do **not** globally preload debugging, TDD, security, planning, code review, design, references, MCP fit, orchestration, long-horizon recovery or verification specialist skills. Load them only when the current task/stage actually needs them.
+
+## Agentit path after dispatch
+
+When `DISPATCH_DECISION=agentit`:
+
+```text
+inspect context
+-> load task-router + using-agent-skills
+-> TASK_DECISION
+-> inspect relevant semantic pack(s)
+-> primary AI chooses any justified skill subset
+-> choose references/tools only if material
+-> choose compatible model endpoint(s) only if model routing itself matters
+-> cheap independent audit
+-> strong review if risk/disagreement requires it
+-> execute through Loop/Graph contracts
+-> fresh verification
+-> durable docs/state where warranted
+-> PR-first for repository changes
+```
+
+The user should not need to know or type Agentit CLI commands. Mechanical commands are agent-facing implementation details.
+
+## Provider/model-neutral invariant
+
+General Agentit behavior must not depend on Claude, Codex, Gemini, Kimi, or any other named model/provider.
+
+A compatible model can use Agentit when it can:
+
+- receive/read the relevant Agentit instructions/skill bodies;
+- access the context and files required by the task;
+- use the required tools/modalities when the task needs them;
+- obey the applicable permissions/safety boundaries;
+- produce evidence that satisfies the verifier.
+
+Named providers/models are valid in **provider-specific adapters, endpoint configuration, current evaluation evidence, or provenance**. They are not valid as hidden requirements inside a general skill merely because the source article used that model.
+
+When a source teaches a useful workflow with one named model, extract the workflow and keep the model-specific wording only as provenance unless the technique genuinely relies on a provider-specific capability.
+
+When model selection itself matters, inspect the `models` pack and use `local-model-routing` JIT. Despite the legacy skill ID, that procedure compares compatible **local or remote** endpoints and routes by task evidence rather than brand.
+
+## Packs: maps, not levels
+
+Canonical runtime map: `skills/using-agent-skills/references/packs.md`.
+
+Packs such as `engineering`, `frontend`, `design`, `backend`, `data`, `product`, `marketing`, `seo`, `research`, `writing`, `models`, `release`, and `agency` exist to answer:
+
+> **What capabilities/skills live around this domain, and when might each one help?**
+
+They do **not** answer:
+
+- how many skills must be loaded;
+- which skill must come first;
+- what “level” the task belongs to;
+- whether every skill in the pack should be used.
+
+There are no pack tiers such as `essential / standard / deep` and no fixed minimum/maximum skill count.
+
+The primary AI may select zero, one, or many skills from one or more packs. It should select only skills it can justify for the current stage.
+
+Example:
+
+```text
+packs:
+- design
+- frontend
+selected_skills:
+- design-inspiration-research
+- browser-testing-with-devtools
+```
+
+Another design task might legitimately select six skills; a small one might select one. **The agent decides.**
 
 ## `TASK_DECISION`
 
-The primary model must decide, at minimum:
-
-- user intent and desired outcome;
-- established facts;
-- material unknowns;
-- domain/category;
-- complexity;
-- `RISK_0..RISK_4` and rationale;
-- reversibility and external effects;
-- skills and tools;
-- execution topology;
-- worker/specialist roles when useful;
-- dependency/ownership boundaries;
-- concrete implementation or investigation plan;
-- verification evidence;
-- backup/dry-run/rollback/post-check requirements where relevant;
-- whether a user-proposed method deserves challenge, and the final resolved choice if it does.
-
-The decision may remain internal if surfacing it would add noise, but the audit worker must receive it.
-
-## Mandatory economy audit
-
-For ordinary material work, request a read-only second opinion from the cheapest model/endpoint that is still competent to audit the bounded decision.
-
-Prefer the semantic `fast` tier. When similarly cheap, diversity is useful: a different model family from the primary agent is preferable because correlated mistakes are less useful as a check.
-
-The auditor receives only the bounded context necessary to judge the proposal:
-
-- exact request and relevant constraints;
-- project facts already established;
-- proposed `TASK_DECISION`;
-- applicable Agentit decision rules.
-
-It does not need write permissions and must not execute the task or generate an authoritative replacement plan.
-
-Use `task-router/references/economy-reviewer.md`. Expected output:
+After Agentit activation, the primary AI uses `task-router` and decides at least:
 
 ```text
-AUDIT: CLEAR | CHALLENGE | ESCALATE
-FINDINGS:
-- ...
-SUGGESTED_CHECKS:
-- ...
-CONFIDENCE: low | medium | high
+intent / outcome
+known facts / material unknowns
+relevant pack(s)
+complexity
+risk / reversibility / external effects
+selected skills
+selected tools
+reference_plan
+execution topology / workers
+plan
+verification
+safety / rollback / post-check
+user-method assessment
 ```
 
-The auditor should also flag either extreme: complacently rubber-stamping a materially weaker user method, or creating performative disagreement where the proposed method is already sound.
+Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, how many skills to load, which skill is relevant, which model is universally best, or which source should be trusted.
 
-The primary agent treats the audit as an adversarial check, not a ceremonial rubber stamp and not a transfer of decision ownership.
+## References are JIT
 
-`CLEAR` means no material objection was found.
+`reference-intelligence` is deliberately **not** part of the global core.
 
-`CHALLENGE` means the primary must reconsider the finding. It may revise the decision or retain it with explicit evidence-based reasoning. If material disagreement remains after reconsideration, escalate.
-
-`ESCALATE` means use a stronger independent model. The cheap auditor does not resolve the dispute itself.
-
-If no cheap worker can be spawned, use a fresh/isolated context when possible. For high-risk work, a same-context self-audit is not equivalent to an independent strong review.
-
-## Strong-review escalation
-
-A stronger independent `critic` or `judgment` tier is mandatory when any of these apply:
-
-- `RISK_3` or `RISK_4`;
-- the cheap auditor asks to escalate;
-- material disagreement survives primary reconsideration;
-- auth/authorization/session boundaries;
-- payments/billing/financial effects;
-- secrets/credentials;
-- PII or sensitive user data;
-- production infrastructure/deployments;
-- destructive or significant data/schema migrations;
-- difficult rollback;
-- large structural architecture or product plan.
-
-The strong critic receives the primary `TASK_DECISION` plus relevant audit findings. It is not the implementation owner, but for these cases it is the independent judgment gate: execution waits until critical objections are resolved, the decision is revised, or required user input is obtained.
-
-For destructive data operations, require verified backup, rollback plan and post-check. For `RISK_4`, use a preview/dry-run whenever technically meaningful.
-
-## Domain packs
-
-Choose one primary family per stage: engineering, frontend, design, backend, data, product, writing, release, research, or another clearly scoped pack.
-
-Load the smallest useful family plus core. Do not dump the entire catalog into model context.
-
-Craft depth Standard/Polished/Studio applies only to design/visual work.
-
-## Skills are knowledge, not routing code
-
-Profiles and registries are inventories. The primary AI reads enough metadata/context to choose useful skills. No script and no cheap auditor owns semantic skill selection.
-
-A skill is actually used only when the stage model reads its `SKILL.md` body or receives equivalent provider-native injection. A list of IDs is not evidence of skill use.
-
-Domain-specific skills require real context. For example, a PostgreSQL-specific skill should be selected because the project is actually PostgreSQL/Supabase/psql, not because the request merely contains “database”.
-
-## Intelligent delegation
-
-Delegate when there is a concrete benefit:
-
-- independent hypotheses can be investigated in parallel;
-- a bounded cheap worker can read large source sets while the primary preserves context for synthesis;
-- frontend/backend or other domains have clean ownership boundaries;
-- fresh correctness/security/performance criticism is useful;
-- design directions benefit from independent concepts;
-- a cheaper capable model can handle bounded repetitive work.
-
-Do not spawn workers merely for appearance. Do not refuse useful delegation merely because the primary model is strong.
-
-One writer owns each file/shared state unless isolation through branches/worktrees makes parallel writes safe.
-
-## Runtime: mechanical enforcement only
-
-Agentit's Loop/Graph runtime is **mandatory for executable work** with a verifiable outcome. It provides execution state, attempt budgets, dependency tracking, receipts and write ownership. It must not classify natural-language intent.
-
-Removing the semantic router does not weaken the runtime acceptance gate. The runtime enforces a plan only after the AI has decided and reviewed that plan.
-
-### Loop
-
-Every executable unit with a verifiable outcome must define and persist:
-
-- observable goal;
-- verifier;
-- stop condition;
-- bounded attempt budget;
-- escalation boundary.
-
-A retry needs fresh evidence or a changed strategy. Do not weaken a verifier to manufacture success.
-
-A direct/single-unit executable task is accepted only after the verifier has produced fresh evidence and `loop-check` has produced a passed **Loop Receipt** for the current contract/state.
-
-### Graph
-
-Every genuinely multi-node execution must materialize a DAG before spawning. Define dependencies, exclusive write ownership where relevant, expected handoff artifacts and each node's bound Loop Contract.
-
-Spawn only ready nodes. Do not advance around a pending/blocked dependency and do not allow overlapping writers to shared state unless branches/worktrees provide explicit isolation.
-
-Final multi-node acceptance requires `graph-check` and a passed **Graph Receipt** backed by the current passed Loop Receipts for completed nodes.
-
-These mechanisms are execution infrastructure, not a semantic router.
-
-## Product interview
-
-Do not turn missing context into silent invention. For product-affecting work, inspect what is discoverable first, then ask one consolidated round covering only material decisions that cannot be inferred safely.
-
-Recommend defaults so the user can answer “use your recommendation” instead of being forced to design the solution from scratch. A recommendation may explicitly disagree with the user's initial idea when the alternative is materially better; present the trade-off and keep the final safe discretionary choice with the user.
-
-## Public visual quality floor
-
-A landing page, homepage, public company/brand site, portfolio, storefront, campaign site or complete visual redesign is design-primary even if implementation is React/Next/CSS.
-
-For greenfield public visual work or a total redesign, Studio is the normal recommendation unless the user wants a leaner pass. Typical flow:
-
-`interview -> live inspiration research -> design direction -> implementation -> independent visual critique -> desktop/mobile browser QA`
-
-Before code, capture a concrete `DESIGN_DIRECTION` with visual thesis, layout/composition grammar, typography, color/material language, imagery, message/copy strategy, signature mechanic, motion role, preserve/replace choices and anti-goals.
-
-Research must affect actual design choices rather than serving as decorative process documentation.
-
-## Continuity
-
-Chat sessions are disposable. Keep a compact canonical project state that allows a fresh agent to recover:
-
-- objective and confirmed intent;
-- constraints/non-goals;
-- durable decisions, including challenged alternatives and the user's resolved choice when material;
-- current status;
-- branch/PR;
-- important files/artifacts;
-- latest verification;
-- next actions/blockers.
-
-Do not persist secrets, credentials, private chain-of-thought, full transcripts or giant tool dumps.
-
-## Mandatory durable documentation
-
-Continuity answers **where the work is now**. It does not fully answer **how the system works**. For substantial repository work, apply `docs/DOCUMENTATION_CONTRACT.md` as an acceptance contract.
-
-The documentation goal is that a fresh agent or engineer can understand the relevant system from the overall architecture down to each materially affected component without first reading the whole codebase.
-
-During work, persist durable knowledge when it becomes stable rather than reconstructing it at the end. Update the project's canonical Markdown documentation for:
-
-- architecture, layers, boundaries, dependencies and end-to-end data/control flow;
-- each non-trivial affected component: responsibility, location, inputs/outputs, internal flow, dependencies, configuration, failure modes and verification;
-- APIs, schemas, events, files, invariants and compatibility contracts;
-- durable non-obvious decisions, including context, chosen option, realistic alternatives, consequences and conditions for revisiting;
-- operational behavior such as startup, lifecycle, jobs, persistence, retries/fallbacks and observability;
-- troubleshooting paths that connect symptom -> likely cause -> diagnostic evidence -> corrective action -> verification.
-
-Reuse existing docs instead of creating duplicate sources of truth. Use ADR-style `.md` records when a decision would otherwise be expensive or risky to rediscover. Do not store private chain-of-thought; record the concise decision rationale and evidence needed by future maintainers.
-
-Before declaring substantial repository work complete, perform a documentation-drift check. The work is not complete if relevant Markdown no longer matches the implementation, materially changed components/contracts are unexplained, new important failure modes lack diagnostic guidance, or the current `STATE.md` is stale.
-
-## Verification
-
-No `done`, `fixed`, `passing`, `premium`, `beautiful` or equivalent claim without fresh evidence appropriate to the claim **and the applicable runtime receipt**.
+If `TASK_DECISION.reference_plan.mode != none`, load it JIT and inspect the smallest useful curated/live source set.
 
 Examples:
 
-- code change -> relevant tests/runtime checks + passed Loop Receipt;
-- UI/visual claim -> rendered/browser evidence at relevant viewport sizes + applicable receipt;
-- migration -> pre/post state plus rollback readiness + applicable receipt;
-- bug fix -> reproduction before and verification after + applicable receipt;
-- high-risk change -> independent strong review plus operational checks + applicable receipt;
-- multi-node task -> passed Graph Receipt backed by node Loop Receipts;
-- substantial repository change -> documentation-drift check against `docs/DOCUMENTATION_CONTRACT.md`.
+- trivial rename -> no references;
+- web design -> relevant design/production references + current implementation docs where material;
+- SEO -> SEO/growth references + live search/platform evidence;
+- current Spanish tax report -> current authoritative tax/legal sources, regardless of whether Agentit already has a tax pack.
 
-The cheap decision audit happens **before** execution; Loop/Graph governs execution acceptance; documentation preserves durable system knowledge; verification checks the actual result. They solve different failure modes.
+The absence of curated Agentit material is never permission to rely on stale model memory for a current/domain-specific claim.
 
-## Git ownership
+## Tools/MCPs are JIT
+
+`mcp-tooling-fit` and external tools are selected only when they materially improve the reviewed plan. Keep least privilege and verify current setup/auth before depending on changing external services.
+
+## Independent audit
+
+For material Agentit work, the reviewed `TASK_DECISION` gets a bounded read-only second opinion from the cheapest competent independent model, normally semantic tier `fast`.
+
+The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong/missing packs, unjustified or missing skills, context bloat, risk underestimation, weak verification, unsafe effects, bad reference/source choices, model-routing assumptions when material, and unnecessary or missing delegation.
+
+Use `task-router/references/economy-reviewer.md` for the detailed contract.
+
+Escalate to a stronger independent critic/judgment model for `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/secrets/PII/production, large structural plans, or unresolved material disagreement.
+
+## Worker projection
+
+Spawn specialists only when isolation, expertise, independent judgment, breadth or parallelism provides a concrete benefit.
+
+A worker receives bounded context:
+
+```text
+role/objective
+relevant pack(s) as discovery labels
+selected skill bodies
+selected references if any
+project constraints
+allowed tools/permissions
+read/write ownership
+expected handoff
+verification / stop condition
+```
+
+Never dump the global catalog or whole pack into a worker. One writer owns shared files/state unless branch/worktree isolation makes parallel writes safe.
+
+The worker contract is provider-neutral. Provider-specific worker spawning mechanics may differ, but that must not change the semantic role, bounded context, ownership or verification contract.
+
+## Runtime enforcement
+
+Agentit's Loop/Graph runtime enforces the AI's reviewed execution plan; it does not interpret prompts.
+
+For executable work with a verifiable outcome:
+
+- define observable goal;
+- define verifier;
+- define stop condition;
+- bound retries;
+- define escalation;
+- require fresh evidence before success.
+
+Multi-node work additionally defines dependencies, handoffs and write ownership through a Graph Contract.
+
+Do not weaken a verifier to manufacture a green receipt.
+
+## Continuity and durable docs
+
+Use `docs/agentit/STATE.md` (or an existing project equivalent) for substantial/resumable work. Keep it compact: objective, constraints, decisions, status, branch/PR, latest verification, blockers and next steps.
+
+For substantial repository changes, keep canonical Markdown documentation aligned with changed architecture/components/contracts/operations/troubleshooting. Do not create duplicate docs when an existing source of truth should be updated.
+
+Do not persist secrets, full transcripts or private chain-of-thought.
+
+## Constructive dissent
+
+Agentit optimizes for the user's actual goal, not agreement with every proposed method.
+
+If the user's suggested implementation is materially weaker than a realistic alternative, explain the concrete trade-off and recommend the better path. Preserve the user's final safe discretionary choice; do not use disagreement as permission for scope expansion or unauthorized changes.
+
+## Git / completion
 
 Repository changes default to:
 
-`work branch -> commits -> verification -> pull request -> review/user merge decision`
+```text
+work branch -> implementation -> fresh verification -> PR -> user/reviewer merge decision
+```
 
-Do not write directly to `main`/`master` or auto-merge unless explicitly authorized.
+No `done`, `fixed`, `passing`, `premium`, `secure` or equivalent claim without fresh evidence appropriate to that claim.
 
-## Provider fallback
+## Core invariant
 
-Provider adapters may map `fast`, `coding`, `critic` and `judgment` to different concrete models. Do not hardcode one vendor into the portable protocol.
-
-The active primary model owns semantic reasoning even when a cheaper model is available. Cost/latency matters for bounded auditing and repetitive delegated work; capability matters more for primary judgment and mandatory high-risk escalation.
-
-## Safety and ownership
-
-Explicit user instructions and project rules beat defaults. Safety beats all. This authority order governs execution; it does not require intellectual agreement.
-
-The primary agent owns the task decision, final integration, documentation and user-facing result. It must not bypass required audit/escalation, durable documentation or runtime receipts merely because it is confident. It should challenge materially weaker discretionary methods before commitment, then respect the user's informed final choice unless that choice conflicts with safety, authorization or another higher-priority hard constraint.
+> **Keep the bootstrap tiny. Keep general Agentit model-neutral. Prefer Agentit for material work. Packs expose options; the primary AI decides the actual skill set and its size.**

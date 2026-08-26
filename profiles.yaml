@@ -4,20 +4,11 @@ global_profiles:
   - core
 profiles:
   core:
-    description: "Small global discovery set for intelligent orchestration; domain packs load extra families JIT."
+    description: "Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a domain pack, then load task skills JIT."
     skills:
       - using-agentit
       - task-router
-      - architect-orchestrator
       - using-agent-skills
-      - mcp-tooling-fit
-      - long-horizon-recovery
-      - debugging-and-error-recovery
-      - code-review-and-quality
-      - test-driven-development
-      - security-and-hardening
-      - planning-and-task-breakdown
-      - verification-gauntlet
   frontend:
     description: "Core plus browser, performance, and UI maintenance guidance."
     extends:
@@ -64,7 +55,7 @@ profiles:
       - documentation-and-adrs
       - anti-ai-slop-writing
   design:
-    description: "Craft-first design studio: JIT UI/UX intelligence, research, concept competition, visual storytelling, tool scouting, art direction, delight, Figma, cinematic scrollytelling, GSAP, spatial worlds, and premium 3D. Craft depth (Standard/Polished/Studio) applies only to visual/design work."
+    description: "Craft-first design studio profile. Runtime workers still load only the selected design pack skills JIT; this profile is an installation/discovery bundle, not a context bundle."
     extends:
       - frontend
     skills:
@@ -96,11 +87,12 @@ profiles:
       - documentation-and-adrs
       - verification-before-completion
   research:
-    description: "Core plus context, specifications, and adversarial review."
+    description: "Core plus context, specifications, authoritative source work, and adversarial review."
     extends:
       - core
     skills:
       - context-engineering
+      - source-driven-development
       - doubt-driven-development
       - spec-driven-development
       - verification-before-completion
@@ -118,7 +110,7 @@ profiles:
       - incremental-implementation
       - git-workflow-and-versioning
   all:
-    description: "Every repository skill; use only when explicitly requested."
+    description: "Every repository skill; use only when explicitly requested for installation/discovery, never as a worker context bundle."
     skills:
       - anti-ai-slop-design
       - anti-ai-slop-writing
@@ -157,6 +149,7 @@ profiles:
       - observability-and-instrumentation
       - performance-optimization
       - planning-and-task-breakdown
+      - reference-intelligence
       - scrollytelling-web
       - security-and-hardening
       - shipping-and-launch

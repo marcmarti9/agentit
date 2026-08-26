@@ -143,20 +143,7 @@ class ScriptRegressionTests(unittest.TestCase):
                 for path in (home / ".codex" / "skills").glob("*/SKILL.md")
             }
             self.assertEqual(
-                {
-                    "using-agentit",
-                    "task-router",
-                    "architect-orchestrator",
-                    "debugging-and-error-recovery",
-                    "code-review-and-quality",
-                    "test-driven-development",
-                    "security-and-hardening",
-                    "long-horizon-recovery",
-                    "mcp-tooling-fit",
-                    "planning-and-task-breakdown",
-                    "using-agent-skills",
-                    "verification-gauntlet",
-                },
+                {"using-agentit", "task-router", "using-agent-skills"},
                 installed,
             )
 
@@ -624,7 +611,7 @@ class ScriptRegressionTests(unittest.TestCase):
                 home
                 / ".agents"
                 / "skills"
-                / "architect-orchestrator"
+                / "task-router"
                 / "SKILL.md"
             )
             round_trip_content = "antigravity round-trip fixture\n"
@@ -648,7 +635,7 @@ class ScriptRegressionTests(unittest.TestCase):
             imported_skill = (
                 repository_fixture
                 / "skills"
-                / "architect-orchestrator"
+                / "task-router"
                 / "SKILL.md"
             )
             self.assertEqual(round_trip_content, imported_skill.read_text(encoding="utf-8"))
@@ -656,7 +643,7 @@ class ScriptRegressionTests(unittest.TestCase):
                 (
                     repository_fixture
                     / "skills"
-                    / "architect-orchestrator"
+                    / "task-router"
                     / "NOT_ALLOWLISTED.md"
                 ).exists()
             )
@@ -667,7 +654,7 @@ class ScriptRegressionTests(unittest.TestCase):
                 if repository_before.get(path) != repository_after.get(path)
             }
             self.assertEqual(
-                {"skills/architect-orchestrator/SKILL.md"}, changed_paths
+                {"skills/task-router/SKILL.md"}, changed_paths
             )
 
     def test_existing_backup_roots_are_rejected_before_apply(self):

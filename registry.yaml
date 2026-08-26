@@ -786,3 +786,28 @@ entries:
     state: AVAILABLE_ON_DEMAND
     priority: on_demand
 
+  - id: mobile-native-app-design
+    name: "Native mobile app design and implementation"
+    kind: skill
+    category: mobile
+    provenance: repo-curated-from-appllama-method
+    source_ref: "https://github.com/Appllama/appllama-skills (MIT; Agentit-owned slim contract)"
+    paths:
+      - "${REPO_ROOT}/skills/mobile-native-app-design/SKILL.md"
+      - "${HOME}/.agents/skills/mobile-native-app-design/SKILL.md"
+      - "${HOME}/.claude/skills/mobile-native-app-design/SKILL.md"
+      - "${HOME}/.codex/skills/mobile-native-app-design/SKILL.md"
+    trigger: "Expo/React Native or iOS/Android product UI, onboarding, paywall, native navigation, sheets/modals, or simulator-verified mobile design"
+    avoid_when: "public websites, web dashboards, or backend-only work"
+    context_cost: medium
+    execution_cost: medium
+    depth: specialized
+    risk: low_to_medium
+    conflicts: ["web-design defaults forced onto native mobile UI", "duplicate upstream Appllama skill bodies loaded at the same time"]
+    dependencies: ["Appllama MCP only when live mobile research is selected", "simulator/emulator for full runtime verification"]
+    essential_dependencies: []
+    required_tools: []
+    compression_applied: none
+    reversibility: high
+    state: AVAILABLE_ON_DEMAND
+    priority: specialized

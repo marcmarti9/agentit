@@ -1,22 +1,23 @@
 ---
 name: mcp-tooling-fit
-description: Audit installed MCPs, fit them to the project, disable unused ones, and discover useful servers from the Agentit catalog, marketplaces, and the web. Use at session start for non-trivial projects or when tooling gaps appear.
+description: Select the smallest useful MCP/tool set for the current Agentit task, based on repository facts, explicit capability needs, least privilege, and current availability.
 ---
 
 # MCP Tooling Fit
 
-Choose the right MCP servers for **this project**, not a default kitchen sink. Prefer least privilege. Plan before applying. Never write secrets into the repo.
+Choose tools for the reviewed task, not because they are popular or globally installed. The primary AI owns the semantic choice; deterministic code may resolve an explicit server/stack ID and enforce risk gates.
 
 ## When to use
 
-- After Agentit activation on a real codebase
-- When the task needs docs, browser, GitHub, DB, design, or search tools
-- When many MCPs are enabled but unused (context and permission noise)
-- When the user asks what tools should be connected
+Load this skill JIT when the task materially depends on MCP/tool selection, when the current tool inventory is noisy, or when an important capability appears missing.
+
+Do not load it for ordinary work whose existing tools are already sufficient.
 
 ## Protocol
 
-### 1. Inventory what is already there
+### 1. Inspect current state
+
+Agent-facing helpers include:
 
 ```bash
 agentit mcp status --project .
@@ -24,109 +25,78 @@ agentit mcp available --project .
 agentit mcp active --project .
 ```
 
-Or via agentit-manager MCP tools: `mcp_status`, `mcp_list_available`, `mcp_list_active`.
+The agentit-manager MCP can expose the equivalent inventory/enable/disable operations.
 
-Record:
+Record only what matters for the current task:
 
-- enabled vs available
-- risk tier of each server
-- whether secrets/env vars are required
+- explicit current availability;
+- required permissions/capabilities;
+- write vs read-only behavior;
+- secrets/env requirements;
+- risk classification.
 
-### 2. Infer project needs from facts
+Catalog presence is not runtime availability.
 
-Inspect the repo (not the user) for stack signals:
+### 2. Infer needs from task and repository facts
 
-- package manifests, lockfiles, frameworks
-- DB / Supabase / Docker / CI
-- design sources (Figma links, design tokens)
-- browser/UI surfaces
-- external SaaS (Linear, Slack, Notion)
+Inspect manifests, frameworks, DB/config, browser/UI surfaces, design sources, CI/deployment and external integrations. Do not ask the user for facts already visible in the project.
 
-Map needs to Agentit stacks when possible:
+Example curated stacks may include:
 
-| Need | Stack / servers |
+| Need | Candidate stack |
 |---|---|
-| coding baseline | `developer_core` (agentit-manager, context7, github, playwright) |
-| frontend/UI verify | `frontend` / playwright, chrome-devtools, figma |
-| design craft | `design_studio` |
-| data/schema | `backend_data` (staging/read-only creds only) |
-| research | `research` |
-| product ops | `product_ops` |
+| repository/docs/browser baseline | `developer_core` |
+| frontend/browser verification | `frontend` |
+| design inspection | `design_studio` |
+| backend/data work | `backend_data` |
+| current-source research | `research` |
+| product operations | `product_ops` |
 
-### 3. Fit: enable useful, disable noise
+These names are discovery conveniences, not semantic routing rules. The primary AI decides whether a stack actually fits.
 
-Propose a minimal set:
+### 3. Prefer the minimum useful set
 
-1. keep or enable servers that unblock the current domain pack
-2. disable servers that are unrelated and always-on without benefit
-3. never enable RISK_3/RISK_4 without explicit user force/consent
+Keep or enable only tools that earn their permission/context/coordination cost. Disable unrelated always-on noise when doing so is safe and useful.
 
-```bash
-# plan first (no --apply)
-agentit mcp enable-stack developer_core --project .
-agentit mcp disable <unused-id> --project .
+Plan mutations before applying them. Higher-risk write-capable tools require the applicable human/review gate.
 
-# apply only after user OK (or clear standing policy)
-agentit mcp enable context7 --project . --apply
-agentit mcp disable <unused-id> --project . --apply
-```
+### 4. Discover gaps when necessary
 
-### 4. Discover gaps beyond the local catalog
+If Agentit's catalog does not cover a required capability:
 
-If the project needs a capability not covered:
+1. prefer official/maintained providers;
+2. check source, maintenance, scopes and secret handling;
+3. compare a small number of realistic candidates;
+4. do not silently install or authorize external software.
 
-1. Search the Agentit curated catalog (`mcp/catalog.yaml` / `agentit mcp available`)
-2. Search skill/MCP marketplaces and the open web for maintained servers (prefer official vendors)
-3. Check install count, repo activity, trust, required scopes, and secret handling
-4. Present 1–3 candidates with: purpose, risk, trust, install command, secrets needed
+Current-source discovery belongs in the task's reference/tool plan, not in a permanent global preload.
 
-Do **not** silently install from the internet. Always:
+### 5. Persist only operationally useful state
 
-- dry-run / plan first
-- ask the user before `--apply`
-- refuse or escalate for high-risk write-capable tools without clear need
-
-### 5. Persist the decision
-
-Write compact notes into project continuity (`docs/agentit/STATE.md` or equivalent):
-
-- enabled MCP set for this project
-- why each is needed
-- disabled-as-noise list
-- pending installs awaiting user approval
-
-## Output contract
-
-```text
-MCP FIT
-Project needs: ...
-Keep/enable: ...
-Disable: ...
-Gaps / candidates: ...
-Apply plan: (commands)
-User approval required: yes/no
-Risk notes: ...
-```
+When a substantial task needs continuity, record the selected MCP/tool set and pending approvals in local `.agentit/STATE.md`. Do not publish transient tool enablement decisions as tracked project documentation unless they are a durable architectural/operational contract.
 
 ## Safety
 
-- Secrets only via env vars / provider secret stores — never committed
-- Prefer read-only and official servers
-- RISK_3+ needs `--force` and human confirmation
-- Disabling a server mid-session is fine; re-enable when a later task needs it
+- least privilege by default;
+- secrets through environment/provider secret stores, never repository files;
+- verify current auth/availability before depending on a mutable external service;
+- RISK_3/RISK_4 or destructive external actions require the applicable human and independent-review gate;
+- disabling/re-enabling tools is allowed when reversible and authorized.
 
 ## Anti-patterns
 
-- enabling every popular MCP “just in case”
-- installing unknown GitHub MCP servers without review
-- treating catalog absence as “cannot help” without a short marketplace/web check
-- asking the user for stack facts already visible in the repo
-- powerwords or secret jargon — ordinary “what tools do we need?” is enough
+- enabling every MCP "just in case";
+- treating a stack name as a natural-language router;
+- assuming catalog presence means authenticated availability;
+- silently installing third-party servers;
+- asking for stack facts that the repository exposes;
+- writing secrets or mutable tool state into public docs;
+- using powerwords to activate tooling.
 
 ## Verification
 
-- [ ] `agentit mcp status` inspected
-- [ ] recommendations match repo facts + current domain pack
-- [ ] unused always-on servers proposed for disable
-- [ ] external installs are plan-first with user approval
-- [ ] continuity notes updated when the MCP set changes
+- [ ] current inventory was inspected when material;
+- [ ] selected tools map to explicit task capabilities;
+- [ ] unnecessary permission/context noise was avoided;
+- [ ] external installs/actions respected risk and consent gates;
+- [ ] substantial continuity notes, if needed, remain in `.agentit/STATE.md` by default.

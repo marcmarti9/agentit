@@ -1,230 +1,155 @@
 ---
 name: using-agentit
-description: Lightweight provider-neutral entry point for material agent work. Decide bare vs Agentit first; prefer Agentit when it materially improves reliability, then use domain packs only to discover and load the concrete skills/tools/references the primary AI decides are worth their context cost.
+description: Lightweight provider-neutral entry point for material agent work. Decide bare vs Agentit first, then load only the skills, references, tools and workers the primary AI can justify JIT.
 ---
 
 # Using Agentit
 
-Agentit is a **provider/model-neutral** reliability/orchestration protocol for capable AI agents. It should improve a task **without filling the context window with its whole framework** or binding general workflows to one model vendor.
-
-The active model owns semantic judgment. Programs remain mechanical: state, files, receipts, manifests, commands and other deterministic execution support.
+Agentit is a provider/model-neutral reliability and orchestration layer for capable AI agents. The active primary AI owns semantic judgment; deterministic software enforces explicit state, permissions, receipts and execution invariants after that decision.
 
 ## First-prompt dispatch
 
-A fresh agent should make one semantic choice before loading the rest of Agentit:
+Make one semantic choice before loading the rest of Agentit:
 
 ```text
 DISPATCH_DECISION: bare | agentit
 ```
 
-### `bare`
+Use `bare` for conversation, tiny obvious mechanical edits, negligible-risk work with no useful specialist/reference/tool/continuity decision, and cases where verification is immediate and local.
 
-Use bare execution only when Agentit would add no material value. Typical conditions:
+Use `agentit` for material implementation, debugging, design, research, current/source-sensitive work, ambiguous product decisions, tool/MCP choices, multi-step changes, long-horizon work, higher-risk actions, or anything where JIT expertise/review/verification materially improves reliability.
 
-- trivial/conversational answer;
-- tiny obvious mechanical edit;
-- negligible risk and blast radius;
-- no useful domain skill/reference/tool/delegation decision;
-- no meaningful continuity, multi-step orchestration or independent review need;
-- verification is obvious and local.
+If genuinely uncertain, choose Agentit. An explicit natural-language request to use Agentit forces the Agentit path when possible. No activation powerword is required.
 
-Bare does **not** mean careless. System/user/project rules still apply.
+## Tiny global bootstrap
 
-### `agentit`
+A globally discoverable installation exposes exactly:
 
-Use Agentit for material work: non-trivial implementation, debugging, design, research, source-sensitive/current domains, multi-step changes, ambiguous product decisions, tool/MCP decisions, high-risk work, long-running work, or anything where JIT expertise/review/verification materially improves the outcome.
+- `using-agentit`
+- `task-router`
+- `using-agent-skills`
 
-**When genuinely uncertain between `bare` and `agentit`, prefer `agentit`.** The minimal bootstrap exists so the safer path does not require preloading the whole framework.
+Everything else is JIT. Availability is not context injection.
 
-An explicit natural-language request to use Agentit always selects `agentit` unless impossible or conflicting with a higher-priority rule.
+Do not globally preload debugging, TDD, security, planning, design, orchestration, Reference Intelligence, MCP fit, continuity, specialist catalogs or verification skills.
 
-## Minimal bootstrap
+## Agentit path
 
-A globally discoverable Agentit installation should expose only:
-
-- `using-agentit` — this dispatcher/protocol;
-- `task-router` — full semantic `TASK_DECISION` once Agentit is selected;
-- `using-agent-skills` — semantic pack discovery and JIT skill projection.
-
-Everything else is JIT.
-
-Do **not** globally preload debugging, TDD, security, planning, code review, design, references, MCP fit, orchestration, long-horizon recovery or verification specialist skills. Load them only when the current task/stage actually needs them.
-
-## Agentit path after dispatch
-
-When `DISPATCH_DECISION=agentit`:
+After `DISPATCH_DECISION=agentit`:
 
 ```text
 inspect context
--> load task-router + using-agent-skills
 -> TASK_DECISION
--> inspect relevant semantic pack(s)
--> primary AI chooses any justified skill subset
--> choose references/tools only if material
--> choose compatible model endpoint(s) only if model routing itself matters
--> cheap independent audit
--> strong review if risk/disagreement requires it
--> execute through Loop/Graph contracts
+-> inspect relevant semantic pack maps
+-> primary AI selects justified skills/references/tools/workers
+-> bounded independent audit
+-> stronger review when risk/disagreement requires it
+-> execute through Loop/Graph contracts when applicable
 -> fresh verification
--> durable docs/state where warranted
+-> durable docs only when the project gained durable knowledge
 -> PR-first for repository changes
 ```
 
 The user should not need to know or type Agentit CLI commands. Mechanical commands are agent-facing implementation details.
 
-## Provider/model-neutral invariant
+For `complexity: substantial | structural`, normally give the user a short route summary before material execution: major stages, meaningful delegation/tools/references, and how completion will be verified. This is a concise execution preview, not private chain-of-thought.
 
-General Agentit behavior must not depend on Claude, Codex, Gemini, Kimi, or any other named model/provider.
+## Provider-neutral invariant
 
-A compatible model can use Agentit when it can:
+General Agentit behavior must not depend on one vendor or model. A compatible host/model can use Agentit when it can read the relevant instructions, access required context/files/tools, respect permissions, and produce evidence satisfying the verifier.
 
-- receive/read the relevant Agentit instructions/skill bodies;
-- access the context and files required by the task;
-- use the required tools/modalities when the task needs them;
-- obey the applicable permissions/safety boundaries;
-- produce evidence that satisfies the verifier.
+Named providers/models belong in host adapters, endpoint configuration, provenance or current evaluation evidence. They are not hidden requirements of general skills.
 
-Named providers/models are valid in **provider-specific adapters, endpoint configuration, current evaluation evidence, or provenance**. They are not valid as hidden requirements inside a general skill merely because the source article used that model.
-
-When a source teaches a useful workflow with one named model, extract the workflow and keep the model-specific wording only as provenance unless the technique genuinely relies on a provider-specific capability.
-
-When model selection itself matters, inspect the `models` pack and use `local-model-routing` JIT. Despite the legacy skill ID, that procedure compares compatible **local or remote** endpoints and routes by task evidence rather than brand.
-
-## Packs: maps, not levels
+## Packs are maps, not levels
 
 Canonical runtime map: `skills/using-agent-skills/references/packs.md`.
 
-Packs such as `engineering`, `frontend`, `design`, `backend`, `data`, `product`, `marketing`, `seo`, `research`, `writing`, `models`, `release`, and `agency` exist to answer:
+Packs answer which capabilities live around a domain. They do not prescribe a skill count, order, quality level or mandatory bundle. There are no pack tiers and no fixed minimum or maximum skill count.
 
-> **What capabilities/skills live around this domain, and when might each one help?**
+The primary AI may select zero, one or many skills across one or more packs, and may change that selection as the stage changes. Selected skill bodies—not whole packs—enter worker/task context.
 
-They do **not** answer:
+## TASK_DECISION
 
-- how many skills must be loaded;
-- which skill must come first;
-- what “level” the task belongs to;
-- whether every skill in the pack should be used.
-
-There are no pack tiers such as `essential / standard / deep` and no fixed minimum/maximum skill count.
-
-The primary AI may select zero, one, or many skills from one or more packs. It should select only skills it can justify for the current stage.
-
-Example:
-
-```text
-packs:
-- design
-- frontend
-selected_skills:
-- design-inspiration-research
-- browser-testing-with-devtools
-```
-
-Another design task might legitimately select six skills; a small one might select one. **The agent decides.**
-
-## `TASK_DECISION`
-
-After Agentit activation, the primary AI uses `task-router` and decides at least:
+The primary AI decides the material route from real context. It should cover, as applicable:
 
 ```text
 intent / outcome
-known facts / material unknowns
-relevant pack(s)
-complexity
+known facts / unresolved material unknowns
+relevant packs
+complexity: trivial | bounded | substantial | structural
 risk / reversibility / external effects
 selected skills
-selected tools
-reference_plan
-execution topology / workers
+selected references
+selected tools / MCPs
+workers / topology / ownership
 plan
-verification
-safety / rollback / post-check
-user-method assessment
+verification / stop / rollback / post-check
+assessment of the user's proposed method
 ```
 
-Semantic ownership stays with the primary AI. No Python/regex/keyword router decides what the task means, which pack applies, how many skills to load, which skill is relevant, which model is universally best, or which source should be trusted.
+No Python/regex/keyword classifier decides what the user means, which pack applies, how many skills to load, which model is best, or which source should be trusted.
+
+Desired ambition still matters. For design/product work the AI may describe goals such as premium, high-polish or exploratory in ordinary language and reflect them in the plan; do not turn that into named effort/craft tiers.
 
 ## References are JIT
 
-`reference-intelligence` is deliberately **not** part of the global core.
+`reference-intelligence` is not global. Load it only when the reviewed `reference_plan` needs curated/live evidence. Use the smallest useful source set and current authoritative sources for time-sensitive or regulated claims.
 
-If `TASK_DECISION.reference_plan.mode != none`, load it JIT and inspect the smallest useful curated/live source set.
-
-Examples:
-
-- trivial rename -> no references;
-- web design -> relevant design/production references + current implementation docs where material;
-- SEO -> SEO/growth references + live search/platform evidence;
-- current Spanish tax report -> current authoritative tax/legal sources, regardless of whether Agentit already has a tax pack.
-
-The absence of curated Agentit material is never permission to rely on stale model memory for a current/domain-specific claim.
+The absence of curated Agentit material is never permission to rely on stale memory for a claim that requires current evidence.
 
 ## Tools/MCPs are JIT
 
-`mcp-tooling-fit` and external tools are selected only when they materially improve the reviewed plan. Keep least privilege and verify current setup/auth before depending on changing external services.
+Load `mcp-tooling-fit` only when tool selection materially matters. The primary AI chooses the capability or explicit stack/server ID; code resolves that choice mechanically. Keep least privilege and verify live availability/auth before depending on mutable services.
 
 ## Independent audit
 
-For material Agentit work, the reviewed `TASK_DECISION` gets a bounded read-only second opinion from the cheapest competent independent model, normally semantic tier `fast`.
+Material Agentit work gets a bounded read-only second opinion when independent review materially improves reliability. The reviewer challenges intent interpretation, missing/unjustified skills/references/tools, context bloat, risk, delegation and verification.
 
-The auditor is a critic, not the router or implementation owner. It looks for misunderstood intent, wrong/missing packs, unjustified or missing skills, context bloat, risk underestimation, weak verification, unsafe effects, bad reference/source choices, model-routing assumptions when material, and unnecessary or missing delegation.
-
-Use `task-router/references/economy-reviewer.md` for the detailed contract.
-
-Escalate to a stronger independent critic/judgment model for `RISK_3/RISK_4`, destructive/irreversible work, auth/payments/secrets/PII/production, large structural plans, or unresolved material disagreement.
+Escalate to stronger independent review for high-consequence, destructive/irreversible, auth/payments/secrets/PII/production work, large structural commitments or unresolved material disagreement. Do not pretend same-context self-review is independent when independence is required.
 
 ## Worker projection
 
-Spawn specialists only when isolation, expertise, independent judgment, breadth or parallelism provides a concrete benefit.
-
-A worker receives bounded context:
+Spawn workers only when specialization, isolation, fresh judgment or genuine parallelism earns its cost. A worker receives bounded context:
 
 ```text
-role/objective
-relevant pack(s) as discovery labels
+role / objective / scope
+relevant pack labels
 selected skill bodies
-selected references if any
-project constraints
-allowed tools/permissions
+selected references/artifacts
+project instructions and explicit user constraints
+least-privilege capability envelope
 read/write ownership
-expected handoff
-verification / stop condition
+risk / parent topology / review requirement
+expected output / verifier / stop condition
 ```
 
-Never dump the global catalog or whole pack into a worker. One writer owns shared files/state unless branch/worktree isolation makes parallel writes safe.
+Never dump the global catalog or a whole pack into a worker. One writer owns shared files/state unless isolation makes parallel writes safe.
 
-The worker contract is provider-neutral. Provider-specific worker spawning mechanics may differ, but that must not change the semantic role, bounded context, ownership or verification contract.
+## Loop/Graph runtime
 
-## Runtime enforcement
-
-Agentit's Loop/Graph runtime enforces the AI's reviewed execution plan; it does not interpret prompts.
+The Loop/Graph runtime enforces the reviewed execution plan; it does not interpret prompts.
 
 For executable work with a verifiable outcome:
 
-- define observable goal;
-- define verifier;
-- define stop condition;
-- bound retries;
-- define escalation;
+- define an observable goal;
+- define a verifier;
+- define a stop condition;
+- bound retries and escalation;
 - require fresh evidence before success.
 
-Multi-node work additionally defines dependencies, handoffs and write ownership through a Graph Contract.
+Multi-node work additionally defines dependencies, handoffs and write ownership. Do not weaken a verifier to manufacture a green receipt.
 
-Do not weaken a verifier to manufacture a green receipt.
+## Continuity and documentation
 
-## Continuity and durable docs
+Substantial/resumable operational state defaults to private local `.agentit/STATE.md` plus `.agentit/checkpoints/`. Do not auto-commit transient Agentit state.
 
-Use `docs/agentit/STATE.md` (or an existing project equivalent) for substantial/resumable work. Keep it compact: objective, constraints, decisions, status, branch/PR, latest verification, blockers and next steps.
+Tracked Markdown should contain durable architecture, interfaces, decisions, operations and troubleshooting introduced or changed by the work. Update an existing canonical source instead of creating duplicates.
 
-For substantial repository changes, keep canonical Markdown documentation aligned with changed architecture/components/contracts/operations/troubleshooting. Do not create duplicate docs when an existing source of truth should be updated.
-
-Do not persist secrets, full transcripts or private chain-of-thought.
+Never persist secrets, raw transcripts or private chain-of-thought.
 
 ## Constructive dissent
 
-Agentit optimizes for the user's actual goal, not agreement with every proposed method.
-
-If the user's suggested implementation is materially weaker than a realistic alternative, explain the concrete trade-off and recommend the better path. Preserve the user's final safe discretionary choice; do not use disagreement as permission for scope expansion or unauthorized changes.
+Agentit optimizes for the user's actual goal, not automatic agreement. If the user's proposed implementation is materially weaker than a realistic alternative, explain the concrete trade-off and recommend the stronger route. Preserve the user's final safe discretionary choice; disagreement is not permission for scope expansion or unauthorized changes.
 
 ## Git / completion
 
@@ -234,8 +159,8 @@ Repository changes default to:
 work branch -> implementation -> fresh verification -> PR -> user/reviewer merge decision
 ```
 
-No `done`, `fixed`, `passing`, `premium`, `secure` or equivalent claim without fresh evidence appropriate to that claim.
+No `done`, `fixed`, `passing`, `secure`, `premium` or equivalent claim without fresh evidence appropriate to that claim.
 
 ## Core invariant
 
-> **Keep the bootstrap tiny. Keep general Agentit model-neutral. Prefer Agentit for material work. Packs expose options; the primary AI decides the actual skill set and its size.**
+> Keep the bootstrap tiny. Keep general Agentit provider-neutral. Packs expose possibilities; the primary AI chooses the actual context, plan and topology. Deterministic software enforces what was explicitly decided.

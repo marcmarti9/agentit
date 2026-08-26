@@ -1,80 +1,96 @@
 ---
 name: long-horizon-recovery
-description: Keep multi-session work resumable. Checkpoint STATE, resume without re-interviewing, and rebuild/review the AI task decision when scope changes.
+description: Keep substantial multi-session Agentit work resumable using private local state, compact checkpoints, and a refreshed TASK_DECISION when scope or risk changes.
 ---
 
 # Long-horizon recovery
 
-Chat is disposable. Repository state is not.
+Chat/session context is disposable. Operational state should survive when the work is substantial enough to justify continuity, without publishing private working notes into the repository.
 
 ## Canonical state
 
-Maintain `docs/agentit/STATE.md` (see `docs/PROJECT_CONTINUITY.md`).
+Default local state:
 
-Minimum sections: Goal, Confirmed intent, Domain pack, Current status, Decisions, Important files, Verification, Next actions, Open questions, Recovery.
+- `.agentit/STATE.md`
+- `.agentit/checkpoints/*.json`
 
-Useful state fields include:
+See `docs/PROJECT_CONTINUITY.md`.
 
-- domain pack and design craft depth when relevant;
-- effort/topology;
-- compact `TASK_DECISION` summary;
-- economy reviewer verdict;
-- strong reviewer verdict when required;
-- worker ownership/dependency decisions;
-- latest verification evidence.
+Do not create or commit `docs/agentit/STATE.md` merely because Agentit is active. If a project already has an intentional tracked team-status document, it may be reused explicitly; otherwise operational state stays local/private.
+
+A useful state snapshot includes:
+
+- goal and confirmed constraints;
+- relevant packs;
+- `complexity: trivial | bounded | substantial | structural` when material;
+- risk and topology;
+- selected skills, tools, references and workers;
+- ownership boundaries;
+- compact `TASK_DECISION` summary and reviewer verdicts;
+- branch/PR and important artifacts;
+- latest verification evidence;
+- blockers and executable next actions.
+
+Do not persist private chain-of-thought. Record decisions, evidence and consequences only.
 
 ## Commands
 
 ```bash
 agentit continuity status --project .
 agentit continuity init "goal text" --project .
-agentit continuity init "goal text" --project . --apply   # overwrite template
+agentit continuity init "goal text" --project . --apply
 agentit continuity checkpoint milestone-name --project .
 ```
 
+These commands are agent-facing mechanical helpers; users should not need to operate them manually.
+
 ## When to checkpoint
 
-1. After the material task decision/review is established
-2. After product interview decisions materially change the plan
-3. After expensive decisions
-4. After meaningful milestones
-5. Before provider/model/session handoff
-6. Before token/context limits or pause
-7. Before final completion
+Use continuity when reconstruction would be meaningfully expensive. Typical moments:
 
-Also write `.agentit/checkpoints/*.json` for machine-readable snapshots when useful.
+1. after the material task decision and required review;
+2. after a user decision materially changes scope;
+3. after an expensive-to-rediscover milestone or architectural decision;
+4. before a provider/model/session/machine handoff;
+5. before stopping because of context/tool limits or an error;
+6. before completion when recovery information still matters.
+
+Do not create continuity ceremony for trivial work.
 
 ## Resume protocol
 
-1. `agentit continuity status` / read STATE.md **before** re-asking the user
-2. Inspect branch/PR/diff referenced
-3. Verify assumptions still true
-4. Repair stale state
-5. Continue from Next actions
+1. Read `.agentit/STATE.md` or the explicitly configured equivalent before re-asking resolved questions.
+2. Inspect the referenced branch/PR/diff and only the files needed next.
+3. Verify recorded assumptions are still true.
+4. Repair stale local state.
+5. Rebuild and review `TASK_DECISION` if scope, risk, independence or important constraints changed.
+6. Continue from `Next actions`.
 
 ## Mid-task decision refresh
 
-If independence, risk, scope, constraints, or important project facts changed materially:
+When a material change occurs:
 
-1. the primary AI rebuilds `TASK_DECISION` from the current full context;
-2. send the changed proposal through the mandatory economy reviewer again;
-3. if the new decision is high-consequence, also run the required strong `critic`/`judgment` review;
-4. update STATE before executing the materially changed plan.
+1. the primary AI rebuilds the semantic `TASK_DECISION` from current context;
+2. repeat the required independent audit/review;
+3. update local state with the changed decision and next actions;
+4. only then execute the materially changed route.
 
-Do not call a prompt router or trace classifier; the active AI owns the semantic decision.
+Do not call a prompt classifier to make that semantic decision. Software persists the explicit decision; the active AI owns its meaning.
 
 ## Anti-patterns
 
-- re-interviewing decisions already in STATE
-- trusting chat memory over STATE
-- continuing a materially changed plan without refreshing/reviewing `TASK_DECISION`
-- finishing without updating Next actions / Verification
-- storing secrets or private chain-of-thought in STATE/checkpoints
+- publishing transient operational state in a public repository;
+- re-interviewing decisions already recorded and still valid;
+- trusting stale chat memory over current repository/evidence;
+- continuing a materially changed plan without refreshing review;
+- storing secrets, credentials, raw transcripts or private chain-of-thought;
+- using named effort/craft tiers instead of recording the actual task decision.
 
 ## Verification
 
-- [ ] STATE.md exists and has required sections
-- [ ] Decision/reviewer status is clear enough for a fresh agent to continue
-- [ ] Next actions are executable by a fresh agent
-- [ ] Latest verification results recorded
-- [ ] Checkpoint taken before handoff
+- [ ] Continuity was used only if the task warrants it.
+- [ ] `.agentit/STATE.md` has enough information for a fresh agent to resume.
+- [ ] State contains actual packs/complexity/risk/topology and selected capabilities, not legacy tier labels.
+- [ ] Next actions and blockers are concrete.
+- [ ] Latest verification evidence is recorded.
+- [ ] State/checkpoints remain local/private unless the project explicitly chose another canonical team document.

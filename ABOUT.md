@@ -1,8 +1,8 @@
 # About Agentit
 
-Agentit is an **open-source, provider-neutral reliability layer for AI coding agents**.
+Agentit is an **open-source, provider-neutral reliability and just-in-time expertise layer for capable AI agents**.
 
-It is not another coding model and it is not a framework that tries to replace the native capabilities of Codex, Claude Code, or other capable agents. Agentit supplies a shared operating protocol around them: model-owned task decisions, independent review, just-in-time skills and tools, bounded delegation, resumable project state, mechanical execution receipts, fresh verification, durable documentation, and reviewable Git handoffs.
+It is not a coding model and does not try to replace the native reasoning, tool use or provider runtime of Codex, Claude Code, Gemini or another compatible host. Agentit adds a portable operating contract around them: model-owned task decisions, JIT skills/references/tools, bounded delegation, independent review, deterministic execution contracts, fresh verification, private resumable state, durable documentation and reviewable Git handoffs.
 
 The [README](README.md) is the canonical public introduction and installation guide. This document explains the design identity behind it.
 
@@ -10,114 +10,102 @@ The [README](README.md) is the canonical public introduction and installation gu
 
 ### AI judgment stays with the AI
 
-Agentit deliberately does **not** use regexes, keyword scores, or a Python classifier to infer natural-language intent, risk, topology, or the right skill from a prompt.
+Agentit deliberately does **not** use regexes, keyword scores or a Python classifier to infer natural-language intent, risk, topology, pack, skill count or the right tool from a prompt.
 
-The active primary model sees the actual conversation and project context and produces `TASK_DECISION`. A separate model reviews material decisions. Deterministic software then enforces the parts that are genuinely mechanical: manifests, capability resolution, runtime state, receipts, verification probes, continuity artifacts, and safe configuration changes.
+The active primary model sees the real conversation/project context and produces `TASK_DECISION`. Deterministic software then enforces the parts that are genuinely mechanical: manifests, capability resolution, permissions, runtime state, receipts, verification probes, continuity artifacts and safe configuration changes.
+
+Independent models can review material decisions when fresh judgment materially improves reliability; stronger gates apply to high-consequence work.
 
 ### Orchestration must earn its cost
 
-Agentit has no fixed "Architect → Manager → Supervisor → Worker" pyramid.
+Agentit has no fixed `Architect -> Manager -> Supervisor -> Worker` pyramid.
 
-Delegation is useful when it creates a concrete advantage such as:
+Delegation is useful when it creates a concrete advantage such as specialist expertise, independent criticism, parallel read-only investigation, context isolation, independent alternatives or bounded implementation ownership. Tightly coupled work can remain direct. Multi-node work gets explicit ownership/dependencies through a Graph Contract rather than an invisible hierarchy.
 
-- specialist expertise;
-- independent criticism;
-- parallel read-only investigation;
-- context isolation for large source sets;
-- independent design alternatives;
-- bounded implementation ownership.
+The role documents and specialist catalog are optional capabilities/adapters, not mandatory runtime stages.
 
-Tightly coupled work can remain direct. Multi-node work gets an explicit Graph Contract rather than an invisible hierarchy.
+### Skills are available JIT, not sprayed into context
 
-### Skills are curated, not sprayed into context
+A globally discoverable Agentit installation exposes only the tiny core needed to decide whether Agentit is useful and, when selected, to discover the relevant semantic map. Profiles are installation/discovery conveniences; they are **not runtime context bundles**.
 
-Agentit uses small, task-scoped skills and bounded profiles. A skill is not considered used because its ID appears in a catalog; the executing model must actually receive its body.
+The primary AI chooses zero, one or many concrete skill bodies from one or more semantic packs according to the current task/stage. A skill is not considered used merely because its ID appears in a profile or catalog.
 
-The repository can learn from strong upstream projects, but external skills are not bulk-imported simply because they are popular. The preferred order is:
-
-```text
-strengthen existing capability
-        ↓
-adapt a better upstream idea with provenance
-        ↓
-incubate a genuinely distinct repeated workflow
-        ↓
-evaluate
-        ↓
-promote only if it earns permanent context/maintenance cost
-```
+External ideas are curated rather than bulk-imported. Prefer strengthening an existing capability or adapting the smallest reusable upstream insight with provenance; promote new permanent surface area only when it earns its context and maintenance cost.
 
 See [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Core layers
 
 ```text
-┌──────────────────────────────────────────────────────────────┐
-│  Semantic policy                                            │
-│  TASK_DECISION → independent audit → escalation when needed │
-└─────────────────────────────┬────────────────────────────────┘
-                              │
-┌─────────────────────────────▼────────────────────────────────┐
-│  JIT capability layer                                       │
-│  skills → profiles → specialists → MCP/tool capabilities    │
-└─────────────────────────────┬────────────────────────────────┘
-                              │
-┌─────────────────────────────▼────────────────────────────────┐
-│  Mechanical execution layer                                 │
-│  Loop contracts → Graph contracts → receipts                │
-└─────────────────────────────┬────────────────────────────────┘
-                              │
-┌─────────────────────────────▼────────────────────────────────┐
-│  Project reliability layer                                  │
-│  continuity → verification → durable docs → Git review      │
-└──────────────────────────────────────────────────────────────┘
+first-prompt dispatch: bare | agentit
+                 |
+                 v
+semantic TASK_DECISION
+(packs, skills, references, tools, risk, complexity, topology, plan, verifier)
+                 |
+                 v
+bounded independent review when warranted
+                 |
+                 v
+JIT capability projection
+(skills + references + tools/MCPs + workers + least privilege)
+                 |
+                 v
+deterministic execution support
+(Loop/Graph contracts + receipts + verification)
+                 |
+                 v
+private continuity + durable docs + Git review
 ```
 
-### 1. Semantic policy
+### Semantic policy
 
-The primary model owns task interpretation. An independent reviewer challenges the decision before material execution, with stronger review for high-consequence changes.
+The primary AI owns task interpretation. Packs are maps, not levels. There is no generic `essential/standard/deep` pack depth, fixed skill count, activation powerword or programmatic natural-language router.
 
-### 2. JIT capabilities
+### JIT capabilities
 
-Profiles expose a bounded discovery set. The active agent selects the smallest useful skill/tool set, and workers receive only task-scoped project instructions, capabilities, and skill bodies.
+Skills, Reference Intelligence, MCP/tool selection, model routing and specialist/worker contracts are loaded only when the reviewed task benefits from them. Workers receive bounded project instructions, selected skill bodies/references and a least-privilege capability envelope rather than the parent/global context dump.
 
-### 3. Mechanical execution
+### Mechanical execution
 
-Executable work uses Loop Contracts with observable goals, verifiers, stop conditions, bounded attempts, and escalation boundaries. Multi-node work uses Graph Contracts with explicit dependencies and write ownership.
+Executable work can use Loop Contracts with observable goals, verifiers, stop conditions, bounded attempts and escalation. Multi-node work uses Graph Contracts with explicit dependencies, handoff artifacts and write ownership. Deterministic runtime validates those explicit contracts; it does not decide what the user meant.
 
-### 4. Project reliability
+### Continuity and documentation
 
-Substantial work can resume from repository state instead of a chat transcript. Completion claims require fresh evidence, and durable architecture/operations documentation must remain aligned with implementation.
+Substantial/resumable operational state defaults to ignored private files such as `.agentit/STATE.md`, `.agentit/checkpoints/` and other `.agentit/` runtime artifacts. It should survive session/provider/machine handoffs without turning transient working notes into public repository documentation.
+
+Tracked Markdown is reserved for durable architecture, interfaces, decisions, operations, troubleshooting and verification knowledge introduced or materially changed by the work.
 
 ## Safety posture
 
-Agentit's management operations are designed to be explicit and reversible, but the exact mutation contract depends on the command:
+Agentit's own managed operations are explicit and reversible where their contracts claim that behavior, but Agentit cannot retroactively sandbox credentials/tools that a host already exposed too broadly.
 
-- `install.sh`, `update.sh`, and `security/harden-local.sh` are **plan-first** and require `--apply` for their managed filesystem changes;
-- profile and MCP enable/disable operations are **plan-first** and require `--apply` to apply managed configuration;
-- continuity commands such as `continuity init` and `continuity checkpoint` are explicit state-writing commands by design;
-- verification is plan-first, while `verify --apply` executes probes and writes a receipt;
-- provider credentials and machine secrets must never be committed to the repository.
+- canonical bootstrap and managed profile/MCP configuration are plan-first before apply;
+- continuity/checkpoint commands intentionally write private project-local state;
+- verification separates planning from probe execution/receipt creation;
+- capability envelopes are least-privilege runtime contracts that host adapters must actually enforce;
+- high-risk external/destructive/auth/production work follows stronger human and independent-review gates;
+- provider credentials, machine secrets and mutable local state must never be committed.
 
-Filesystem-management code rejects unsafe symlink/path states where applicable and uses hashes/manifests for managed reversible writes.
+See [SECURITY.md](SECURITY.md) and [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md).
 
 ## Provider neutrality
 
-The protocol and shared skills are intended to remain provider-neutral. Provider adapters are deliberately thin and may have different feature maturity.
+The shared protocol and skills remain provider-neutral. Provider adapters are deliberately thin and may expose different mechanics or maturity. Named models/providers are valid in adapters, endpoint configuration, provenance and evaluation evidence—not as hidden requirements of general Agentit semantics.
 
-The current shell installer has explicit targets for Claude Code, OpenAI Codex, and Antigravity-style skill discovery. The **current installer scripts are GNU/Linux-oriented**; that is a packaging/platform limitation, not a claim that the underlying skill/protocol format is Linux-only.
+The canonical Python bootstrap targets macOS and GNU/Linux; older shell compatibility paths have narrower portability.
 
 ## Evidence posture
 
-Agentit is early-stage. Mechanical contracts can be tested deterministically; claims that it universally improves code quality, token use, latency, or cost cannot.
+Agentit is early-stage. Mechanical contracts can be implemented and tested deterministically; claims that Agentit universally improves quality, token use, latency, cost or reliability require controlled agent-level comparative evidence.
 
 Public claims therefore distinguish:
 
-- **implemented/tested contract** — backed by code/tests/CI for the exact revision;
-- **design hypothesis** — a reason Agentit may improve agent reliability;
-- **comparative claim** — requires controlled agent-level baseline experiments.
+- **implemented/tested contract** — backed by code/tests for the cited revision;
+- **design hypothesis** — a reason the architecture may help;
+- **comparative claim** — requires paired baseline/treatment agent runs.
 
-See [`evals/evaluation-plan.md`](evals/evaluation-plan.md).
+See [`evals/evaluation-plan.md`](evals/evaluation-plan.md) and the tracked comparative-evaluation work.
 
 ## Open source
 

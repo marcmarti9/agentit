@@ -1,85 +1,63 @@
-# Agentit interview, domain packs, craft depth, and provider-neutral execution
+# Agentit task planning and provider-neutral execution
 
-Agentit owns the work protocol. Providers own only the execution primitive.
+Agentit owns the work protocol. Providers supply execution primitives.
 
-## 1. AI decision before product interview
+## 1. Primary AI owns the semantic task decision
 
-Agentit has no programmatic natural-language router. The active primary AI inspects the available conversation, repository, files, tools, instructions and state, then owns the semantic `TASK_DECISION`.
+After the first meaningful `bare | agentit` dispatch, the active primary AI uses the real conversation, repository, files, tools, instructions, and state to produce `TASK_DECISION`. No regex, keyword table, score, or Python classifier decides user intent, packs, skill count, tools, risk, or worker topology.
 
-For product-affecting work, inspect discoverable facts first. If material user decisions remain unresolved, use `interview-me` before implementation. Mechanical chores with no product decision can bypass the interview, but not task understanding, review or verification.
+For material Agentit work, the decision covers outcome, known facts/unknowns, relevant packs, complexity, risk, selected skills/tools/references, topology/workers, plan, verification, rollback/post-check, and assessment of the user's proposed method.
 
-## 2. Batch every currently identifiable material question
+## 2. Inspect before asking
 
-Ask all currently identifiable material user decisions in one useful batch with recommendations. Follow up only for genuinely new decisions. Do not ask the user to repeat facts that are already available in project or conversation context.
+Discoverable project facts should normally be inspected rather than turned into questions. Ask the user only for unresolved material decisions, permissions, preferences, or trade-offs that cannot be safely inferred.
 
-## 3. Domain packs are AI-selected knowledge families
+When several current material questions are known, batch them coherently. Follow up only when new evidence creates genuinely new decisions.
 
-Machine catalog: `effort/levels.yaml` + `profiles.yaml`.
+## 3. Packs are flat discovery maps
 
-The primary AI chooses the smallest useful domain pack for each stage: engineering, frontend, design, backend, data, product, writing, release, research, or another clearly scoped role.
+Runtime packs are model-readable semantic maps. They have no required depth level, fixed ordering, or prescribed skill count. The primary AI selects the concrete skill bodies that earn their context cost for the current stage/worker.
 
-Profiles and registries are inventories, not classifiers. Load actual skill bodies only when relevant; an ID in metadata is not proof a skill was used.
+Task depth still exists as judgment, not as a vocabulary. `TASK_DECISION.complexity` (`trivial | bounded | substantial | structural`), the plan, selected capabilities, topology, and verification describe how much work the task deserves. For design/product work the agent may also describe the desired ambition naturally (for example, high-polish or premium) when that affects the plan; no named tier is required.
 
-## 4. Craft depth is design/visual only
+## 4. User-facing route summary
 
-Standard / Polished / Studio apply only to visual/design craft. They do not gate ordinary APIs, infrastructure, pure logic or documentation.
+For substantial or structural tasks, normally tell the user the short route before material execution: major stages, important tools/references, delegation if any, and how completion will be verified. Do not turn this into ceremony for bounded work, and do not expose private chain-of-thought.
 
-Lean / normal / thorough may describe non-design rigor, but they are guidance rather than semantic routing outputs.
+## 5. No activation powerword
 
-## 5. Effort and token estimates are contextual guidance
+After installation, Agentit performs semantic first-task dispatch automatically. An explicit request such as “use Agentit” forces the Agentit path when possible, but the user does not need to prepend a phrase to every material task.
 
-Do not present fixed token tables as authoritative bills and do not derive semantic decisions through a deterministic `token_estimate` router.
+## 6. Independent review and delegation
 
-The active model may provide a rough contextual effort/token estimate when useful, based on inspected project scope, risk, dependencies, topology and evidence. Such estimates never decide category, risk, topology, skills or delegation.
+Material decisions receive the configured independent audit. High-risk, destructive, difficult-to-reverse, auth/payments/secrets/PII/production, large structural commitments, or unresolved disagreement require stronger independent review.
 
-## 6. No task-routing powerwords
+Delegate when specialization, isolation, fresh judgment, or genuine parallelism earns its cost. Specialists are optional capabilities, never a mandatory org chart. Catalog trigger text is model-readable discovery metadata, not a software router.
 
-Only natural Agentit activation in the user's language is special. After activation, the primary AI interprets ordinary language from full context. No regex, keyword table, scoring script or prompt classifier decides task meaning.
+## 7. Loop / Graph execution
 
-## 7. Independent decision review and intelligent delegation
+Semantic choices belong to the AI; deterministic runtime enforces the reviewed mechanical plan. Executable units with verifiable outcomes use bounded Loop contracts and fresh evidence. Multi-node dependent work uses Graph contracts with explicit dependencies, ownership, handoffs, and node receipts.
 
-Before material execution, the proposed `TASK_DECISION` receives a read-only economy audit from the cheapest competent independent model, normally semantic tier `fast`.
+## 8. Continuity and documentation
 
-`CHALLENGE` requires primary reconsideration. `ESCALATE`, unresolved material disagreement, `RISK_3/RISK_4`, destructive or difficult-to-reverse work, auth, payments, secrets, PII, production, significant migrations and large structural plans require a stronger independent `critic`/`judgment` review before material execution.
+Operational task state defaults to local/private `.agentit/STATE.md` plus `.agentit/checkpoints/`. It must not be committed merely to make Agentit resumable. Durable architecture/product/operations knowledge belongs in the project's normal tracked documentation when the work actually creates such knowledge.
 
-Delegate when specialization, isolation, independent hypotheses, breadth, latency or fresh judgment adds value. Do not force single-agent or multi-agent execution as ideology.
+See `docs/PROJECT_CONTINUITY.md` and `docs/DOCUMENTATION_CONTRACT.md`.
 
-## 8. Loop/Graph execution runtime remains mandatory
+## 9. Provider-neutral specialist contract
 
-The semantic router was removed; the mechanical execution guarantees were not.
+General roles are logical capability bundles. Preferred fallback order is provider-native scoped worker -> another isolated delegated context -> parent with the same bounded skill bodies. If genuine independent review is required, loss of independence must be visible and may require escalation instead of fallback.
 
-Every executable unit with a verifiable outcome must use a persisted Loop Contract and is accepted only after fresh verifier evidence and a passed Loop Receipt.
+Provider/model names belong only in adapters, endpoint configuration, current observations, or provenance. General Agentit contracts remain provider-neutral.
 
-Multi-node execution must additionally materialize a Graph Contract with dependencies, ownership and handoffs. Final multi-node acceptance requires a passed Graph Receipt backed by the node Loop Receipts.
+## 10. MCP / tools
 
-Loop/Graph infrastructure enforces a plan after the AI has decided it. It must never infer natural-language intent, category, risk, topology, skills or delegation.
+The primary AI chooses tools or an explicit named MCP stack from full context. Software may resolve that explicit ID mechanically. Tool enablement remains least-privilege and follows the applicable review/consent gate.
 
-## 9. Continuity
+## 11. PR-first repository changes
 
-Chat is disposable. Persist `docs/agentit/STATE.md` (or the project's canonical equivalent) per `docs/PROJECT_CONTINUITY.md` for substantial work.
+Repository mutations default to work branch -> commits -> fresh verification -> PR -> review/user merge unless the current task explicitly authorizes another workflow.
 
-Record compact durable state: objective, confirmed constraints, `TASK_DECISION` summary, economy-review verdict, strong-review verdict when required, domain pack/craft depth/effort, worker ownership, branch/PR, verification evidence, blockers and next actions. Do not persist secrets or private chain-of-thought.
+## 12. Non-interactive execution
 
-## 10. PR-first
-
-`work branch -> commits -> verification -> PR -> user merge` unless explicitly overridden for that task.
-
-## 11. Provider-neutral specialist contract
-
-Catalog roles are logical bundles. Fallback order is provider-native scoped worker -> isolated delegated call/fresh context -> parent with the same bounded skill bodies and execution contracts.
-
-A missing independent strong review for high-risk work must degrade visibly rather than being silently replaced by same-context confidence.
-
-## 12. MCP fit
-
-Use `mcp-tooling-fit` and `agentit mcp` to inspect the catalog and explicitly selected named stacks. The primary AI chooses a stack from full context; software resolves that exact `stack_id` mechanically.
-
-MCP activation remains opt-in and plan-first. RISK_3+ tooling requires the applicable review and force/consent gate.
-
-## 13. Cross-provider compatibility
-
-Shared policy describes semantic capability tiers for OpenAI, Anthropic, Google, xAI and compatible clients, not one vendor's model names or subagent API.
-
-## 14. Non-interactive execution
-
-Do not fake interviews or independent reviews. If a material decision cannot be safely inferred and no user input is available, block or take the conservative non-mutating path rather than inventing permission.
+Do not fake interviews, permissions, or independent reviews. When a material decision cannot be safely inferred and no user input is available, prefer a conservative non-mutating path or explicit escalation.

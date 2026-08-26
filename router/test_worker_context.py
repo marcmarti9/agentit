@@ -1,4 +1,4 @@
-"""Adversarial tests for Worker Context Contract (GSD #671 class failures)."""
+"""Adversarial tests for the bounded Worker Context Contract."""
 
 from __future__ import annotations
 
@@ -22,41 +22,19 @@ from worker_context import (
     validate_for_spawn,
 )
 
-
 REPOSITORY = Path(__file__).resolve().parents[1]
 
 
-class DiscoverInstructionsTests(unittest.TestCase):
-    def test_root_agents_and_claude_discovered(self):
+class WorkerContextTests(unittest.TestCase):
+    def test_project_instructions_and_subdir_scope_are_projected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "AGENTS.md").write_text("Never use React.\n", encoding="utf-8")
-            (root / "CLAUDE.md").write_text("Always parameterize SQL.\n", encoding="utf-8")
-            found = discover_project_instructions(root)
-            basenames = {i.basename for i in found}
-            self.assertEqual({"AGENTS.md", "CLAUDE.md"}, basenames)
-            self.assertTrue(all(i.scope == "root" for i in found))
-
-    def test_subdir_agents_discovered_with_work_subdir(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("Root rule A.\n", encoding="utf-8")
-            pkg = root / "packages" / "web"
-            pkg.mkdir(parents=True)
-            (pkg / "AGENTS.md").write_text("Subdir rule B.\n", encoding="utf-8")
+            (root / "AGENTS.md").write_text("Root rule.\n", encoding="utf-8")
+            sub = root / "packages" / "web"
+            sub.mkdir(parents=True)
+            (sub / "AGENTS.md").write_text("Subdir rule.\n", encoding="utf-8")
             found = discover_project_instructions(root, work_subdir="packages/web")
-            paths = {i.path for i in found}
-            self.assertIn("AGENTS.md", paths)
-            self.assertIn("packages/web/AGENTS.md", paths)
-            scopes = {i.path: i.scope for i in found}
-            self.assertEqual("root", scopes["AGENTS.md"])
-            self.assertEqual("subdir", scopes["packages/web/AGENTS.md"])
-
-    def test_missing_instruction_files_are_ok(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            found = discover_project_instructions(root)
-            self.assertEqual([], found)
+            self.assertEqual({"AGENTS.md", "packages/web/AGENTS.md"}, {item.path for item in found})
 
     def test_symlink_project_root_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -67,433 +45,225 @@ class DiscoverInstructionsTests(unittest.TestCase):
             with self.assertRaises(WorkerContextError):
                 discover_project_instructions(link)
 
-
-class SkillsProjectionTests(unittest.TestCase):
-    def test_task_skills_only_not_full_catalog(self):
-        catalog = [f"skill-{i}" for i in range(31)]
+    def test_selected_skills_are_bounded_and_unknown_skill_fails_closed(self):
+        catalog = [f"skill-{index}" for index in range(31)]
         projected = resolve_skills_projected(
-            task_skills=["security-and-hardening", "frontend-ui-engineering"],
+            task_skills=["security-and-hardening"],
             manifest_skills=catalog,
             include_manifest_skills=True,
-            known_repository_skills=catalog
-            + ["security-and-hardening", "frontend-ui-engineering"],
+            known_repository_skills=[*catalog, "security-and-hardening"],
         )
-        self.assertEqual(
-            ["security-and-hardening", "frontend-ui-engineering"],
-            projected,
-        )
-        self.assertLess(len(projected), 31)
-
-    def test_unknown_skill_fails_closed(self):
+        self.assertEqual(["security-and-hardening"], projected)
         with self.assertRaises(WorkerContextError):
             resolve_skills_projected(
-                task_skills=["does-not-exist"],
+                task_skills=["missing"],
                 manifest_skills=[],
                 include_manifest_skills=False,
-                known_repository_skills={"security-and-hardening"},
+                known_repository_skills={"known"},
             )
 
-    def test_manifest_only_when_requested_and_no_task_skills(self):
-        projected = resolve_skills_projected(
-            task_skills=[],
-            manifest_skills=["a", "b"],
-            include_manifest_skills=True,
+    def test_empty_skills_allowed(self):
+        self.assertEqual(
+            [],
+            resolve_skills_projected(
+                task_skills=[], manifest_skills=["a"], include_manifest_skills=False
+            ),
         )
-        self.assertEqual(["a", "b"], projected)
 
-    def test_empty_skills_allowed_for_mechanical_task(self):
-        projected = resolve_skills_projected(
-            task_skills=[],
-            manifest_skills=["a", "b"],
-            include_manifest_skills=False,
+    def test_preferences_drop_secret_shaped_values(self):
+        projected = project_preferences(
+            {
+                "user_style_preferences": {
+                    "preferred_language": "es",
+                    "testing_framework": "pytest",
+                    "api_key": "nope",
+                    "code_style": "sk-abcdefghijklmnopqrstuvwxyz012345",
+                }
+            }
         )
-        self.assertEqual([], projected)
+        self.assertEqual(
+            {"preferred_language": "es", "testing_framework": "pytest"},
+            projected,
+        )
 
-
-class CapabilityEnvelopeTests(unittest.TestCase):
-    def test_worker_projects_only_specialist_capabilities_and_selected_permissions(self):
+    def test_worker_projects_specialist_capabilities_least_privilege(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
             payload = build_worker_context(
                 WorkerTaskSpec(
-                    objective="Implement the responsive account page",
+                    objective="Implement responsive account page",
                     specialist_ids=("frontend-developer",),
                     available_providers=("mcp.github", "local.filesystem"),
                     provider_host="codex",
                 ),
-                project_root=root,
+                project_root=Path(tmp),
             )
-
         envelope = payload["worker_context"]["capability_envelope"]
         granted = {item["capability"]: item for item in envelope["grants"]}
         self.assertEqual("mcp.github", granted["repository.read"]["provider"])
         self.assertEqual(["repository:read"], granted["repository.read"]["permissions"])
-        self.assertNotIn("mail.send", granted)
         self.assertTrue(envelope["least_privilege"])
 
-    def test_spawn_rejects_explicitly_unresolved_required_capability(self):
+    def test_unresolved_or_uninventoried_capability_rejects_spawn(self):
         with tempfile.TemporaryDirectory() as tmp:
-            payload = build_worker_context(
+            root = Path(tmp)
+            unresolved = build_worker_context(
                 WorkerTaskSpec(
-                    objective="Read the repository",
+                    objective="Read repo",
                     required_capabilities=("repository.read",),
                     available_providers=(),
                     provider_host="codex",
                 ),
-                project_root=Path(tmp),
+                project_root=root,
             )
+            with self.assertRaises(WorkerContextError):
+                validate_for_spawn(unresolved)
 
-        with self.assertRaises(WorkerContextError):
-            validate_for_spawn(payload)
-
-    def test_spawn_rejects_capability_plan_without_provider_inventory(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            payload = build_worker_context(
+            pending = build_worker_context(
                 WorkerTaskSpec(
-                    objective="Implement a frontend change",
+                    objective="Frontend task",
                     specialist_ids=("frontend-developer",),
                 ),
-                project_root=Path(tmp),
+                project_root=root,
             )
+            self.assertEqual(
+                "inventory_required",
+                pending["worker_context"]["capability_envelope"]["status"],
+            )
+            with self.assertRaises(WorkerContextError):
+                validate_for_spawn(pending)
 
-        self.assertEqual(
-            "inventory_required",
-            payload["worker_context"]["capability_envelope"]["status"],
-        )
-        with self.assertRaises(WorkerContextError):
-            validate_for_spawn(payload)
-
-    def test_spawn_rejects_tampered_provider_permissions(self):
+    def test_tampered_permissions_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             payload = build_worker_context(
                 WorkerTaskSpec(
-                    objective="Read the repository",
+                    objective="Read repo",
                     required_capabilities=("repository.read",),
                     available_providers=("mcp.github",),
                     provider_host="codex",
                 ),
                 project_root=Path(tmp),
             )
-
-        payload["worker_context"]["capability_envelope"]["grants"][0][
-            "permissions"
-        ].append("repository:admin")
+        payload["worker_context"]["capability_envelope"]["grants"][0]["permissions"].append(
+            "repository:admin"
+        )
         with self.assertRaises(WorkerContextError):
             validate_for_spawn(payload)
 
-
-class PreferenceProjectionTests(unittest.TestCase):
-    def test_projects_style_preferences_only(self):
-        prefs = {
-            "user_style_preferences": {
-                "testing_framework": "pytest",
-                "response_style": "terse",
-                "api_key": "should-not-appear",
-            },
-            "other": "ignored",
-        }
-        projected = project_preferences(prefs)
-        self.assertEqual("pytest", projected["testing_framework"])
-        self.assertEqual("terse", projected["response_style"])
-        self.assertNotIn("api_key", projected)
-
-    def test_secret_shaped_values_dropped(self):
-        prefs = {
-            "user_style_preferences": {
-                "preferred_language": "es",
-                "code_style": "sk-abcdefghijklmnopqrstuvwxyz012345",
-            }
-        }
-        projected = project_preferences(prefs)
-        self.assertEqual({"preferred_language": "es"}, projected)
-
-
-class Adversarial671Tests(unittest.TestCase):
-    """Prove projection prevents fresh negligence; absence fails the gate."""
-
-    def _fixture_project(self, root: Path) -> None:
-        (root / "AGENTS.md").write_text(
-            "# Project rules\n\nNever use React.\n"
-            "All database queries must be parameterized.\n",
-            encoding="utf-8",
-        )
-        (root / ".agentit").mkdir()
-        manifest = {
-            "profiles": ["frontend", "core"],
-            "skills": {
-                "security-and-hardening": {"managed": True},
-                "frontend-ui-engineering": {"managed": True},
-                "test-driven-development": {"managed": True},
-            },
-        }
-        (root / ".agentit" / "skills-manifest.json").write_text(
-            json.dumps(manifest), encoding="utf-8"
-        )
-
-    def test_worker_receives_project_instruction_never_use_react(self):
+    def test_new_contract_projects_packs_references_without_legacy_tiers(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            self._fixture_project(root)
-            payload = build_and_validate(
+            (root / "AGENTS.md").write_text("Project rule.\n", encoding="utf-8")
+            payload = build_worker_context(
                 WorkerTaskSpec(
-                    objective="Add a settings page",
-                    skills=["security-and-hardening", "frontend-ui-engineering"],
-                    verification="pytest -q",
-                    risk="RISK_2",
+                    objective="Investigate and fix UI issue",
+                    relevant_packs=("frontend", "engineering"),
+                    skills=("debugging-and-error-recovery",),
+                    references=("agentit://artifacts/ui-evidence.txt",),
+                    parent_topology="writer_reviewer",
+                    independent_review_required=True,
                 ),
                 project_root=root,
-                preferences={
-                    "user_style_preferences": {
-                        "testing_framework": "pytest",
-                        "response_style": "terse",
-                    }
-                },
-                require_project_instructions=True,
-                known_repository_skills={
-                    "security-and-hardening",
-                    "frontend-ui-engineering",
-                    "test-driven-development",
-                },
+                known_repository_skills={"debugging-and-error-recovery"},
             )
-            ctx = payload["worker_context"]
-            joined = "\n".join(i["content"] for i in ctx["project_instructions"])
-            self.assertIn("Never use React", joined)
-            self.assertIn("parameterized", joined.lower())
+        context = payload["worker_context"]
+        self.assertEqual(2, context["schema_version"])
+        self.assertEqual(["frontend", "engineering"], context["relevant_packs"])
+        self.assertEqual(["agentit://artifacts/ui-evidence.txt"], context["references_projected"])
+        self.assertNotIn("domain_pack", json.dumps(context))
+        self.assertNotIn("craft_depth", json.dumps(context))
+        self.assertNotIn("spend", context.get("orchestration", {}))
+        prompt = render_worker_prompt(payload)
+        self.assertIn("relevant_packs: frontend, engineering", prompt)
+        self.assertIn("independent_review_required: true", prompt)
+
+    def test_project_instructions_and_selected_skills_survive_projection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "AGENTS.md").write_text(
+                "Never use React.\nAll database queries must be parameterized.\n",
+                encoding="utf-8",
+            )
+            payload = build_and_validate(
+                WorkerTaskSpec(
+                    objective="Add settings page",
+                    skills=("security-and-hardening", "frontend-ui-engineering"),
+                    verification="pytest -q",
+                ),
+                project_root=root,
+                preferences={"user_style_preferences": {"testing_framework": "pytest"}},
+                known_repository_skills={"security-and-hardening", "frontend-ui-engineering"},
+                require_project_instructions=True,
+            )
+            context = payload["worker_context"]
             prompt = render_worker_prompt(payload)
             self.assertIn("Never use React", prompt)
-            self.assertIn("security-and-hardening", prompt)
             self.assertEqual(
                 ["security-and-hardening", "frontend-ui-engineering"],
-                ctx["skills_projected"],
+                context["skills_projected"],
             )
-            self.assertEqual("pytest", ctx["preferences_projected"]["testing_framework"])
-            self.assertIn("no commits", ctx["constraints"])
+            self.assertIn("no commits", context["constraints"])
 
-    def test_skip_projection_fails_assert_and_spawn_gate(self):
+    def test_skip_project_instruction_projection_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            self._fixture_project(root)
+            (root / "AGENTS.md").write_text("Rule.\n", encoding="utf-8")
             payload = build_worker_context(
-                WorkerTaskSpec(objective="Add a settings page", skills=["security-and-hardening"]),
+                WorkerTaskSpec(objective="x"),
                 project_root=root,
-                known_repository_skills={"security-and-hardening"},
                 skip_project_instructions=True,
             )
-            with self.assertRaises(WorkerContextError) as cm:
+            with self.assertRaisesRegex(WorkerContextError, "fresh negligence"):
                 assert_projection_complete(payload)
-            self.assertIn("fresh negligence", str(cm.exception).lower())
-            with self.assertRaises(WorkerContextError):
-                validate_for_spawn(payload, require_project_instructions=True)
 
-    def test_does_not_project_all_thirty_one_skills(self):
+    def test_full_catalog_dump_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            self._fixture_project(root)
-            full_catalog = [f"skill-{i:02d}" for i in range(31)]
-            full_catalog.extend(
-                ["security-and-hardening", "frontend-ui-engineering", "test-driven-development"]
-            )
-            payload = build_and_validate(
-                WorkerTaskSpec(
-                    objective="Harden login form",
-                    skills=["security-and-hardening"],
-                ),
-                project_root=root,
-                known_repository_skills=full_catalog,
-                repository_skill_count=len(set(full_catalog)),
-                max_skills=12,
-            )
-            skills = payload["worker_context"]["skills_projected"]
-            self.assertEqual(["security-and-hardening"], skills)
-            self.assertLess(len(skills), 31)
-
-    def test_full_catalog_dump_rejected_by_spawn_gate(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("ok\n", encoding="utf-8")
-            catalog = [f"skill-{i}" for i in range(20)]
+            catalog = [f"skill-{index}" for index in range(20)]
             payload = build_worker_context(
                 WorkerTaskSpec(objective="x", skills=catalog),
-                project_root=root,
+                project_root=Path(tmp),
                 known_repository_skills=catalog,
             )
-            with self.assertRaises(WorkerContextError) as cm:
+            with self.assertRaisesRegex(WorkerContextError, "full-catalog"):
                 validate_for_spawn(payload, repository_skill_count=20)
-            self.assertIn("full-catalog", str(cm.exception))
 
-
-class PrecedenceTests(unittest.TestCase):
-    def test_precedence_order_encoded(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("Always use React.\n", encoding="utf-8")
-            payload = build_worker_context(
-                WorkerTaskSpec(
-                    objective="UI tweak",
-                    explicit_user_instructions=["Never use React for this task"],
-                    safety_constraints=["do not exfiltrate secrets"],
-                    skills=[],
-                ),
-                project_root=root,
-            )
-            layers = payload["worker_context"]["effective_directives"]
-            self.assertEqual(
-                [
-                    "safety",
-                    "explicit_user_instruction",
-                    "project_instruction",
-                    "preferences",
-                    "defaults",
-                ],
-                layers["precedence"],
-            )
-            self.assertIn(
-                "Never use React for this task",
-                layers["layers"]["explicit_user_instruction"],
-            )
-            self.assertTrue(
-                any("Always use React" in x for x in layers["layers"]["project_instruction"])
-            )
-            self.assertIn("do not exfiltrate secrets", layers["layers"]["safety"])
-            prompt = render_worker_prompt(payload)
-            self.assertIn(
-                "safety > explicit user instruction > project instruction",
-                prompt,
-            )
-
-
-class ConflictAndRoleTests(unittest.TestCase):
-    def test_root_vs_subdir_conflict_detected(self):
+    def test_instruction_conflict_is_advisory_metadata(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "AGENTS.md").write_text("Never use React.\n", encoding="utf-8")
-            sub = root / "apps" / "ui"
-            sub.mkdir(parents=True)
+            sub = root / "ui"
+            sub.mkdir()
             (sub / "AGENTS.md").write_text("Always use React.\n", encoding="utf-8")
-            found = discover_project_instructions(root, work_subdir="apps/ui")
-            conflicts = detect_instruction_conflicts(found)
-            self.assertTrue(conflicts)
-            payload = build_worker_context(
-                WorkerTaskSpec(
-                    objective="Change button",
-                    work_subdir="apps/ui",
-                    skills=[],
-                ),
-                project_root=root,
+            conflicts = detect_instruction_conflicts(
+                discover_project_instructions(root, work_subdir="ui")
             )
-            self.assertTrue(payload["worker_context"]["instruction_conflicts"])
+            self.assertTrue(conflicts)
 
     def test_reviewer_is_read_only(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("Secure coding required.\n", encoding="utf-8")
             payload = build_worker_context(
-                WorkerTaskSpec(
-                    objective="Review auth diff",
-                    role="reviewer",
-                    skills=["security-and-hardening"],
-                ),
-                project_root=root,
-                known_repository_skills={"security-and-hardening"},
+                WorkerTaskSpec(objective="Review diff", role="reviewer"),
+                project_root=Path(tmp),
             )
-            constraints = payload["worker_context"]["constraints"]
-            self.assertTrue(any("read-only" in c for c in constraints))
-            self.assertTrue(any("review only" in c for c in constraints))
-
-    def test_implementer_vs_reviewer_roles_differ(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("x\n", encoding="utf-8")
-            impl = build_worker_context(
-                WorkerTaskSpec(objective="impl", role="implementer"),
-                project_root=root,
-            )
-            rev = build_worker_context(
-                WorkerTaskSpec(objective="rev", role="reviewer"),
-                project_root=root,
-            )
-            self.assertEqual("implementer", impl["worker_context"]["role"])
-            self.assertEqual("reviewer", rev["worker_context"]["role"])
-            self.assertNotEqual(
-                impl["worker_context"]["constraints"],
-                rev["worker_context"]["constraints"],
-            )
-
-
-class ArtifactAndSecretTests(unittest.TestCase):
-    def test_artifact_uri_projected(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("ok\n", encoding="utf-8")
-            payload = build_worker_context(
-                WorkerTaskSpec(
-                    objective="Continue from handoff",
-                    artifact_uris=["agentit://artifacts/ref-abc123.txt"],
-                ),
-                project_root=root,
-            )
-            self.assertEqual(
-                ["agentit://artifacts/ref-abc123.txt"],
-                payload["worker_context"]["artifact_uris"],
-            )
-            prompt = render_worker_prompt(payload)
-            self.assertIn("agentit://artifacts/ref-abc123.txt", prompt)
+        constraints = payload["worker_context"]["constraints"]
+        self.assertTrue(any("read-only" in item for item in constraints))
+        self.assertTrue(any("review only" in item for item in constraints))
 
     def test_secret_shaped_artifact_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("ok\n", encoding="utf-8")
             with self.assertRaises(WorkerContextError):
                 build_worker_context(
                     WorkerTaskSpec(
                         objective="x",
-                        artifact_uris=["sk-abcdefghijklmnopqrstuvwxyz012345"],
+                        artifact_uris=("sk-abcdefghijklmnopqrstuvwxyz012345",),
                     ),
-                    project_root=root,
+                    project_root=Path(tmp),
                 )
 
-    def test_auditable_json_shape(self):
+    def test_cli_build_and_skip_gate(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "AGENTS.md").write_text("Never use React.\n", encoding="utf-8")
-            payload = build_and_validate(
-                WorkerTaskSpec(
-                    objective="Add form",
-                    skills=["security-and-hardening", "frontend-ui-engineering"],
-                    risk="RISK_2",
-                    extra_constraints=["no dependency changes"],
-                ),
-                project_root=root,
-                preferences={
-                    "user_style_preferences": {
-                        "testing_framework": "pytest",
-                        "response_style": "terse",
-                    }
-                },
-                known_repository_skills={
-                    "security-and-hardening",
-                    "frontend-ui-engineering",
-                },
-            )
-            ctx = payload["worker_context"]
-            self.assertEqual(1, ctx["schema_version"])
-            self.assertEqual(["AGENTS.md"], ctx["project_instruction_paths"])
-            self.assertEqual(
-                ["security-and-hardening", "frontend-ui-engineering"],
-                ctx["skills_projected"],
-            )
-            self.assertEqual("RISK_2", ctx["risk"])
-            self.assertIn("no commits", ctx["constraints"])
-            # JSON serializable audit object
-            json.dumps(payload)
-
-
-class CliTests(unittest.TestCase):
-    def test_cli_build_json(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("Never use React.\n", encoding="utf-8")
-            completed = subprocess.run(
+            good = subprocess.run(
                 [
                     "python3",
                     str(REPOSITORY / "router" / "worker_context.py"),
@@ -512,19 +282,10 @@ class CliTests(unittest.TestCase):
                 stderr=subprocess.PIPE,
                 check=False,
             )
-            self.assertEqual(0, completed.returncode, completed.stderr)
-            payload = json.loads(completed.stdout)
-            self.assertIn("worker_context", payload)
-            self.assertIn(
-                "Never use React",
-                payload["worker_context"]["project_instructions"][0]["content"],
-            )
+            self.assertEqual(0, good.returncode, good.stderr)
+            self.assertIn("worker_context", json.loads(good.stdout))
 
-    def test_cli_skip_fails(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "AGENTS.md").write_text("Never use React.\n", encoding="utf-8")
-            completed = subprocess.run(
+            bad = subprocess.run(
                 [
                     "python3",
                     str(REPOSITORY / "router" / "worker_context.py"),
@@ -541,8 +302,8 @@ class CliTests(unittest.TestCase):
                 stderr=subprocess.PIPE,
                 check=False,
             )
-            self.assertNotEqual(0, completed.returncode)
-            self.assertIn("fresh negligence", completed.stderr.lower())
+            self.assertNotEqual(0, bad.returncode)
+            self.assertIn("fresh negligence", bad.stderr.lower())
 
 
 if __name__ == "__main__":

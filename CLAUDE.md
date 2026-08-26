@@ -1,16 +1,14 @@
-# Directrices de Claude Code
+# Claude Code adapter
 
-Usa `~/AGENTS.md` como guía global y selecciona la topología mínima que justifique la tarea. `architect` es el owner y punto de contacto con el usuario, no una fase obligatoria de una pirámide.
+`AGENTS.md` is Agentit's canonical provider-neutral operating contract. Follow it first; use this file only for Claude Code-specific execution details.
 
-- Resuelve directamente por defecto.
-- Usa `plan + directa` para trabajo amplio pero acoplado.
-- Usa `probe` para investigación aislada y de solo lectura.
-- Usa `fan-out`, pipeline o DAG solo con independencia real, ownership separado y beneficio neto de coordinación.
-- Usa `orchestrator`, `supervisor`, `worker` y `auditor` como capacidades adaptativas, no como cadena fija.
-- Mantén un único writer por archivo o contrato; usa worktrees/ramas aisladas para escritores paralelos.
-- Para RISK_3/RISK_4 conserva contexto completo, recupera originales y exige revisión/verificación proporcional.
-- No actives hooks, MCP, proxies ni compresión destructiva sin revisión, allowlist y rollback.
+- Make the semantic `bare | agentit` dispatch from the actual task context. No activation phrase is required.
+- Keep the primary/parent agent responsible for task interpretation, integration, verification, and the user-facing answer.
+- Use Claude Code subagents when specialization, context isolation, independent review, or real parallelism materially helps. Do not force a fixed agent hierarchy.
+- Agent files under `agents/` are optional role adapters. Select only a role that fits the reviewed task plan.
+- Before delegating, build a bounded Worker Context Contract: objective, scope, selected skill bodies, selected references, tools/permissions, ownership, expected handoff, verifier, and stop condition.
+- One writer owns each shared file or mutable resource unless isolation is explicit.
+- High-risk work follows Agentit's review, rollback, and post-check rules.
+- Machine-local models, plugins, MCP servers, endpoints, permissions, and credentials belong in local Claude configuration, not in this repository.
 
-Cada subagente debe recibir objetivo, alcance de lectura/escritura, entradas, salida, verificador y stop condition; los resultados grandes deben persistirse como artefactos referenciados.
-
-OmniRoute en `http://localhost:20128` solo se usa después de comprobar que hay un listener y que el routing es el esperado.
+If Claude Code cannot provide an independent worker required by the plan, degrade visibly: use the parent with the same bounded skills for ordinary delegation, or stop/escalate when genuine independence is a safety requirement.

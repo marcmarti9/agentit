@@ -1,191 +1,144 @@
 ---
 name: architect-orchestrator
-description: Intelligent orchestration after interview. Exercise independent architectural judgment, delegate for expertise/independence/context isolation/critique, and enforce Loop and Graph Engineering at runtime.
+description: JIT orchestration for material work. Help the primary AI choose useful topology, bounded workers, independent alternatives/review, and deterministic Loop/Graph execution without imposing a fixed hierarchy.
 ---
 
-# Adaptive Agent Architecture
+# Adaptive orchestration
 
-The Architect owns the user relationship, decomposition, judgment, integration and final answer. Multi-agent is neither mandatory nor a fallback: use it whenever it materially improves outcome, context hygiene or independent judgment.
+The primary AI owns decomposition, judgment, integration and the user-facing answer. This skill is optional JIT guidance when delegation, independent alternatives, graph ownership or bounded execution materially improves the task.
 
-The Architect is not a yes-man. Preserve the user's outcome and hard constraints, but independently evaluate a proposed implementation/architecture. If a materially better design exists, recommend it and explain the trade-off before commitment; if the user's original choice remains safe/feasible and they still prefer it, respect that informed choice.
+Agent roles are capabilities, not a mandatory org chart. Do not require an Architect/Supervisor/Worker hierarchy for work that does not benefit from it.
 
 ## Before topology
 
-1. mechanical vs product-affecting;
-2. product work -> load and run `interview-me`;
-3. separate desired outcome/hard constraints from any suggested implementation method;
-4. challenge a materially weaker proposed method and resolve the user's informed choice;
-5. choose domain pack;
-6. craft depth only for visual/design work;
-7. ensure selected skill **bodies** are actually loaded, not just their IDs;
-8. for material structural/interface choices, compare genuinely different designs before committing;
-9. choose topology based on dependencies + useful independence;
-10. instantiate runtime contracts before execution: bounded loops for every executable unit, and a validated graph for multi-node work.
+The primary AI should already have or construct a reviewed `TASK_DECISION` covering the material outcome, unresolved unknowns, relevant packs, selected skills/references/tools, complexity, risk, topology, plan and verification.
 
-## Harness path
+Before delegating:
 
-Resolve the Agentit root from provider discovery/bootstrap state or the active checkout. Do **not** assume `~/code/agentit` or another human-managed path. In examples below, `<agentit-root>` means that resolved runtime/checkout root; agents should substitute the actual path mechanically.
+1. inspect project/user constraints;
+2. separate the desired outcome from a merely suggested implementation method;
+3. challenge a materially weaker method and preserve the user's final safe discretionary choice;
+4. ensure selected skill bodies/references are actually available JIT;
+5. compare genuinely different alternatives before expensive-to-reverse structural commitment when that comparison has value;
+6. choose topology from dependencies, ownership and useful independence;
+7. instantiate deterministic Loop/Graph contracts for executable work when their enforcement is useful.
 
-## No single-agent gravity
+Do not ask users to choose internal pack names, worker counts or topology jargon.
 
-Do not ask only “can one agent do this?”. Ask “does isolation or independent work improve this?”. Valid reasons to delegate include independent packages/files/domains, large documentation/reference sets, several research hypotheses/lenses, different expertise/tools, creative concept diversity and independent critique/review.
+## Why delegate
 
-A strong parent should spend scarce context on synthesis and hard decisions. Use capable workers for high-volume reading/research when available and require bounded receipts/evidence. The parent verifies and integrates; it does not blindly trust summaries.
+Useful reasons include:
 
-Do not hardcode provider model names into portable policy. Provider adapters map semantic tiers: judgment-heavy parent, capable research/implementation worker, independent critic.
+- large independent reading/research sets;
+- distinct implementation packages or ownership boundaries;
+- different expertise/tools;
+- independent hypotheses or design directions;
+- fresh-context critique/review;
+- isolation that reduces context contamination.
 
-## Design alternatives before structural commitment
+Stop when coordination costs more than the expected benefit. A capable parent model is not a reason to avoid all delegation, and multi-agent theater is not a reason to spawn workers.
 
-The first plausible architecture—whether proposed by the agent or the user—is not automatically the right one. When work materially changes a public interface, module seam, persistence model, protocol, service boundary, migration strategy, or another expensive-to-reverse structural choice, **design it more than once before implementation**.
+## Structural alternatives
 
-This is not a tax on mechanical work. Skip it for obvious local edits, routine bug fixes with an established seam, and changes whose alternatives are not materially different.
+For a material public interface, service/module seam, persistence model, protocol, migration strategy or other expensive-to-reverse decision, compare more than the first plausible design when realistic alternatives exist.
 
-For structural work:
+Make alternatives genuinely different in seam/ownership/failure model, then compare interface simplicity, hidden complexity, locality, testability, operational risk, reversibility, migration cost and fit with project conventions. Record the durable conclusion, not private chain-of-thought.
 
-1. Write the constraints and invariants any viable design must satisfy.
-2. Produce at least **two genuinely different** designs. Use independent workers when fresh context or concept independence is useful; otherwise the Architect may produce them directly.
-3. Make each design concrete enough to compare: interface/surface, ownership, dependencies, failure modes, migration/rollback implications, test seam, and a short caller/example flow.
-4. Compare on **interface simplicity, hidden complexity, locality of change, testability, operational risk, reversibility, migration cost, and fit with existing project conventions**.
-5. Recommend one design or an explicit hybrid and record why the rejected option lost.
-6. If this recommendation differs from the user's proposed method, present the material trade-off instead of silently switching or silently agreeing.
-7. Persist the resolved decision when it is durable enough to matter to future maintainers.
+## Topology vocabulary
 
-Do not manufacture cosmetic variants of the same architecture. If two proposals have the same seam, ownership and failure model with different names, they are one design.
+Possible model-owned topologies include:
 
-## Topologies
+- `direct` — tightly coupled single-owner work;
+- `probe` — read-only investigation;
+- `fan_out` — genuinely independent research/packages/concepts;
+- `pipeline` — dependent stages;
+- `writer_reviewer` — one writer plus fresh review;
+- `audit` — independent high-impact review;
+- custom DAG — explicit multi-node dependencies/ownership.
 
-- `direct`: tightly coupled single-thread work with no material isolation benefit;
-- `probe`: read-only investigation;
-- `fan_out`: independent research/packages/concepts;
-- `pipeline`: dependent stages;
-- `writer_reviewer`: one owner + fresh review;
-- `audit`: high-impact independent review;
-- design competition: independent concepts followed by explicit jury;
-- DAG: multi-package dependencies when needed.
+These are options, not required stages. There are no hard minimum/maximum worker quotas.
 
-`subagents.recommended` is soft guidance. No hard min/max quotas.
+## Worker Context Contract
+
+Every delegated worker receives a bounded projection rather than the parent/global context dump:
+
+- objective, scope and role;
+- project instructions and explicit user constraints;
+- relevant pack labels;
+- selected skill bodies and selected references/artifacts;
+- risk and parent topology;
+- least-privilege capability envelope;
+- allowed read/write ownership;
+- expected output, verifier and stop condition.
+
+Use `router/worker_context.py` for mechanical projection/validation. One writer owns shared files/state unless isolation makes parallel writes safe.
+
+Provider adapters may implement spawning differently. The semantic worker contract remains provider-neutral.
 
 # Runtime Loop Engineering
 
-Loop Engineering is mandatory for every executable unit, including work performed directly by the Architect when it has a verifiable outcome. A loop declares **observable goal, verifier, stop condition, attempt budget and escalation boundary** before action.
+A Loop Contract is useful when an executable unit has an observable outcome and retries need deterministic bounds. It declares goal, verifier, stop condition, attempt budget and escalation boundary before action.
 
-Use the resolved runtime rather than a fixed home path:
+Resolve the Agentit root from the active installation/checkout rather than hardcoding a human path.
+
+Example agent-facing commands:
 
 ```bash
 python3 <agentit-root>/router/runtime_cli.py loop-init \
   --state .agentit/runtime/loops/<node-id>.json \
   --goal "<observable goal>" --verifier "<verifier>" --stop "<stop condition>"
+
+python3 <agentit-root>/router/runtime_cli.py loop-check \
+  --state .agentit/runtime/loops/<node-id>.json
 ```
 
-Record every attempt with actual evidence. The default budget is 2 attempts total (one automatic retry). A retry must provide fresh evidence or a different strategy. Do not weaken/fix the verifier to manufacture progress.
-
-A unit is complete only if:
-
-```bash
-python3 <agentit-root>/router/runtime_cli.py loop-check --state .agentit/runtime/loops/<node-id>.json
-```
-
-returns success. The resulting `Loop Receipt` is the evidence accepted by Graph Engineering. Narrative “done” without a passed receipt is not completion.
-
-If the budget is exhausted, evidence shows the approach is invalid, or a material decision leaves the authorized scope, escalate instead of looping indefinitely.
+The default runtime budget is bounded. Retries require fresh evidence or a meaningfully different strategy. Never weaken a verifier to manufacture success. Exhausted or invalid routes escalate instead of looping indefinitely.
 
 # Runtime Graph Engineering
 
-When topology has more than one execution node, materialize it as a DAG before spawning work. Store runtime artifacts under ignored `.agentit/runtime/`.
+When execution genuinely has multiple dependent nodes, materialize a DAG under ignored `.agentit/runtime/`.
 
-A graph spec defines for each node:
+Each node defines:
 
-- stable node id and objective;
-- dependency ids;
-- exclusive `write_paths` ownership (read-only nodes use none);
+- stable id/objective;
+- dependencies;
+- exclusive write paths (or read-only);
 - expected handoff artifacts where relevant.
 
-Initialize/validate:
+The deterministic runtime rejects cycles, invalid dependencies, unsafe paths and overlapping write ownership before execution. Only ready nodes should run; dependent completion requires accepted receipts/artifacts. Final graph success requires the graph verifier/receipt, not narrative confidence.
 
-```bash
-python3 <agentit-root>/router/runtime_cli.py graph-init \
-  --spec .agentit/runtime/graph-spec.json \
-  --state .agentit/runtime/graph.json
-```
+## Independent review
 
-The runtime rejects cycles, unknown/self dependencies, unsafe paths and overlapping write ownership before execution.
+Use fresh independent review when consequence, structural commitment or uncertainty makes independence valuable. High-risk/security-sensitive/production/destructive work follows the stronger gates in the risk policy.
 
-Spawn **only** nodes returned by:
+Reviewers challenge assumptions and evidence; they do not own routing or silently rewrite user intent. Same-context self-review is not independent when real independence is required.
 
-```bash
-python3 <agentit-root>/router/runtime_cli.py graph-ready --state .agentit/runtime/graph.json
-```
+## Design/public-facing work
 
-A worker node can unlock dependents only after returning a passed Loop Receipt. Persist that receipt and record completion with `graph-complete`. Missing expected artifacts block completion. A blocked/escalated node must be represented with `graph-block`; do not silently route around it.
+Design work can benefit from independent reference research, alternative directions and fresh visual critique, but there is no fixed concept count or named quality tier. The primary AI chooses the amount of exploration justified by the requested ambition, uncertainty and cost.
 
-Final multi-node success requires:
-
-```bash
-python3 <agentit-root>/router/runtime_cli.py graph-check --state .agentit/runtime/graph.json
-```
-
-A final answer claiming multi-node completion without a passed Graph Receipt is a protocol failure.
-
-## Public visual pipeline
-
-A public landing/homepage/company or brand website/portfolio/storefront, especially greenfield or total redesign, is design-primary.
-
-Greenfield/total Studio default graph:
-
-1. deep recommendation-led interview;
-2. live reference research, often fan-out by independent lens;
-3. **3 genuinely different concepts** in Studio (2 can be enough for Polished uncertainty);
-4. Architect judges against brief + research + constraints;
-5. write one `DESIGN_DIRECTION` artifact;
-6. one final implementation owner consumes that direction;
-7. fresh independent design critic;
-8. desktop/mobile browser verification.
-
-Research/concept nodes should be read-only. `DESIGN_DIRECTION` is an explicit handoff artifact. Final implementation has one writer owner. Critic is read-only. Each node has its own bounded loop and receipt.
-
-Concepts differ in visual thesis, composition, typography/imagery and narrative/interaction—not palette swaps.
+When multiple directions are useful, make them genuinely different in visual thesis/composition/type/imagery/narrative—not palette swaps. Final implementation should still have clear ownership and browser/device verification appropriate to the claim.
 
 ## Skill loading
 
-Use `always_core + task/stage skills`, never the whole catalog. “Smallest useful” does not mean dropping art direction from a public website.
-
-A route/profile/worker containing a skill name is not evidence the skill ran. The model must read/receive the `SKILL.md` body or provider-native loading must provide equivalent evidence. Keep the Skill Load Receipt.
-
-## Worker contract
-
-Every spawn receives objective, scope, role, project/user instructions, actual task-scoped skill bodies, ownership, expected output/evidence, verifier, stop condition and loop state/id. One writer per shared file/state.
-
-Workers return findings/artifacts + Skill Load Receipt when applicable + mandatory Loop Receipt. The Architect validates/records the receipt before marking a graph node completed.
-
-## Critic gate
-
-Use a fresh independent critic for large structural/high-impact plans, architecture/migration decisions where isolation improves review, Studio greenfield public visual work and total visual redesigns.
-
-The critic should detect both architectural errors and decision-quality failures: uncritical agreement with a user-proposed method, silent overriding of an informed user choice, or performative disagreement without material evidence.
-
-For visual work the critic checks hierarchy, composition, type, imagery, motion, direction fidelity, generic AI-template signals, cardification/container abuse, repeated section silhouettes, responsive behavior and whether reference research visibly affected the design.
+Load only the task/stage skills the primary AI selected. A skill ID in a catalog/worker spec is not equivalent to loading its body. Do not dump entire packs or the repository skill catalog into workers.
 
 ## Stop spawning when
 
-- branches are no longer independent;
-- coordination cost exceeds context/expertise benefit;
-- multiple workers would need the same write ownership;
-- remaining work is a tightly coupled integration decision owned by the Architect.
+- work is no longer independent;
+- workers need conflicting write ownership;
+- the remaining work is a tightly coupled integration decision;
+- coordination/context cost exceeds expected expertise/independence benefit.
 
 ## Anti-patterns
 
-- forced single-agent because “one model can do it”;
+- mandatory hierarchy;
+- forced single-agent execution for ideology;
 - workers for show;
-- rubber-stamping a materially weaker user-proposed implementation;
-- silently replacing a safe explicit user choice after recommending an alternative;
-- accepting the first plausible structural design without comparing a materially different alternative;
-- cosmetic “alternatives” with the same seam/ownership/failure model;
-- parent serially reading a massive corpus without considering isolation;
-- skill IDs without bodies;
-- hardcoded `~/code/agentit` runtime paths;
-- execution without Loop Receipt;
-- advancing a dependent node without `graph-ready`;
-- cycles or overlapping writers hidden in prose orchestration;
-- concept competition where every result is the same template;
-- skipping fresh critique on flagship/total visual work;
-- unbounded correction loops.
+- fixed worker quotas or fixed design-concept counts;
+- legacy effort/craft tiers;
+- parent serially reading a huge independent corpus without considering isolation;
+- skill IDs without selected bodies;
+- hardcoded local runtime paths;
+- unbounded correction loops;
+- completion claims without the required fresh verifier/receipt.

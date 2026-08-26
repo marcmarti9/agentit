@@ -1,6 +1,7 @@
-"""Unit tests for Agentit Scout & Incubator pipeline."""
+"""Unit tests for private project-local Agentit Scout state."""
 
 import json
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -20,6 +21,23 @@ class ScoutPipelineTestCase(unittest.TestCase):
     def tearDown(self) -> None:
         self.tmpdir.cleanup()
 
+    def test_direct_state_is_project_local_private(self) -> None:
+        item = add_candidate("https://example.com/tool", project_root=self.project_dir)
+        state = self.project_dir / ".agentit" / "scout" / "candidates.yaml"
+        self.assertTrue(state.is_file())
+        self.assertEqual(stat.S_IMODE(state.stat().st_mode), 0o600)
+        self.assertEqual(stat.S_IMODE(state.parent.stat().st_mode), 0o700)
+        self.assertEqual(item["source"], "https://example.com/tool")
+        self.assertEqual(1, len(load_candidates(self.project_dir)["candidates"]))
+
+    def test_reject_roundtrip_stays_project_local(self) -> None:
+        item = add_candidate("candidate alpha", project_root=self.project_dir)
+        self.assertTrue(reject_candidate(item["id"], "not useful", self.project_dir))
+        inspected = inspect_candidate(item["id"], self.project_dir)
+        self.assertIsNotNone(inspected)
+        self.assertEqual("rejected", inspected["decision"])
+        self.assertEqual("not useful", inspected["reason"])
+
     def test_scout_status_cli(self) -> None:
         proc = subprocess.run(
             [str(AGENTIT_CLI), "scout", "status", "--project", str(self.project_dir)],
@@ -28,10 +46,10 @@ class ScoutPipelineTestCase(unittest.TestCase):
             check=True,
         )
         data = json.loads(proc.stdout)
-        self.assertIn("active_candidates", data)
+        self.assertEqual(0, data["active_candidates"])
         self.assertIn("candidates", data)
 
-    def test_scout_add_and_inspect_cli(self) -> None:
+    def test_scout_add_and_inspect_cli_uses_project_argument(self) -> None:
         add_proc = subprocess.run(
             [str(AGENTIT_CLI), "scout", "add", "https://x.com/test_idea", "--project", str(self.project_dir)],
             capture_output=True,
@@ -39,8 +57,9 @@ class ScoutPipelineTestCase(unittest.TestCase):
             check=True,
         )
         data = json.loads(add_proc.stdout)
-        self.assertEqual(data["source"], "https://x.com/test_idea")
         cand_id = data["id"]
+        self.assertEqual(data["source"], "https://x.com/test_idea")
+        self.assertTrue((self.project_dir / ".agentit" / "scout" / "candidates.yaml").is_file())
 
         inspect_proc = subprocess.run(
             [str(AGENTIT_CLI), "scout", "inspect", cand_id, "--project", str(self.project_dir)],

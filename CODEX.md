@@ -1,26 +1,20 @@
-# Codex
+# Codex adapter
 
-Usa `~/.codex/AGENTS.md` como guía global canónica de Codex. El instalador también mantiene `~/AGENTS.md` para los proveedores que usan la guía común.
+`AGENTS.md` is Agentit's canonical provider-neutral operating contract. Follow it first; use this file only for Codex-specific execution details.
 
-El instalador instala globalmente solo el perfil `core` de `profiles.yaml`
-(incluye `using-agentit`: di **usa agentit** / **use agentit** para activar el
-playbook) y mantiene acotado el catálogo de descubrimiento. Activa perfiles
-adicionales por proyecto con `./agentit enable <profile> --project .`; el comando
-muestra un plan por defecto y requiere `--apply` para escribir. Para migrar una instalación antigua
-que tenía todas las skills globales, usa `bash install.sh --provider codex
---apply --prune-on-demand`; solo poda copias exactas y no modificadas con backup.
+- Make the semantic `bare | agentit` dispatch from the actual task context. No activation phrase is required.
+- Keep the primary/parent agent responsible for task interpretation, integration, verification, and the user-facing answer.
+- Use Codex subagents only when specialization, context isolation, independent review, or real parallelism materially helps. A fixed multi-agent chain is never required.
+- Before delegating, project a bounded Worker Context Contract: objective, scope, selected skill bodies, selected references, tools/permissions, ownership, expected handoff, verifier, and stop condition.
+- One writer owns each shared file or mutable resource unless isolation is explicit.
 
-- No cargues la jerarquía de Claude Architect → Supervisor → Worker por defecto.
-- Resuelve directamente tareas pequeñas y medianas.
-- Para tareas grandes, crea un plan y usa subagentes solo si existen frentes independientes que puedan avanzar en paralelo.
-- No leas documentación completa al iniciar una sesión; sigue el `AGENTS.md` del repositorio y abre únicamente los documentos que este enrute para la tarea actual.
-- Mantén las delegaciones compactas: objetivo, restricciones, archivos relevantes y criterio de aceptación.
+## Optional Codex worker profiles
 
-Los perfiles portables de `.codex/agents/` son workers acotados para Codex:
+`.codex/agents/` contains optional convenience profiles for installations where the named models are available:
 
-- `terra_worker`: worker predeterminado cuando el backend permite seleccionarlo.
-- `luna_worker`: perfil opcional; úsalo solo cuando la sesión confirme que Luna está disponible.
+- `terra_worker` — balanced bounded execution worker.
+- `luna_worker` — fast bounded execution worker.
 
-La selección del modelo principal, el esfuerzo de razonamiento y las opciones del backend multiagente viven en `~/.codex/config.toml`, porque son preferencias locales y pueden variar entre máquinas. No subas ese archivo completo: puede contener rutas, servidores MCP y otros ajustes específicos del equipo.
+They are adapters, not Agentit dependencies. If a profile/model is unavailable, use a host-native worker and project the same Agentit worker contract instead. Model availability and the primary model configuration are machine-local concerns and belong in the user's Codex configuration.
 
-La configuración multiagente detallada de `agents/` sigue orientada a Claude Code. La política de Codex es adaptativa y no obliga a crear una cadena fija de agentes.
+Agentit installation and updates should use the portable bootstrap path documented in the README. Legacy shell helpers may exist for compatibility, but they are not part of the semantic task-routing contract.

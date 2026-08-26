@@ -216,3 +216,21 @@ candidates:
   - Site-level data sensitivity
   decision: catalog_risk_2_optional
   evidence: GSC MCP packages used alongside GA4 in agency stacks 2026
+- id: appllama-mobile-design
+  source: https://github.com/Appllama/appllama-skills
+  claim: Live top-grossing mobile app screen and flow research plus native Expo/React Native design guidance
+  type: skill_and_mcp
+  status: validated
+  integration_mode: on_demand_profiles
+  benefits:
+  - Mobile-specific reference intelligence from shipped high-grossing apps
+  - Native Expo/React Native implementation and simulator-verification method
+  - Fills Agentit's mobile gap without making the paid MCP global
+  costs:
+  - Appllama Pro subscription and credit-metered research calls
+  - Remote service availability and expiring media URLs
+  risks:
+  - Catalog harvesting or cloning competitor screens instead of synthesizing patterns
+  - Context duplication if upstream skill bodies and Agentit's slim contract are loaded together
+  decision: integrate_as_optional_mobile_stack
+  evidence: MIT upstream skill repo and official Appllama MCP docs verified 2026-08-26; Agentit keeps an original slim skill, mobile profile, and opt-in mobile_design MCP stack

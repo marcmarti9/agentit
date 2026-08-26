@@ -5,7 +5,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
-# Local-only reports, credentials and provider state must never enter this repo.
+# Local-only reports, credentials, provider state, continuity and Scout queues.
 *.local.yaml
 *.local.json
 *.secret

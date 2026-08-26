@@ -45,7 +45,7 @@ If Appllama is unavailable, say the research is incomplete and fall back to live
 
 ## Implementation baseline
 
-Override only when the repo already differs:
+First detect the repo's actual Expo/React Native versions and follow current official docs. Override these defaults when the project or platform contract differs:
 
 - Expo + Expo Router, React Native, TypeScript
 - Reanimated + Gesture Handler for motion/gestures
@@ -55,9 +55,9 @@ Override only when the repo already differs:
 - semantic / system colors in **light and dark from day one**
 - native controls (Switch, Slider, SegmentedControl, pickers, context menus) over rebuilt fakes
 - SF Symbols / Material Symbols; no emoji in chrome
-- `borderCurve: 'continuous'` on rounded rects
+- on iOS 13+, prefer `borderCurve: 'continuous'` on rounded rects when it matches the design
 - navigator-owned titles; tabs are peers with independent stacks
-- `router.push` to go deeper, `replace` for one-way doors (signed-in, onboarding done, purchase completed)
+- use `router.navigate` for ordinary navigation; use `router.push` when a distinct new stack entry is intentional, and `replace` for one-way doors (signed-in, onboarding done, purchase completed)
 
 Web-design defaults that usually fail on mobile: indigo glow CTAs, glassmorphism on every card, mesh-gradient heroes, custom tab bars that fight the system, JS-thread springs, missing empty/error/loading states.
 
@@ -65,7 +65,7 @@ Web-design defaults that usually fail on mobile: indigo glow CTAs, glassmorphism
 
 Every screen answers: what presentation is this, can the user come back, and what does back do on iOS **and** Android?
 
-- Push vs replace vs dismissTo
+- Navigate/push vs replace vs dismissTo
 - Modal (task with Cancel/Done) vs formSheet vs fullScreenModal vs overlay
 - One-way doors must not re-enter old state via back
 - Re-tapping an active tab pops to that tab's root

@@ -6,10 +6,10 @@ This reference turns the useful workflow behind the bookmarked “$10k website�
 
 Primary bookmarked sources reviewed 2026-08-25:
 
-- https://x.com/monokern/status/2074889830501155091 — article/thread on building a high-craft website with Claude Code using concrete visual references and iterative review.
-- https://x.com/bateshkaaa/status/2079218516150862086 — creator framing around AI-compressed agency-quality website delivery.
+- https://x.com/bateshkaaa/status/2079218516150862086 — primary source for the AI-compressed agency-quality website workflow: skills, section-level screenshot references, explicit constraints/ban list, first build, then separate polish passes.
 - https://x.com/heynavtoor/status/2083221614595051602 — cinematic / Apple-like product-page workflow reference.
 - https://x.com/xiathis/status/2077468692493791353 — cinematic high-craft web production reference.
+- https://x.com/monokern/status/2074889830501155091 — 21st.dev component catalog with ready-made prompts to paste into a coding agent; useful for discovering interaction primitives, not a wholesale site-production method.
 
 Authority: **process/design inspiration**, not independent evidence that a website is worth any quoted dollar amount or that cinematic motion improves conversion.
 

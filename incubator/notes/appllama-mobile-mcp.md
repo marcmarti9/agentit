@@ -12,7 +12,7 @@ Inspected 2026-08-26 from:
 |---|---|
 | Failure/job | AI mobile UIs look like wrapped websites; agents invent chrome instead of studying shipped winners |
 | Agentit already | Strong web design pack; no Expo/RN native skill; no App Store screen library |
-| Better upstream | Live 920+ top-grossing screens/flows/paywalls via MCP + native-fidelity laws |
+| Better upstream | Live library covering 900+ top-grossing mobile apps, with screens/flows/paywalls exposed through the MCP plus native-design guidance |
 | Strengthen existing? | No — `design-inspiration-research` is web-reference DNA, not a mobile screen library |
 | Context cost | New opt-in skill + situational MCP. Keep out of `core` |
 | Runtime vs guidance | Both: remote research MCP + Agentit-owned implementation contract |

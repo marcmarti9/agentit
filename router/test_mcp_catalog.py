@@ -39,6 +39,23 @@ class McpCatalogTestCase(unittest.TestCase):
         ids = [s["id"] for s in rec["servers"]]
         self.assertEqual(ids, ["agentit-manager", "context7", "github", "playwright"])
 
+    def test_mobile_design_stack_is_opt_in_remote_research(self) -> None:
+        rec = recommend_stack("mobile_design")
+        self.assertEqual(rec["stack"], "mobile_design")
+        self.assertEqual([s["id"] for s in rec["servers"]], ["appllama", "context7"])
+
+        server = get_server("appllama")
+        self.assertEqual(server["risk"], "RISK_1")
+        self.assertFalse(server["requires_secret"])
+        self.assertFalse(server["write_capable"])
+
+        snip = snippet_for_server("appllama", provider="json")
+        self.assertEqual(
+            snip["mcpServers"]["appllama"]["url"],
+            "https://mcp.appllama.io/mcp",
+        )
+        self.assertFalse(snip["auto_activate"])
+
     def test_free_text_task_recommendation_is_rejected(self) -> None:
         with self.assertRaises(McpCatalogError):
             recommend_for_task("implement figma design in react")
@@ -77,6 +94,7 @@ class McpCatalogTestCase(unittest.TestCase):
         summary = catalog_summary()
         self.assertGreaterEqual(summary["server_count"], 10)
         self.assertIn("developer_core", summary["stacks"])
+        self.assertIn("mobile_design", summary["stacks"])
         self.assertGreaterEqual(len(list_stacks()), 5)
 
     def test_cli_list(self) -> None:

@@ -68,8 +68,11 @@ That writes `agentit-manager` into detected providers so every agent can self-ma
 | **github** | Issues/PRs (OAuth preferred) |
 | **playwright** | Browser smoke tests |
 
+Situational mobile research lives in stack `mobile_design` (`appllama` + `context7`). It is **not** part of `developer_core`. Enable only for Expo/React Native product UI; the library is credit-metered.
+
 ```bash
 agentit mcp enable-stack developer_core --apply
+agentit mcp enable-stack mobile_design --apply   # mobile tasks only
 ```
 
 ## Risk gates

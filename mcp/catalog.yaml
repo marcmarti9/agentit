@@ -30,6 +30,9 @@ stacks:
   design_studio:
     description: "Craft-first visual workflow with official Figma MCP plus browser verification; pair with the Agentit design skill profile."
     servers: [figma, context7, playwright, chrome-devtools]
+  mobile_design:
+    description: "Opt-in mobile product research for Expo/React Native: shipped app patterns from Appllama plus current framework/library docs. Appllama is paid and credit-metered."
+    servers: [appllama, context7]
   backend_data:
     description: "Schema/query context. Use staging or read-only credentials only."
     servers: [context7, postgres, supabase, github]
@@ -307,6 +310,33 @@ servers:
       - "Available read/write tools depend on Figma seat, permissions, and current client support."
       - "Use Code Connect/component mappings when available instead of regenerating existing components."
       - "Review write-back to shared files and design-system libraries before applying broad changes."
+
+  - id: appllama
+    name: Appllama MCP
+    tier: situational
+    category: design
+    risk: RISK_1
+    trust: official_vendor
+    summary: "Read-only research over shipped top-grossing mobile app screens, flows and UI patterns for native product design. Paid and credit-metered."
+    homepage: https://appllama.io/mcp
+    package: null
+    remote_url: https://mcp.appllama.io/mcp
+    requires_secret: false
+    write_capable: false
+    evidence:
+      - "Official Appllama MCP documentation and public MIT appllama-skills repository, verified 2026-08-26"
+      - "Agentit skills/mobile-native-app-design uses it only as opt-in reference research"
+    claude_add: "claude mcp add --transport http appllama https://mcp.appllama.io/mcp"
+    mcp_json_remote:
+      url: https://mcp.appllama.io/mcp
+    codex_toml: |
+      [mcp_servers.appllama]
+      url = "https://mcp.appllama.io/mcp"
+    safety_notes:
+      - "Paid/credit-metered remote service; call get_credits before paid research calls."
+      - "Treat returned screens as references: extract patterns, never clone competitor pixels or ship Appllama watermarks."
+      - "Do not harvest or bulk-export the catalog; research only what the current task needs."
+      - "Authentication/account access is handled by the remote service/client; never commit vendor credentials."
 
   - id: linear
     name: Linear MCP

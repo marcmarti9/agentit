@@ -63,3 +63,13 @@ MIT License. Copyright (c) 2024 Next Level Builder.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright and permission notice. The Software is provided "AS IS", without warranty of any kind.
 
 Agentit's `ui-ux-pro-max-intelligence` is a provider-neutral adapter/integration guide around the upstream searchable UI/UX design-intelligence project. Agentit does not vendor the upstream database or scripts in this repository; it queries/discovers them JIT when available and keeps creative direction in Agentit's own design stack.
+
+## Appllama / appllama-skills
+
+Source: https://github.com/Appllama/appllama-skills
+MCP: https://mcp.appllama.io/mcp
+Docs: https://appllama.io/mcp
+
+MIT-licensed companion skills. Agentit does not vendor the upstream SKILL.md bodies or reference playbooks.
+
+Agentit's `mobile-native-app-design` skill is an original, slimmer Agentit contract informed by the published usage/design method (study real top-grossing screens, then implement native Expo/React Native UI). The live library remains a third-party paid MCP. Do not claim drop-in compatibility with `npx skills add appllama/appllama-skills`.

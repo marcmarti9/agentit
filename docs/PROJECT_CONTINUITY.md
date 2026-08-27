@@ -101,4 +101,4 @@ If cross-machine persistence is needed, use an intentionally chosen private/sync
 
 ## Git / PR workflow
 
-Repository changes default to work branch -> verification -> documentation-drift check -> PR -> review/user merge unless explicitly overridden. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.
+Repository changes default to work branch -> verification -> PR -> review/user merge unless explicitly overridden. For substantial repository work, the documentation-drift check is part of verification and must pass before the PR handoff. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.

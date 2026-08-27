@@ -4,13 +4,13 @@ global_profiles:
   - core
 profiles:
   core:
-    description: "Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a domain pack, then load task skills JIT."
+    description: "Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a domain pack, then load task skills JIT. Core also carries the minimum durable-documentation and cold-session invariants."
     skills:
       - using-agentit
       - task-router
       - using-agent-skills
   frontend:
-    description: "Core plus browser, performance, and UI maintenance guidance."
+    description: "Core plus browser, performance, and UI maintenance guidance. Installation/discovery only; runtime selection remains JIT."
     extends:
       - core
     skills:
@@ -22,7 +22,7 @@ profiles:
       - design-taste-frontend
       - specialist-agent-routing
   backend:
-    description: "Core plus API boundaries, observability, and service maintenance."
+    description: "Core plus API boundaries, observability, and service maintenance. Installation/discovery only; runtime selection remains JIT."
     extends:
       - core
     skills:
@@ -65,6 +65,8 @@ profiles:
       - impeccable-design
       - emil-design-eng
       - design-inspiration-research
+      - design-md-workflow
+      - diagram-and-architecture-visuals
       - design-trend-researcher
       - creative-web-experiences
       - visual-storytelling-director
@@ -137,8 +139,10 @@ profiles:
       - mcp-tooling-fit
       - deprecation-and-migration
       - design-inspiration-research
+      - design-md-workflow
       - design-taste-frontend
       - design-trend-researcher
+      - diagram-and-architecture-visuals
       - documentation-and-adrs
       - doubt-driven-development
       - emil-design-eng

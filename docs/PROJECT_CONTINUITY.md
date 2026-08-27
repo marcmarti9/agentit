@@ -2,6 +2,8 @@
 
 Chat/session context is disposable. Substantial work should be resumable after a lost session, provider switch, crash, context exhaustion, or long pause without publishing private working notes into the repository.
 
+Continuity preserves **evidence and resumable state**, not active model context. A resumed session still starts semantically cold from Agentit's three-skill core and makes a fresh decision about non-core skills, references, tools and workers.
+
 ## Default state is local and private
 
 Agentit's default operational state lives at:
@@ -15,7 +17,7 @@ If a project already has an intentional, tracked canonical state/status document
 Operational state and durable project documentation are different:
 
 - `.agentit/STATE.md` — current objective, execution state, blockers, next actions, temporary handoff context.
-- tracked project docs — durable architecture, interfaces, decisions, operations, and troubleshooting that belong in the product repository.
+- tracked project docs — durable architecture, component responsibilities, interfaces, decisions, operations, failure/recovery procedures and verification that belong in the product repository.
 
 ## Minimum state
 
@@ -29,8 +31,8 @@ What is being built/changed and why.
 Audience, success criteria, constraints, non-goals.
 
 ## Execution decision
-Relevant packs, complexity, risk, topology, selected skills/tools/references,
-worker ownership, and review requirements.
+Relevant packs, complexity, risk, topology, previously selected skills/tools/references,
+worker ownership, MCPs enabled by the task, cleanup ownership, and review requirements.
 
 ## Current status
 Complete, in progress, blocked, not started.
@@ -56,7 +58,9 @@ Last checkpoint and exact resume path.
 
 ## Complexity and planning
 
-Continuity records the semantic `TASK_DECISION`, including `complexity: trivial | bounded | substantial | structural`. It does not impose named quality/depth tiers. The primary AI decides how much work a task deserves and records the actual plan, topology, selected capabilities, and verification strategy.
+Continuity records the previous semantic `TASK_DECISION`, including `complexity: trivial | bounded | substantial | structural`. It does not impose named quality/depth tiers. The primary AI decides how much work a task deserves and records the actual plan, topology, selected capabilities, and verification strategy.
+
+Recorded selections are **not automatic reactivation instructions**. On resume, they are evidence about the previous route. The fresh session re-checks current scope, repository state, freshness, availability and risk before selecting non-core skills/references/MCPs again.
 
 For substantial or structural work, the agent should normally surface a short user-facing route summary before material execution: what it will inspect/change, major stages, delegation if any, and how completion will be verified. Keep this concise unless the user asks for a full plan.
 
@@ -75,7 +79,7 @@ Do not create continuity ceremony for trivial work.
 
 ## Persist
 
-Useful state includes branch/PR identifiers, selected packs/skills/references/tools, complexity/risk/topology, worker ownership, stable decisions, changed files, verification receipts, failures/reproduction steps, blockers, and next actions.
+Useful state includes branch/PR identifiers, previous packs/skills/references/tools, complexity/risk/topology, worker ownership, task-added MCPs and cleanup ownership, stable decisions, changed files, verification receipts, failures/reproduction steps, blockers, and next actions.
 
 Never persist secrets, credentials, private chain-of-thought, raw chat transcripts, giant tool dumps, or personal plans unrelated to the public project.
 
@@ -83,15 +87,18 @@ Never persist secrets, credentials, private chain-of-thought, raw chat transcrip
 
 A fresh agent should:
 
-1. inspect `.agentit/STATE.md` or the explicitly configured project equivalent;
-2. inspect the referenced branch/PR/diff and only the files needed next;
-3. verify recorded assumptions still hold;
-4. repair stale operational state locally;
-5. rebuild/review `TASK_DECISION` if scope, risk, or independence materially changed;
-6. continue from `Next actions` instead of re-asking already resolved questions.
+1. start from the three-skill Agentit core, not from the previous task's injected skill/tool context;
+2. inspect `.agentit/STATE.md` or the explicitly configured project equivalent as resumable evidence;
+3. inspect the referenced branch/PR/diff and only the files needed next;
+4. verify recorded assumptions still hold;
+5. repair stale operational state locally;
+6. rebuild/review the current `TASK_DECISION` and explicitly re-select any non-core skills, references, workers or MCPs still justified;
+7. continue from `Next actions` instead of re-asking already resolved user decisions.
+
+A recorded MCP may still be configured/exposed by the provider. That is availability, not current authorization. Do not use it until the fresh decision selects it again. Clean up task-owned MCP enablement when safe and no longer needed.
 
 If cross-machine persistence is needed, use an intentionally chosen private/synced workspace or an existing tracked team status document. Agentit must not auto-publish private operational state to obtain portability.
 
 ## Git / PR workflow
 
-Repository changes default to work branch -> verification -> PR -> review/user merge unless explicitly overridden. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.
+Repository changes default to work branch -> verification -> PR -> review/user merge unless explicitly overridden. For substantial repository work, the documentation-drift check is part of verification and must pass before the PR handoff. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.

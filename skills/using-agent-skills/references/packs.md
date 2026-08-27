@@ -12,6 +12,8 @@ The primary AI then decides which skill bodies to load and **how many**. There i
 
 A pack with twenty listed skills can still lead to `selected_skills: []` or one selected skill. Another task may justify many. That decision belongs to the model looking at the actual task.
 
+A new execution session starts semantically cold: installed profiles and skill files remain discovery surfaces, but only the three global core skills are assumed active until the new task selects more.
+
 ## Worker projection contract
 
 A spawned worker should receive something conceptually equivalent to:
@@ -31,7 +33,7 @@ references:
 
 The pack names are discovery/provenance labels. **Only the selected skill bodies consume worker skill context.**
 
-Do not infer a skill count from pack size, task size, risk label, or worker title.
+Do not infer a skill count from pack size, task size, risk label, worker title, installed profile, or a previous session's selection.
 
 ---
 
@@ -58,6 +60,7 @@ Do not infer a skill count from pack size, task size, risk label, or worker titl
 - `context-engineering` — control large or fragmented engineering context deliberately.
 - `git-workflow-and-versioning` — branch/commit/history discipline when Git handoff matters.
 - `documentation-and-adrs` — preserve durable architecture/decision knowledge when it would be expensive to rediscover.
+- `diagram-and-architecture-visuals` — choose a truthful architecture/flow visualization route when spatial structure materially improves engineering understanding.
 - `observability-and-instrumentation` — logs, metrics, traces and operational diagnostics when runtime behavior matters.
 - `ci-cd-and-automation` — CI/CD and automated quality gates.
 - `deprecation-and-migration` — safely retire or migrate interfaces/systems while preserving compatibility requirements.
@@ -76,6 +79,7 @@ Do not infer a skill count from pack size, task size, risk label, or worker titl
 - `code-simplification` — keep component/state architecture lean.
 - `anti-ai-slop-design` — lightweight guard against generic visual clichés and fabricated content.
 - `design-taste-frontend` — stronger visual judgment when implementation also needs art-direction sensitivity.
+- `design-md-workflow` — read/maintain a durable project visual-identity contract when `DESIGN.md` or equivalent persistent design memory materially applies.
 - `source-driven-development` — current framework/browser/API behavior matters.
 - `security-and-hardening` — auth/session/input/trust-boundary work in frontend surfaces.
 - `test-driven-development` — component/behavior tests when useful.
@@ -87,13 +91,15 @@ If visual direction is material, inspect the `design` pack too. That does not re
 
 ## design
 
-**Use for:** public websites, landing pages, product/brand visual systems, visual direction, interaction design, motion, scrollytelling, Figma work and spatial/3D experiences.
+**Use for:** public websites, landing pages, product/brand visual systems, visual direction, interaction design, motion, scrollytelling, Figma work, diagrams and spatial/3D experiences.
 
 **Skills in this pack:**
 
 - `design-taste-frontend` — visual direction, hierarchy, composition and anti-generic frontend design judgment.
 - `anti-ai-slop-design` — detect cliché AI aesthetics, fabricated proof and generic structural repetition.
 - `design-inspiration-research` — research references, extract design DNA, synthesize rather than clone, and preserve provenance. Its references include the distilled premium/high-craft website production playbook.
+- `design-md-workflow` — encode/read/verify durable project visual identity and tokens when persistent multi-session design memory is useful.
+- `diagram-and-architecture-visuals` — route branded/general diagrams, code-grounded architecture maps, or simpler project-native diagrams without defaulting to AI-slop boxes.
 - `impeccable-design` — structured visual critique and polish passes.
 - `ui-ux-pro-max-intelligence` — broader UI/UX pattern intelligence when the task benefits from it.
 - `emil-design-eng` — interaction craft and design-engineering judgment.
@@ -151,6 +157,7 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `mob
 - `architect-orchestrator` — structural or multi-service work.
 - `debugging-and-error-recovery` — reproduce/localize backend failures.
 - `deprecation-and-migration` — interface/service migration and compatibility work.
+- `diagram-and-architecture-visuals` — communicate service topology/flows when a maintained visual is materially clearer than prose.
 
 ---
 
@@ -170,6 +177,7 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `mob
 - `architect-orchestrator` — multi-stage migrations and dependent systems.
 - `deprecation-and-migration` — compatibility and rollout/rollback for schema/system migration.
 - `verification-before-completion` — pre/post evidence for data changes.
+- `diagram-and-architecture-visuals` — ER/schema/data-flow/lineage visuals when relationships are easier to verify spatially.
 
 If no existing data skill fits the actual engine/domain, discover a better skill or use current canonical sources. Never force PostgreSQL guidance onto an unrelated database because it happens to be the nearest pack entry.
 
@@ -190,6 +198,7 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 - `reference-intelligence` — market/product/comparable evidence materially affects the decision.
 - `architect-orchestrator` — broad product + technical decomposition or multi-stage ownership.
 - `marketing-and-growth` — product positioning/growth concerns are genuinely part of the decision.
+- `diagram-and-architecture-visuals` — journey/flow/story-map visuals when they materially clarify a product decision.
 
 ---
 
@@ -201,7 +210,7 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 
 - `marketing-and-growth` — main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.
 - `shipping-and-launch` — launch/distribution readiness and operational launch checks.
-- `anti-ai-slop-writing` — remove generic/robotic marketing prose and preserve brand voice.
+- `anti-ai-slop-writing` — preserve claims and brand voice while removing generic/robotic wording, structural AI tells and unsupported hype.
 - `reference-intelligence` — current competitor/market/launch evidence and source provenance.
 - `source-driven-development` — current platform/API/policy behavior when it affects execution.
 - `doubt-driven-development` — challenge high-impact strategy, claims or unsupported assumptions.
@@ -240,6 +249,7 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 - `doubt-driven-development` — adversarial source/assumption review.
 - `architect-orchestrator` — parallel independent research branches and synthesis when that actually helps.
 - `documentation-and-adrs` — preserve durable research decisions/knowledge when relevant to a project.
+- `diagram-and-architecture-visuals` — visualize a researched system/process only when the visual is grounded in the collected evidence.
 
 For current legal, tax, regulatory, medical, financial or other domain-specific work, Agentit does **not** need a permanent domain pack first. Use live authoritative domain sources whenever correctness depends on them.
 
@@ -251,7 +261,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 **Skills in this pack:**
 
-- `anti-ai-slop-writing` — remove generic, repetitive or robotic prose.
+- `anti-ai-slop-writing` — preserve meaning/voice while removing generic, repetitive, robotic or templated prose.
 - `documentation-and-adrs` — durable technical/project documentation and decision records.
 - `source-driven-development` — factual/current source-grounded writing.
 - `reference-intelligence` — multi-source reports, source roles and provenance.
@@ -297,6 +307,8 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `reference-intelligence` — competitor, market, design or source-heavy client work.
 - `marketing-and-growth` — marketing/growth delivery.
 - `verification-before-completion` — prove client-facing changes before claiming completion.
+- `design-md-workflow` — preserve a client's visual identity across repeated delivery when a durable design contract exists or is justified.
+- `diagram-and-architecture-visuals` — client-facing system/process visuals when they materially improve handoff or decision quality.
 
 ---
 
@@ -307,13 +319,17 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - Skill order inside a pack does not imply priority or execution sequence.
 - There are no hidden pack levels or recommended counts.
 - The primary AI may inspect multiple packs and choose any justified subset.
+- Profiles classify installation/discovery availability; packs classify semantic possibilities; neither one is active runtime context by itself.
+- Every new session re-selects non-core skill bodies, references and tools from the actual current task.
 - General Agentit procedures are provider/model-neutral; provider-specific details belong only where the real integration/source requires them.
 - `reference-intelligence` is JIT, not global. Load it when source/provenance judgment is material.
 - `mcp-tooling-fit` is JIT when external tool/MCP selection itself needs judgment.
 - `security-and-hardening` is JIT when a real security/trust boundary exists, not for every code edit.
 - `architect-orchestrator` / `specialist-agent-routing` are JIT when orchestration/delegation actually helps.
 - `long-horizon-recovery` is JIT for long/resumable work.
-- The base Agentit protocol still requires appropriate verification even when no dedicated verification skill body is selected.
+- `design-md-workflow` is JIT even when `DESIGN.md` persists as durable project knowledge.
+- `diagram-and-architecture-visuals` is JIT; a diagram tool is never required merely because a task is technical.
+- The base Agentit protocol still requires appropriate verification and documentation-drift checks even when no dedicated verification/documentation skill body is selected.
 
 ## Missing pack or skill
 

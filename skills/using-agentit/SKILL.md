@@ -33,6 +33,22 @@ Everything else is JIT. Availability is not context injection.
 
 Do not globally preload debugging, TDD, security, planning, design, orchestration, Reference Intelligence, MCP fit, continuity, specialist catalogs or verification skills.
 
+## Cold-start invariant
+
+Every new execution session is **semantically cold**.
+
+At session start:
+
+- only the three global core skill bodies above may be assumed active;
+- previously selected task skills, references, workers and MCPs are not inherited as current-task decisions;
+- installed project profiles and copied skill packages are discovery/availability metadata, not active context;
+- a tool merely appearing in the host UI does not authorize or justify using it;
+- the current primary AI must make a fresh `TASK_DECISION` and re-select every non-core skill/reference/tool it actually needs.
+
+MCP configuration can persist at the host/provider level even when the Agentit task is over. Treat that persistence as **availability, not activation**. Track MCPs enabled by the current task and disable those task-added MCPs at completion when the provider supports safe toggling, unless the user/project explicitly asked to keep them available. Do not blanket-disable unrelated user MCPs or mutate global provider state merely to manufacture a clean-looking status.
+
+If a host cannot unload a third-party MCP without a restart, the next session is still logically clean: ignore the stale tool surface unless the new `TASK_DECISION` selects it again.
+
 ## Agentit path
 
 After `DISPATCH_DECISION=agentit`:
@@ -46,7 +62,8 @@ inspect context
 -> stronger review when risk/disagreement requires it
 -> execute through Loop/Graph contracts when applicable
 -> fresh verification
--> durable docs only when the project gained durable knowledge
+-> durable documentation check
+-> clean up task-added JIT context/tooling where safe
 -> PR-first for repository changes
 ```
 
@@ -81,6 +98,7 @@ risk / reversibility / external effects
 selected skills
 selected references
 selected tools / MCPs
+MCPs enabled by this task and cleanup owner
 workers / topology / ownership
 plan
 verification / stop / rollback / post-check
@@ -100,6 +118,34 @@ The absence of curated Agentit material is never permission to rely on stale mem
 ## Tools/MCPs are JIT
 
 Load `mcp-tooling-fit` only when tool selection materially matters. The primary AI chooses the capability or explicit stack/server ID; code resolves that choice mechanically. Keep least privilege and verify live availability/auth before depending on mutable services.
+
+MCP lifecycle is task-scoped by default:
+
+```text
+available/configured
+-> selected by current TASK_DECISION
+-> enabled only if needed
+-> used within least privilege
+-> verified
+-> task-added enablement cleaned up when safe
+```
+
+Never interpret an installed profile, named MCP stack, or previously enabled server as permission to auto-load or auto-use it in a later session.
+
+## Core documentation invariant
+
+Durable documentation is part of substantial repository work, so the **minimum documentation contract lives in core** even though the deeper `documentation-and-adrs` skill remains JIT.
+
+For every substantial change:
+
+1. Inspect the project's canonical docs before implementation and identify what may become stale.
+2. Document each materially changed component/responsibility at the level needed to understand it independently: purpose, boundaries, important data/control flow, interfaces/configuration/invariants, failure behavior, and how to verify it.
+3. Keep cross-component architecture/integration docs consistent with those component-level docs. Do not force unrelated components into one giant page merely to minimize file count.
+4. Prefer updating the existing canonical source over creating duplicate status/history documents.
+5. Record durable non-obvious decisions and trade-offs when rediscovery would be expensive; never record private chain-of-thought.
+6. Before completion, perform a documentation-drift check alongside code/runtime verification.
+
+Do not create documentation for trivial helpers, obvious syntax, temporary execution state or raw task history. The full repository contract is `docs/DOCUMENTATION_CONTRACT.md`; load `documentation-and-adrs` only when a substantial documentation/ADR procedure itself needs more context.
 
 ## Independent audit
 
@@ -143,7 +189,7 @@ Multi-node work additionally defines dependencies, handoffs and write ownership.
 
 Substantial/resumable operational state defaults to private local `.agentit/STATE.md` plus `.agentit/checkpoints/`. Do not auto-commit transient Agentit state.
 
-Tracked Markdown should contain durable architecture, interfaces, decisions, operations and troubleshooting introduced or changed by the work. Update an existing canonical source instead of creating duplicates.
+Tracked Markdown should contain durable architecture, component responsibilities, interfaces, decisions, operations, failure/recovery procedures and verification introduced or changed by the work. Update an existing canonical source instead of creating duplicates.
 
 Never persist secrets, raw transcripts or private chain-of-thought.
 
@@ -156,11 +202,13 @@ Agentit optimizes for the user's actual goal, not automatic agreement. If the us
 Repository changes default to:
 
 ```text
-work branch -> implementation -> fresh verification -> PR -> user/reviewer merge decision
+work branch -> implementation -> fresh verification -> documentation drift check -> PR -> user/reviewer merge decision
 ```
+
+Before handing off, clean up task-added MCP enablement where doing so is safe and does not disturb unrelated concurrent/user state.
 
 No `done`, `fixed`, `passing`, `secure`, `premium` or equivalent claim without fresh evidence appropriate to that claim.
 
 ## Core invariant
 
-> Keep the bootstrap tiny. Keep general Agentit provider-neutral. Packs expose possibilities; the primary AI chooses the actual context, plan and topology. Deterministic software enforces what was explicitly decided.
+> Start every session cold. Keep the bootstrap tiny. Keep general Agentit provider-neutral. Packs and profiles expose possibilities; the primary AI chooses the actual context, plan and topology. Durable knowledge is documented. Deterministic software enforces what was explicitly decided.

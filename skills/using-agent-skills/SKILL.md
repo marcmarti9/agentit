@@ -11,6 +11,14 @@ A pack is only a semantic map of an area. It helps the model discover what skill
 
 Canonical runtime pack map: `references/packs.md`.
 
+## Cold-session rule
+
+A new execution session starts with only Agentit's global core (`using-agentit`, `task-router`, `using-agent-skills`) as active skill context.
+
+Installed/copied skills and enabled project profiles may remain on disk for discovery, but **installation is not activation**. Do not inherit the previous session's `selected_skills`. Re-read the task, inspect relevant pack maps, and make a fresh selection.
+
+Likewise, removing a skill from the current selection means stop carrying its body into later stages/workers even if the file remains installed. Persisting skill files across sessions is a cache/discovery optimization, not semantic state.
+
 ## Pack-first discovery
 
 For an Agentit task/stage:
@@ -23,6 +31,7 @@ understand task
 -> load only those SKILL.md bodies
 -> execute / verify
 -> add or remove skills later if new evidence changes the need
+-> next session starts from core again
 ```
 
 The primary AI owns the selection. There are intentionally **no fixed skill counts and no pack levels**.
@@ -46,16 +55,27 @@ The deciding question is not “what level is this task?” but:
 
 > **Which skill bodies would materially improve this specific stage, and are they worth their context cost?**
 
+## Profiles vs packs vs active context
+
+These are deliberately different concepts:
+
+- **Profiles** (`profiles.yaml`) are installation/discovery bundles. They answer “which skills should be available in this environment/project?”
+- **Packs** (`references/packs.md`) are semantic maps. They answer “which capabilities might be relevant to this domain?”
+- **Selected skills** are the current session/stage context. They answer “which exact skill bodies should this model read now?”
+
+Never collapse those three layers. Enabling a profile does not activate every skill in it; inspecting a pack does not load its skills; a previous session's selection does not survive as the next session's selection.
+
 ## Selection rules
 
 1. **Use packs as discovery maps, not bundles.** Never inject a whole pack merely because its domain matches.
 2. **No quotas.** Do not target 1, 3, 5, or any other predetermined number of skills.
-3. **Load bodies, not IDs.** A skill is active only when the executing model reads its `SKILL.md` or receives equivalent provider-native injection.
-4. **Cross-pack selection is allowed.** A task can pull from `frontend` + `design`, `backend` + `security` concerns inside engineering, `marketing` + `seo`, etc., when the actual problem warrants it.
+3. **Load bodies, not IDs.** A skill is active only when the executing model reads its `SKILL.md` or receives equivalent provider-native injection for the current stage.
+4. **Cross-pack selection is allowed.** A task can pull from `frontend` + `design`, `backend` + security concerns inside engineering, `marketing` + `seo`, etc., when the actual problem warrants it.
 5. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and advanced verification remain JIT.
 6. **Project-local skills win.** Prefer compatible project-local instructions/skills over generic global guidance.
 7. **Do not force an unrelated pack.** If Agentit lacks a tax/legal/database/etc. pack, use authoritative live sources and discover/adapt a real skill only if a durable procedure is missing.
 8. **Selection can change during work.** Add a skill when a concrete gap appears; remove/stop carrying one when it no longer helps.
+9. **No cross-session semantic carry-over.** Previous task selection is evidence/history only; every new session reselects from core.
 
 ## References are also JIT
 
@@ -63,9 +83,13 @@ The deciding question is not “what level is this task?” but:
 
 When `TASK_DECISION.reference_plan.mode != none`, load `reference-intelligence` and the smallest relevant curated/live source set. A web task may use design references; a current tax report should use current authoritative tax sources; a trivial repository rename may use none.
 
+References from a previous session are not current-task context merely because they were useful before. Re-select and re-verify when freshness or provenance matters.
+
 ## Tools are also JIT
 
 Do not load `mcp-tooling-fit` or enable MCPs merely because they exist. Select tools only when they materially improve the reviewed plan.
+
+Host/provider MCP configuration may persist beyond a task. That persistence means **available**, not **selected**. Track MCPs the current task enabled and disable those additions at completion when safe; never use a stale exposed MCP in a new session unless the new `TASK_DECISION` selects it again.
 
 ## Worker Context Contract
 
@@ -104,6 +128,8 @@ Do not create a new skill for a one-off fact lookup.
 - fixed `essential/standard/deep` pack tiers;
 - hardcoded minimum/maximum skill counts;
 - loading every skill in the selected pack;
+- treating a persistent profile install as persistent active context;
+- carrying yesterday's selected skills into today's task without re-selection;
 - spawning every worker with the same giant context;
 - using a pack name as a substitute for reading selected skill bodies;
 - adding skills “just in case” without a concrete reason;
@@ -120,6 +146,7 @@ Why these pack(s)?
 Why each selected skill?
 Why is each selected skill worth its token cost now?
 What useful context did we deliberately NOT load?
+Which previous-session context did we deliberately NOT inherit?
 ```
 
 There is no correct skill count. The correct set is whatever the primary AI can justify from the actual task.

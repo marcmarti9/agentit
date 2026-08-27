@@ -48,7 +48,7 @@ class JitHygieneTests(unittest.TestCase):
             REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn("Profiles vs packs vs active context", text)
-        self.assertIn("Installation is not activation", text)
+        self.assertIn("installation is not activation", text)
         self.assertIn("No cross-session semantic carry-over", text)
 
     def test_documentation_contract_requires_component_level_understanding(self) -> None:

@@ -41,7 +41,13 @@ Primary production playbook:
 
 - `skills/design-inspiration-research/references/premium-web-production.md`
 
-It distills useful workflow patterns such as section-level references, design DNA, decision-frontier questions, a vertical slice, intentional signature interaction when justified, rendered defect/polish passes, and real desktop/mobile/performance/accessibility QA.
+Component/reference scouting playbook:
+
+- `skills/design-inspiration-research/references/component-reference-scouting.md`
+
+Use the component scouting reference only when a frontend task materially benefits from external component, interaction, motion or design-system references. It keeps the project's own component system as the foundation, uses external catalogs as JIT discovery inputs, and requires an explicit `ADOPT | ADAPT | COMPOSE | REFERENCE | BUILD | REJECT` decision rather than blindly copying demos.
+
+The premium-web playbook distills useful workflow patterns such as section-level references, design DNA, decision-frontier questions, a vertical slice, intentional signature interaction when justified, rendered defect/polish passes, and real desktop/mobile/performance/accessibility QA.
 
 Useful external sources are design/process inputs, not conversion or pricing evidence. Re-verify current tool/setup details live before depending on them.
 

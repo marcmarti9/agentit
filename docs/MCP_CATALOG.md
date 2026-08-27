@@ -1,6 +1,8 @@
 # Agentit MCP Catalog & Runtime
 
-Curated MCP servers **plus mid-session enable/disable** for every major coding agent:
+Curated MCP servers **plus mid-session enable/disable** for every major coding agent.
+
+The core rule is: **configured/visible is not selected**. MCP configuration may persist in a host, but every new Agentit session makes a fresh tool decision and treats non-selected MCPs as inactive for the current task.
 
 | Provider | Config surface |
 |----------|----------------|
@@ -11,7 +13,7 @@ Curated MCP servers **plus mid-session enable/disable** for every major coding a
 | Antigravity | `~/.gemini/config/mcp_config.json` |
 | Portable project | `.mcp.json` |
 
-## Agent workflow (what you wanted)
+## Agent workflow
 
 In any session the agent can:
 
@@ -49,6 +51,36 @@ Connect **agentit-manager** once. The agent then calls:
 
 `mcp_recommend` does **not** accept a natural-language task description. The primary AI chooses the stack from the full task context, then the manager resolves that named stack mechanically.
 
+## Session lifecycle
+
+Agentit uses a **semantic cold start** rather than assuming provider configuration is ephemeral.
+
+At the beginning of a new session:
+
+1. Only Agentit's core skills are assumed active.
+2. Run/inspect MCP status only if tool selection matters.
+3. Ignore previously enabled third-party MCPs unless the new `TASK_DECISION` selects them again.
+4. Enable only the smallest server/stack set justified by this task.
+5. Record which MCPs this task itself enabled so cleanup has an owner.
+
+At completion:
+
+- disable MCPs that **this task added** when the provider supports safe toggling and the project/user did not ask to keep them available;
+- do not blanket-remove unrelated user MCPs or servers another concurrent session may be using;
+- leave `agentit-manager` as the optional persistent meta-control plane when installed;
+- if a provider requires restart/reconnect to unload a server, document that limitation and still treat the next session as logically clean until the MCP is explicitly re-selected.
+
+This distinction is intentional:
+
+```text
+installed/configured = available
+selected in TASK_DECISION = authorized for this task
+enabled = provider runtime state
+used = actual task action
+```
+
+Those are not synonyms.
+
 ## Bootstrap (once per machine)
 
 ```bash
@@ -68,7 +100,9 @@ That writes `agentit-manager` into detected providers so every agent can self-ma
 | **github** | Issues/PRs (OAuth preferred) |
 | **playwright** | Browser smoke tests |
 
-Situational mobile research lives in stack `mobile_design` (`appllama` + `context7`). It is **not** part of `developer_core`. Enable only for Expo/React Native product UI; the library is credit-metered.
+`developer_core` is a named convenience stack, **not** an always-on runtime bundle. A coding task may need none, one, or several of those servers.
+
+Situational mobile research lives in stack `mobile_design` (`appllama` + `context7`). It is **not** part of the session core. Enable only for Expo/React Native product UI when that research materially helps; the library is credit-metered.
 
 ```bash
 agentit mcp enable-stack developer_core --apply
@@ -79,8 +113,8 @@ agentit mcp enable-stack mobile_design --apply   # mobile tasks only
 
 | Risk | Rule |
 |------|------|
-| RISK_1 / RISK_2 | Agent may enable with `--apply` |
-| RISK_3 / RISK_4 | Requires `--force` (DB/prod-class) |
+| RISK_1 / RISK_2 | Agent may enable with `--apply` when selected by the current plan |
+| RISK_3 / RISK_4 | Requires `--force` (DB/prod-class) plus reviewed justification |
 
 Secrets stay in env vars (`${GITHUB_PERSONAL_ACCESS_TOKEN}`, etc.), never committed.
 
@@ -93,6 +127,18 @@ Secrets stay in env vars (`${GITHUB_PERSONAL_ACCESS_TOKEN}`, etc.), never commit
 | **Claude / Cursor / Codex / Antigravity** | May need new session or MCP reconnect for *backend* tools |
 
 Meta management always works via CLI or agentit-manager; third-party tool surfaces depend on the host client.
+
+A stale tool surface after disable is not permission to keep using it. Conversely, a selected MCP that has not appeared after enable is not available yet: reconnect/reload or choose another route.
+
+## Profiles, stacks and sessions
+
+Do not confuse the three layers:
+
+- Agentit **skill profiles** classify/install available skill packages.
+- MCP **stacks** are named server sets the primary AI may choose.
+- The current **session selection** is the exact subset of skills/MCPs actually justified now.
+
+Neither a profile nor a stack auto-activates its members merely by existing.
 
 ## About “Notch MCP”
 
@@ -117,3 +163,5 @@ Meta management always works via CLI or agentit-manager; third-party tool surfac
 - Backups: `.<file>.agentit-bak-<timestamp>` next to mutated configs.
 - No symlink writes; mode `0600` on state files.
 - Prefer official packages; pin when you can.
+- Do not use cleanup as an excuse to mutate unrelated/global MCP configuration.
+- Track task-added enablement so the task can clean up only what it owns.

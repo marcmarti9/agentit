@@ -73,3 +73,43 @@ Docs: https://appllama.io/mcp
 MIT-licensed companion skills. Agentit does not vendor the upstream SKILL.md bodies or reference playbooks.
 
 Agentit's `mobile-native-app-design` skill is an original, slimmer Agentit contract informed by the published usage/design method (study real top-grossing screens, then implement native Expo/React Native UI). The live library remains a third-party paid MCP. Do not claim drop-in compatibility with `npx skills add appllama/appllama-skills`.
+
+## Siqi Chen / Humanizer
+
+Source: https://github.com/blader/humanizer
+
+MIT License. Copyright (c) 2025 Siqi Chen.
+
+Agentit's `anti-ai-slop-writing` is an original provider-neutral synthesis informed by Humanizer's evidence-preserving AI-writing-pattern review and voice-matching approach. Agentit does not vendor the upstream skill body or claim drop-in compatibility.
+
+## Hardik Pandya / Stop Slop
+
+Source: https://github.com/hardikpandya/stop-slop
+
+MIT License. Copyright (c) 2025 Hardik Pandya.
+
+Agentit's `anti-ai-slop-writing` also incorporates general structural-review ideas from Stop Slop, especially looking beyond word replacement to rhythm, repeated rhetorical templates, formatting and sentence structure. Agentit does not vendor its phrase/reference files.
+
+## Google Labs / DESIGN.md
+
+Source: https://github.com/google-labs-code/design.md
+
+Licensed under the Apache License, Version 2.0.
+
+Agentit's `design-md-workflow` is original integration guidance around the external alpha `DESIGN.md` format. Agentit does not vendor Google's parser/linter/schema implementation and does not treat the alpha format as a permanent Agentit-owned standard.
+
+## Cathryn Lavery / diagram-design
+
+Source: https://github.com/cathrynlavery/diagram-design
+
+MIT License. Copyright (c) 2025 Cathryn Lavery.
+
+Agentit's `diagram-and-architecture-visuals` is original routing/integration guidance informed by diagram-design's broad visual-type catalog, progressive-disclosure model, semantic-first diagram selection, branded style discipline and geometry-verification philosophy. Agentit does not vendor the upstream references, scripts or renderer assets.
+
+## tt-a1i / Archify
+
+Source: https://github.com/tt-a1i/archify
+
+MIT License. Copyright (c) 2026 tt-a1i (Archify), with upstream copyright notices retained by that project.
+
+Agentit's `diagram-and-architecture-visuals` treats Archify as an optional JIT external implementation family for typed, validated, code-grounded architecture maps. Agentit does not vendor Archify's renderer, JSON schemas, validators or artifacts and does not claim that authored graph reach proves live production impact.

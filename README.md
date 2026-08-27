@@ -5,7 +5,7 @@
 
 **A provider-neutral reliability and just-in-time expertise layer for capable AI agents.**
 
-Agentit gives coding agents a compact operating protocol for material work: choose the right expertise only when it is useful, challenge important decisions independently, use current references when needed, delegate with bounded context, preserve project state, verify execution with fresh evidence, and ship reviewable changes.
+Agentit gives coding agents a compact operating protocol for material work: start from a tiny clean core, choose the right expertise only when it is useful, challenge important decisions independently, use current references when needed, delegate with bounded context, preserve durable project knowledge, verify execution with fresh evidence, and ship reviewable changes.
 
 It is open source under Apache-2.0 and is designed to sit around the coding agent you already use.
 
@@ -16,7 +16,7 @@ You + capable coding agent
  DISPATCH: bare | agentit
           │
           ▼
-   tiny Agentit core
+ tiny clean Agentit core
           │
           ▼
  semantic domain packs
@@ -33,7 +33,10 @@ You + capable coding agent
           │
           ▼
  fresh verification
- + resumable project state
+ + durable docs / private continuity
+          │
+          ▼
+ JIT tooling cleanup
           │
           ▼
  branch → PR → human merge
@@ -79,11 +82,32 @@ using-agentit
 
 Everything deeper is loaded just in time.
 
+The core also carries two universal invariants without loading extra specialist bodies:
+
+- every new execution session is **semantically cold**;
+- substantial repository work must leave durable architecture/component knowledge accurate enough for another competent agent or engineer to continue without replaying the chat.
+
+### Clean-session JIT model
+
+Agentit deliberately separates what is installed from what is active:
+
+```text
+profile installed      = skills available for discovery
+pack inspected         = capabilities visible as possibilities
+selected skill body    = active context for this stage
+MCP configured         = tool available to the host
+MCP selected/enabled   = tool justified for this task
+```
+
+A new session does not inherit the previous session's selected skills, references, workers or MCP decisions. It starts from the three-skill core and re-selects non-core context from the current task.
+
+Provider MCP configuration may physically persist. That does not make a stale MCP semantically active. Agentit tracks task-added MCP enablement and cleans up what the task owns when safe, without blanket-disabling unrelated user or concurrent-session tooling.
+
 ### Agent-owned task decisions
 
 The active model owns semantic judgment from the real conversation, repository, files, tools, constraints and project state.
 
-For material work it creates a compact `TASK_DECISION` covering the relevant outcome, unknowns, risk, skills, references, tools, topology, ownership, plan and verification strategy.
+For material work it creates a compact `TASK_DECISION` covering the relevant outcome, unknowns, risk, skills, references, tools, MCP lifecycle/cleanup ownership, topology, ownership, plan and verification strategy.
 
 Mechanical software then enforces the reviewed plan through deterministic state and execution contracts.
 
@@ -109,7 +133,20 @@ selected_skills:
 - verification-before-completion
 ```
 
-Only selected skill bodies enter the working context.
+Only selected skill bodies enter the working context. Profiles are installation/discovery bundles, not runtime context bundles.
+
+### Design memory and visual systems
+
+Design work can now select two additional JIT capabilities when they actually help:
+
+- `design-md-workflow` — read, create and verify an optional durable `DESIGN.md` visual-identity contract without making Google's alpha format a global dependency;
+- `diagram-and-architecture-visuals` — choose between simple project-native diagrams, polished/branded diagram workflows, and code-grounded validated architecture maps such as Archify.
+
+Both stay outside core and are loaded only for relevant stages.
+
+### Anti-AI-slop writing
+
+`anti-ai-slop-writing` treats humanization as more than deleting a few buzzwords. It preserves factual claims/citations, adapts to destination and authentic writer/brand voice, catches repeated structural AI tells, and keeps technical prose precise.
 
 ### Reference Intelligence
 
@@ -175,14 +212,14 @@ The runtime validates execution state and prevents invalid dependency or ownersh
 
 ### Resumable project state
 
-Substantial work can maintain compact continuity state in:
+Substantial work can maintain compact **private operational continuity** in:
 
 ```text
-docs/agentit/STATE.md
+.agentit/STATE.md
 .agentit/checkpoints/*.json
 ```
 
-A fresh session, provider or machine can recover the objective, decisions, branch/PR, verification status, blockers and next actions from repository state instead of reconstructing a chat transcript.
+A fresh session can recover resumable operational state when needed without committing raw task history. This state is distinct from normal tracked project documentation and stays local/private by default.
 
 ### Provider-neutral capabilities
 
@@ -196,20 +233,24 @@ Agentit includes a curated MCP catalog and runtime management surface. It can in
 
 Current MCP configuration surfaces include Claude Code, Cursor, Codex, Grok, Antigravity and portable project `.mcp.json` files.
 
+Named stacks are convenience/discovery sets, not always-on bundles. A task can select none, one or several MCPs and should clean up task-added enablement when safe.
+
 ### Verification receipts
 
 Agentit records fresh evidence rather than accepting narrative success. Verification can include project-native tests/builds, explicit semantic verification signals, Loop Receipts and Graph Receipts.
 
 ### Durable documentation
 
-Material architecture, contracts, operations and decisions stay in normal project documentation. Continuity state records only the compact operational information required to resume work.
+Substantial architecture, component responsibilities, interfaces, configuration/invariants, operations, failure/recovery behavior, verification procedures and durable decisions stay in normal project documentation.
+
+Agentit's core requires a documentation-drift check before substantial repository work is called complete. The deeper `documentation-and-adrs` procedure remains JIT and is loaded only when the task needs the extra documentation/ADR guidance.
 
 ### Reviewable Git workflow
 
 Repository changes default to:
 
 ```text
-work branch → implementation → fresh verification → pull request → human merge
+work branch → implementation → fresh verification → documentation drift check → pull request → human merge
 ```
 
 ## Example flow
@@ -245,6 +286,8 @@ execution:
 - implement bounded fix
 - run Loop verifier
 - preserve relevant regression coverage
+- update durable docs if architecture/contracts/operations changed
+- clean up task-added JIT tooling where safe
 - create PR with fresh evidence
 ```
 
@@ -276,17 +319,17 @@ This keeps semantic interpretation with the model that has the richest context w
 
 ## Installation and discovery profiles
 
-`profiles.yaml` controls installation/discovery availability. Runtime skill selection remains JIT.
+`profiles.yaml` controls installation/discovery availability. Runtime skill selection remains JIT and resets semantically to core for each new execution session.
 
 | Profile | Discovery scope |
 |---|---|
-| `core` | three-skill Agentit navigation core |
+| `core` | three-skill Agentit navigation core + minimum cold-start/documentation invariants |
 | `frontend` | frontend implementation and runtime verification |
 | `backend` | APIs, services, observability and backend engineering |
 | `supabase` | backend plus PostgreSQL/Supabase-specific guidance |
 | `product` | discovery, requirements and product decisions |
-| `writing` | technical writing and documentation |
-| `design` | UI/UX, visual direction, motion and spatial craft |
+| `writing` | technical writing and anti-slop/documentation support |
+| `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
 | `release` | CI/CD, migrations and release readiness |
 | `research` | source-driven and context-heavy research |
 | `growth` / `agency` | marketing, growth and multi-domain delivery |
@@ -306,6 +349,8 @@ Agentit's mechanical surfaces are designed around explicit state and bounded mut
 - rollback guarded against post-install user modifications.
 
 Risk-sensitive Agentit work can require independent review, rollback planning, dry runs and post-change verification according to the task's actual impact.
+
+MCP cleanup follows ownership: Agentit should undo task-added enablement when safe, not erase unrelated global configuration merely to claim a clean session.
 
 ## Evaluation
 
@@ -327,10 +372,12 @@ See:
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | compact global Agentit rules and dispatch |
-| `skills/using-agentit/` | canonical Agentit lifecycle |
+| `skills/using-agentit/` | canonical Agentit lifecycle, cold-start and minimum documentation contract |
 | `skills/task-router/` | model-owned task decision + review contract |
 | `skills/using-agent-skills/` | semantic pack discovery and JIT projection |
 | `skills/reference-intelligence/` | curated/live source and provenance workflow |
+| `skills/design-md-workflow/` | optional durable visual-identity contract workflow |
+| `skills/diagram-and-architecture-visuals/` | JIT diagram/tool routing and architecture-visual evidence discipline |
 | `skills/` | concrete JIT expertise modules |
 | `router/` | deterministic capabilities, context, Loop/Graph, MCP and verification runtime |
 | `profiles.yaml` | installation/discovery profiles |
@@ -342,6 +389,7 @@ See:
 
 - [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md)
 - [`skills/using-agent-skills/references/packs.md`](skills/using-agent-skills/references/packs.md)
+- [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md)
 - [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md)
 - [`docs/RUNTIME_ENGINEERING.md`](docs/RUNTIME_ENGINEERING.md)
 - [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md)

@@ -11,6 +11,8 @@ This skill works with `reference-intelligence`. Hallmark's MIT-licensed `study` 
 
 For premium/Studio public web work, also read `references/premium-web-production.md`. That file distills the useful production workflow from the bookmarked “$10k website” / cinematic-web articles; quoted price claims are deliberately not treated as evidence.
 
+When a frontend task needs a missing component, interaction, or motion pattern, use `references/component-reference-scouting.md` as a JIT discovery map. It keeps the project system as the foundation while letting the agent inspect strong external component references before inventing commodity UI from scratch.
+
 ## Required by default
 
 Run this pass before art direction/code for:
@@ -35,6 +37,29 @@ When current web/browser tooling is available:
 7. Synthesize 2–3 original project-specific directions from multiple principles.
 
 When Agentit's curated references already contain a useful source or playbook, start there but re-verify live/current details when the decision depends on them. Curated references are accelerators, not an exhaustive knowledge base. Do not load every stored reference simply because it exists.
+
+## Component/reference scouting
+
+For a missing frontend pattern, do not jump directly from prompt to invented markup. Use this smaller loop:
+
+```text
+need
+-> inspect existing project components/design tokens
+-> identify the missing behavior
+-> inspect a small set of relevant reference/component sources
+-> shortlist candidates
+-> verify code/license/dependencies/accessibility/responsiveness
+-> choose one implementation family
+-> adapt to project tokens and brand
+-> integrate
+-> verify in the browser
+```
+
+Load `references/component-reference-scouting.md` when this loop is material. Its curated sources include component foundations, expressive component catalogs, motion references, and design-system QA inputs. They are discovery candidates, never mandatory dependencies.
+
+**Reference, do not collage.** Keep one primary component/design foundation per surface. External sources should supply a missing pattern or principle, not turn the product into several unrelated demos stitched together.
+
+Prefer `ADOPT | ADAPT | COMPOSE | REFERENCE | BUILD | REJECT` as explicit outcomes for discovered components. Discovery is not adoption.
 
 ## Design-DNA extraction
 
@@ -112,7 +137,7 @@ Only durable influences belong there; do not dump the research browsing history.
 
 Feed `INSPIRATION_SYNTHESIS` and `REFERENCE_TO_DECISION_MAP` into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the principles that shaped it.
 
-Before inventing commodity UI primitives, inspect the project's own component system first. External component catalogs such as 21st.dev are discovery/reference candidates when useful; inspect and adapt candidates to project tokens/accessibility instead of requiring a custom Agentit runtime integration merely to know they exist.
+Before inventing commodity UI primitives, inspect the project's own component system first. When a missing pattern justifies external scouting, use `references/component-reference-scouting.md`, inspect a small set of candidates, choose an explicit adoption outcome, and adapt the result to project tokens/accessibility instead of shipping catalog demo styling unchanged.
 
 If the final design would plausibly look the same without this research, the research failed. Extract stronger principles or explicitly state that the references did not improve the direction.
 
@@ -133,6 +158,8 @@ Reference research is a strong delegation boundary because it is read-only and c
 - treating a creator's business claim as evidence because its design is attractive;
 - forcing every trendy technique into one page;
 - doing research only after the visual direction is already fixed;
+- inventing commodity UI before checking compatible references when a reference pass would materially help;
 - installing a component/tool before checking project primitives and license/dependency fit;
+- mixing unrelated component languages into one surface;
 - invisible research with no traceable impact on design;
 - final design influenced by external work with no project provenance record.

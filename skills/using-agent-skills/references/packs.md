@@ -202,6 +202,38 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 
 ---
 
+## executive
+
+**Use for:** company-level strategy, finance, people, legal, operations, marketing, product, board/governance and executive-priority decisions where specialist business judgment or cross-functional synthesis materially improves the result.
+
+**Skills in this pack:**
+
+- `executive-orchestration` — single accountable executive synthesis, model-owned specialist selection, bounded fan-out, conflict resolution, company context and authority boundaries.
+- `executive-strategy` — positioning, market choice, moat, strategic options, partnerships, build/buy/partner and explicit non-goals.
+- `executive-finance` — cash/runway, unit economics, scenarios, pricing economics, ROI and capital allocation.
+- `executive-people` — role design, hiring, compensation, performance, retention and organization structure.
+- `executive-legal` — contract/IP/employment/privacy/regulatory framing with jurisdiction-aware evidence and qualified-counsel escalation.
+- `executive-operations` — bottlenecks, process, automation, vendor dependencies, capacity and operating metrics.
+- `executive-marketing` — ICP, positioning, GTM, channel/funnel economics, brand/demand and retention-linked marketing decisions.
+- `executive-product` — customer problem, PMF evidence, prioritization, sequencing, make/buy and product investment gates.
+- `executive-board` — board/investor narrative, KPI/variance, governance, material risks and explicit asks.
+- `executive-chief-of-staff` — triage, decision queue, ownership, blockers, follow-ups and operating cadence.
+- `specialist-agent-routing` — bounded executive specialists only when independent expertise/context isolation/parallelism earns its coordination cost.
+- `reference-intelligence` — current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
+- `source-driven-development` — current authoritative sources for changing domain rules/contracts/platform behavior.
+- `context-engineering` — large company/financial/customer/market evidence sets without dumping all context into every specialist.
+- `doubt-driven-development` — adversarially challenge high-impact bets and fragile assumptions.
+- `planning-and-task-breakdown` — turn a decided executive action into owned, sequenced work when useful.
+- `documentation-and-adrs` — preserve durable decisions/assumptions/ownership when rediscovery would be costly.
+- `verification-before-completion` — verify factual/action completion claims rather than accepting executive-sounding prose.
+- `marketing-and-growth` — deeper campaign/CRO/content/SEO execution after an executive marketing decision when needed.
+
+The `executive` profile is deliberately broad because profiles are installation/discovery surfaces. Installing or enabling it does **not** activate this pack or any executive skill body. A finance-only task may load only `executive-finance`; a cross-functional decision may load `executive-orchestration` plus whichever independent specialists can genuinely change the recommendation. Never preload the executive bench as a committee.
+
+Executive skills decide at the business-function level. Pair them with engineering, product, marketing, release or other operational skills only when the decision proceeds into actual implementation.
+
+---
+
 ## marketing
 
 **Use for:** ICP/customer research, positioning, copy, campaigns, content strategy, email, CRO, launch planning and marketing operations.

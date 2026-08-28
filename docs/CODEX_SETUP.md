@@ -1,70 +1,69 @@
 # OpenAI Codex Integration & Setup Guide
 
-This guide describes how to configure, route, and manage OpenAI Codex worker profiles within the `Agentit` harness.
+Agentit keeps Codex semantically aligned with every other supported provider: the host sees only the three Agentit core navigation skills at startup, while task-specific expertise is loaded JIT from Agentit's private runtime.
 
----
+## Skill surface
 
-## Overview
+Codex's Agentit-visible skill root is:
 
-Unlike Claude Code (which utilizes full multi-agent roles), OpenAI Codex is configured for **scoped delegation** using standalone, portable worker profiles.
-
-The main coordinator agent retains user intent, architectural control, interface design, decomposition, and final acceptance. Heavy execution tasks (reading large files, implementing feature code, writing tests, running verifications) are delegated to isolated worker profiles.
-
----
-
-## Portable Worker Profiles
-
-Two lightweight TOML worker profiles are provided in `.codex/agents/`:
-
-### 1. `terra_worker` (`.codex/agents/terra-worker.toml`)
-- **Model**: GPT-5.6 Terra
-- **Reasoning Effort**: Medium
-- **Primary Role**: Default worker profile for mechanical code implementation, refactoring, writing unit tests, and routine tasks.
-
-### 2. `luna_worker` (`.codex/agents/luna-worker.toml`)
-- **Model**: GPT-5.6 Luna
-- **Reasoning Effort**: Max
-- **Primary Role**: High-context reading, complex logic implementation, large codebase analysis, or extensive refactoring.
-
----
-
-## Installation & Deployment
-
-The worker profiles are installed exclusively to `~/.codex/agents/` by `install.sh`:
-
-```bash
-# Preview installation plan
-bash install.sh --provider codex
-
-# Apply installation
-bash install.sh --provider codex --apply
+```text
+~/.agents/skills/
+  using-agentit/
+  task-router/
+  using-agent-skills/
 ```
 
-`install.sh` copies only declared worker profiles via an explicit allowlist and leaves your local `~/.codex/config.toml` untouched.
+Do not project the rest of Agentit's catalog into this directory. Provider-native skill discovery can advertise installed skill metadata to the model before the full body is activated, so a large global skill directory is startup context pollution.
 
----
+The full Agentit skill library remains private under:
 
-## Delegation Guidelines for Codex
+```text
+~/.agentit/runtime/skills
+```
 
-### Coordinator Responsibilities
-1. **Intent & Architecture**: Owns user requirements, API design, and module boundaries.
-2. **Task Decomposition**: Breaks work into bounded, single-file or single-module subtasks.
-3. **Diff Verification**: Reviews the actual git diff produced by workers rather than relying solely on text summaries.
-4. **Final Acceptance**: Runs test suites and confirms completion before closing tasks.
+The coordinator discovers and loads non-core skills mechanically:
 
-### Worker Execution Rules
-1. **Single Auto-Retry**: If a worker implementation fails verification (build, test, lint), return the failure output to the **same worker** with improved specifications. Do not spawn a new worker profile to bypass an error.
-2. **Prohibited External Actions**: Workers must **NEVER** execute pull requests, git pushes, deployments, database migrations, or external network calls without explicit human authorization.
-3. **Bounded Context**: Pass only the target file paths, contracts, and verifier recipes. Do not dump entire conversation histories into subagents.
+```text
+agentit skills packs
+agentit skills candidates engineering backend
+agentit skills show debugging-and-error-recovery security-and-hardening --project .
+```
 
----
+See `docs/JIT_SKILL_LOADING.md` for the cross-provider contract.
 
-## Local Configuration Safety
+## Portable worker profiles
 
-Local machine settings such as API keys, MCP servers, reasoning defaults, and custom backend flags belong in `~/.codex/config.toml`. 
+Codex also has two host-specific execution/model profiles under `.codex/agents/`:
 
-Because `config.toml` contains environment-specific paths and local credentials, it is **never versioned** in this repository. Use `update.sh` to safely pull remote updates without overwriting local machine state:
+### `terra_worker`
+
+- model: GPT-5.6 Terra
+- reasoning effort: Medium
+- role: routine bounded implementation, refactoring and tests when delegation helps.
+
+### `luna_worker`
+
+- model: GPT-5.6 Luna
+- reasoning effort: Max
+- role: high-context reading, complex implementation and larger isolated workloads.
+
+These profiles are execution bindings, not semantic capabilities denied to other providers. The same selected Agentit skill bodies must remain usable directly in the parent when a native worker primitive is unavailable.
+
+## Installation
+
+The portable Python bootstrap is canonical:
 
 ```bash
-bash update.sh --apply
+python3 bootstrap.py --provider codex
+python3 bootstrap.py --provider codex --apply
 ```
+
+It installs the private Agentit runtime, projects only the three core skills to `~/.agents/skills`, preserves the two allowlisted worker profiles under `~/.codex/agents`, backs up replacements, and safely removes only provably unmodified legacy Agentit non-core copies from old Codex skill roots.
+
+`~/.codex/config.toml` remains machine-local and is not overwritten by the normal Agentit bootstrap.
+
+## Delegation contract
+
+The coordinator retains user intent, semantic task decisions, integration and final acceptance. A worker receives only bounded objective/context, selected skill bodies, relevant references, permissions, ownership and verification requirements.
+
+Workers do not get the whole Agentit skill catalog. A skill ID without its exact selected body does not count as activation.

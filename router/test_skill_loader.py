@@ -30,6 +30,27 @@ class WorkerSkillLoaderTests(unittest.TestCase):
         self.assertEqual("project", skills[0]["source"])
         self.assertEqual(body, skills[0]["content"])
 
+    def test_private_agentit_profile_cache_precedes_harness_but_not_project_native(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            private = root / ".agentit" / "profile-skills" / "design-taste-frontend"
+            private.mkdir(parents=True)
+            private_body = "# Private Agentit profile skill\n\nUse the enabled project profile.\n"
+            (private / "SKILL.md").write_text(private_body, encoding="utf-8")
+
+            skills = load_skill_bodies(["design-taste-frontend"], project_root=root)
+            self.assertEqual("project-agentit-profile", skills[0]["source"])
+            self.assertEqual(private_body, skills[0]["content"])
+
+            local = root / ".agents" / "skills" / "design-taste-frontend"
+            local.mkdir(parents=True)
+            local_body = "# Project-native skill\n\nProject instructions win.\n"
+            (local / "SKILL.md").write_text(local_body, encoding="utf-8")
+
+            skills = load_skill_bodies(["design-taste-frontend"], project_root=root)
+            self.assertEqual("project", skills[0]["source"])
+            self.assertEqual(local_body, skills[0]["content"])
+
     def test_missing_skill_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(SkillLoadError):

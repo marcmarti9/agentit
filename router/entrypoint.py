@@ -23,6 +23,16 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         return bootstrap_main(args[1:])
 
+    if args and args[0] == "skills":
+        from router.skills_cli import main as skills_main
+
+        return skills_main(args[1:])
+
+    if args and args[0] in {"enable", "activate", "disable", "status"}:
+        from router.profile_jit_cli import main as profile_main
+
+        return profile_main(args)
+
     from router.profiles import main as profiles_main
 
     return profiles_main(args)

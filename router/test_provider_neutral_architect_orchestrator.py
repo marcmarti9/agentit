@@ -10,7 +10,7 @@ from router.bootstrap import SOURCE_ROOT, build_install_plan
 
 
 CORE_SKILLS = {"using-agentit", "task-router", "using-agent-skills"}
-PROVIDERS = ("claude", "codex", "antigravity")
+PROVIDERS = ("claude", "codex", "grok", "gemini", "antigravity")
 
 
 class ProviderNeutralArchitectOrchestratorTests(unittest.TestCase):
@@ -41,9 +41,7 @@ class ProviderNeutralArchitectOrchestratorTests(unittest.TestCase):
                 with self.subTest(provider=provider):
                     plan = build_install_plan(home=home, provider=provider)
                     categories = {item["category"] for item in plan["operations"]}
-                    self.assertFalse(
-                        any(category == "provider:claude:agent" for category in categories)
-                    )
+                    self.assertFalse(any(category == "provider:claude:agent" for category in categories))
 
     def test_provider_global_skill_projection_remains_exactly_core(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,23 +1,46 @@
 ---
 name: using-agent-skills
-description: Discover Agentit skills through semantic packs, then let the primary AI choose any concrete subset that materially helps the current stage or worker.
+description: Discover Agentit skills through bounded semantic packs, then let the primary AI choose only the concrete bodies that materially help the current stage or worker.
 ---
 
 # Using Agent Skills
 
 Skills are **JIT knowledge**, not a context dump.
 
-A pack is only a semantic map of an area. It helps the model discover what skills exist and what each one is useful for. It does **not** prescribe a level, order, minimum, maximum, or normal number of skills.
+A new execution session starts with only Agentit's global core:
 
-Canonical runtime pack map: `references/packs.md`.
+```text
+using-agentit
++ task-router
++ using-agent-skills
+```
 
-## Cold-session rule
+The host-visible skill roots must contain only those three Agentit skills. The full Agentit skill library lives privately under Agentit's runtime and is discovered through the `agentit skills` CLI. A provider seeing a skill name/description is already context exposure, even if it has not opened that skill's `SKILL.md`.
 
-A new execution session starts with only Agentit's global core (`using-agentit`, `task-router`, `using-agent-skills`) as active skill context.
+**installation is not activation.** A skill may exist in Agentit's private runtime for discovery without being active model context. Only explicitly selected bodies count as active for the current stage.
 
-Installed/copied skills and enabled project profiles may remain on disk for discovery, but **installation is not activation**. Do not inherit the previous session's `selected_skills`. Re-read the task, inspect relevant pack maps, and make a fresh selection.
+## Progressive disclosure contract
 
-Likewise, removing a skill from the current selection means stop carrying its body into later stages/workers even if the file remains installed. Persisting skill files across sessions is a cache/discovery optimization, not semantic state.
+Use these layers in order and stop as soon as enough context exists:
+
+```text
+LEVEL 0 — startup
+3 core skills only
+
+LEVEL 1 — domain discovery
+agentit skills packs
+
+LEVEL 2 — bounded candidate metadata
+agentit skills candidates <pack...>
+
+LEVEL 3 — exact selected bodies
+agentit skills show <skill...> --project .
+
+LEVEL 4 — references owned by an active skill
+only the smallest relevant files
+```
+
+Do **not** open or inject the complete `references/packs.md` map just to discover one domain. That file is private backing data for bounded mechanical discovery. The model should normally use the CLI surfaces above.
 
 ## Pack-first discovery
 
@@ -25,79 +48,60 @@ For an Agentit task/stage:
 
 ```text
 understand task
--> inspect the relevant pack(s)
--> read candidate descriptions
+-> inspect only pack IDs/descriptions if needed
+-> request metadata only for relevant pack(s)
 -> AI chooses any number of skills that materially help
--> load only those SKILL.md bodies
+-> load only those exact SKILL.md bodies
 -> execute / verify
--> add or remove skills later if new evidence changes the need
--> next session starts from core again
+-> add or remove bodies later if evidence changes the need
+-> next session starts from the three core skills again
 ```
 
-The primary AI owns the selection. There are intentionally **no fixed skill counts and no pack levels**.
+The primary AI owns semantic selection. Software only exposes requested metadata and bodies. There are intentionally **no fixed skill counts and no pack levels**.
 
-A task may legitimately use:
+A task may legitimately use no non-core skill, one skill, or several skills across packs. The deciding question is:
 
-```text
-selected_skills: []
-```
-
-or:
-
-```text
-selected_skills:
-- debugging-and-error-recovery
-```
-
-or several skills from one or more packs when the work genuinely spans those concerns.
-
-The deciding question is not “what level is this task?” but:
-
-> **Which skill bodies would materially improve this specific stage, and are they worth their context cost?**
+> Which skill bodies would materially improve this specific stage, and are they worth their context cost now?
 
 ## Profiles vs packs vs active context
 
 These are deliberately different concepts:
 
-- **Profiles** (`profiles.yaml`) are installation/discovery bundles. They answer “which skills should be available in this environment/project?”
-- **Packs** (`references/packs.md`) are semantic maps. They answer “which capabilities might be relevant to this domain?”
-- **Selected skills** are the current session/stage context. They answer “which exact skill bodies should this model read now?”
+- **Profiles** (`profiles.yaml`) are installation/discovery bundles. They answer which capabilities Agentit can make available.
+- **Packs** are semantic discovery maps. They answer which capabilities might be relevant to a domain.
+- **Selected skills** are the current stage's actual context bodies.
 
-Never collapse those three layers. Enabling a profile does not activate every skill in it; inspecting a pack does not load its skills; a previous session's selection does not survive as the next session's selection.
+Never collapse these layers. Enabling a profile does not activate every skill in it; inspecting candidate metadata does not activate a skill; a previous session's selection never survives as active context in the next session.
 
 ## Selection rules
 
-1. **Use packs as discovery maps, not bundles.** Never inject a whole pack merely because its domain matches.
-2. **No quotas.** Do not target 1, 3, 5, or any other predetermined number of skills.
-3. **Load bodies, not IDs.** A skill is active only when the executing model reads its `SKILL.md` or receives equivalent provider-native injection for the current stage.
-4. **Cross-pack selection is allowed.** A task can pull from `frontend` + `design`, `backend` + security concerns inside engineering, `marketing` + `seo`, etc., when the actual problem warrants it.
-5. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and advanced verification remain JIT.
-6. **Project-local skills win.** Prefer compatible project-local instructions/skills over generic global guidance.
-7. **Do not force an unrelated pack.** If Agentit lacks a tax/legal/database/etc. pack, use authoritative live sources and discover/adapt a real skill only if a durable procedure is missing.
-8. **Selection can change during work.** Add a skill when a concrete gap appears; remove/stop carrying one when it no longer helps.
-9. **No cross-session semantic carry-over.** Previous task selection is evidence/history only; every new session reselects from core.
+1. **Host roots are core-only for Agentit.** Never install/project non-core Agentit skills into `.claude/skills`, `.agents/skills`, `.grok/skills`, `.gemini/skills`, `.gemini/config/skills`, or another provider discovery root merely to make them available.
+2. **Use packs as discovery maps, not bundles.** Never inject a whole pack merely because its domain matches.
+3. **No quotas.** Do not target a predetermined number of skills.
+4. **Load bodies, not IDs.** A non-core skill is active only when the executing model reads its exact body through `agentit skills show ...` or receives equivalent bounded worker injection.
+5. **Cross-pack selection is allowed.** Choose whatever combination the actual task warrants.
+6. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and advanced verification remain JIT.
+7. **Project-local skills win.** Prefer compatible project-local instructions/skills over generic Agentit guidance.
+8. **Selection can change during work.** Add a body when a concrete gap appears and stop carrying it when no longer useful.
+9. **No cross-session semantic carry-over.** Previous selections are history/evidence only.
+10. **Provider persistence is not activation.** Persistent MCP/config/plugin availability never means selected for the new task.
 
-## References are also JIT
+## Parent and worker loading
 
-`reference-intelligence` is not globally loaded.
+The same rule applies to the parent and delegated workers.
 
-When `TASK_DECISION.reference_plan.mode != none`, load `reference-intelligence` and the smallest relevant curated/live source set. A web task may use design references; a current tax report should use current authoritative tax sources; a trivial repository rename may use none.
+Parent example:
 
-References from a previous session are not current-task context merely because they were useful before. Re-select and re-verify when freshness or provenance matters.
+```text
+agentit skills candidates engineering backend
+agentit skills show debugging-and-error-recovery security-and-hardening --project .
+```
 
-## Tools are also JIT
-
-Do not load `mcp-tooling-fit` or enable MCPs merely because they exist. Select tools only when they materially improve the reviewed plan.
-
-Host/provider MCP configuration may persist beyond a task. That persistence means **available**, not **selected**. Track MCPs the current task enabled and disable those additions at completion when safe; never use a stale exposed MCP in a new session unless the new `TASK_DECISION` selects it again.
-
-## Worker Context Contract
-
-A spawned worker should receive only what it needs to succeed:
+Worker context should receive only:
 
 ```text
 role / objective
-relevant pack(s) as discovery labels
+relevant pack labels
 selected skill bodies
 selected references (if any)
 project constraints/instructions
@@ -107,46 +111,47 @@ expected output/handoff
 verification / stop condition
 ```
 
-`pack` is explanatory metadata. `selected skill bodies` are the actual context payload.
+The parent keeps integration responsibility; workers do not receive the whole catalog.
 
-The parent keeps the broader catalog and integration responsibility.
+## References are also JIT
+
+`reference-intelligence` is not globally loaded. When external/current knowledge materially matters, first select that skill, then load only the smallest relevant curated/live source set. Re-select and re-verify across sessions when freshness matters.
+
+## Tools are also JIT
+
+Do not load `mcp-tooling-fit` or enable MCPs because they exist. Host/provider MCP configuration may persist beyond a task; persistence means available, not authorized or selected.
 
 ## Missing capability
 
-If the current pack(s) do not expose an adequate skill:
+If the selected pack(s) do not expose an adequate skill:
 
 1. inspect project-local skills/instructions;
-2. inspect another genuinely relevant Agentit pack;
-3. use `find-skills` / approved skill discovery when a reusable external skill could help;
-4. use authoritative live sources for current domain knowledge;
-5. adapt/create a new skill only if the procedure is durable and likely to recur.
-
-Do not create a new skill for a one-off fact lookup.
+2. inspect another genuinely relevant pack through `agentit skills candidates`;
+3. use approved external skill discovery when a durable reusable procedure could help;
+4. use authoritative live sources for one-off/current facts;
+5. adapt/create a new skill only when the procedure is durable and likely to recur.
 
 ## Anti-patterns
 
-- fixed `essential/standard/deep` pack tiers;
-- hardcoded minimum/maximum skill counts;
-- loading every skill in the selected pack;
-- treating a persistent profile install as persistent active context;
-- carrying yesterday's selected skills into today's task without re-selection;
+- installing all Agentit skills into a provider's native skill directory;
+- relying on "the body is lazy" while exposing dozens of names/descriptions at startup;
+- opening the full pack map for a one-pack task;
+- loading every skill in a selected pack;
+- carrying yesterday's selected bodies into today's task;
 - spawning every worker with the same giant context;
-- using a pack name as a substitute for reading selected skill bodies;
-- adding skills “just in case” without a concrete reason;
-- loading PostgreSQL guidance for a random database task;
-- loading design references into a fiscal report;
-- keeping a huge lifecycle recipe in context when one procedure would suffice.
+- adding skills "just in case";
+- treating persistent host/tool configuration as active semantic context.
 
 ## Completion check
 
-Before execution/spawn, the parent should be able to answer:
+Before execution/spawn, be able to answer:
 
 ```text
 Why these pack(s)?
 Why each selected skill?
-Why is each selected skill worth its token cost now?
+Why is each selected body worth its context cost now?
 What useful context did we deliberately NOT load?
-Which previous-session context did we deliberately NOT inherit?
+Does the host-visible Agentit surface still contain only the three core skills?
 ```
 
 There is no correct skill count. The correct set is whatever the primary AI can justify from the actual task.

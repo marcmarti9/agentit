@@ -116,8 +116,8 @@ Mechanical software then enforces the reviewed plan through deterministic state 
 Agentit organizes expertise into flat semantic discovery maps such as:
 
 ```text
-engineering  frontend  design  backend  data  product
-marketing    seo       research writing  models release agency
+engineering  frontend  design  backend  data  product  executive
+marketing    seo       research writing release agency
 ```
 
 A pack helps the model discover useful capabilities. The model chooses the concrete skill bodies and how many are worth their context cost.
@@ -134,6 +134,14 @@ selected_skills:
 ```
 
 Only selected skill bodies enter the working context. Profiles are installation/discovery bundles, not runtime context bundles.
+
+### Executive operating profile
+
+`executive` is a deliberately deep installation/discovery profile for company-level decisions. It exposes JIT expertise for strategy, finance, people, legal, operations, marketing, product, board/governance, chief-of-staff triage and cross-functional executive orchestration.
+
+A finance-only task can load just `executive-finance`. A genuinely cross-functional decision can load `executive-orchestration` plus only the independent specialists whose analysis can change the recommendation. Installing or enabling the profile never activates the whole executive bench, and each new session still starts from the same three-skill core.
+
+The executive layer is provider-neutral and materially informed by Sente Labs' OpenExecutive architecture without vendoring its app/runtime or model stack. See [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md).
 
 ### Design memory and visual systems
 
@@ -328,6 +336,7 @@ This keeps semantic interpretation with the model that has the richest context w
 | `backend` | APIs, services, observability and backend engineering |
 | `supabase` | backend plus PostgreSQL/Supabase-specific guidance |
 | `product` | discovery, requirements and product decisions |
+| `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
 | `writing` | technical writing and anti-slop/documentation support |
 | `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
 | `release` | CI/CD, migrations and release readiness |
@@ -376,12 +385,14 @@ See:
 | `skills/task-router/` | model-owned task decision + review contract |
 | `skills/using-agent-skills/` | semantic pack discovery and JIT projection |
 | `skills/reference-intelligence/` | curated/live source and provenance workflow |
+| `skills/executive-orchestration/` | cross-functional executive routing, bounded fan-out and single-parent synthesis contract |
 | `skills/design-md-workflow/` | optional durable visual-identity contract workflow |
 | `skills/diagram-and-architecture-visuals/` | JIT diagram/tool routing and architecture-visual evidence discipline |
-| `skills/` | concrete JIT expertise modules |
+| `skills/` | concrete JIT expertise modules, including the `executive-*` specialist skills |
 | `router/` | deterministic capabilities, context, Loop/Graph, MCP and verification runtime |
 | `profiles.yaml` | installation/discovery profiles |
 | `probes/` | mechanical verification catalog |
+| `docs/EXECUTIVE_PROFILE.md` | executive profile architecture, routing, evidence, authority and verification contract |
 | `docs/` | architecture, runtime, continuity and policy documentation |
 | `evals/` | mechanical and paired agent-level evaluation plan/results |
 
@@ -389,6 +400,7 @@ See:
 
 - [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md)
 - [`skills/using-agent-skills/references/packs.md`](skills/using-agent-skills/references/packs.md)
+- [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md)
 - [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md)
 - [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md)
 - [`docs/RUNTIME_ENGINEERING.md`](docs/RUNTIME_ENGINEERING.md)

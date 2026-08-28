@@ -47,6 +47,31 @@ profiles:
       - spec-driven-development
       - marketing-and-growth
       - verification-before-completion
+  executive:
+    description: "Deep company-level executive bench: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff judgment. Deliberately broad for installation/discovery; each task still selects only the exact executive skill bodies, evidence and specialists it needs JIT."
+    extends:
+      - core
+    skills:
+      - executive-orchestration
+      - executive-strategy
+      - executive-finance
+      - executive-people
+      - executive-legal
+      - executive-operations
+      - executive-marketing
+      - executive-product
+      - executive-board
+      - executive-chief-of-staff
+      - specialist-agent-routing
+      - planning-and-task-breakdown
+      - context-engineering
+      - source-driven-development
+      - reference-intelligence
+      - doubt-driven-development
+      - documentation-and-adrs
+      - verification-before-completion
+      - interview-me
+      - marketing-and-growth
   writing:
     description: "Technical writing, documentation, and anti-AI-slop editing."
     extends:
@@ -146,6 +171,16 @@ profiles:
       - documentation-and-adrs
       - doubt-driven-development
       - emil-design-eng
+      - executive-board
+      - executive-chief-of-staff
+      - executive-finance
+      - executive-legal
+      - executive-marketing
+      - executive-operations
+      - executive-orchestration
+      - executive-people
+      - executive-product
+      - executive-strategy
       - figma-design-workflow
       - find-skills
       - frontend-ui-engineering

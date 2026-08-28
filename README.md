@@ -62,8 +62,8 @@ Trivial work can stay direct. Material work activates Agentit's JIT workflow.
 For maintainers and agents that want the explicit bootstrap surface:
 
 ```bash
-python3 bootstrap.py --provider <claude|codex|antigravity>
-python3 bootstrap.py --provider <claude|codex|antigravity> --apply
+python3 bootstrap.py --provider <claude|codex|grok|antigravity>
+python3 bootstrap.py --provider <claude|codex|grok|antigravity> --apply
 ```
 
 The canonical bootstrap supports macOS and GNU/Linux and produces verified, reversible installation state.

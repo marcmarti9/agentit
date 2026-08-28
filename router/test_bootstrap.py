@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -54,6 +56,14 @@ class PortableBootstrapTests(unittest.TestCase):
             self.assertIn(str(canonical), destinations)
             self.assertNotIn(str(legacy), destinations)
 
+    def test_grok_uses_canonical_global_skill_discovery_path(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            plan = build_install_plan(home=home, source_root=ROOT, provider="grok")
+            destinations = {item["destination"] for item in plan["operations"]}
+            canonical = home / ".grok" / "skills" / "using-agentit" / "SKILL.md"
+            self.assertIn(str(canonical), destinations)
+
     def test_apply_installs_runtime_provider_surfaces_and_cli(self):
         with tempfile.TemporaryDirectory() as temporary:
             home = Path(temporary)
@@ -67,8 +77,9 @@ class PortableBootstrapTests(unittest.TestCase):
 
             cli = home / ".local" / "bin" / "agentit"
             self.assertTrue(cli.is_file())
+            cmd = [str(cli), "--help"] if os.name != "nt" else [sys.executable, str(cli), "--help"]
             completed = subprocess.run(
-                [str(cli), "--help"],
+                cmd,
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,

@@ -4,6 +4,11 @@
 
 - Make the semantic `bare | agentit` dispatch from the actual task context. No activation phrase is required.
 - Keep the primary/parent agent responsible for task interpretation, integration, verification, and the user-facing answer.
+- **Cold start & Core skills**: Global skill discovery in `~/.codex/skills/` contains ONLY the 3 bootstrap core skills:
+  1. `using-agentit`
+  2. `task-router`
+  3. `using-agent-skills`
+- **Just-In-Time (JIT) skill loading**: When a task needs non-core expertise (e.g. `debugging-and-error-recovery`, `test-driven-development`, `security-and-hardening`), inspect `references/packs.md` and load the specific `SKILL.md` body directly from `~/.agentit/runtime/skills/<skill-name>/SKILL.md` (or the project repository `skills/<skill-name>/SKILL.md`). Do NOT install all skills globally into `~/.codex/skills/`.
 - Use Codex subagents only when specialization, context isolation, independent review, or real parallelism materially helps. A fixed multi-agent chain is never required.
 - Before delegating, project a bounded Worker Context Contract: objective, scope, selected skill bodies, selected references, tools/permissions, ownership, expected handoff, verifier, and stop condition.
 - One writer owns each shared file or mutable resource unless isolation is explicit.

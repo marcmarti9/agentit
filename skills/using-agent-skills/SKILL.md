@@ -28,11 +28,21 @@ understand task
 -> inspect the relevant pack(s)
 -> read candidate descriptions
 -> AI chooses any number of skills that materially help
--> load only those SKILL.md bodies
+-> load only those SKILL.md bodies dynamically (JIT)
 -> execute / verify
 -> add or remove skills later if new evidence changes the need
 -> next session starts from core again
 ```
+
+### Loading Skill Bodies JIT
+
+When a non-core skill is selected, read its `SKILL.md` file dynamically using your file reading tool (`view_file` / `cat` / `read_file`):
+
+1. **Global Agentit Runtime**: `~/.agentit/runtime/skills/<skill-name>/SKILL.md`
+2. **Repository Source**: `skills/<skill-name>/SKILL.md` (when operating in the Agentit repository)
+3. **Project Local Override**: `.agents/skills/<skill-name>/SKILL.md` or `.agentit/skills/<skill-name>/SKILL.md`
+
+Do NOT preload non-core skills into global host prompt directories. Keep the global host prompt clean with only the 3 core skills.
 
 The primary AI owns the selection. There are intentionally **no fixed skill counts and no pack levels**.
 

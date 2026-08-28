@@ -27,7 +27,7 @@ Uso: bash install.sh [opciones]
 Por defecto no modifica nada y muestra el plan.
 
   --apply                    aplicar cambios (requiere backup automático)
-  --provider NAME            all|claude|codex|antigravity (por defecto: all)
+  --provider NAME            all|claude|codex|grok|antigravity (por defecto: all)
   --home DIR                 raíz de usuario alternativa para pruebas
   --with-settings            copiar settings.json de Claude (revisar antes)
   --with-local-settings      copiar la plantilla local explícita a settings.local.json (no recomendado)
@@ -78,7 +78,7 @@ while (($#)); do
 done
 
 case "$PROVIDER" in
-  all|claude|codex|antigravity) ;;
+  all|claude|codex|grok|antigravity) ;;
   *) die "provider inválido: $PROVIDER" ;;
 esac
 [[ "$WITH_SETTINGS" == "false" || "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]] || \
@@ -377,8 +377,11 @@ preflight_install() {
     preflight_shared_skills "$USER_HOME/.codex"
     preflight_copy_codex_agent_profiles "$USER_HOME/.codex"
   fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "grok" ]]; then
+    preflight_shared_skills "$USER_HOME/.grok"
+  fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-    preflight_shared_skills "$USER_HOME/.agents"
+    preflight_shared_skills "$USER_HOME/.gemini/config"
   fi
   if [[ "$PRUNE_ON_DEMAND" == "true" ]]; then
     if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
@@ -387,8 +390,11 @@ preflight_install() {
     if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
       preflight_prune_on_demand "codex" "$USER_HOME/.codex"
     fi
+    if [[ "$PROVIDER" == "all" || "$PROVIDER" == "grok" ]]; then
+      preflight_prune_on_demand "grok" "$USER_HOME/.grok"
+    fi
     if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-      preflight_prune_on_demand "antigravity" "$USER_HOME/.agents"
+      preflight_prune_on_demand "antigravity" "$USER_HOME/.gemini/config"
     fi
   fi
   if [[ "$WITH_SETTINGS" == "true" ]]; then
@@ -405,8 +411,9 @@ preflight_install() {
     case "$PROVIDER" in
       claude) guides=(AGENTS.md CLAUDE.md) ;;
       codex) guides=(AGENTS.md CODEX.md) ;;
+      grok) guides=(AGENTS.md GROK.md) ;;
       antigravity) guides=(AGENTS.md) ;;
-      all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+      all) guides=(AGENTS.md CLAUDE.md CODEX.md GROK.md) ;;
     esac
     local guide
     for guide in "${guides[@]}"; do
@@ -453,8 +460,11 @@ if [[ "$PRUNE_ON_DEMAND" == "true" && "$MODE" == "apply" ]]; then
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
     prune_on_demand "codex" "$USER_HOME/.codex"
   fi
+  if [[ "$PROVIDER" == "all" || "$PROVIDER" == "grok" ]]; then
+    prune_on_demand "grok" "$USER_HOME/.grok"
+  fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-    prune_on_demand "antigravity" "$USER_HOME/.agents"
+    prune_on_demand "antigravity" "$USER_HOME/.gemini/config"
   fi
 fi
 
@@ -475,11 +485,17 @@ if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
   copy_codex_agent_profiles "$USER_HOME/.codex"
 fi
 
-# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; la selección
+# Grok recibe el core mínimo en ~/.grok/skills
+if [[ "$PROVIDER" == "all" || "$PROVIDER" == "grok" ]]; then
+  note "[grok] perfil global core en ~/.grok/skills"
+  copy_shared_skills "grok" "$USER_HOME/.grok"
+fi
+
+# Antigravity/Gemini descubre Open Skills desde ~/.gemini/config/skills; la selección
 # de capacidades no depende de tener adapters exclusivos de otro provider.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
-  note "[antigravity] perfil global core en ~/.agents/skills"
-  copy_shared_skills "antigravity" "$USER_HOME/.agents"
+  note "[antigravity] perfil global core en ~/.gemini/config/skills"
+  copy_shared_skills "antigravity" "$USER_HOME/.gemini/config"
 fi
 
 if [[ "$WITH_SETTINGS" == "true" ]]; then
@@ -501,8 +517,9 @@ if [[ "$WITH_GUIDES" == "true" ]]; then
   case "$PROVIDER" in
     claude) guides=(AGENTS.md CLAUDE.md) ;;
     codex) guides=(AGENTS.md CODEX.md) ;;
+    grok) guides=(AGENTS.md GROK.md) ;;
     antigravity) guides=(AGENTS.md) ;;
-    all) guides=(AGENTS.md CLAUDE.md CODEX.md) ;;
+    all) guides=(AGENTS.md CLAUDE.md CODEX.md GROK.md) ;;
   esac
   for guide in "${guides[@]}"; do
     [[ -f "$REPO_DIR/$guide" ]] || continue

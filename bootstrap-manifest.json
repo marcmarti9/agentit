@@ -13,6 +13,7 @@
     "AGENTS.md",
     "CLAUDE.md",
     "CODEX.md",
+    "GROK.md",
     "THIRD_PARTY_NOTICES.md",
     "LICENSE",
     "router",
@@ -51,6 +52,9 @@
       "skills_root": ".codex/skills",
       "codex_agents_source": ".codex/agents",
       "agents_root": ".codex/agents"
+    },
+    "grok": {
+      "skills_root": ".grok/skills"
     },
     "antigravity": {
       "skills_root": ".gemini/config/skills"

@@ -300,7 +300,10 @@ def _optional_spec(
 
 
 def _venv_python(home: Path) -> Path:
-    return _destination(home, Path(".agentit") / "venv" / "bin" / "python")
+    base = _destination(home, Path(".agentit") / "venv")
+    if os.name == "nt" or (base / "Scripts" / "python.exe").exists():
+        return base / "Scripts" / "python.exe"
+    return base / "bin" / "python"
 
 
 def _cli_spec(home: Path) -> CopySpec:

@@ -103,6 +103,105 @@ specialists:
       preferred: [data.analyze]
     output: ranked plan with rationale, dependencies, cuts, and explicit non-goals
 
+  - id: executive-strategist
+    domain: executive
+    mode: probe
+    description: Company-level strategy, market choice, positioning, moats, build/buy/partner decisions and strategic sequencing.
+    triggers: [company strategy, positioning, market entry, moat, partnership, build vs buy, strategic priority]
+    skills: [executive-strategy, reference-intelligence, source-driven-development]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, collaboration.read]
+    output: strategic recommendation with alternatives, explicit non-goals, assumptions, evidence and revisit criteria
+
+  - id: finance-executive
+    domain: executive
+    mode: probe
+    description: Cash, runway, unit economics, scenarios, ROI, pricing economics and capital-allocation judgment.
+    triggers: [cash, runway, unit economics, pricing, roi, budget, margin, capital allocation, fundraising]
+    skills: [executive-finance, context-engineering, doubt-driven-development]
+    capabilities:
+      required: [documentation.read, data.analyze]
+      preferred: [collaboration.read]
+    output: decision-oriented financial model with assumptions, scenarios, sensitivities and exposure/review limits
+
+  - id: people-executive
+    domain: executive
+    mode: probe
+    description: Role design, hiring, compensation, performance, retention and organization-structure decisions.
+    triggers: [hiring, compensation, performance, retention, org design, management span, role design]
+    skills: [executive-people, reference-intelligence]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, collaboration.read]
+    output: people recommendation with business rationale, human impact, evidence, jurisdiction risks and follow-up criteria
+
+  - id: legal-executive
+    domain: executive
+    mode: reviewer
+    description: Executive legal framing for contracts, IP, employment, privacy, governance and regulatory exposure with jurisdiction-aware escalation.
+    triggers: [contract, legal risk, ip, privacy, employment law, regulation, governance, dispute]
+    skills: [executive-legal, reference-intelligence, doubt-driven-development]
+    capabilities:
+      required: [documentation.read]
+      preferred: [collaboration.read]
+    output: issue/risk map, current-source requirements, negotiating options and explicit qualified-counsel escalation boundary
+
+  - id: operations-executive
+    domain: executive
+    mode: probe
+    description: Constraint, process, vendor, automation, capacity and operating-metric decisions.
+    triggers: [operations, process, bottleneck, vendor, automation, capacity, sla, workflow]
+    skills: [executive-operations, planning-and-task-breakdown]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, issue.read, collaboration.read]
+    output: constraint-first operating recommendation with owner, metric, fallback and review point
+
+  - id: marketing-executive
+    domain: executive
+    mode: probe
+    description: ICP, positioning, GTM, funnel/channel economics, brand/demand and retention-linked marketing decisions.
+    triggers: [gtm, icp, positioning, channel strategy, funnel, marketing roi, brand, launch]
+    skills: [executive-marketing, marketing-and-growth, reference-intelligence]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, browser.inspect, collaboration.read]
+    output: prioritized GTM/marketing decision tied to customer behavior, economics, evidence and experiment thresholds
+
+  - id: product-executive
+    domain: executive
+    mode: probe
+    description: Customer-problem, product-market-fit, roadmap, sequencing, make/buy and evidence-gate decisions.
+    triggers: [product strategy, pmf, roadmap, prioritization, make vs buy, customer problem, retention]
+    skills: [executive-product, reference-intelligence]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, issue.read, collaboration.read]
+    output: product judgment with riskiest assumption, evidence gate, sequencing, success signal and kill/revisit condition
+
+  - id: board-executive
+    domain: executive
+    mode: reviewer
+    description: Board/investor narrative, KPI/variance, governance, material risk and explicit decision/ask preparation.
+    triggers: [board, investor update, board deck, governance, board metrics, board ask]
+    skills: [executive-board, executive-finance, executive-legal]
+    capabilities:
+      required: [documentation.read]
+      preferred: [data.analyze, collaboration.read]
+    output: coherent board-level narrative or review with reconciled numbers, material risks, recommendation and explicit asks
+
+  - id: executive-chief-of-staff
+    domain: executive
+    mode: probe
+    description: Triage company signals, maintain decision/follow-up queues, route ownership and compress operating cadence without executive-notification spam.
+    triggers: [chief of staff, triage, executive priorities, blockers, follow up, decision queue, operating cadence]
+    skills: [executive-chief-of-staff, executive-orchestration, planning-and-task-breakdown]
+    capabilities:
+      required: [documentation.read]
+      preferred: [issue.read, collaboration.read, data.analyze]
+    output: compact triage/decision queue with owners, urgency rationale, blockers, next action and closure condition
+
   - id: design-system-researcher
     domain: design
     mode: probe

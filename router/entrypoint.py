@@ -23,6 +23,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         return bootstrap_main(args[1:])
 
+    if args and args[0] == "skills":
+        from router.skills_cli import main as skills_main
+
+        return skills_main(args[1:])
+
     from router.profiles import main as profiles_main
 
     return profiles_main(args)

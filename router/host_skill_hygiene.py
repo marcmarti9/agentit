@@ -10,8 +10,10 @@ those roots and removes them reversibly during bootstrap.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -81,6 +83,38 @@ def _provider_roots(home: Path, manifest: dict[str, Any], providers: Iterable[st
     return roots
 
 
+def _write_recovery_receipt(
+    *, home: Path, backup_root: Path, records: list[dict[str, Any]]
+) -> None:
+    """Persist a rollback-compatible journal before a destructive cleanup step.
+
+    The normal bootstrap overwrites this file with its complete receipt after a
+    successful install. If bootstrap fails after host-skill cleanup, this
+    recovery-only receipt still gives the ordinary rollback command enough
+    information to restore every removed tree.
+    """
+
+    payload = {
+        "schema_version": 1,
+        "kind": "agentit.bootstrap.receipt",
+        "recovery_only": True,
+        "home": str(home),
+        "records": records,
+    }
+    backup_root.mkdir(parents=True, exist_ok=True)
+    fd, temporary_name = tempfile.mkstemp(prefix=".agentit-recovery-", dir=backup_root)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump(payload, stream, ensure_ascii=False, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, backup_root / "manifest.json")
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def plan_host_skill_hygiene(
     *, home: Path, source_root: Path, manifest: dict[str, Any], providers: Iterable[str]
 ) -> list[dict[str, Any]]:
@@ -125,6 +159,10 @@ def plan_host_skill_hygiene(
                     "category": f"provider:{provider}:legacy-skill",
                     "skill_id": candidate.name,
                     "destination": str(candidate),
+                    # Bind apply to the exact tree approved during planning.
+                    # Without this, a user edit between plan/apply could be
+                    # backed up and then deleted despite the fail-closed rule.
+                    "planned_tree_manifest": current,
                 }
             )
     return operations
@@ -142,25 +180,44 @@ def apply_host_skill_hygiene(
             raise HostSkillHygieneError(f"legacy skill destination escapes home: {destination}") from exc
         if not destination.is_dir() or destination.is_symlink():
             raise HostSkillHygieneError(f"legacy skill changed before cleanup: {destination}")
+
         tree_before = _tree_manifest(destination)
+        planned = operation.get("planned_tree_manifest")
+        if not isinstance(planned, dict) or tree_before != planned:
+            raise HostSkillHygieneError(
+                f"legacy skill changed after planning; refusing cleanup: {destination}"
+            )
+
         backup = backup_root / "removed-skill-trees" / rel
         if backup.exists() or backup.is_symlink():
             raise HostSkillHygieneError(f"legacy skill backup already exists: {backup}")
+
+        record = {
+            "kind": "removed_skill_tree",
+            "category": operation["category"],
+            "skill_id": operation["skill_id"],
+            "destination": str(destination),
+            "backup_path": str(backup),
+            "tree_manifest": tree_before,
+        }
+
+        # Journal the intended destructive operation first. If the process dies
+        # after the directory is removed but before bootstrap writes its final
+        # receipt, the ordinary rollback path still has a durable record.
+        _write_recovery_receipt(home=home, backup_root=backup_root, records=[*records, record])
+
         backup.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(destination, backup, symlinks=False)
         if _tree_manifest(backup) != tree_before:
             raise HostSkillHygieneError(f"legacy skill backup mismatch: {destination}")
+
+        # Revalidate immediately before deletion as a second TOCTOU barrier.
+        if _tree_manifest(destination) != tree_before:
+            raise HostSkillHygieneError(
+                f"legacy skill changed during backup; refusing cleanup: {destination}"
+            )
         shutil.rmtree(destination)
-        records.append(
-            {
-                "kind": "removed_skill_tree",
-                "category": operation["category"],
-                "skill_id": operation["skill_id"],
-                "destination": str(destination),
-                "backup_path": str(backup),
-                "tree_manifest": tree_before,
-            }
-        )
+        records.append(record)
     return records
 
 

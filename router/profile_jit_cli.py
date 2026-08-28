@@ -182,7 +182,12 @@ def _legacy_cleanup_plan(
                     f"legacy Agentit profile skill was modified; refusing automatic JIT migration: {path}"
                 )
             operations.append(
-                {"action": "remove-legacy-host-file", "path": str(path), "skill_id": str(skill_id)}
+                {
+                    "action": "remove-legacy-host-file",
+                    "path": str(path),
+                    "skill_id": str(skill_id),
+                    "expected_sha256": expected,
+                }
             )
     return operations
 
@@ -245,6 +250,58 @@ def _validate_private_existing(
                 raise ProfileError(f"refusing to overwrite modified private profile skill: {path}")
 
 
+def _private_cleanup_plan(
+    *, project: Path, old_manifest: dict[str, Any] | None, payload: dict[str, Any]
+) -> list[dict[str, str]]:
+    """Return old managed private files that are no longer in the desired payload.
+
+    This covers both removed references inside a still-enabled skill and entire
+    skills that disappear because a profile was disabled or its catalog changed.
+    Every removal is bound to the hash recorded by the old manifest so a user
+    edit after planning fails closed instead of being deleted.
+    """
+
+    if old_manifest is None:
+        return []
+    desired_skills = payload.get("skills") or {}
+    operations: list[dict[str, str]] = []
+    for skill_id, metadata in old_manifest.get("skills", {}).items():
+        if not isinstance(metadata, dict):
+            continue
+        destination = metadata.get("destination")
+        if not isinstance(destination, str) or not Path(destination).parts[:2] == PRIVATE_SKILL_ROOT.parts[:2]:
+            continue
+        root = (project / destination).parent
+        new_metadata = desired_skills.get(skill_id)
+        desired_files = (
+            set(_managed_file_metadata(new_metadata)) if isinstance(new_metadata, dict) else set()
+        )
+        for relative, file_meta in _managed_file_metadata(metadata).items():
+            if relative in desired_files:
+                continue
+            path = root / relative
+            if not path.exists():
+                continue
+            _assert_project_path(path, project=project)
+            expected = file_meta.get("installed_sha256")
+            if (
+                not path.is_file()
+                or path.is_symlink()
+                or not isinstance(expected, str)
+                or _sha256(path) != expected
+            ):
+                raise ProfileError(f"refusing to remove modified managed private profile skill: {path}")
+            operations.append(
+                {
+                    "action": "remove-stale-private-file",
+                    "path": str(path),
+                    "skill_id": str(skill_id),
+                    "expected_sha256": expected,
+                }
+            )
+    return operations
+
+
 def _copy_atomic(source: Path, destination: Path, *, project: Path) -> None:
     _assert_project_path(destination, project=project)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -270,6 +327,24 @@ def _remove_file_and_empty_parents(path: Path, *, project: Path, stop: Path) -> 
         current = current.parent
 
 
+def _apply_planned_removal(
+    item: dict[str, str], *, project: Path, stop: Path, label: str
+) -> None:
+    path = Path(item["path"])
+    if not path.exists():
+        return
+    _assert_project_path(path, project=project)
+    expected = item.get("expected_sha256")
+    if (
+        not path.is_file()
+        or path.is_symlink()
+        or not isinstance(expected, str)
+        or _sha256(path) != expected
+    ):
+        raise ProfileError(f"{label} changed after planning; refusing removal: {path}")
+    _remove_file_and_empty_parents(path, project=project, stop=stop)
+
+
 def _enable(
     profile_name: str,
     *, project: Path,
@@ -292,6 +367,7 @@ def _enable(
     _validate_private_existing(project=project, old_manifest=old)
     cleanup = _legacy_cleanup_plan(project=project, manifest=old)
     payload = _build_payload(profiles, catalog=catalog, repo_root=repo_root)
+    stale = _private_cleanup_plan(project=project, old_manifest=old, payload=payload)
     operations: list[str] = []
     for skill_id, metadata in payload["skills"].items():
         root = _private_dir(project, skill_id)
@@ -300,6 +376,7 @@ def _enable(
             destination = root / relative
             verb = "replace" if destination.exists() else "install"
             operations.append(f"{verb}: {destination}")
+    operations.extend(f"remove stale private cache: {item['path']}" for item in stale)
     operations.extend(f"remove legacy host exposure: {item['path']}" for item in cleanup)
 
     if not apply:
@@ -311,10 +388,20 @@ def _enable(
         for relative in metadata["files"]:
             _copy_atomic(source / relative, root / relative, project=project)
 
+    for item in stale:
+        _apply_planned_removal(
+            item,
+            project=project,
+            stop=project / PRIVATE_SKILL_ROOT,
+            label="stale private profile file",
+        )
     for item in cleanup:
-        path = Path(item["path"])
-        if path.exists():
-            _remove_file_and_empty_parents(path, project=project, stop=project / LEGACY_HOST_ROOT)
+        _apply_planned_removal(
+            item,
+            project=project,
+            stop=project / LEGACY_HOST_ROOT,
+            label="legacy host-visible profile file",
+        )
 
     _atomic_json(_manifest_path(project), payload, project=project)
     return ["Perfil disponible en biblioteca JIT privada.", *operations]
@@ -338,35 +425,27 @@ def _disable(
     _validate_private_existing(project=project, old_manifest=old)
     cleanup = _legacy_cleanup_plan(project=project, manifest=old)
     payload = _build_payload(profiles, catalog=catalog, repo_root=repo_root)
-    desired = set(payload["skills"])
-    removals: list[Path] = []
-    for skill_id, metadata in old.get("skills", {}).items():
-        if skill_id in desired or not isinstance(metadata, dict):
-            continue
-        destination = metadata.get("destination")
-        if not isinstance(destination, str) or not Path(destination).parts[:2] == PRIVATE_SKILL_ROOT.parts[:2]:
-            continue
-        root = (project / destination).parent
-        for relative, file_meta in _managed_file_metadata(metadata).items():
-            path = root / relative
-            if not path.exists():
-                continue
-            expected = file_meta.get("installed_sha256")
-            if not path.is_file() or path.is_symlink() or not isinstance(expected, str) or _sha256(path) != expected:
-                raise ProfileError(f"refusing to remove modified managed private profile skill: {path}")
-            removals.append(path)
+    stale = _private_cleanup_plan(project=project, old_manifest=old, payload=payload)
 
-    operations = [*(f"remove private cache: {path}" for path in removals)]
+    operations = [*(f"remove private cache: {item['path']}" for item in stale)]
     operations.extend(f"remove legacy host exposure: {item['path']}" for item in cleanup)
     if not apply:
         return ["MODO PLAN: no se escribirán archivos.", *operations]
 
-    for path in removals:
-        _remove_file_and_empty_parents(path, project=project, stop=project / PRIVATE_SKILL_ROOT)
+    for item in stale:
+        _apply_planned_removal(
+            item,
+            project=project,
+            stop=project / PRIVATE_SKILL_ROOT,
+            label="managed private profile file",
+        )
     for item in cleanup:
-        path = Path(item["path"])
-        if path.exists():
-            _remove_file_and_empty_parents(path, project=project, stop=project / LEGACY_HOST_ROOT)
+        _apply_planned_removal(
+            item,
+            project=project,
+            stop=project / LEGACY_HOST_ROOT,
+            label="legacy host-visible profile file",
+        )
 
     # Refresh still-desired private packages from source after validating they
     # were not modified; this keeps project availability current without host exposure.

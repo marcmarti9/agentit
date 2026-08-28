@@ -113,3 +113,13 @@ Source: https://github.com/tt-a1i/archify
 MIT License. Copyright (c) 2026 tt-a1i (Archify), with upstream copyright notices retained by that project.
 
 Agentit's `diagram-and-architecture-visuals` treats Archify as an optional JIT external implementation family for typed, validated, code-grounded architecture maps. Agentit does not vendor Archify's renderer, JSON schemas, validators or artifacts and does not claim that authored graph reach proves live production impact.
+
+## Sente Labs / OpenExecutive
+
+Source: https://github.com/SenteLabsAI/OpenExecutive
+
+Copyright 2025 Open Executive Contributors. Licensed under the Apache License, Version 2.0.
+
+Agentit's `executive` profile and `executive-*` skills are original provider-neutral adaptations materially informed by OpenExecutive's public architecture and operating guidance: a single coherent Executive synthesis layer, domain-specialist decomposition, model-owned specialist selection, parallel specialist consultation, company-specific context, durable decision/episodic memory concepts, proactive triage/authority boundaries, domain decision heuristics and evaluation discipline.
+
+Agentit does not vendor OpenExecutive's Python/TypeScript runtime, prompts verbatim, UI, FastAPI/Next.js application, ChromaDB/SQLite persistence, scheduler/integration implementation or provider/model configuration. It does not require Anthropic/Claude and does not claim drop-in compatibility with OpenExecutive. The adapted executive skills keep Agentit's cold-session JIT, provider-neutral capability, authorization, provenance and verification contracts.

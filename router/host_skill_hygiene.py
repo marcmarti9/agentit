@@ -46,6 +46,19 @@ def _tree_manifest(root: Path) -> dict[str, str]:
     return result
 
 
+def _matches_agentit_source(current: dict[str, str], source: dict[str, str]) -> bool:
+    if current == source:
+        return True
+    # Some historical installers projected only SKILL.md even when the source
+    # skill also contained references. That legacy shape is still safely
+    # attributable when the sole body matches the current Agentit body exactly.
+    return (
+        set(current) == {"SKILL.md"}
+        and "SKILL.md" in source
+        and current["SKILL.md"] == source["SKILL.md"]
+    )
+
+
 def _provider_roots(home: Path, manifest: dict[str, Any], providers: Iterable[str]) -> list[tuple[str, Path]]:
     catalog = manifest.get("providers") or {}
     seen: set[Path] = set()
@@ -71,11 +84,12 @@ def _provider_roots(home: Path, manifest: dict[str, Any], providers: Iterable[st
 def plan_host_skill_hygiene(
     *, home: Path, source_root: Path, manifest: dict[str, Any], providers: Iterable[str]
 ) -> list[dict[str, Any]]:
-    """Return reversible removals for exact legacy Agentit non-core skill copies.
+    """Return reversible removals for provably Agentit-managed non-core copies.
 
-    Unknown/user-owned skills are never removed. A non-core directory is only
-    classified as Agentit-managed when its complete file tree exactly matches
-    the current source skill tree. Same-ID but different content is left alone.
+    Unknown/user-owned skills are never removed. A non-core directory is
+    classified as Agentit-managed only when its whole tree matches the current
+    source tree or when it is the historical SKILL.md-only projection and that
+    body matches exactly. Same-ID but different content is left alone.
     """
 
     core = {str(item) for item in manifest.get("core_skills") or []}
@@ -103,7 +117,7 @@ def plan_host_skill_hygiene(
                 current = _tree_manifest(candidate)
             except HostSkillHygieneError:
                 continue
-            if current != source_manifests[candidate.name]:
+            if not _matches_agentit_source(current, source_manifests[candidate.name]):
                 continue
             operations.append(
                 {

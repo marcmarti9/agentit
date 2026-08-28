@@ -45,15 +45,39 @@
   ],
   "providers": {
     "claude": {
-      "skills_root": ".claude/skills"
+      "skills_root": ".claude/skills",
+      "legacy_skill_roots": [
+        ".claude/skills"
+      ]
     },
     "codex": {
-      "skills_root": ".codex/skills",
+      "skills_root": ".agents/skills",
+      "legacy_skill_roots": [
+        ".codex/skills",
+        ".agents/skills"
+      ],
       "codex_agents_source": ".codex/agents",
       "agents_root": ".codex/agents"
     },
+    "grok": {
+      "skills_root": ".grok/skills",
+      "legacy_skill_roots": [
+        ".grok/skills"
+      ]
+    },
+    "gemini": {
+      "skills_root": ".gemini/skills",
+      "legacy_skill_roots": [
+        ".gemini/skills",
+        ".agents/skills"
+      ]
+    },
     "antigravity": {
-      "skills_root": ".gemini/config/skills"
+      "skills_root": ".gemini/config/skills",
+      "legacy_skill_roots": [
+        ".gemini/config/skills",
+        ".agents/skills"
+      ]
     }
   },
   "optional_templates": {

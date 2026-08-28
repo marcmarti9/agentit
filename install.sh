@@ -371,7 +371,6 @@ preflight_shared_skills() {
 
 preflight_install() {
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
-    preflight_copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents"
     preflight_shared_skills "$USER_HOME/.claude"
   fi
   if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
@@ -459,24 +458,25 @@ if [[ "$PRUNE_ON_DEMAND" == "true" && "$MODE" == "apply" ]]; then
   fi
 fi
 
-# Claude conserva los agentes adaptativos y el perfil global core. Los demás
-# cuerpos permanecen en el repositorio y se activan bajo demanda por proyecto.
+# Todos los providers reciben el mismo core mínimo. Las capacidades semánticas
+# JIT (incluido architect-orchestrator) permanecen en el runtime/catálogo común
+# y se seleccionan por tarea; ningún host recibe una jerarquía semántica extra
+# solo por su formato nativo de agentes.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "claude" ]]; then
-  note "[claude] agentes adaptativos + perfil global core"
-  copy_tree "$REPO_DIR/agents" "$USER_HOME/.claude/agents" "claude/agents"
+  note "[claude] perfil global core; sin jerarquía semántica preinstalada"
   copy_shared_skills "claude" "$USER_HOME/.claude"
 fi
 
-# Codex recibe solo el perfil global core y los workers portables; no se impone
-# la jerarquía de Claude en ~/.codex/agents. Los archivos antiguos no se eliminan.
+# Codex mantiene workers host-specific de ejecución/modelo, pero la semántica
+# de arquitectura/orquestación se resuelve por las mismas skills JIT comunes.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "codex" ]]; then
-  note "[codex] perfil global core; sin jerarquía obligatoria"
+  note "[codex] perfil global core; sin jerarquía semántica obligatoria"
   copy_shared_skills "codex" "$USER_HOME/.codex"
   copy_codex_agent_profiles "$USER_HOME/.codex"
 fi
 
-# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; no se
-# presupone un wrapper ni un runtime específico adicional.
+# Antigravity/Gemini descubre Open Skills desde ~/.agents/skills; la selección
+# de capacidades no depende de tener adapters exclusivos de otro provider.
 if [[ "$PROVIDER" == "all" || "$PROVIDER" == "antigravity" ]]; then
   note "[antigravity] perfil global core en ~/.agents/skills"
   copy_shared_skills "antigravity" "$USER_HOME/.agents"

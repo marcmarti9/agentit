@@ -17,7 +17,7 @@ using-agentit
 
 The host-visible skill roots must contain only those three Agentit skills. The full Agentit skill library lives privately under Agentit's runtime and is discovered through the `agentit skills` CLI. A provider seeing a skill name/description is already context exposure, even if it has not opened that skill's `SKILL.md`.
 
-**Installation is not activation.** A skill may exist in Agentit's private runtime for discovery without being active model context. Only explicitly selected bodies count as active for the current stage.
+**installation is not activation.** A skill may exist in Agentit's private runtime for discovery without being active model context. Only explicitly selected bodies count as active for the current stage.
 
 ## Progressive disclosure contract
 

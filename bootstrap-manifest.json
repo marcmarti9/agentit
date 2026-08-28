@@ -45,9 +45,7 @@
   ],
   "providers": {
     "claude": {
-      "skills_root": ".claude/skills",
-      "agents_source": "agents",
-      "agents_root": ".claude/agents"
+      "skills_root": ".claude/skills"
     },
     "codex": {
       "skills_root": ".codex/skills",

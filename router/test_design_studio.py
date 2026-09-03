@@ -19,7 +19,7 @@ class DesignStudioTests(unittest.TestCase):
 
         required = {
             "design-taste-frontend",
-            "impeccable-design",
+            "impeccable",
             "emil-design-eng",
             "design-inspiration-research",
             "design-md-workflow",
@@ -48,7 +48,7 @@ class DesignStudioTests(unittest.TestCase):
         )
         self.assertNotIn("reference-intelligence", core)
         self.assertNotIn("specialist-agent-routing", core)
-        self.assertNotIn("impeccable-design", core)
+        self.assertNotIn("impeccable", core)
         self.assertNotIn("scrollytelling-web", core)
         self.assertNotIn("threejs-product-storytelling", core)
         self.assertNotIn("creative-tool-scout", core)

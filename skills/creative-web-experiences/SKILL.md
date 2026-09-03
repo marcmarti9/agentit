@@ -72,7 +72,7 @@ When external research is available, pair with `design-inspiration-research` bef
 
 ## Pairing
 
-- Always pair non-trivial visual work with `design-taste-frontend`, `impeccable-design`, and `emil-design-eng`.
+- Always pair non-trivial visual work with `design-taste-frontend`, `impeccable`, and `emil-design-eng`.
 - For scroll narratives, add `scrollytelling-web`, `gsap-scrolltrigger`, and `gsap-performance`.
 - For spaces and navigable environments, add `threejs-spatial-experiences`.
 - For product/object assemblies, add `threejs-product-storytelling`.

@@ -68,7 +68,7 @@ Do not claim write support when the current seat/tool surface is read-only.
 For serious frontend design work, Figma context should normally be paired with:
 
 - `design-taste-frontend` for art direction;
-- `impeccable-design` for craft and critique;
+- `impeccable` for craft and critique;
 - `emil-design-eng` for interaction polish;
 - `browser-testing-with-devtools` / Playwright for implementation verification;
 - `scrollytelling-web` when the target includes scroll choreography.

@@ -64,4 +64,4 @@ Return a ranked list containing:
 - risk of becoming annoying;
 - keep/cut recommendation.
 
-Pair with `emil-design-eng` for motion feel and `impeccable-design` for final craft review.
+Pair with `emil-design-eng` for motion feel and `impeccable` for final craft review.

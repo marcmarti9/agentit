@@ -135,7 +135,7 @@ Only durable influences belong there; do not dump the research browsing history.
 
 ## Implementation handoff
 
-Feed `INSPIRATION_SYNTHESIS` and `REFERENCE_TO_DECISION_MAP` into `design-taste-frontend` and `impeccable-design` **before implementation**. The selected `DESIGN_DIRECTION` should cite the principles that shaped it.
+Feed `INSPIRATION_SYNTHESIS` and `REFERENCE_TO_DECISION_MAP` into `design-taste-frontend` and `impeccable` **before implementation**. The selected `DESIGN_DIRECTION` should cite the principles that shaped it.
 
 Before inventing commodity UI primitives, inspect the project's own component system first. When a missing pattern justifies external scouting, use `references/component-reference-scouting.md`, inspect a small set of candidates, choose an explicit adoption outcome, and adapt the result to project tokens/accessibility instead of shipping catalog demo styling unchanged.
 

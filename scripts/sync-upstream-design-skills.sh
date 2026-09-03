@@ -25,7 +25,7 @@ done
 rm -rf \
   "$ROOT/skills/design-taste-frontend" \
   "$ROOT/skills/impeccable" \
-  "$ROOT/skills/impeccable-design" \
+  "$ROOT/skills/impeccable" \
   "$ROOT/skills/emil-design-eng"
 
 mkdir -p \

@@ -169,22 +169,18 @@ def _skill_source_dir(repo_root: Path, skill_id: str) -> Path:
 
 
 def _list_skill_package_files(skill_dir: Path) -> list[str]:
-    """Relative paths under a skill dir: SKILL.md plus references/** regular files."""
+    """Return SKILL.md plus every regular file contained in the skill package."""
     if not skill_dir.is_dir() or skill_dir.is_symlink():
         raise ProfileError(f"skill directory is not a regular directory: {skill_dir}")
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.is_file() or skill_md.is_symlink():
         raise ProfileError(f"source skill is not a regular file: {skill_md}")
     files = ["SKILL.md"]
-    references = skill_dir / "references"
-    if references.exists():
-        if not references.is_dir() or references.is_symlink():
-            raise ProfileError(f"skill references must be a regular directory: {references}")
-        for path in sorted(references.rglob("*")):
-            if path.is_symlink():
-                raise ProfileError(f"skill package rejects symlinks: {path}")
-            if path.is_file():
-                files.append(path.relative_to(skill_dir).as_posix())
+    for path in sorted(skill_dir.rglob("*")):
+        if path.is_symlink():
+            raise ProfileError(f"skill package rejects symlinks: {path}")
+        if path.is_file() and path != skill_md:
+            files.append(path.relative_to(skill_dir).as_posix())
     return files
 
 

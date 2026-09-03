@@ -35,7 +35,7 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Check legacy shell syntax
-        run: bash -n install.sh update.sh security/harden-local.sh
+        run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh
 
       - name: Check portable Python entrypoints
         run: |

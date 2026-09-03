@@ -262,7 +262,7 @@ specialists:
     mode: reviewer
     description: Add a small number of memorable, brand-appropriate moments without turning the interface into a gimmick.
     triggers: [delight, whimsy, playful, easter egg, memorable, polish]
-    skills: [delight-and-whimsy, emil-design-eng, impeccable-design]
+    skills: [delight-and-whimsy, emil-design-eng, impeccable]
     capabilities:
       required: [repository.read]
       preferred: [design.inspect, browser.inspect]
@@ -273,7 +273,7 @@ specialists:
     mode: reviewer
     description: Independent visual and interaction critique covering hierarchy, composition, typography, motion, responsiveness, states, and anti-slop signals.
     triggers: [critique, review design, polish, premium, visual qa]
-    skills: [impeccable-design, design-taste-frontend, emil-design-eng]
+    skills: [impeccable, design-taste-frontend, emil-design-eng]
     capabilities:
       required: [repository.read]
       preferred: [design.inspect, browser.inspect]

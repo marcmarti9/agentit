@@ -20,7 +20,7 @@ MIT License. Copyright (c) 2026 Leonxlnx.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright and permission notice. The Software is provided "AS IS", without warranty of any kind.
 
-Agentit materially modifies and integrates the design-taste guidance into its provider-neutral routing/profile model.
+Agentit vendors the canonical upstream `skills/taste-skill` package as `skills/design-taste-frontend` without compressing or rewriting its skill body. Agentit-specific routing and composition live outside the vendored package.
 
 ## Emil Kowalski / skills
 
@@ -30,7 +30,7 @@ MIT License. Copyright (c) 2026 Emil Kowalski.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright and permission notice. The Software is provided "AS IS", without warranty of any kind.
 
-Agentit adapts the public design-engineering philosophy for its local `emil-design-eng` skill.
+Agentit vendors the canonical upstream `skills/emil-design-eng` package as `skills/emil-design-eng` without compressing or rewriting its skill body. Agentit-specific routing and composition live outside the vendored package.
 
 ## GreenSock / gsap-skills
 
@@ -44,7 +44,7 @@ Source: https://github.com/pbakaus/impeccable
 
 Copyright 2025 Paul Bakaus. Licensed under the Apache License, Version 2.0.
 
-Agentit's `impeccable-design` is a substantially reorganized/modified adaptation for Agentit's skill model. It does not vendor Impeccable's scripts, detector, CLI, or claim drop-in compatibility with its command runtime.
+Agentit vendors Impeccable's canonical `.agents/skills/impeccable` distribution as `skills/impeccable`, including its `SKILL.md`, `reference/`, and `scripts/` package files. Agentit-specific routing and composition live outside the vendored package.
 
 ## Scott Sun / Three.js Awesome Graphics Agent Skills
 

@@ -194,7 +194,7 @@ Common JIT pairings:
 
 - `design-inspiration-research` — establish evidence-backed direction before encoding it;
 - `design-taste-frontend` — art direction;
-- `impeccable-design` — critique/polish;
+- `impeccable` — critique/polish;
 - `figma-design-workflow` — when Figma is authoritative;
 - `frontend-ui-engineering` — implement the contract;
 - `browser-testing-with-devtools` — rendered verification.

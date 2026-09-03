@@ -153,7 +153,7 @@ A screenshot of only the hero is not evidence that scrollytelling works.
 Use with:
 
 - `design-taste-frontend` — art direction;
-- `impeccable-design` — composition/craft;
+- `impeccable` — composition/craft;
 - `emil-design-eng` — motion feel;
 - `gsap-scrolltrigger` — scroll mechanics;
 - `gsap-performance` — hot-path correctness;

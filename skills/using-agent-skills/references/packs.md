@@ -100,7 +100,7 @@ If visual direction is material, inspect the `design` pack too. That does not re
 - `design-inspiration-research` — research references, extract design DNA, synthesize rather than clone, and preserve provenance. Its references include the distilled premium/high-craft website production playbook.
 - `design-md-workflow` — encode/read/verify durable project visual identity and tokens when persistent multi-session design memory is useful.
 - `diagram-and-architecture-visuals` — route branded/general diagrams, code-grounded architecture maps, or simpler project-native diagrams without defaulting to AI-slop boxes.
-- `impeccable-design` — structured visual critique and polish passes.
+- `impeccable` — structured visual critique and polish passes.
 - `ui-ux-pro-max-intelligence` — broader UI/UX pattern intelligence when the task benefits from it.
 - `emil-design-eng` — interaction craft and design-engineering judgment.
 - `design-trend-researcher` — investigate current visual/interaction patterns when freshness matters.

@@ -30,7 +30,7 @@ UI UX Pro Max is strongest at structured, product-aware lookup:
 Agentit's other design skills remain responsible for judgment:
 
 - `design-taste-frontend` -> art direction and visual thesis;
-- `impeccable-design` -> craft critique and polish;
+- `impeccable` -> craft critique and polish;
 - `emil-design-eng` -> interaction/motion feel;
 - `creative-web-experiences` -> concept generation;
 - `design-inspiration-research` / `design-trend-researcher` -> current external references;

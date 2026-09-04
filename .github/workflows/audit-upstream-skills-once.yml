@@ -1,0 +1,193 @@
+name: Audit all skill upstream provenance
+
+on:
+  push:
+    branches:
+      - sync/all-skills-upstream-2026-09-04
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone candidate canonical sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/agentit-upstreams
+          repos=(
+            'Leonxlnx/taste-skill'
+            'pbakaus/impeccable'
+            'emilkowalski/skills'
+            'greensock/gsap-skills'
+            'supabase/agent-skills'
+            'Nutlope/hallmark'
+            'nextlevelbuilder/ui-ux-pro-max-skill'
+            'Appllama/appllama-skills'
+            'blader/humanizer'
+            'hardikpandya/stop-slop'
+            'google-labs-code/design.md'
+            'cathrynlavery/diagram-design'
+            'tt-a1i/archify'
+            'SenteLabsAI/OpenExecutive'
+            'obra/superpowers'
+            'mattpocock/skills'
+            'addyosmani/agent-skills'
+            'open-gsd/gsd-core'
+            'coreyhaines31/marketingskills'
+            'vercel-labs/skills'
+          )
+          for repo in "${repos[@]}"; do
+            dest="/tmp/agentit-upstreams/${repo//\//__}"
+            echo "==> $repo"
+            if ! git clone --depth 1 "https://github.com/$repo.git" "$dest"; then
+              echo "WARN: failed to clone $repo" >&2
+              rm -rf "$dest"
+            fi
+          done
+
+      - name: Build provenance similarity report
+        run: |
+          python3 - <<'PY'
+          from __future__ import annotations
+          from pathlib import Path
+          from difflib import SequenceMatcher
+          import hashlib, json, re, subprocess
+
+          repo_root = Path('.').resolve()
+          source_root = Path('/tmp/agentit-upstreams')
+
+          def fm_name(text: str) -> str | None:
+              m = re.match(r'^---\s*\n(.*?)\n---\s*\n', text, re.S)
+              if not m:
+                  return None
+              n = re.search(r'(?m)^name:\s*["\']?([^"\'\n]+)', m.group(1))
+              return n.group(1).strip() if n else None
+
+          def normalize(text: str) -> str:
+              text = re.sub(r'^---\s*\n.*?\n---\s*\n', '', text, flags=re.S)
+              text = text.lower()
+              text = re.sub(r'https?://\S+', ' ', text)
+              text = re.sub(r'[^a-z0-9_+.#-]+', ' ', text)
+              return re.sub(r'\s+', ' ', text).strip()
+
+          def tokens(text: str) -> set[str]:
+              return {t for t in normalize(text).split() if len(t) >= 4}
+
+          sources=[]
+          source_heads={}
+          for d in sorted(source_root.iterdir() if source_root.exists() else []):
+              if not d.is_dir():
+                  continue
+              repo=d.name.replace('__','/',1)
+              try:
+                  head=subprocess.check_output(['git','-C',str(d),'rev-parse','HEAD'], text=True).strip()
+              except Exception:
+                  head='unknown'
+              source_heads[repo]=head
+              for p in d.rglob('SKILL.md'):
+                  try: text=p.read_text(encoding='utf-8')
+                  except Exception: continue
+                  sources.append({
+                      'repo':repo,
+                      'head':head,
+                      'path':p.relative_to(d).as_posix(),
+                      'name':fm_name(text),
+                      'text':text,
+                      'norm':normalize(text),
+                      'tokens':tokens(text),
+                      'sha256':hashlib.sha256(text.encode()).hexdigest(),
+                  })
+
+          locals=[]
+          for d in sorted((repo_root/'skills').iterdir()):
+              p=d/'SKILL.md'
+              if not p.is_file(): continue
+              text=p.read_text(encoding='utf-8')
+              locals.append({
+                  'id':d.name,
+                  'name':fm_name(text),
+                  'text':text,
+                  'norm':normalize(text),
+                  'tokens':tokens(text),
+                  'sha256':hashlib.sha256(text.encode()).hexdigest(),
+              })
+
+          rows=[]
+          details=[]
+          for local in locals:
+              scored=[]
+              for src in sources:
+                  inter=len(local['tokens'] & src['tokens'])
+                  union=max(1,len(local['tokens'] | src['tokens']))
+                  j=inter/union
+                  # Sequence score is capped to keep huge files affordable.
+                  a=local['norm'][:30000]
+                  b=src['norm'][:30000]
+                  seq=SequenceMatcher(None,a,b,autojunk=False).ratio() if a and b else 0
+                  name_bonus=0.18 if local['id']==src['name'] else 0.12 if local['id']==Path(src['path']).parent.name else 0
+                  score=0.65*j+0.35*seq+name_bonus
+                  scored.append((score,j,seq,src))
+              scored.sort(key=lambda x:x[0], reverse=True)
+              top=scored[:5]
+              best=top[0] if top else None
+              if best:
+                  s,j,seq,src=best
+                  rows.append((local['id'],local['name'] or '',src['repo'],src['path'],src['name'] or '',s,j,seq,src['head'],local['sha256']==src['sha256']))
+              else:
+                  rows.append((local['id'],local['name'] or '','','','','0','0','0','',False))
+              details.append((local,top))
+
+          out=[]
+          out.append('# Upstream skill provenance audit — 2026-09-04')
+          out.append('')
+          out.append('Machine-generated candidate matching. Scores are evidence for review, not authority: canonical provenance must still be confirmed before vendoring.')
+          out.append('')
+          out.append(f'- Local skills scanned: **{len(locals)}**')
+          out.append(f'- Candidate upstream skill packages scanned: **{len(sources)}**')
+          out.append('')
+          out.append('## Candidate repositories and snapshots')
+          out.append('')
+          out.append('| Repository | Snapshot |')
+          out.append('| --- | --- |')
+          for repo,head in sorted(source_heads.items()):
+              out.append(f'| `{repo}` | `{head}` |')
+          out.append('')
+          out.append('## Best candidate per local skill')
+          out.append('')
+          out.append('| Local skill | Frontmatter | Best upstream | Upstream path | Upstream name | Score | Jaccard | Seq | Exact SHA |')
+          out.append('| --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |')
+          for r in rows:
+              lid,lname,repo,path,sname,score,j,seq,head,exact=r
+              out.append(f'| `{lid}` | `{lname}` | `{repo}` | `{path}` | `{sname}` | {float(score):.3f} | {float(j):.3f} | {float(seq):.3f} | {"yes" if exact else "no"} |')
+          out.append('')
+          out.append('## Top five candidates per skill')
+          out.append('')
+          for local,top in details:
+              out.append(f'### `{local["id"]}`')
+              out.append('')
+              for score,j,seq,src in top:
+                  out.append(f'- {score:.3f} — `{src["repo"]}:{src["path"]}` (`name: {src["name"]}`; jaccard {j:.3f}; seq {seq:.3f}; snapshot `{src["head"]}`)')
+              out.append('')
+
+          path=repo_root/'reports/upstream-skill-audit-2026-09-04.md'
+          path.write_text('\n'.join(out)+'\n', encoding='utf-8')
+          print(path)
+          PY
+
+      - name: Commit audit report
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add reports/upstream-skill-audit-2026-09-04.md
+          git diff --cached --quiet && exit 0
+          git commit -m 'docs: audit canonical upstream skill provenance'
+          git push origin "HEAD:${GITHUB_REF_NAME}"

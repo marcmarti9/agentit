@@ -104,11 +104,15 @@ Agentit vendors the canonical `hallmark` package in full, including its referenc
 
 Source: https://github.com/vercel-labs/skills
 
+License: MIT. Copyright (c) 2026 Vercel, Inc.
+
 Agentit vendors the canonical `find-skills` package in full. The exact upstream snapshot and path are recorded in `skills/UPSTREAM_LOCK.json`.
 
 ### Jesse Vincent / Superpowers
 
 Source: https://github.com/obra/superpowers
+
+License: MIT. Copyright (c) 2025 Jesse Vincent.
 
 Agentit vendors the canonical `verification-before-completion` package in full. Agentit-specific Loop/Graph receipt enforcement remains in Agentit's runtime and core policy instead of being injected into the vendored skill body.
 

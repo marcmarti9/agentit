@@ -1,0 +1,417 @@
+name: Sync all canonical skills once
+
+on:
+  push:
+    branches:
+      - sync/all-skills-upstream-2026-09-04
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test dependencies
+        run: python3 -m pip install PyYAML
+
+      - name: Preserve Agentit-owned pack map
+        run: |
+          set -euo pipefail
+          test -f skills/using-agent-skills/references/packs.md
+          cp skills/using-agent-skills/references/packs.md references/agentit-skill-packs.md
+
+      - name: Sync complete upstream packages
+        run: |
+          chmod +x scripts/sync-upstream-skills.sh
+          ./scripts/sync-upstream-skills.sh
+
+      - name: Migrate catalog aliases and keep Agentit policy outside vendored packages
+        run: |
+          python3 - <<'PY'
+          from __future__ import annotations
+          from pathlib import Path
+          import json
+          import re
+          import yaml
+
+          root = Path('.')
+          lock = json.loads((root / 'skills' / 'UPSTREAM_LOCK.json').read_text(encoding='utf-8'))
+          vendored = {root / 'skills' / item['skill'] for item in lock['mappings']}
+
+          aliases = {
+              'anti-ai-slop-design': 'hallmark',
+              'anti-ai-slop-writing': 'humanizer',
+              'ui-ux-pro-max-intelligence': 'ui-ux-pro-max',
+              'mobile-native-app-design': 'appllama-app-design-skill',
+              'diagram-and-architecture-visuals': 'diagram-design',
+          }
+          literal_replacements = {
+              'skills/using-agent-skills/references/packs.md': 'references/agentit-skill-packs.md',
+          }
+
+          def inside_vendored(path: Path) -> bool:
+              return any(base == path or base in path.parents for base in vendored)
+
+          suffixes = {'.md', '.yaml', '.yml', '.py', '.json', '.sh', '.toml', '.txt'}
+          for path in root.rglob('*'):
+              if not path.is_file() or '.git' in path.parts or inside_vendored(path):
+                  continue
+              if path.suffix not in suffixes and path.name != 'agentit':
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              new = text
+              for old, replacement in literal_replacements.items():
+                  new = new.replace(old, replacement)
+              for old, replacement in aliases.items():
+                  new = new.replace(old, replacement)
+              if new != text:
+                  path.write_text(new, encoding='utf-8')
+
+          # Canonical Addy using-agent-skills no longer owns Agentit's semantic pack map.
+          skills_cli = root / 'router' / 'skills_cli.py'
+          text = skills_cli.read_text(encoding='utf-8')
+          text, count = re.subn(
+              r'^PACKS_PATH = .*$',
+              'PACKS_PATH = HARNESS_ROOT / "references" / "agentit-skill-packs.md"',
+              text,
+              count=1,
+              flags=re.M,
+          )
+          if count != 1:
+              raise SystemExit('could not migrate PACKS_PATH')
+          skills_cli.write_text(text, encoding='utf-8')
+
+          # Profiles use both members of composite pairs now that the compressed wrappers are retired.
+          profiles_path = root / 'profiles.yaml'
+          data = yaml.safe_load(profiles_path.read_text(encoding='utf-8'))
+          for profile in data.get('profiles', {}).values():
+              skills = profile.get('skills', [])
+              if 'humanizer' in skills and 'stop-slop' not in skills:
+                  skills.insert(skills.index('humanizer') + 1, 'stop-slop')
+              if 'appllama-app-design-skill' in skills and 'appllama-usage' not in skills:
+                  skills.insert(skills.index('appllama-app-design-skill') + 1, 'appllama-usage')
+          profiles_path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding='utf-8')
+
+          # Private JIT profiles must preserve every file in a complete skill package, not just references/.
+          jit = root / 'router' / 'profile_jit_cli.py'
+          text = jit.read_text(encoding='utf-8')
+          pattern = re.compile(
+              r'def _package_files\(source_dir: Path\) -> list\[str\]:\n.*?\n    return files\n\n',
+              re.S,
+          )
+          replacement = '''def _package_files(source_dir: Path) -> list[str]:
+              """Return every regular file in a complete skill package."""
+              if not source_dir.is_dir() or source_dir.is_symlink():
+                  raise ProfileError(f"skill source is not a regular directory: {source_dir}")
+              skill_md = source_dir / "SKILL.md"
+              if not skill_md.is_file() or skill_md.is_symlink():
+                  raise ProfileError(f"skill source body missing: {skill_md}")
+              files = ["SKILL.md"]
+              for path in sorted(source_dir.rglob("*")):
+                  if path.is_symlink():
+                      raise ProfileError(f"skill package rejects symlinks: {path}")
+                  if path.is_file() and path != skill_md:
+                      files.append(path.relative_to(source_dir).as_posix())
+              return files
+
+          '''
+          replacement = '\n'.join(line[14:] if line.startswith('              ') else line for line in replacement.splitlines()) + '\n'
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit('could not replace private JIT package discovery')
+
+          # Addy's shared repo-level references are copied into the private JIT layout where
+          # ../../references/... from .agentit/profile-skills/<id>/SKILL.md resolves correctly.
+          text = text.replace(
+              'LEGACY_HOST_ROOT = Path(".agents") / "skills"\n',
+              'LEGACY_HOST_ROOT = Path(".agents") / "skills"\nPRIVATE_SHARED_REFERENCE_ROOT = Path(".agentit") / "references"\nADDY_SHARED_REFERENCE_MANIFEST = Path("references") / ".addy-agent-skills-files"\n',
+              1,
+          )
+          marker = 'def _source_dir(repo_root: Path, skill_id: str) -> Path:\n'
+          helper = '''def _shared_reference_files(repo_root: Path) -> list[str]:
+              manifest = repo_root / ADDY_SHARED_REFERENCE_MANIFEST
+              if not manifest.exists():
+                  return []
+              if not manifest.is_file() or manifest.is_symlink():
+                  raise ProfileError(f"shared reference manifest is unsafe: {manifest}")
+              result: list[str] = []
+              for raw in manifest.read_text(encoding="utf-8").splitlines():
+                  relative = raw.strip()
+                  if not relative:
+                      continue
+                  rel = Path(relative)
+                  if rel.is_absolute() or ".." in rel.parts:
+                      raise ProfileError(f"unsafe shared reference path: {relative}")
+                  source = repo_root / "references" / rel
+                  if not source.is_file() or source.is_symlink():
+                      raise ProfileError(f"shared reference source missing or unsafe: {source}")
+                  result.append(rel.as_posix())
+              return sorted(set(result))
+
+
+          def _sync_shared_references(*, project: Path, repo_root: Path) -> None:
+              destination_root = project / PRIVATE_SHARED_REFERENCE_ROOT
+              destination_manifest = destination_root / ".addy-agent-skills-files"
+              if destination_manifest.exists():
+                  if not destination_manifest.is_file() or destination_manifest.is_symlink():
+                      raise ProfileError(f"private shared reference manifest is unsafe: {destination_manifest}")
+                  for raw in destination_manifest.read_text(encoding="utf-8").splitlines():
+                      relative = raw.strip()
+                      if not relative:
+                          continue
+                      stale = destination_root / relative
+                      _assert_project_path(stale, project=project)
+                      if stale.exists():
+                          if not stale.is_file() or stale.is_symlink():
+                              raise ProfileError(f"private shared reference cache is unsafe: {stale}")
+                          stale.unlink()
+              for relative in _shared_reference_files(repo_root):
+                  _copy_atomic(
+                      repo_root / "references" / relative,
+                      destination_root / relative,
+                      project=project,
+                  )
+              source_manifest = repo_root / ADDY_SHARED_REFERENCE_MANIFEST
+              if source_manifest.exists():
+                  _copy_atomic(source_manifest, destination_manifest, project=project)
+
+
+          '''
+          helper = '\n'.join(line[10:] if line.startswith('          ') else line for line in helper.splitlines()) + '\n'
+          if marker not in text:
+              raise SystemExit('could not find shared reference helper insertion point')
+          text = text.replace(marker, helper + marker, 1)
+
+          old = '    stale = _private_cleanup_plan(project=project, old_manifest=old, payload=payload)\n    operations: list[str] = []\n'
+          new = '    stale = _private_cleanup_plan(project=project, old_manifest=old, payload=payload)\n    shared_references = _shared_reference_files(repo_root)\n    operations: list[str] = []\n    operations.extend(f"sync shared reference: {project / PRIVATE_SHARED_REFERENCE_ROOT / relative}" for relative in shared_references)\n'
+          if old not in text:
+              raise SystemExit('could not add shared reference plan')
+          text = text.replace(old, new, 1)
+
+          old = '    for item in stale:\n        _apply_planned_removal(\n'
+          if old not in text:
+              raise SystemExit('could not add shared reference sync')
+          text = text.replace(old, '    _sync_shared_references(project=project, repo_root=repo_root)\n\n' + old, 1)
+          jit.write_text(text, encoding='utf-8')
+
+          # Portable global bootstrap: using-agent-skills' ../../references links resolve under each provider root.
+          bootstrap = root / 'router' / 'bootstrap.py'
+          text = bootstrap.read_text(encoding='utf-8')
+          needle = '''            _append_tree_specs(
+                specs,
+                source_base=src,
+                destination_base=skills_root / skill_id,
+                category=f"provider:{provider}:skill",
+            )
+
+        if provider == "codex" and config.get("codex_agents_source"):
+'''
+          insertion = '''            _append_tree_specs(
+                specs,
+                source_base=src,
+                destination_base=skills_root / skill_id,
+                category=f"provider:{provider}:skill",
+            )
+
+        addy_reference_manifest = source_root / "references" / ".addy-agent-skills-files"
+        if "using-agent-skills" in core_skills and addy_reference_manifest.is_file():
+            for raw in addy_reference_manifest.read_text(encoding="utf-8").splitlines():
+                relative = raw.strip()
+                if not relative:
+                    continue
+                rel = _assert_relative(relative)
+                src = _source(source_root, Path("references") / rel)
+                specs.append(
+                    CopySpec(
+                        source=src,
+                        destination=skills_root.parent / "references" / rel,
+                        mode=stat.S_IMODE(src.stat().st_mode),
+                        category=f"provider:{provider}:shared-reference",
+                    )
+                )
+
+        if provider == "codex" and config.get("codex_agents_source"):
+'''
+          if needle not in text:
+              raise SystemExit('could not extend provider bootstrap references')
+          bootstrap.write_text(text.replace(needle, insertion, 1), encoding='utf-8')
+
+          # Keep the old design-only entrypoint as a compatibility wrapper.
+          wrapper = root / 'scripts' / 'sync-upstream-design-skills.sh'
+          wrapper.write_text('''#!/usr/bin/env bash
+          set -euo pipefail
+          ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+          echo "sync-upstream-design-skills.sh is deprecated; syncing the complete canonical skill registry." >&2
+          exec "$ROOT/scripts/sync-upstream-skills.sh" "$@"
+          '''.replace('          ', ''), encoding='utf-8')
+          wrapper.chmod(0o755)
+
+          # Record canonical status in notices without leaving contradictory adaptation claims.
+          notices = root / 'THIRD_PARTY_NOTICES.md'
+          text = notices.read_text(encoding='utf-8')
+          def replace_section(text: str, heading: str, body: str) -> str:
+              pattern = re.compile(rf'(?ms)^## {re.escape(heading)}\n.*?(?=^## |\Z)')
+              replacement = f'## {heading}\n\n{body.strip()}\n\n'
+              if pattern.search(text):
+                  return pattern.sub(replacement, text, count=1)
+              return text.rstrip() + '\n\n' + replacement
+
+          sections = {
+              'Addy Osmani / Agent Skills': '''Source: https://github.com/addyosmani/agent-skills
+
+MIT License. Copyright (c) 2025 Addy Osmani.
+
+Agentit vendors the canonical upstream packages for its matching engineering skill IDs without compressing or rewriting their skill bodies. Addy's repo-level shared `references/` checklists are vendored at Agentit's root `references/` so upstream relative links remain valid. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'GreenSock / GSAP Skills': '''Source: https://github.com/greensock/gsap-skills
+
+Agentit vendors the canonical upstream `gsap-scrolltrigger` and `gsap-performance` skill packages without compressing or rewriting their bodies. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Next Level Builder / UI UX Pro Max Skill': '''Source: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+
+Agentit vendors the canonical `.claude/skills/ui-ux-pro-max` package in full, including its data, references and scripts. The former compact `ui-ux-pro-max-intelligence` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Appllama / Appllama Skills': '''Source: https://github.com/Appllama/appllama-skills
+
+Agentit vendors the canonical `appllama-app-design-skill` and `appllama-usage` packages in full. The former compact `mobile-native-app-design` adapter is retired. Live Appllama MCP availability remains an external capability decision, not bundled credentials or access. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Siqi Chen / Humanizer': '''Source: https://github.com/blader/humanizer
+
+Agentit vendors the canonical Humanizer skill package, including its upstream agents/scripts, instead of maintaining a compressed prose synthesis. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Hardik Pandya / Stop Slop': '''Source: https://github.com/hardikpandya/stop-slop
+
+Agentit vendors the canonical Stop Slop skill package and references instead of folding it into a compressed local writing wrapper. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Cathryn Lavery / Diagram Design': '''Source: https://github.com/cathrynlavery/diagram-design
+
+Agentit vendors the canonical `diagram-design` package in full. The former compact `diagram-and-architecture-visuals` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Supabase / Agent Skills': '''Source: https://github.com/supabase/agent-skills
+
+MIT License. Copyright (c) 2026 Supabase.
+
+Agentit vendors the canonical `supabase-postgres-best-practices` package in full. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Nutlope / Hallmark': '''Source: https://github.com/Nutlope/hallmark
+
+Agentit vendors the canonical `hallmark` anti-AI-design-slop package in full. The former local `anti-ai-slop-design` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Vercel Labs / Skills': '''Source: https://github.com/vercel-labs/skills
+
+Agentit vendors the canonical `find-skills` package in full. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+              'Jesse Vincent / Superpowers': '''Source: https://github.com/obra/superpowers
+
+Agentit vendors the canonical `verification-before-completion` package in full. Agentit-specific Loop/Graph receipt enforcement remains in Agentit's own runtime/core policy rather than being injected into the vendored skill body. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.''',
+          }
+          for heading, body in sections.items():
+              text = replace_section(text, heading, body)
+          notices.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Add regression coverage for complete packages and provenance
+        run: |
+          cat > router/test_upstream_skill_registry.py <<'PY'
+          import json
+          import tempfile
+          import unittest
+          from pathlib import Path
+
+          from router.profile_jit_cli import _package_files, _shared_reference_files
+          from router.profiles import load_catalog, resolve_profile
+
+          ROOT = Path(__file__).resolve().parents[1]
+
+
+          class UpstreamSkillRegistryTests(unittest.TestCase):
+              def test_every_canonical_mapping_exists_as_complete_skill_package(self):
+                  lock = json.loads((ROOT / 'skills' / 'UPSTREAM_LOCK.json').read_text(encoding='utf-8'))
+                  self.assertGreaterEqual(len(lock['mappings']), 38)
+                  for item in lock['mappings']:
+                      skill = ROOT / 'skills' / item['skill']
+                      self.assertTrue((skill / 'SKILL.md').is_file(), item['skill'])
+
+              def test_retired_compact_aliases_are_absent(self):
+                  for skill_id in (
+                      'anti-ai-slop-design',
+                      'anti-ai-slop-writing',
+                      'ui-ux-pro-max-intelligence',
+                      'mobile-native-app-design',
+                      'diagram-and-architecture-visuals',
+                  ):
+                      self.assertFalse((ROOT / 'skills' / skill_id).exists(), skill_id)
+
+              def test_multifile_private_jit_package_includes_scripts_assets_and_agents(self):
+                  with tempfile.TemporaryDirectory() as tmp:
+                      skill = Path(tmp) / 'skill'
+                      (skill / 'scripts').mkdir(parents=True)
+                      (skill / 'assets').mkdir()
+                      (skill / 'agents').mkdir()
+                      (skill / 'SKILL.md').write_text('# skill\n', encoding='utf-8')
+                      (skill / 'scripts' / 'x.mjs').write_text('export {};\n', encoding='utf-8')
+                      (skill / 'assets' / 'x.txt').write_text('asset\n', encoding='utf-8')
+                      (skill / 'agents' / 'x.toml').write_text('name="x"\n', encoding='utf-8')
+                      self.assertEqual(
+                          _package_files(skill),
+                          ['SKILL.md', 'agents/x.toml', 'assets/x.txt', 'scripts/x.mjs'],
+                      )
+
+              def test_addy_shared_reference_manifest_resolves(self):
+                  refs = _shared_reference_files(ROOT)
+                  self.assertTrue(refs)
+                  self.assertIn('definition-of-done.md', refs)
+                  for relative in refs:
+                      self.assertTrue((ROOT / 'references' / relative).is_file())
+
+              def test_profiles_resolve_only_existing_canonical_or_agentit_owned_skills(self):
+                  catalog = load_catalog(ROOT / 'profiles.yaml')
+                  resolved = resolve_profile('all', catalog, repo_root=ROOT)
+                  self.assertIn('humanizer', resolved)
+                  self.assertIn('stop-slop', resolved)
+                  self.assertIn('hallmark', resolved)
+                  self.assertIn('ui-ux-pro-max', resolved)
+                  self.assertIn('appllama-app-design-skill', resolved)
+                  self.assertIn('appllama-usage', resolved)
+                  self.assertIn('diagram-design', resolved)
+
+
+          if __name__ == '__main__':
+              unittest.main()
+          PY
+
+      - name: Validate full repository
+        run: |
+          bash -n scripts/sync-upstream-skills.sh scripts/sync-upstream-design-skills.sh install.sh update.sh security/harden-local.sh
+          python3 -m unittest discover -s router -p 'test_*.py' -v
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('.')
+          lock=json.loads((root/'skills/UPSTREAM_LOCK.json').read_text())
+          # Concrete completeness guards for formerly-truncated packages.
+          assert (root/'skills/impeccable/scripts/context.mjs').is_file()
+          assert (root/'skills/ui-ux-pro-max/scripts').is_dir()
+          assert (root/'skills/ui-ux-pro-max/data').is_dir()
+          assert (root/'skills/humanizer/scripts').is_dir()
+          assert (root/'skills/stop-slop/references').is_dir()
+          assert (root/'skills/appllama-app-design-skill/references').is_dir()
+          assert (root/'skills/diagram-design/SKILL.md').is_file()
+          assert (root/'references/definition-of-done.md').is_file()
+          assert len(lock['mappings']) >= 38
+          PY
+
+      - name: Commit synchronized registry
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --stat
+          git diff --cached --quiet && exit 0
+          git commit -m 'feat: sync complete canonical upstream skill registry'
+          git push origin "HEAD:${GITHUB_REF_NAME}"

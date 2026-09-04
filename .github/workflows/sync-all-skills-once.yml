@@ -37,7 +37,9 @@ jobs:
           ./scripts/sync-upstream-skills.sh
 
       - name: Reconcile Agentit routing and installers
-        run: python3 scripts/reconcile-upstream-skill-registry.py
+        run: |
+          python3 scripts/reconcile-upstream-skill-registry.py
+          python3 scripts/align-canonical-skill-policy.py
 
       - name: Validate synchronized registry
         run: |

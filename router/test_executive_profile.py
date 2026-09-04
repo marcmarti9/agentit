@@ -75,13 +75,9 @@ class ExecutiveProfileTests(unittest.TestCase):
             self.assertTrue(selected & EXECUTIVE_SKILLS, specialist_id)
 
     def test_executive_pack_preserves_installation_vs_activation_boundary(self) -> None:
-        text = (
-            REPOSITORY
-            / "skills"
-            / "using-agent-skills"
-            / "references"
-            / "packs.md"
-        ).read_text(encoding="utf-8")
+        text = (REPOSITORY / "references" / "agentit-skill-packs.md").read_text(
+            encoding="utf-8"
+        )
         self.assertIn("## executive", text)
         self.assertIn("executive-orchestration", text)
         self.assertIn("profile is deliberately broad", text)

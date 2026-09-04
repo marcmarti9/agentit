@@ -38,7 +38,7 @@ entries:
     category: context
     provenance: local-repository
     paths:
-      - "${REPO_ROOT}/skills/using-agent-skills/references/packs.md"
+      - "${REPO_ROOT}/references/agentit-skill-packs.md"
       - "${REPO_ROOT}/profiles.yaml"
     state: AVAILABLE_ON_DEMAND
 

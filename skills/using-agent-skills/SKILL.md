@@ -1,157 +1,192 @@
 ---
 name: using-agent-skills
-description: Discover Agentit skills through bounded semantic packs, then let the primary AI choose only the concrete bodies that materially help the current stage or worker.
+description: Discovers and invokes agent skills. Use when starting a session or when you need to discover which skill applies to the current task. This is the meta-skill that governs how all other skills are discovered and invoked.
 ---
 
 # Using Agent Skills
 
-Skills are **JIT knowledge**, not a context dump.
+## Overview
 
-A new execution session starts with only Agentit's global core:
+Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
 
-```text
-using-agentit
-+ task-router
-+ using-agent-skills
+## Skill Discovery
+
+When a task arrives, identify the development phase and apply the corresponding skill:
+
+```
+Task arrives
+    │
+    ├── Don't know what you want yet? ──────→ interview-me
+    ├── Have a rough concept, need variants? → idea-refine
+    ├── New project/feature/change? ──→ spec-driven-development
+    ├── No quality bar written down? ──→ constraint-driven-development
+    ├── Have a spec, need tasks? ──────→ planning-and-task-breakdown
+    ├── Implementing code? ────────────→ incremental-implementation
+    │   ├── UI work? ─────────────────→ frontend-ui-engineering
+    │   ├── API work? ────────────────→ api-and-interface-design
+    │   ├── Need better context? ─────→ context-engineering
+    │   ├── Need doc-verified code? ───→ source-driven-development
+    │   └── Stakes high / unfamiliar code? ──→ doubt-driven-development
+    ├── Writing/running tests? ────────→ test-driven-development
+    │   └── Browser-based? ───────────→ browser-testing-with-devtools
+    ├── Something broke? ──────────────→ debugging-and-error-recovery
+    ├── Reviewing code? ───────────────→ code-review-and-quality
+    │   ├── Too complex? ─────────────→ code-simplification
+    │   ├── Security concerns? ───────→ security-and-hardening
+    │   └── Performance concerns? ────→ performance-optimization
+    ├── Committing/branching? ─────────→ git-workflow-and-versioning
+    ├── CI/CD pipeline work? ──────────→ ci-cd-and-automation
+    ├── Deprecating/migrating? ────────→ deprecation-and-migration
+    ├── Writing docs/ADRs? ───────────→ documentation-and-adrs
+    ├── Adding logs/metrics/alerts? ───→ observability-and-instrumentation
+    └── Deploying/launching? ─────────→ shipping-and-launch
 ```
 
-The host-visible skill roots must contain only those three Agentit skills. The full Agentit skill library lives privately under Agentit's runtime and is discovered through the `agentit skills` CLI. A provider seeing a skill name/description is already context exposure, even if it has not opened that skill's `SKILL.md`.
+## Core Operating Behaviors
 
-**installation is not activation.** A skill may exist in Agentit's private runtime for discovery without being active model context. Only explicitly selected bodies count as active for the current stage.
+These behaviors apply at all times, across all skills. They are non-negotiable.
 
-## Progressive disclosure contract
+### 1. Surface Assumptions
 
-Use these layers in order and stop as soon as enough context exists:
+Before implementing anything non-trivial, explicitly state your assumptions:
 
-```text
-LEVEL 0 — startup
-3 core skills only
-
-LEVEL 1 — domain discovery
-agentit skills packs
-
-LEVEL 2 — bounded candidate metadata
-agentit skills candidates <pack...>
-
-LEVEL 3 — exact selected bodies
-agentit skills show <skill...> --project .
-
-LEVEL 4 — references owned by an active skill
-only the smallest relevant files
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption about requirements]
+2. [assumption about architecture]
+3. [assumption about scope]
+→ Correct me now or I'll proceed with these.
 ```
 
-Do **not** open or inject the complete `references/packs.md` map just to discover one domain. That file is private backing data for bounded mechanical discovery. The model should normally use the CLI surfaces above.
+Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early — it's cheaper than rework.
 
-## Pack-first discovery
+### 2. Manage Confusion Actively
 
-For an Agentit task/stage:
+When you encounter inconsistencies, conflicting requirements, or unclear specifications:
 
-```text
-understand task
--> inspect only pack IDs/descriptions if needed
--> request metadata only for relevant pack(s)
--> AI chooses any number of skills that materially help
--> load only those exact SKILL.md bodies
--> execute / verify
--> add or remove bodies later if evidence changes the need
--> next session starts from the three core skills again
+1. **STOP.** Do not proceed with a guess.
+2. Name the specific confusion.
+3. Present the tradeoff or ask the clarifying question.
+4. Wait for resolution before continuing.
+
+**Bad:** Silently picking one interpretation and hoping it's right.
+**Good:** "I see X in the spec but Y in the existing code. Which takes precedence?"
+
+### 3. Push Back When Warranted
+
+You are not a yes-machine. When an approach has clear problems:
+
+- Point out the issue directly
+- Explain the concrete downside (quantify when possible — "this adds ~200ms latency" not "this might be slower")
+- Propose an alternative
+- Accept the human's decision if they override with full information
+
+Sycophancy is a failure mode. "Of course!" followed by implementing a bad idea helps no one. Honest technical disagreement is more valuable than false agreement.
+
+### 4. Enforce Simplicity
+
+Your natural tendency is to overcomplicate. Actively resist it.
+
+Before finishing any implementation, ask:
+- Can this be done in fewer lines?
+- Are these abstractions earning their complexity?
+- Would a staff engineer look at this and say "why didn't you just..."?
+
+If you build 1000 lines and 100 would suffice, you have failed. Prefer the boring, obvious solution. Cleverness is expensive.
+
+### 5. Maintain Scope Discipline
+
+Touch only what you're asked to touch.
+
+Do NOT:
+- Remove comments you don't understand
+- "Clean up" code orthogonal to the task
+- Refactor adjacent systems as a side effect
+- Delete code that seems unused without explicit approval
+- Add features not in the spec because they "seem useful"
+
+Your job is surgical precision, not unsolicited renovation.
+
+### 6. Verify, Don't Assume
+
+Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
+
+Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `../../references/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
+
+## Failure Modes to Avoid
+
+These are the subtle errors that look like productivity but create problems:
+
+1. Making wrong assumptions without checking
+2. Not managing your own confusion — plowing ahead when lost
+3. Not surfacing inconsistencies you notice
+4. Not presenting tradeoffs on non-obvious decisions
+5. Being sycophantic ("Of course!") to approaches with clear problems
+6. Overcomplicating code and APIs
+7. Modifying code or comments orthogonal to the task
+8. Removing things you don't fully understand
+9. Building without a spec because "it's obvious"
+10. Skipping verification because "it looks right"
+
+## Skill Rules
+
+1. **Check for an applicable skill before starting work.** Skills encode processes that prevent common mistakes.
+
+2. **Skills are workflows, not suggestions.** Follow the steps in order. Don't skip verification steps.
+
+3. **Multiple skills can apply.** A feature implementation might involve `idea-refine` → `spec-driven-development` → `planning-and-task-breakdown` → `incremental-implementation` → `test-driven-development` → `code-review-and-quality` → `code-simplification` → `shipping-and-launch` in sequence.
+
+4. **When in doubt, start with a spec.** If the task is non-trivial and there's no spec, begin with `spec-driven-development`.
+
+## Lifecycle Sequence
+
+For a complete feature, the typical skill sequence is:
+
+```
+1.  interview-me                → Extract what the user actually wants
+2.  idea-refine                 → Refine vague ideas
+3.  spec-driven-development     → Define what we're building
+4.  planning-and-task-breakdown → Break into verifiable chunks
+5.  context-engineering         → Load the right context
+6.  source-driven-development   → Verify against official docs
+7.  incremental-implementation  → Build slice by slice
+8.  observability-and-instrumentation → Instrument as you build (runs parallel with 7-9, not after)
+9.  doubt-driven-development    → Cross-examine non-trivial decisions in-flight
+10. test-driven-development     → Prove each slice works
+11. code-review-and-quality     → Review before merge
+12. code-simplification         → Reduce unnecessary complexity while preserving behavior
+13. git-workflow-and-versioning → Clean commit history
+14. documentation-and-adrs      → Document decisions
+15. deprecation-and-migration   → Retire old systems and move users safely when needed
+16. shipping-and-launch         → Deploy safely
 ```
 
-The primary AI owns semantic selection. Software only exposes requested metadata and bodies. There are intentionally **no fixed skill counts and no pack levels**.
+Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
 
-A task may legitimately use no non-core skill, one skill, or several skills across packs. The deciding question is:
+## Quick Reference
 
-> Which skill bodies would materially improve this specific stage, and are they worth their context cost now?
-
-## Profiles vs packs vs active context
-
-These are deliberately different concepts:
-
-- **Profiles** (`profiles.yaml`) are installation/discovery bundles. They answer which capabilities Agentit can make available.
-- **Packs** are semantic discovery maps. They answer which capabilities might be relevant to a domain.
-- **Selected skills** are the current stage's actual context bodies.
-
-Never collapse these layers. Enabling a profile does not activate every skill in it; inspecting candidate metadata does not activate a skill; a previous session's selection never survives as active context in the next session.
-
-## Selection rules
-
-1. **Host roots are core-only for Agentit.** Never install/project non-core Agentit skills into `.claude/skills`, `.agents/skills`, `.grok/skills`, `.gemini/skills`, `.gemini/config/skills`, or another provider discovery root merely to make them available.
-2. **Use packs as discovery maps, not bundles.** Never inject a whole pack merely because its domain matches.
-3. **No quotas.** Do not target a predetermined number of skills.
-4. **Load bodies, not IDs.** A non-core skill is active only when the executing model reads its exact body through `agentit skills show ...` or receives equivalent bounded worker injection.
-5. **Cross-pack selection is allowed.** Choose whatever combination the actual task warrants.
-6. **Do not preload cross-cutting skills.** Security, performance, references, MCP fit, orchestration, long-horizon recovery and advanced verification remain JIT.
-7. **Project-local skills win.** Prefer compatible project-local instructions/skills over generic Agentit guidance.
-8. **Selection can change during work.** Add a body when a concrete gap appears and stop carrying it when no longer useful.
-9. **No cross-session semantic carry-over.** Previous selections are history/evidence only.
-10. **Provider persistence is not activation.** Persistent MCP/config/plugin availability never means selected for the new task.
-
-## Parent and worker loading
-
-The same rule applies to the parent and delegated workers.
-
-Parent example:
-
-```text
-agentit skills candidates engineering backend
-agentit skills show debugging-and-error-recovery security-and-hardening --project .
-```
-
-Worker context should receive only:
-
-```text
-role / objective
-relevant pack labels
-selected skill bodies
-selected references (if any)
-project constraints/instructions
-allowed tools/permissions
-read/write scope
-expected output/handoff
-verification / stop condition
-```
-
-The parent keeps integration responsibility; workers do not receive the whole catalog.
-
-## References are also JIT
-
-`reference-intelligence` is not globally loaded. When external/current knowledge materially matters, first select that skill, then load only the smallest relevant curated/live source set. Re-select and re-verify across sessions when freshness matters.
-
-## Tools are also JIT
-
-Do not load `mcp-tooling-fit` or enable MCPs because they exist. Host/provider MCP configuration may persist beyond a task; persistence means available, not authorized or selected.
-
-## Missing capability
-
-If the selected pack(s) do not expose an adequate skill:
-
-1. inspect project-local skills/instructions;
-2. inspect another genuinely relevant pack through `agentit skills candidates`;
-3. use approved external skill discovery when a durable reusable procedure could help;
-4. use authoritative live sources for one-off/current facts;
-5. adapt/create a new skill only when the procedure is durable and likely to recur.
-
-## Anti-patterns
-
-- installing all Agentit skills into a provider's native skill directory;
-- relying on "the body is lazy" while exposing dozens of names/descriptions at startup;
-- opening the full pack map for a one-pack task;
-- loading every skill in a selected pack;
-- carrying yesterday's selected bodies into today's task;
-- spawning every worker with the same giant context;
-- adding skills "just in case";
-- treating persistent host/tool configuration as active semantic context.
-
-## Completion check
-
-Before execution/spawn, be able to answer:
-
-```text
-Why these pack(s)?
-Why each selected skill?
-Why is each selected body worth its context cost now?
-What useful context did we deliberately NOT load?
-Does the host-visible Agentit surface still contain only the three core skills?
-```
-
-There is no correct skill count. The correct set is whatever the primary AI can justify from the actual task.
+| Phase | Skill | One-Line Summary |
+|-------|-------|-----------------|
+| Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
+| Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
+| Define | spec-driven-development | Requirements and acceptance criteria before code |
+| Plan | planning-and-task-breakdown | Decompose into small, verifiable tasks |
+| Build | incremental-implementation | Thin vertical slices, test each before expanding |
+| Build | source-driven-development | Verify against official docs before implementing |
+| Build | doubt-driven-development | Adversarial fresh-context review of every non-trivial decision |
+| Build | context-engineering | Right context at the right time |
+| Build | frontend-ui-engineering | Production-quality UI with accessibility |
+| Build | api-and-interface-design | Stable interfaces with clear contracts |
+| Verify | test-driven-development | Failing test first, then make it pass |
+| Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
+| Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
+| Review | code-review-and-quality | Five-axis review with quality gates |
+| Review | code-simplification | Preserve behavior while reducing unnecessary complexity |
+| Review | security-and-hardening | OWASP prevention, input validation, least privilege |
+| Review | performance-optimization | Measure first, optimize only what matters |
+| Ship | git-workflow-and-versioning | Atomic commits, clean history |
+| Ship | ci-cd-and-automation | Automated quality gates on every change |
+| Ship | deprecation-and-migration | Remove old systems and migrate users safely |
+| Ship | documentation-and-adrs | Document the why, not just the what |
+| Ship | observability-and-instrumentation | Structured logs, RED metrics, traces, symptom-based alerts |
+| Ship | shipping-and-launch | Pre-launch checklist, monitoring, rollback plan |

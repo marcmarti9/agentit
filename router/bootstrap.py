@@ -234,6 +234,23 @@ def _provider_specs(
                 category=f"provider:{provider}:skill",
             )
 
+        addy_reference_manifest = source_root / "references" / ".addy-agent-skills-files"
+        if "using-agent-skills" in core_skills and addy_reference_manifest.is_file():
+            for raw in addy_reference_manifest.read_text(encoding="utf-8").splitlines():
+                relative = raw.strip()
+                if not relative:
+                    continue
+                rel = _assert_relative(relative)
+                src = _source(source_root, Path("references") / rel)
+                specs.append(
+                    CopySpec(
+                        source=src,
+                        destination=skills_root.parent / "references" / rel,
+                        mode=stat.S_IMODE(src.stat().st_mode),
+                        category=f"provider:{provider}:shared-reference",
+                    )
+                )
+
         if provider == "codex" and config.get("codex_agents_source"):
             destination_root = _destination(home, str(config["agents_root"]))
             for filename in manifest.get("codex_agent_profiles") or []:

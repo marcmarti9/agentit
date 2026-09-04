@@ -325,7 +325,7 @@ servers:
     write_capable: false
     evidence:
       - "Official Appllama MCP documentation and public MIT appllama-skills repository, verified 2026-08-26"
-      - "Agentit skills/mobile-native-app-design uses it only as opt-in reference research"
+      - "Agentit skills/appllama-app-design-skill uses it only as opt-in reference research"
     claude_add: "claude mcp add --transport http appllama https://mcp.appllama.io/mcp"
     mcp_json_remote:
       url: https://mcp.appllama.io/mcp

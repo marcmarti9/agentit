@@ -15,7 +15,7 @@ first-prompt dispatch
 
 Runtime pack discovery lives in:
 
-- `skills/using-agent-skills/references/packs.md`
+- `references/agentit-skill-packs.md`
 
 Reference handling discipline lives in:
 

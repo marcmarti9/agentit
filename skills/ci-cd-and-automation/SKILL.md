@@ -1,6 +1,6 @@
 ---
 name: ci-cd-and-automation
-description: Set up CI/CD quality gates. Use for pipelines, test runners, or deployment automation; not for ordinary local tests.
+description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
 ---
 
 # CI/CD and Automation

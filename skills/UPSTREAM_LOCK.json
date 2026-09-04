@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "generated_by": "scripts/sync-upstream-skills.sh",
+  "mappings": [
+    {
+      "skill": "api-and-interface-design",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/api-and-interface-design",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "appllama-app-design-skill",
+      "repo": "Appllama/appllama-skills",
+      "path": "skills/appllama-app-design-skill",
+      "replaces": [
+        "mobile-native-app-design"
+      ],
+      "snapshot": "629818a094844bd383cbcc336e6bc1d953fc193f"
+    },
+    {
+      "skill": "appllama-usage",
+      "repo": "Appllama/appllama-skills",
+      "path": "skills/appllama-usage",
+      "snapshot": "629818a094844bd383cbcc336e6bc1d953fc193f"
+    },
+    {
+      "skill": "browser-testing-with-devtools",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/browser-testing-with-devtools",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "ci-cd-and-automation",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/ci-cd-and-automation",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "code-review-and-quality",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/code-review-and-quality",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "code-simplification",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/code-simplification",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "context-engineering",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/context-engineering",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "debugging-and-error-recovery",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/debugging-and-error-recovery",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "deprecation-and-migration",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/deprecation-and-migration",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "design-taste-frontend",
+      "repo": "Leonxlnx/taste-skill",
+      "path": "skills/taste-skill",
+      "snapshot": "ccbc15639c97057cbfcf32ecebc38ef716e4bb37"
+    },
+    {
+      "skill": "diagram-design",
+      "repo": "cathrynlavery/diagram-design",
+      "path": "skills/diagram-design",
+      "replaces": [
+        "diagram-and-architecture-visuals"
+      ],
+      "snapshot": "4451eadc484d76aa860edf3289c16fcd082dcdbf"
+    },
+    {
+      "skill": "documentation-and-adrs",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/documentation-and-adrs",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "doubt-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/doubt-driven-development",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "emil-design-eng",
+      "repo": "emilkowalski/skills",
+      "path": "skills/emil-design-eng",
+      "snapshot": "d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7"
+    },
+    {
+      "skill": "find-skills",
+      "repo": "vercel-labs/skills",
+      "path": "skills/find-skills",
+      "snapshot": "435076e78988e1e6ec40d00b0b1d76bdbbc5419a"
+    },
+    {
+      "skill": "frontend-ui-engineering",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/frontend-ui-engineering",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "git-workflow-and-versioning",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/git-workflow-and-versioning",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "gsap-performance",
+      "repo": "greensock/gsap-skills",
+      "path": "skills/gsap-performance",
+      "snapshot": "aed9cfd3277740755f6bfc1155c7aa645403b760"
+    },
+    {
+      "skill": "gsap-scrolltrigger",
+      "repo": "greensock/gsap-skills",
+      "path": "skills/gsap-scrolltrigger",
+      "snapshot": "aed9cfd3277740755f6bfc1155c7aa645403b760"
+    },
+    {
+      "skill": "hallmark",
+      "repo": "Nutlope/hallmark",
+      "path": "skills/hallmark",
+      "replaces": [
+        "anti-ai-slop-design"
+      ],
+      "snapshot": "13ac0ec7e148655948100b6396439e481361d690"
+    },
+    {
+      "skill": "humanizer",
+      "repo": "blader/humanizer",
+      "path": ".",
+      "replaces": [
+        "anti-ai-slop-writing"
+      ],
+      "snapshot": "e2e92e7b4b8229253ed5c8e81dc65463fdeddda5"
+    },
+    {
+      "skill": "idea-refine",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/idea-refine",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "impeccable",
+      "repo": "pbakaus/impeccable",
+      "path": ".agents/skills/impeccable",
+      "snapshot": "695df68a5860da4d25cd629fc3727ec8f3c0991b"
+    },
+    {
+      "skill": "incremental-implementation",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/incremental-implementation",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "interview-me",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/interview-me",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "observability-and-instrumentation",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/observability-and-instrumentation",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "performance-optimization",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/performance-optimization",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "planning-and-task-breakdown",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/planning-and-task-breakdown",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "security-and-hardening",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/security-and-hardening",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "shipping-and-launch",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/shipping-and-launch",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "source-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/source-driven-development",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "spec-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/spec-driven-development",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "stop-slop",
+      "repo": "hardikpandya/stop-slop",
+      "path": ".",
+      "snapshot": "8da1f030185bdfe8471220585162991eaeb970e9"
+    },
+    {
+      "skill": "supabase-postgres-best-practices",
+      "repo": "supabase/agent-skills",
+      "path": "skills/supabase-postgres-best-practices",
+      "snapshot": "8331f910845103c08d51f6ca1d86ebb7d1f745e3"
+    },
+    {
+      "skill": "test-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/test-driven-development",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "ui-ux-pro-max",
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "path": ".claude/skills/ui-ux-pro-max",
+      "replaces": [
+        "ui-ux-pro-max-intelligence"
+      ],
+      "snapshot": "f3ac195224eac1eb0dfe1a3059c2a6add78ffbe3"
+    },
+    {
+      "skill": "using-agent-skills",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/using-agent-skills",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+    },
+    {
+      "skill": "verification-before-completion",
+      "repo": "obra/superpowers",
+      "path": "skills/verification-before-completion",
+      "snapshot": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797"
+    }
+  ],
+  "shared": [
+    {
+      "repo": "addyosmani/agent-skills",
+      "path": "references",
+      "destination": "references",
+      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7",
+      "manifest": "references/.addy-agent-skills-files"
+    }
+  ]
+}

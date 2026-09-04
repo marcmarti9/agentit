@@ -16,8 +16,8 @@ class MobileDesignProfileTests(unittest.TestCase):
         core = resolve_profile("core", catalog, repo_root=REPOSITORY)
         mobile = resolve_profile("mobile", catalog, repo_root=REPOSITORY)
 
-        self.assertIn("mobile-native-app-design", mobile)
-        self.assertNotIn("mobile-native-app-design", core)
+        self.assertIn("appllama-app-design-skill", mobile)
+        self.assertNotIn("appllama-app-design-skill", core)
         self.assertIn("frontend-ui-engineering", mobile)
 
 

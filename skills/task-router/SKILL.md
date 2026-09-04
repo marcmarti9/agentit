@@ -47,7 +47,7 @@ user_method_assessment
 
 ## Packs and skill selection
 
-Read `skills/using-agent-skills/references/packs.md` when pack discovery detail is useful.
+Read `references/agentit-skill-packs.md` when pack discovery detail is useful.
 
 A pack is only a **semantic discovery map**. It describes an area and the skills that may be relevant there. It has no levels, no fixed ordering, and no prescribed skill count.
 

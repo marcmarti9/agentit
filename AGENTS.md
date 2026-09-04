@@ -71,7 +71,7 @@ A source saying “use Claude”, “use Kimi”, “use Codex”, or another na
 ## Profiles, packs and active context are different
 
 - **Profiles** classify installation/discovery availability.
-- **Packs** (`skills/using-agent-skills/references/packs.md`) are flat semantic discovery maps.
+- **Packs** (`references/agentit-skill-packs.md`) are flat semantic discovery maps.
 - **Selected skill bodies** are the actual current-stage context.
 
 A profile or pack does **not** define levels, priority groups, mandatory sequences, minimum counts, maximum counts or a normal number of skills.

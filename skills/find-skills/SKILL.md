@@ -1,6 +1,6 @@
 ---
 name: find-skills
-description: Discover reusable skills. Use when looking for an installable capability; not when the required skill is already known.
+description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
 ---
 
 # Find Skills
@@ -26,7 +26,6 @@ The Skills CLI (`npx skills`) is the package manager for the open agent skills e
 
 - `npx skills find [query] [--owner <owner>]` - Search for skills interactively or by keyword, optionally scoped to a GitHub owner
 - `npx skills add <package>` - Install a skill from GitHub or other sources
-- `npx skills check` - Check for skill updates
 - `npx skills update` - Update all installed skills
 
 **Browse skills at:** https://skills.sh/

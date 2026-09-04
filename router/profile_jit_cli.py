@@ -25,6 +25,8 @@ from router.profiles import ProfileError, load_catalog, resolve_profile
 MANIFEST_RELATIVE_PATH = Path(".agentit") / "skills-manifest.json"
 PRIVATE_SKILL_ROOT = Path(".agentit") / "profile-skills"
 LEGACY_HOST_ROOT = Path(".agents") / "skills"
+PRIVATE_SHARED_REFERENCE_ROOT = Path(".agentit") / "references"
+ADDY_SHARED_REFERENCE_MANIFEST = Path("references") / ".addy-agent-skills-files"
 
 
 def _sha256(path: Path) -> str:
@@ -93,22 +95,74 @@ def _atomic_json(path: Path, payload: dict[str, Any], *, project: Path) -> None:
 
 
 def _package_files(source_dir: Path) -> list[str]:
+    """Return every regular file in a complete skill package."""
     if not source_dir.is_dir() or source_dir.is_symlink():
         raise ProfileError(f"skill source is not a regular directory: {source_dir}")
     skill_md = source_dir / "SKILL.md"
     if not skill_md.is_file() or skill_md.is_symlink():
         raise ProfileError(f"skill source body missing: {skill_md}")
     files = ["SKILL.md"]
-    references = source_dir / "references"
-    if references.exists():
-        if not references.is_dir() or references.is_symlink():
-            raise ProfileError(f"skill references must be a regular directory: {references}")
-        for path in sorted(references.rglob("*")):
-            if path.is_symlink():
-                raise ProfileError(f"skill package rejects symlinks: {path}")
-            if path.is_file():
-                files.append(path.relative_to(source_dir).as_posix())
+    for file_path in sorted(source_dir.rglob("*")):
+        if file_path.is_symlink():
+            raise ProfileError(f"skill package rejects symlinks: {file_path}")
+        if file_path.is_file() and file_path != skill_md:
+            files.append(file_path.relative_to(source_dir).as_posix())
     return files
+
+
+def _shared_reference_files(repo_root: Path) -> list[str]:
+    manifest = repo_root / ADDY_SHARED_REFERENCE_MANIFEST
+    if not manifest.exists():
+        return []
+    if not manifest.is_file() or manifest.is_symlink():
+        raise ProfileError(f"shared reference manifest is unsafe: {manifest}")
+    result: list[str] = []
+    for raw in manifest.read_text(encoding="utf-8").splitlines():
+        relative = raw.strip()
+        if not relative:
+            continue
+        rel = Path(relative)
+        if rel.is_absolute() or ".." in rel.parts:
+            raise ProfileError(f"unsafe shared reference path: {relative}")
+        source = repo_root / "references" / rel
+        if not source.is_file() or source.is_symlink():
+            raise ProfileError(f"shared reference source missing or unsafe: {source}")
+        result.append(rel.as_posix())
+    return sorted(set(result))
+
+
+def _sync_shared_references(*, project: Path, repo_root: Path) -> None:
+    destination_root = project / PRIVATE_SHARED_REFERENCE_ROOT
+    destination_manifest = destination_root / ".addy-agent-skills-files"
+    if destination_manifest.exists():
+        if not destination_manifest.is_file() or destination_manifest.is_symlink():
+            raise ProfileError(
+                f"private shared reference manifest is unsafe: {destination_manifest}"
+            )
+        for raw in destination_manifest.read_text(encoding="utf-8").splitlines():
+            relative = raw.strip()
+            if not relative:
+                continue
+            rel = Path(relative)
+            if rel.is_absolute() or ".." in rel.parts:
+                raise ProfileError(f"unsafe cached shared reference path: {relative}")
+            stale = destination_root / rel
+            _assert_project_path(stale, project=project)
+            if stale.exists():
+                if not stale.is_file() or stale.is_symlink():
+                    raise ProfileError(f"private shared reference cache is unsafe: {stale}")
+                stale.unlink()
+
+    for relative in _shared_reference_files(repo_root):
+        _copy_atomic(
+            repo_root / "references" / relative,
+            destination_root / relative,
+            project=project,
+        )
+
+    source_manifest = repo_root / ADDY_SHARED_REFERENCE_MANIFEST
+    if source_manifest.exists():
+        _copy_atomic(source_manifest, destination_manifest, project=project)
 
 
 def _source_dir(repo_root: Path, skill_id: str) -> Path:
@@ -368,7 +422,12 @@ def _enable(
     cleanup = _legacy_cleanup_plan(project=project, manifest=old)
     payload = _build_payload(profiles, catalog=catalog, repo_root=repo_root)
     stale = _private_cleanup_plan(project=project, old_manifest=old, payload=payload)
+    shared_references = _shared_reference_files(repo_root)
     operations: list[str] = []
+    operations.extend(
+        f"sync shared reference: {project / PRIVATE_SHARED_REFERENCE_ROOT / relative}"
+        for relative in shared_references
+    )
     for skill_id, metadata in payload["skills"].items():
         root = _private_dir(project, skill_id)
         source = _source_dir(repo_root, skill_id)
@@ -387,6 +446,8 @@ def _enable(
         source = _source_dir(repo_root, skill_id)
         for relative in metadata["files"]:
             _copy_atomic(source / relative, root / relative, project=project)
+
+    _sync_shared_references(project=project, repo_root=repo_root)
 
     for item in stale:
         _apply_planned_removal(

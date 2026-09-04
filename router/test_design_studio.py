@@ -23,7 +23,7 @@ class DesignStudioTests(unittest.TestCase):
             "emil-design-eng",
             "design-inspiration-research",
             "design-md-workflow",
-            "diagram-and-architecture-visuals",
+            "diagram-design",
             "design-trend-researcher",
             "creative-web-experiences",
             "visual-storytelling-director",
@@ -53,7 +53,7 @@ class DesignStudioTests(unittest.TestCase):
         self.assertNotIn("threejs-product-storytelling", core)
         self.assertNotIn("creative-tool-scout", core)
         self.assertNotIn("design-md-workflow", core)
-        self.assertNotIn("diagram-and-architecture-visuals", core)
+        self.assertNotIn("diagram-design", core)
 
     def test_design_studio_mcp_stack_includes_figma_and_browser_verification(self):
         stack = recommend_stack("design_studio")

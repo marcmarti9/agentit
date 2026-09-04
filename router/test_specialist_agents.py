@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 
@@ -11,7 +12,8 @@ POLICY_DOC = REPOSITORY / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md"
 CONTINUITY_DOC = REPOSITORY / "docs" / "PROJECT_CONTINUITY.md"
 PROFILES_PATH = REPOSITORY / "profiles.yaml"
 INTERVIEW_SKILL = SKILLS_DIR / "interview-me" / "SKILL.md"
-UIUX_SKILL = SKILLS_DIR / "ui-ux-pro-max-intelligence" / "SKILL.md"
+UIUX_SKILL = SKILLS_DIR / "ui-ux-pro-max" / "SKILL.md"
+UPSTREAM_LOCK = SKILLS_DIR / "UPSTREAM_LOCK.json"
 LEGACY_EFFORT_PATH = REPOSITORY / "effort" / "levels.yaml"
 
 
@@ -87,14 +89,15 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         self.assertIn("specialists are optional capabilities", text)
         self.assertIn("provider-neutral", text)
 
-    def test_interview_batches_all_current_material_questions(self):
+    def test_interview_uses_canonical_one_question_at_a_time_workflow(self):
         policy = self.catalog["policy"]
-        self.assertTrue(policy["interview_batch_all_current_questions"])
+        self.assertTrue(policy["interview_one_question_at_a_time"])
+        self.assertNotIn("interview_batch_all_current_questions", policy)
         text = INTERVIEW_SKILL.read_text(encoding="utf-8").lower()
-        self.assertIn("all material questions", text)
-        self.assertIn("one numbered batch", text)
-        self.assertIn("follow-up batch", text)
-        self.assertIn("genuinely new material decisions", text)
+        self.assertIn("ask one question at a time", text)
+        self.assertIn("guess:", text)
+        self.assertIn("95% confidence", text)
+        self.assertNotIn("one numbered batch", text)
 
     def test_continuity_is_private_by_default_and_resumable(self):
         policy = self.catalog["policy"]
@@ -117,11 +120,19 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
     def test_ui_ux_intelligence_remains_jit_and_discoverable(self):
         self.assertTrue(UIUX_SKILL.is_file())
         text = UIUX_SKILL.read_text(encoding="utf-8").lower()
-        self.assertIn("nextlevelbuilder/ui-ux-pro-max-skill", text)
-        self.assertIn("searchable design-intelligence source", text)
-        self.assertIn("do not dump the full database", text)
+        self.assertIn("name: ui-ux-pro-max", text)
+        self.assertIn("running the search tool", text)
+        self.assertTrue((SKILLS_DIR / "ui-ux-pro-max" / "scripts").is_dir())
+        self.assertTrue((SKILLS_DIR / "ui-ux-pro-max" / "data").is_dir())
+
+        lock = json.loads(UPSTREAM_LOCK.read_text(encoding="utf-8"))
+        mapping = {item["skill"]: item for item in lock["mappings"]}
+        self.assertEqual(
+            "nextlevelbuilder/ui-ux-pro-max-skill",
+            mapping["ui-ux-pro-max"]["repo"],
+        )
         design_skills = self.profiles["profiles"]["design"]["skills"]
-        self.assertIn("ui-ux-pro-max-intelligence", design_skills)
+        self.assertIn("ui-ux-pro-max", design_skills)
 
     def test_legacy_effort_tier_catalog_is_removed(self):
         self.assertFalse(LEGACY_EFFORT_PATH.exists())

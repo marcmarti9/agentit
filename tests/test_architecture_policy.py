@@ -50,17 +50,17 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("If genuinely uncertain, choose Agentit", agents)
 
     def test_constructive_dissent_preserves_user_agency(self):
+        # Constructive dissent is Agentit-owned policy. Do not inject it into a
+        # canonical upstream planning skill just to make the policy test pass.
         harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
-        planning = (ROOT / "skills" / "planning-and-task-breakdown" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("Constructive dissent", harness)
         self.assertIn("Preserve the user's final safe discretionary choice", harness)
         self.assertIn("Constructive dissent", task_router)
         self.assertIn("preserve the user's final safe discretionary choice", task_router)
-        self.assertIn("Planning is not a rubber-stamp phase", planning)
-        self.assertIn("let the user keep the original approach", planning)
 
     def test_runtime_packs_are_flat_and_skill_count_is_model_owned(self):
+        pack_map = ROOT / "references" / "agentit-skill-packs.md"
         paths = [
             ROOT / "AGENTS.md",
             ROOT / "ABOUT.md",
@@ -69,7 +69,7 @@ class ArchitecturePolicyTests(unittest.TestCase):
             ROOT / "docs" / "REFERENCE_INTELLIGENCE.md",
             ROOT / "skills" / "using-agentit" / "SKILL.md",
             ROOT / "skills" / "using-agent-skills" / "SKILL.md",
-            ROOT / "skills" / "using-agent-skills" / "references" / "packs.md",
+            pack_map,
             ROOT / "skills" / "task-router" / "SKILL.md",
             ROOT / "skills" / "interview-me" / "SKILL.md",
             ROOT / "skills" / "architect-orchestrator" / "SKILL.md",
@@ -91,10 +91,9 @@ class ArchitecturePolicyTests(unittest.TestCase):
         )
         for needle in forbidden:
             self.assertNotIn(needle, combined, f"rigid pack/tier policy returned: {needle}")
-        self.assertIn(
-            "no fixed skill counts and no pack levels",
-            (ROOT / "skills" / "using-agent-skills" / "SKILL.md").read_text(encoding="utf-8"),
-        )
+        pack_text = pack_map.read_text(encoding="utf-8")
+        self.assertIn("flat semantic discovery maps", pack_text)
+        self.assertIn("There is no minimum, maximum, default count, level, or required order", pack_text)
         self.assertIn(
             "no fixed minimum or maximum",
             (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8"),
@@ -129,13 +128,21 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("references_projected", text)
 
     def test_interview_is_jit_not_mandatory_product_ceremony(self):
-        text = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("all material questions", text)
-        self.assertIn("one numbered batch", text)
-        self.assertIn("follow-up batch", text)
-        self.assertIn("genuinely new material decisions", text)
-        self.assertIn("If none remain, do not interview", text)
-        self.assertNotIn("Product-affecting work is interviewed before", text)
+        skill = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8").lower()
+        policy = (ROOT / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md").read_text(
+            encoding="utf-8"
+        ).lower()
+        catalog = (ROOT / "agents" / "catalog.yaml").read_text(encoding="utf-8")
+
+        self.assertIn("ask one question at a time", skill)
+        self.assertIn("guess:", skill)
+        self.assertIn("95% confidence", skill)
+        self.assertIn("when not to use", skill)
+        self.assertIn("interview_one_question_at_a_time: true", catalog)
+        self.assertNotIn("interview_batch_all_current_questions", catalog)
+        self.assertIn("ask the user only for unresolved material decisions", policy)
+        self.assertIn("one focused question at a time", policy)
+        self.assertNotIn("product-affecting work is interviewed before", policy)
 
     def test_legacy_mcp_helper_is_exact_stack_only(self):
         self.assertEqual(recommend_for_task("developer_core")["stack"], "developer_core")

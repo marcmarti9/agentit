@@ -79,7 +79,7 @@ Named providers/models belong in host adapters, endpoint configuration, provenan
 
 ## Packs are maps, not levels
 
-Canonical runtime map: `skills/using-agent-skills/references/packs.md`.
+Canonical runtime map: `references/agentit-skill-packs.md`.
 
 Packs answer which capabilities live around a domain. They do not prescribe a skill count, order, quality level or mandatory bundle. There are no pack tiers and no fixed minimum or maximum skill count.
 

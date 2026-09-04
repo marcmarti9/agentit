@@ -9,7 +9,7 @@ Specialists are temporary capabilities, not a permanent org chart. Spawn one onl
 
 ## Discovery
 
-Use `agents/catalog.yaml` as a model-readable specialist catalog and `skills/using-agent-skills/references/packs.md` as the semantic skill map. Catalog triggers are discovery hints for the model, never executable keyword-routing rules.
+Use `agents/catalog.yaml` as a model-readable specialist catalog and `references/agentit-skill-packs.md` as the semantic skill map. Catalog triggers are discovery hints for the model, never executable keyword-routing rules.
 
 Profiles determine what can be installed/discovered. Packs expose possible expertise. **Workers receive selected skill bodies and selected references, never whole profiles or packs.**
 

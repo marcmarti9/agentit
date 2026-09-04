@@ -1,218 +1,240 @@
 schema_version: 1
 default_profile: core
 global_profiles:
-  - core
+- core
 profiles:
   core:
-    description: "Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a domain pack, then load task skills JIT. Core also carries the minimum durable-documentation and cold-session invariants."
+    description: 'Minimal global Agentit bootstrap: decide whether Agentit is warranted,
+      choose a domain pack, then load task skills JIT. Core also carries the minimum
+      durable-documentation and cold-session invariants.'
     skills:
-      - using-agentit
-      - task-router
-      - using-agent-skills
+    - using-agentit
+    - task-router
+    - using-agent-skills
   frontend:
-    description: "Core plus browser, performance, and UI maintenance guidance. Installation/discovery only; runtime selection remains JIT."
+    description: Core plus browser, performance, and UI maintenance guidance. Installation/discovery
+      only; runtime selection remains JIT.
     extends:
-      - core
+    - core
     skills:
-      - frontend-ui-engineering
-      - browser-testing-with-devtools
-      - performance-optimization
-      - code-simplification
-      - anti-ai-slop-design
-      - design-taste-frontend
-      - specialist-agent-routing
+    - frontend-ui-engineering
+    - browser-testing-with-devtools
+    - performance-optimization
+    - code-simplification
+    - hallmark
+    - design-taste-frontend
+    - specialist-agent-routing
   backend:
-    description: "Core plus API boundaries, observability, and service maintenance. Installation/discovery only; runtime selection remains JIT."
+    description: Core plus API boundaries, observability, and service maintenance.
+      Installation/discovery only; runtime selection remains JIT.
     extends:
-      - core
+    - core
     skills:
-      - api-and-interface-design
-      - observability-and-instrumentation
-      - performance-optimization
-      - code-simplification
+    - api-and-interface-design
+    - observability-and-instrumentation
+    - performance-optimization
+    - code-simplification
   supabase:
-    description: "Backend profile plus PostgreSQL/Supabase-specific guidance."
+    description: Backend profile plus PostgreSQL/Supabase-specific guidance.
     extends:
-      - backend
+    - backend
     skills:
-      - supabase-postgres-best-practices
+    - supabase-postgres-best-practices
   product:
-    description: "Core plus discovery, marketing, CRO, and product decision support."
+    description: Core plus discovery, marketing, CRO, and product decision support.
     extends:
-      - core
+    - core
     skills:
-      - idea-refine
-      - interview-me
-      - documentation-and-adrs
-      - spec-driven-development
-      - marketing-and-growth
-      - verification-before-completion
+    - idea-refine
+    - interview-me
+    - documentation-and-adrs
+    - spec-driven-development
+    - marketing-and-growth
+    - verification-before-completion
   executive:
-    description: "Deep company-level executive bench: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff judgment. Deliberately broad for installation/discovery; each task still selects only the exact executive skill bodies, evidence and specialists it needs JIT."
+    description: 'Deep company-level executive bench: strategy, finance, people, legal,
+      operations, marketing, product, board and chief-of-staff judgment. Deliberately
+      broad for installation/discovery; each task still selects only the exact executive
+      skill bodies, evidence and specialists it needs JIT.'
     extends:
-      - core
+    - core
     skills:
-      - executive-orchestration
-      - executive-strategy
-      - executive-finance
-      - executive-people
-      - executive-legal
-      - executive-operations
-      - executive-marketing
-      - executive-product
-      - executive-board
-      - executive-chief-of-staff
-      - specialist-agent-routing
-      - planning-and-task-breakdown
-      - context-engineering
-      - source-driven-development
-      - reference-intelligence
-      - doubt-driven-development
-      - documentation-and-adrs
-      - verification-before-completion
-      - interview-me
-      - marketing-and-growth
+    - executive-orchestration
+    - executive-strategy
+    - executive-finance
+    - executive-people
+    - executive-legal
+    - executive-operations
+    - executive-marketing
+    - executive-product
+    - executive-board
+    - executive-chief-of-staff
+    - specialist-agent-routing
+    - planning-and-task-breakdown
+    - context-engineering
+    - source-driven-development
+    - reference-intelligence
+    - doubt-driven-development
+    - documentation-and-adrs
+    - verification-before-completion
+    - interview-me
+    - marketing-and-growth
   writing:
-    description: "Technical writing, documentation, and anti-AI-slop editing."
+    description: Technical writing, documentation, and anti-AI-slop editing.
     extends:
-      - core
+    - core
     skills:
-      - documentation-and-adrs
-      - anti-ai-slop-writing
+    - documentation-and-adrs
+    - humanizer
+    - stop-slop
   design:
-    description: "Craft-first design studio profile. Runtime workers still load only the selected design pack skills JIT; this profile is an installation/discovery bundle, not a context bundle."
+    description: Craft-first design studio profile. Runtime workers still load only
+      the selected design pack skills JIT; this profile is an installation/discovery
+      bundle, not a context bundle.
     extends:
-      - frontend
+    - frontend
     skills:
-      - anti-ai-slop-design
-      - ui-ux-pro-max-intelligence
-      - design-taste-frontend
-      - impeccable
-      - emil-design-eng
-      - design-inspiration-research
-      - design-md-workflow
-      - diagram-and-architecture-visuals
-      - design-trend-researcher
-      - creative-web-experiences
-      - visual-storytelling-director
-      - creative-tool-scout
-      - delight-and-whimsy
-      - figma-design-workflow
-      - scrollytelling-web
-      - gsap-scrolltrigger
-      - gsap-performance
-      - threejs-spatial-experiences
-      - threejs-product-storytelling
-      - mobile-native-app-design
+    - hallmark
+    - ui-ux-pro-max
+    - design-taste-frontend
+    - impeccable
+    - emil-design-eng
+    - design-inspiration-research
+    - design-md-workflow
+    - diagram-design
+    - design-trend-researcher
+    - creative-web-experiences
+    - visual-storytelling-director
+    - creative-tool-scout
+    - delight-and-whimsy
+    - figma-design-workflow
+    - scrollytelling-web
+    - gsap-scrolltrigger
+    - gsap-performance
+    - threejs-spatial-experiences
+    - threejs-product-storytelling
+    - appllama-app-design-skill
+    - appllama-usage
   mobile:
-    description: "Expo/React Native product UI: study shipped mobile winners, then implement native-feeling screens. Installation/discovery bundle only; workers still load the selected skill JIT."
+    description: 'Expo/React Native product UI: study shipped mobile winners, then
+      implement native-feeling screens. Installation/discovery bundle only; workers
+      still load the selected skill JIT.'
     extends:
-      - frontend
+    - frontend
     skills:
-      - mobile-native-app-design
-      - anti-ai-slop-design
-      - design-inspiration-research
+    - appllama-app-design-skill
+    - appllama-usage
+    - hallmark
+    - design-inspiration-research
   release:
-    description: "Core plus CI, migration, launch, and operational readiness."
+    description: Core plus CI, migration, launch, and operational readiness.
     extends:
-      - core
+    - core
     skills:
-      - ci-cd-and-automation
-      - deprecation-and-migration
-      - shipping-and-launch
-      - documentation-and-adrs
-      - verification-before-completion
+    - ci-cd-and-automation
+    - deprecation-and-migration
+    - shipping-and-launch
+    - documentation-and-adrs
+    - verification-before-completion
   research:
-    description: "Core plus context, specifications, authoritative source work, and adversarial review."
+    description: Core plus context, specifications, authoritative source work, and
+      adversarial review.
     extends:
-      - core
+    - core
     skills:
-      - context-engineering
-      - source-driven-development
-      - doubt-driven-development
-      - spec-driven-development
-      - verification-before-completion
+    - context-engineering
+    - source-driven-development
+    - doubt-driven-development
+    - spec-driven-development
+    - verification-before-completion
   growth:
-    description: "Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and launch discipline. Live marketing data still requires separately reviewed connectors."
+    description: 'Digital growth delivery on demand: product discovery, CRO, copy,
+      SEO signals and launch discipline. Live marketing data still requires separately
+      reviewed connectors.'
     extends:
-      - product
+    - product
     skills:
-      - shipping-and-launch
+    - shipping-and-launch
   agency:
-    description: "Agency operating profile: product and growth delivery plus incremental implementation and disciplined Git handoffs. Pair with the relevant coding profile for implementation."
+    description: 'Agency operating profile: product and growth delivery plus incremental
+      implementation and disciplined Git handoffs. Pair with the relevant coding profile
+      for implementation.'
     extends:
-      - growth
+    - growth
     skills:
-      - incremental-implementation
-      - git-workflow-and-versioning
+    - incremental-implementation
+    - git-workflow-and-versioning
   all:
-    description: "Every repository skill; use only when explicitly requested for installation/discovery, never as a worker context bundle."
+    description: Every repository skill; use only when explicitly requested for installation/discovery,
+      never as a worker context bundle.
     skills:
-      - anti-ai-slop-design
-      - anti-ai-slop-writing
-      - api-and-interface-design
-      - architect-orchestrator
-      - browser-testing-with-devtools
-      - ci-cd-and-automation
-      - code-review-and-quality
-      - code-simplification
-      - context-engineering
-      - creative-tool-scout
-      - creative-web-experiences
-      - debugging-and-error-recovery
-      - delight-and-whimsy
-      - mcp-tooling-fit
-      - deprecation-and-migration
-      - design-inspiration-research
-      - design-md-workflow
-      - design-taste-frontend
-      - design-trend-researcher
-      - diagram-and-architecture-visuals
-      - documentation-and-adrs
-      - doubt-driven-development
-      - emil-design-eng
-      - executive-board
-      - executive-chief-of-staff
-      - executive-finance
-      - executive-legal
-      - executive-marketing
-      - executive-operations
-      - executive-orchestration
-      - executive-people
-      - executive-product
-      - executive-strategy
-      - figma-design-workflow
-      - find-skills
-      - frontend-ui-engineering
-      - git-workflow-and-versioning
-      - gsap-performance
-      - gsap-scrolltrigger
-      - idea-refine
-      - impeccable
-      - incremental-implementation
-      - interview-me
-      - local-model-routing
-      - long-horizon-recovery
-      - marketing-and-growth
-      - mobile-native-app-design
-      - observability-and-instrumentation
-      - performance-optimization
-      - planning-and-task-breakdown
-      - reference-intelligence
-      - scrollytelling-web
-      - security-and-hardening
-      - shipping-and-launch
-      - source-driven-development
-      - specialist-agent-routing
-      - spec-driven-development
-      - supabase-postgres-best-practices
-      - task-router
-      - test-driven-development
-      - threejs-product-storytelling
-      - threejs-spatial-experiences
-      - ui-ux-pro-max-intelligence
-      - using-agent-skills
-      - using-agentit
-      - verification-before-completion
-      - verification-gauntlet
-      - visual-storytelling-director
+    - hallmark
+    - humanizer
+    - stop-slop
+    - api-and-interface-design
+    - architect-orchestrator
+    - browser-testing-with-devtools
+    - ci-cd-and-automation
+    - code-review-and-quality
+    - code-simplification
+    - context-engineering
+    - creative-tool-scout
+    - creative-web-experiences
+    - debugging-and-error-recovery
+    - delight-and-whimsy
+    - mcp-tooling-fit
+    - deprecation-and-migration
+    - design-inspiration-research
+    - design-md-workflow
+    - design-taste-frontend
+    - design-trend-researcher
+    - diagram-design
+    - documentation-and-adrs
+    - doubt-driven-development
+    - emil-design-eng
+    - executive-board
+    - executive-chief-of-staff
+    - executive-finance
+    - executive-legal
+    - executive-marketing
+    - executive-operations
+    - executive-orchestration
+    - executive-people
+    - executive-product
+    - executive-strategy
+    - figma-design-workflow
+    - find-skills
+    - frontend-ui-engineering
+    - git-workflow-and-versioning
+    - gsap-performance
+    - gsap-scrolltrigger
+    - idea-refine
+    - impeccable
+    - incremental-implementation
+    - interview-me
+    - local-model-routing
+    - long-horizon-recovery
+    - marketing-and-growth
+    - appllama-app-design-skill
+    - appllama-usage
+    - observability-and-instrumentation
+    - performance-optimization
+    - planning-and-task-breakdown
+    - reference-intelligence
+    - scrollytelling-web
+    - security-and-hardening
+    - shipping-and-launch
+    - source-driven-development
+    - specialist-agent-routing
+    - spec-driven-development
+    - supabase-postgres-best-practices
+    - task-router
+    - test-driven-development
+    - threejs-product-storytelling
+    - threejs-spatial-experiences
+    - ui-ux-pro-max
+    - using-agent-skills
+    - using-agentit
+    - verification-before-completion
+    - verification-gauntlet
+    - visual-storytelling-director

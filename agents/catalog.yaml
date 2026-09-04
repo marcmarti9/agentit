@@ -5,7 +5,7 @@ policy:
   provider_neutral: true
   graceful_degradation_to_parent: true
   interview_only_for_unresolved_material_decisions: true
-  interview_batch_all_current_questions: true
+  interview_one_question_at_a_time: true
   semantic_complexity_owned_by_primary_ai: true
   continuity_for_substantial_work: true
   continuity_policy: docs/PROJECT_CONTINUITY.md
@@ -207,7 +207,7 @@ specialists:
     mode: probe
     description: Query product-aware UI/UX intelligence JIT and return compact baselines for style, typography, color, UX, charts, icons, motion, and stack guidance.
     triggers: [design system, ui patterns, ux patterns, palette, typography, product style, chart design, ui ux pro max]
-    skills: [ui-ux-pro-max-intelligence, source-driven-development]
+    skills: [ui-ux-pro-max, source-driven-development]
     capabilities:
       required: [documentation.read]
       preferred: [design.inspect]

@@ -17,7 +17,7 @@ from router.skill_loader import SkillLoadError, load_skill_bodies, render_prompt
 
 
 HARNESS_ROOT = Path(__file__).resolve().parents[1]
-PACKS_PATH = HARNESS_ROOT / "skills" / "using-agent-skills" / "references" / "packs.md"
+PACKS_PATH = HARNESS_ROOT / "references" / "agentit-skill-packs.md"
 
 
 class SkillDiscoveryError(RuntimeError):

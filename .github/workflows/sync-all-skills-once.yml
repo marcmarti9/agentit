@@ -28,8 +28,8 @@ jobs:
 
       - name: Preserve Agentit-owned pack map
         run: |
-          test -f skills/using-agent-skills/references/packs.md
-          cp skills/using-agent-skills/references/packs.md references/agentit-skill-packs.md
+          test -f references/agentit-skill-packs.md
+          cp references/agentit-skill-packs.md references/agentit-skill-packs.md
 
       - name: Sync canonical upstream packages
         run: |

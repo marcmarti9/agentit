@@ -1,86 +1,79 @@
 ---
 name: gsap-performance
-description: Performance rules for GSAP and high-motion web experiences: compositor-friendly properties, batching, quick setters, timeline ownership, ScrollTrigger cost, mobile constraints, cleanup, and runtime profiling.
+description: Official GSAP skill for performance — prefer transforms, avoid layout thrashing, will-change, batching. Use when optimizing GSAP animations, reducing jank, or when the user asks about animation performance, FPS, or smooth 60fps.
 license: MIT
-source: https://github.com/greensock/gsap-skills
 ---
 
 # GSAP Performance
 
-Agentit adaptation of GreenSock's official MIT-licensed GSAP skills. Use alongside any animation-heavy page and especially with `gsap-scrolltrigger` or `scrollytelling-web`.
+## When to Use This Skill
 
-## Performance is part of motion design
+Apply when optimizing GSAP animations for smooth 60fps, reducing layout/paint cost, or when the user asks about performance, jank, or best practices for fast animations.
 
-A beautiful sequence that drops frames, blocks scrolling, overheats a phone, or leaks after navigation is not finished design.
+**Related skills:** Build animations with **gsap-core** (transforms, autoAlpha) and **gsap-timeline**; for ScrollTrigger performance see **gsap-scrolltrigger**.
 
-## Hot-path rules
+## Prefer Transform and Opacity
 
-Prefer animating properties that can stay on the compositor: transforms and opacity. Be cautious with properties that repeatedly trigger layout/paint, including width/height/top/left, large filters, shadows, masks, and complex clip paths.
+Animating **transform** (`x`, `y`, `scaleX`, `scaleY`, `rotation`, `rotationX`, `rotationY`, `skewX`, `skewY`) and **opacity** keeps work on the compositor and avoids layout and most paint. Avoid animating layout-heavy properties when a transform can achieve the same effect.
 
-This is not an absolute ban: some premium effects require paint-heavy properties. Budget them intentionally, isolate them, and profile the actual result.
+- ✅ Prefer: **x**, **y**, **scale**, **rotation**, **opacity**.
+- ❌ Avoid when possible: **width**, **height**, **top**, **left**, **margin**, **padding** (they trigger layout and can cause jank).
 
-## Avoid render-loop React state
+GSAP’s **x** and **y** use transforms (translate) by default; use them instead of **left**/**top** for movement.
 
-Never call React state setters on every scroll/pointer/animation frame just to mirror a continuous animation value. Keep continuous state in GSAP/motion values/refs and update React only for semantic discrete state changes.
+## will-change
 
-## Reuse animation objects
+Use **will-change** in CSS on elements that will animate. It hints the browser to promote the layer.
 
-- Prefer one timeline that owns related choreography rather than recreating tweens every frame.
-- For very high-frequency pointer/scroll setter cases, use GSAP's optimized setter/to patterns instead of allocating new tweens continuously.
-- Do not create new ScrollTriggers inside scroll callbacks.
-- Kill/revert timelines, contexts, listeners, and triggers on unmount/navigation.
+```css
+will-change: transform;
+```
 
-## DOM and layout
+## Batch Reads and Writes
 
-- Batch DOM reads before writes when manual measurement is necessary.
-- Avoid alternating `getBoundingClientRect()` and style writes in loops.
-- Keep enormous blurred layers and full-screen backdrop filters out of hot animated paths when possible.
-- Promote layers deliberately; do not spray `will-change` across the whole page.
-- Remove `will-change` or leave promotion decisions to the animation engine when permanent layers would waste memory.
+GSAP batches updates internally. When mixing GSAP with direct DOM reads/writes or layout-dependent code, avoid interleaving reads and writes in a way that causes repeated layout thrashing. Prefer doing all reads first, then all writes (or let GSAP handle the writes in one go).
 
-## ScrollTrigger-specific
+## Many Elements (Stagger, Lists)
 
-- Use the smallest number of triggers that accurately models the narrative.
-- One timeline + one trigger is generally cheaper and more coherent than dozens of independent scrubbed triggers for one scene.
-- Avoid refresh loops caused by continuously mutating layout around measured trigger boundaries.
-- Lazy-initialize heavy below-the-fold scenes where practical.
-- Pause expensive scene work when the relevant chapter is inactive.
+- Use **stagger** instead of many separate tweens with manual delays when the animation is the same; it’s more efficient.
+- For long lists, consider **virtualization** or animating only visible items; avoid creating hundreds of simultaneous tweens if it causes jank.
+- Reuse timelines where possible; avoid creating new timelines every frame.
 
-## WebGL / Three.js pairing
+## Frequently updated properties (e.g. mouse followers)
 
-On product storytelling pages:
+Prefer **gsap.quickTo()** for properties that are updated often (e.g. mouse-follower x/y). It reuses a single tween instead of creating new tweens on each update. 
 
-- cap DPR instead of blindly rendering at device pixel ratio 3/4;
-- use compressed textures/geometry when the asset pipeline supports them;
-- avoid an always-running render loop when the scene can render on demand;
-- pause or reduce work when offscreen;
-- dispose geometries, materials, textures, render targets, and listeners during teardown;
-- keep post-processing passes few and justified;
-- test thermals/frame pacing on a real mobile-class device if the experience is important.
+```javascript
+let xTo = gsap.quickTo("#id", "x", { duration: 0.4, ease: "power3" }),
+    yTo = gsap.quickTo("#id", "y", { duration: 0.4, ease: "power3" });
 
-## Mobile degradation is design, not failure
+document.querySelector("#container").addEventListener("mousemove", (e) => {
+  xTo(e.pageX);
+  yTo(e.pageY);
+});
+```
 
-A desktop cinematic scene may become a shorter scrub, pre-rendered sequence, static milestones, or simpler product rotation on constrained devices. Preserve the story and hierarchy; reduce implementation cost, not meaning.
+## ScrollTrigger and Performance
 
-## Measure
+- **pin: true** promotes the pinned element; pin only what’s needed.
+- **scrub** with a small value (e.g. `scrub: 1`) can reduce work during scroll; test on low-end devices.
+- Call **ScrollTrigger.refresh()** only when layout actually changes (e.g. after content load), not on every resize; debounce when possible.
 
-Use browser performance tooling on the actual interaction. Look for:
+## Reduce Simultaneous Work
 
-- long main-thread tasks;
-- repeated layout/recalculate-style cycles;
-- paint/composite hotspots;
-- event-listener churn;
-- memory growth across route transitions;
-- duplicated timelines/triggers in development and production;
-- slow asset decode/upload to GPU;
-- frame drops at section handoffs.
+- Pause or kill off-screen or inactive animations when they’re not visible (e.g. when the user navigates away).
+- Avoid animating huge numbers of properties on many elements at once; simplify or sequence if needed.
 
-Do not infer smoothness from source code or a single screenshot.
+## Best practices
 
-## Reduced motion
+- ✅ Animate **transform** and **opacity**; use **will-change** in CSS only on elements that animate.
+- ✅ Use **stagger** instead of many separate tweens with manual delays when the animation is the same.
+- ✅ Use **gsap.quickTo()** for frequently updated properties (e.g. mouse followers).
+- ✅ Clean up or kill off-screen animations; call **ScrollTrigger.refresh()** when layout changes, debounced when possible.
 
-The reduced-motion path should often eliminate expensive cinematic work entirely. It is both an accessibility path and a useful robustness fallback.
+## Do Not
 
-## Attribution
-
-Adapted from GreenSock's official MIT-licensed `greensock/gsap-skills` project. Preserve attribution when redistributing substantial portions.
+- ❌ Animate **width**/ **height**/ **top**/ **left** for movement when **x**/ **y**/ **scale** can achieve the same look.
+- ❌ Set **will-change** or **force3D** on every element “just in case”; use for elements that are actually animating.
+- ❌ Create hundreds of overlapping tweens or ScrollTriggers without testing on low-end devices.
+- ❌ Ignore cleanup; stray tweens and ScrollTriggers keep running and can hurt performance and correctness.

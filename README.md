@@ -148,13 +148,13 @@ The executive layer is provider-neutral and materially informed by Sente Labs' O
 Design work can now select two additional JIT capabilities when they actually help:
 
 - `design-md-workflow` — read, create and verify an optional durable `DESIGN.md` visual-identity contract without making Google's alpha format a global dependency;
-- `diagram-and-architecture-visuals` — choose between simple project-native diagrams, polished/branded diagram workflows, and code-grounded validated architecture maps such as Archify.
+- `diagram-design` — choose between simple project-native diagrams, polished/branded diagram workflows, and code-grounded validated architecture maps such as Archify.
 
 Both stay outside core and are loaded only for relevant stages.
 
 ### Anti-AI-slop writing
 
-`anti-ai-slop-writing` treats humanization as more than deleting a few buzzwords. It preserves factual claims/citations, adapts to destination and authentic writer/brand voice, catches repeated structural AI tells, and keeps technical prose precise.
+`humanizer` treats humanization as more than deleting a few buzzwords. It preserves factual claims/citations, adapts to destination and authentic writer/brand voice, catches repeated structural AI tells, and keeps technical prose precise.
 
 ### Reference Intelligence
 
@@ -387,7 +387,7 @@ See:
 | `skills/reference-intelligence/` | curated/live source and provenance workflow |
 | `skills/executive-orchestration/` | cross-functional executive routing, bounded fan-out and single-parent synthesis contract |
 | `skills/design-md-workflow/` | optional durable visual-identity contract workflow |
-| `skills/diagram-and-architecture-visuals/` | JIT diagram/tool routing and architecture-visual evidence discipline |
+| `skills/diagram-design/` | JIT diagram/tool routing and architecture-visual evidence discipline |
 | `skills/` | concrete JIT expertise modules, including the `executive-*` specialist skills |
 | `router/` | deterministic capabilities, context, Loop/Graph, MCP and verification runtime |
 | `profiles.yaml` | installation/discovery profiles |
@@ -399,7 +399,7 @@ See:
 ## Core docs
 
 - [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md)
-- [`skills/using-agent-skills/references/packs.md`](skills/using-agent-skills/references/packs.md)
+- [`references/agentit-skill-packs.md`](references/agentit-skill-packs.md)
 - [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md)
 - [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md)
 - [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md)

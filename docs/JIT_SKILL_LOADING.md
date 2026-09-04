@@ -74,7 +74,7 @@ agentit skills show debugging-and-error-recovery security-and-hardening --projec
 
 The first command exposes only pack IDs and short domain descriptions. The second exposes only candidate metadata from requested packs. The third loads exact selected bodies and emits a skill-load receipt.
 
-`skills/using-agent-skills/references/packs.md` remains canonical backing data, but it is not intended to be injected wholesale into model context for ordinary discovery.
+`references/agentit-skill-packs.md` remains canonical backing data, but it is not intended to be injected wholesale into model context for ordinary discovery.
 
 ## Existing global installations
 

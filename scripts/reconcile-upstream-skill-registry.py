@@ -21,15 +21,15 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCK_PATH = ROOT / "skills" / "UPSTREAM_LOCK.json"
 
 ALIASES = {
-    "anti-ai-slop-design": "hallmark",
-    "anti-ai-slop-writing": "humanizer",
-    "ui-ux-pro-max-intelligence": "ui-ux-pro-max",
-    "mobile-native-app-design": "appllama-app-design-skill",
-    "diagram-and-architecture-visuals": "diagram-design",
+    "hallmark": "hallmark",
+    "humanizer": "humanizer",
+    "ui-ux-pro-max": "ui-ux-pro-max",
+    "appllama-app-design-skill": "appllama-app-design-skill",
+    "diagram-design": "diagram-design",
 }
 
 PATH_REPLACEMENTS = {
-    "skills/using-agent-skills/references/packs.md": "references/agentit-skill-packs.md",
+    "references/agentit-skill-packs.md": "references/agentit-skill-packs.md",
 }
 
 TEXT_SUFFIXES = {".md", ".yaml", ".yml", ".py", ".json", ".sh", ".toml", ".txt"}
@@ -330,10 +330,10 @@ Agentit vendors the canonical upstream packages for its matching engineering ski
 Agentit vendors the canonical upstream `gsap-scrolltrigger` and `gsap-performance` skill packages without compressing or rewriting their bodies. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Next Level Builder / UI UX Pro Max Skill": """Source: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
 
-Agentit vendors the canonical `.claude/skills/ui-ux-pro-max` package in full, including its data, references and scripts. The former compact `ui-ux-pro-max-intelligence` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
+Agentit vendors the canonical `.claude/skills/ui-ux-pro-max` package in full, including its data, references and scripts. The former compact `ui-ux-pro-max` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Appllama / Appllama Skills": """Source: https://github.com/Appllama/appllama-skills
 
-Agentit vendors the canonical `appllama-app-design-skill` and `appllama-usage` packages in full. The former compact `mobile-native-app-design` adapter is retired. Live Appllama MCP availability remains an external capability decision, not bundled credentials or access. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
+Agentit vendors the canonical `appllama-app-design-skill` and `appllama-usage` packages in full. The former compact `appllama-app-design-skill` adapter is retired. Live Appllama MCP availability remains an external capability decision, not bundled credentials or access. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Siqi Chen / Humanizer": """Source: https://github.com/blader/humanizer
 
 Agentit vendors the canonical Humanizer skill package, including its upstream agents/scripts, instead of maintaining a compressed prose synthesis. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
@@ -342,7 +342,7 @@ Agentit vendors the canonical Humanizer skill package, including its upstream ag
 Agentit vendors the canonical Stop Slop skill package and references instead of folding it into a compressed local writing wrapper. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Cathryn Lavery / Diagram Design": """Source: https://github.com/cathrynlavery/diagram-design
 
-Agentit vendors the canonical `diagram-design` package in full. The former compact `diagram-and-architecture-visuals` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
+Agentit vendors the canonical `diagram-design` package in full. The former compact `diagram-design` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Supabase / Agent Skills": """Source: https://github.com/supabase/agent-skills
 
 MIT License. Copyright (c) 2026 Supabase.
@@ -350,7 +350,7 @@ MIT License. Copyright (c) 2026 Supabase.
 Agentit vendors the canonical `supabase-postgres-best-practices` package in full. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Nutlope / Hallmark": """Source: https://github.com/Nutlope/hallmark
 
-Agentit vendors the canonical `hallmark` anti-AI-design-slop package in full. The former local `anti-ai-slop-design` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
+Agentit vendors the canonical `hallmark` anti-AI-design-slop package in full. The former local `hallmark` adapter is retired. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
         "Vercel Labs / Skills": """Source: https://github.com/vercel-labs/skills
 
 Agentit vendors the canonical `find-skills` package in full. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.""",
@@ -387,11 +387,11 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
 
     def test_retired_compact_aliases_are_absent(self):
         for skill_id in (
-            "anti-ai-slop-design",
-            "anti-ai-slop-writing",
-            "ui-ux-pro-max-intelligence",
-            "mobile-native-app-design",
-            "diagram-and-architecture-visuals",
+            "hallmark",
+            "humanizer",
+            "ui-ux-pro-max",
+            "appllama-app-design-skill",
+            "diagram-design",
         ):
             self.assertFalse((ROOT / "skills" / skill_id).exists(), skill_id)
 

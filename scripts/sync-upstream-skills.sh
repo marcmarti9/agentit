@@ -101,11 +101,11 @@ copy_package "$TMP/superpowers/skills/verification-before-completion" "$ROOT/ski
 
 # Retire local compact/adaptor IDs where a canonical package now replaces them.
 rm -rf \
-  "$ROOT/skills/anti-ai-slop-design" \
-  "$ROOT/skills/anti-ai-slop-writing" \
-  "$ROOT/skills/ui-ux-pro-max-intelligence" \
-  "$ROOT/skills/mobile-native-app-design" \
-  "$ROOT/skills/diagram-and-architecture-visuals"
+  "$ROOT/skills/hallmark" \
+  "$ROOT/skills/humanizer" \
+  "$ROOT/skills/ui-ux-pro-max" \
+  "$ROOT/skills/appllama-app-design-skill" \
+  "$ROOT/skills/diagram-design"
 
 # Addy's skills intentionally use ../../references/<file>.md for shared checklists.
 # Preserve those upstream files at Agentit's repository root without overwriting
@@ -188,13 +188,13 @@ mappings = [
     {"skill": "gsap-performance", "repo": "greensock/gsap-skills", "path": "skills/gsap-performance"},
     {"skill": "gsap-scrolltrigger", "repo": "greensock/gsap-skills", "path": "skills/gsap-scrolltrigger"},
     {"skill": "supabase-postgres-best-practices", "repo": "supabase/agent-skills", "path": "skills/supabase-postgres-best-practices"},
-    {"skill": "hallmark", "repo": "Nutlope/hallmark", "path": "skills/hallmark", "replaces": ["anti-ai-slop-design"]},
-    {"skill": "ui-ux-pro-max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "path": ".claude/skills/ui-ux-pro-max", "replaces": ["ui-ux-pro-max-intelligence"]},
-    {"skill": "appllama-app-design-skill", "repo": "Appllama/appllama-skills", "path": "skills/appllama-app-design-skill", "replaces": ["mobile-native-app-design"]},
+    {"skill": "hallmark", "repo": "Nutlope/hallmark", "path": "skills/hallmark", "replaces": ["hallmark"]},
+    {"skill": "ui-ux-pro-max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "path": ".claude/skills/ui-ux-pro-max", "replaces": ["ui-ux-pro-max"]},
+    {"skill": "appllama-app-design-skill", "repo": "Appllama/appllama-skills", "path": "skills/appllama-app-design-skill", "replaces": ["appllama-app-design-skill"]},
     {"skill": "appllama-usage", "repo": "Appllama/appllama-skills", "path": "skills/appllama-usage"},
-    {"skill": "humanizer", "repo": "blader/humanizer", "path": ".", "replaces": ["anti-ai-slop-writing"]},
+    {"skill": "humanizer", "repo": "blader/humanizer", "path": ".", "replaces": ["humanizer"]},
     {"skill": "stop-slop", "repo": "hardikpandya/stop-slop", "path": "."},
-    {"skill": "diagram-design", "repo": "cathrynlavery/diagram-design", "path": "skills/diagram-design", "replaces": ["diagram-and-architecture-visuals"]},
+    {"skill": "diagram-design", "repo": "cathrynlavery/diagram-design", "path": "skills/diagram-design", "replaces": ["diagram-design"]},
     {"skill": "find-skills", "repo": "vercel-labs/skills", "path": "skills/find-skills"},
     {"skill": "verification-before-completion", "repo": "obra/superpowers", "path": "skills/verification-before-completion"},
 ]

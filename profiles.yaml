@@ -127,7 +127,7 @@ profiles:
     - hallmark
     - design-inspiration-research
   release:
-    description: Core plus CI, migration, launch, and operational readiness.
+    description: Core plus CI, migration, launch, security gate, and operational readiness.
     extends:
     - core
     skills:
@@ -136,6 +136,8 @@ profiles:
     - shipping-and-launch
     - documentation-and-adrs
     - verification-before-completion
+    - security-and-hardening
+    - app-security-gate
   research:
     description: Core plus context, specifications, authoritative source work, and
       adversarial review.
@@ -172,6 +174,7 @@ profiles:
     - humanizer
     - stop-slop
     - api-and-interface-design
+    - app-security-gate
     - architect-orchestrator
     - browser-testing-with-devtools
     - ci-cd-and-automation

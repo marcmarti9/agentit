@@ -41,7 +41,7 @@ first-prompt dispatch: bare | agentit
                  |
                  v
 semantic TASK_DECISION
-(packs, skills, references, tools, risk, complexity, topology, plan, verifier)
+(mode: FAST|NORMAL|DEEP, packs, skills, references, tools, risk, complexity, topology, plan, verifier)
                  |
                  v
 bounded independent review when warranted

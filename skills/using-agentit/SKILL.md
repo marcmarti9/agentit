@@ -93,6 +93,7 @@ The primary AI decides the material route from real context. It should cover, as
 intent / outcome
 known facts / unresolved material unknowns
 relevant packs
+execution_mode: FAST | NORMAL | DEEP
 complexity: trivial | bounded | substantial | structural
 risk / reversibility / external effects
 selected skills
@@ -108,6 +109,77 @@ assessment of the user's proposed method
 No Python/regex/keyword classifier decides what the user means, which pack applies, how many skills to load, which model is best, or which source should be trusted.
 
 Desired ambition still matters. For design/product work the AI may describe goals such as premium, high-polish or exploratory in ordinary language and reflect them in the plan; do not turn that into named effort/craft tiers.
+
+## Execution modes: FAST | NORMAL | DEEP
+
+To eliminate overengineering and ensure rapid progress, Agentit enforces three execution tiers:
+
+```text
+EXECUTION_MODE: FAST | NORMAL | DEEP
+```
+
+### FAST MODE — Default for iterative development
+
+When the user requests a localized UI, styling, layout, copy, component, or behavior change, optimize for iteration speed.
+
+#### Default behavior
+* Make the smallest change that correctly satisfies the request.
+* Modify only files directly necessary for the requested change.
+* Do NOT refactor unrelated code.
+* Do NOT redesign surrounding systems.
+* Do NOT perform architecture reviews unless required.
+* Do NOT update documentation unless the change makes existing documentation incorrect.
+* Do NOT create additional abstractions unless necessary.
+* Do NOT launch subagents for normal implementation tasks.
+* Do NOT perform broad repository audits.
+* Do NOT search the entire repository when the relevant implementation is already known.
+* Do NOT run the complete test suite for a localized change.
+* Run only the minimum targeted checks necessary to detect obvious regressions.
+* For visual changes, perform one desktop verification and one mobile verification unless something is visibly broken.
+* Do NOT repeatedly inspect the same result after it is already correct.
+* Do NOT spend time polishing things the user did not request.
+* Preserve existing functionality instead of revalidating every existing feature.
+* Do NOT create GitHub checkpoints/commits unless requested or unless this project explicitly requires one.
+
+#### Scope rule
+Treat the user's request literally. If the user asks to change a layout, move an element, adjust spacing, or alter a product grid, do only that. Do not turn a localized request into a general quality, architecture, accessibility, performance, documentation, or regression-testing project.
+
+#### Verification budget
+1. Implement.
+2. Check the affected page/component.
+3. Fix obvious issues.
+4. Stop.
+
+Do not continue improving after the requested result has been achieved.
+
+#### Escalation
+Only switch to DEEP MODE when:
+* the user explicitly asks for a deep review/audit/refactor;
+* the change affects infrastructure, security, payments, authentication, production data, migrations, or other high-risk systems;
+* the implementation cannot safely be localized;
+* targeted validation reveals a wider regression.
+
+Otherwise FAST MODE is mandatory.
+
+#### Priority
+During interactive design/development sessions:
+**iteration speed > exhaustive validation > documentation.**
+The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
+
+### NORMAL MODE — Medium functional changes
+Use for standard feature work, multi-component fixes, and bounded non-critical changes:
+* Direct implementation with targeted test coverage.
+* Run relevant test suites for affected modules, not the entire repository.
+* Update durable documentation only for materially changed contracts or responsibilities.
+* Subagents used only if genuine isolation/specialization provides clear value.
+
+### DEEP MODE — High-risk, architectural, and production releases
+Reserved for high-consequence work:
+* Explicit deep audit/review/refactor requests from the user.
+* Infrastructure, security, authentication, payments, production data, migrations, or high-blast-radius changes (`RISK_3`/`RISK_4`).
+* Architecture reviews, independent critic/auditor review, comprehensive testing, durable documentation contract, and formal verification gates.
+
+Unless DEEP MODE criteria are met, **FAST MODE is mandatory for iterative development.**
 
 ## References are JIT
 
@@ -134,7 +206,9 @@ Never interpret an installed profile, named MCP stack, or previously enabled ser
 
 ## Core documentation invariant
 
-Durable documentation is part of substantial repository work, so the **minimum documentation contract lives in core** even though the deeper `documentation-and-adrs` skill remains JIT.
+In FAST MODE, do NOT update documentation unless the change makes existing documentation incorrect.
+
+Durable documentation is part of substantial repository work (NORMAL and DEEP modes), so the **minimum documentation contract lives in core** even though the deeper `documentation-and-adrs` skill remains JIT.
 
 For every substantial change:
 
@@ -151,11 +225,15 @@ Do not create documentation for trivial helpers, obvious syntax, temporary execu
 
 Material Agentit work gets a bounded read-only second opinion when independent review materially improves reliability. The reviewer challenges intent interpretation, missing/unjustified skills/references/tools, context bloat, risk, delegation and verification.
 
+In FAST MODE, the audit is lightweight: ensure no multi-agent overengineering or excessive verification is planned, and proceed without delay.
+
 Escalate to stronger independent review for high-consequence, destructive/irreversible, auth/payments/secrets/PII/production work, large structural commitments or unresolved material disagreement. Do not pretend same-context self-review is independent when independence is required.
 
 ## Worker projection
 
-Spawn workers only when specialization, isolation, fresh judgment or genuine parallelism earns its cost. A worker receives bounded context:
+In FAST MODE, do NOT launch subagents for normal implementation tasks; implement directly in the active session.
+
+For NORMAL and DEEP modes, spawn workers only when specialization, isolation, fresh judgment or genuine parallelism earns its cost. A worker receives bounded context:
 
 ```text
 role / objective / scope
@@ -198,6 +276,8 @@ Never persist secrets, raw transcripts or private chain-of-thought.
 Agentit optimizes for the user's actual goal, not automatic agreement. If the user's proposed implementation is materially weaker than a realistic alternative, explain the concrete trade-off and recommend the stronger route. Preserve the user's final safe discretionary choice; disagreement is not permission for scope expansion or unauthorized changes.
 
 ## Git / completion
+
+In FAST MODE, optimize for iteration speed: do not create extra checkpoints, commits, or PR ceremony unless requested or project-mandated. Stop immediately once the verification budget is satisfied.
 
 Repository changes default to:
 

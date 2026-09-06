@@ -149,6 +149,19 @@ class ArchitecturePolicyTests(unittest.TestCase):
         with self.assertRaises(McpCatalogError):
             recommend_for_task("design a frontend and inspect the browser")
 
+    def test_execution_modes_fast_normal_deep_policy(self):
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        using_agentit = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
+        task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
+
+        for text, src in ((agents, "AGENTS.md"), (using_agentit, "using-agentit"), (task_router, "task-router")):
+            self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", text, f"missing mode declaration in {src}")
+            self.assertIn("FAST MODE — Default for iterative development", text, f"missing FAST MODE in {src}")
+            self.assertIn("iteration speed > exhaustive validation > documentation", text, f"missing priority in {src}")
+            self.assertIn("Do NOT launch subagents for normal implementation tasks", text, f"missing subagent constraint in {src}")
+            self.assertIn("Verification budget", text, f"missing verification budget in {src}")
+            self.assertIn("Treat the user's request literally", text, f"missing scope rule in {src}")
+
 
 if __name__ == "__main__":
     unittest.main()

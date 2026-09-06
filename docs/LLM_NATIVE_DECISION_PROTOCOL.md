@@ -17,6 +17,7 @@ The active primary model considers at least:
 - the user's actual intent and desired outcome;
 - facts already established from conversation/project/tool context;
 - material unknowns and assumptions;
+- execution mode (`FAST | NORMAL | DEEP`; FAST by default for iterative/localized changes);
 - domain/category and complexity;
 - risk and reversibility;
 - production, account, financial, data or other external effects;
@@ -43,7 +44,7 @@ The auditor is read-only. Give it only the bounded context needed to judge the p
 - proposed `TASK_DECISION`;
 - applicable Agentit rules.
 
-It must not replace the decision. It only checks for misunderstood intent, risk possibly classified too low, missing constraints, unjustified assumptions, poor skill/tool choice, unnecessary or missing delegation, unsafe parallel ownership, dependency mistakes, weak verification, and reasons to escalate.
+It must not replace the decision. It only checks for mode violations/overengineering (e.g. attempting subagents or full-suite testing for a FAST mode task), misunderstood intent, risk possibly classified too low, missing constraints, unjustified assumptions, poor skill/tool choice, unnecessary or missing delegation, unsafe parallel ownership, dependency mistakes, weak verification, and reasons to escalate.
 
 It returns:
 

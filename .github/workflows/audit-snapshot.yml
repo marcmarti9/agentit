@@ -1,26 +1,72 @@
 name: Audit source snapshot
-
 on:
   push:
     branches: [audit/repository-cleanup-2026-09-07]
     paths: [.github/workflows/audit-snapshot.yml]
-
 permissions:
   contents: read
-
 jobs:
   snapshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Archive tracked files only
-        run: git archive --format=tar HEAD -o "$RUNNER_TEMP/agentit-source.tar"
+      - name: Collect upstream source and review evidence without executing upstream code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import concurrent.futures, datetime, json, os, pathlib, shutil, subprocess, tempfile, urllib.request
+          out = pathlib.Path(os.environ['RUNNER_TEMP']) / 'evidence'
+          out.mkdir()
+          lock = json.loads(pathlib.Path('skills/UPSTREAM_LOCK.json').read_text())
+          sources = sorted({m['repo'] for m in lock['mappings']})
+          def collect(repo):
+              clone = pathlib.Path(tempfile.mkdtemp()) / 'repo'
+              subprocess.run(['git', '-c', 'core.hooksPath=/dev/null', 'clone', '--quiet', '--depth=1', 'https://github.com/' + repo + '.git', str(clone)], check=True, timeout=180)
+              sha = subprocess.check_output(['git', '-C', str(clone), 'rev-parse', 'HEAD'], text=True).strip()
+              paths = {m['path'] for m in lock['mappings'] if m['repo'] == repo}
+              paths |= {m['path'] for m in lock.get('shared', []) if m['repo'] == repo}
+              if '.' not in paths:
+                  paths |= {p.name for p in clone.iterdir() if p.is_file() and p.name.upper().startswith(('LICENSE', 'LICENCE', 'COPYING', 'NOTICE'))}
+              archive = out / (repo.replace('/', '__') + '.tar')
+              subprocess.run(['git', '-C', str(clone), 'archive', '--format=tar', '-o', str(archive), 'HEAD', '--', *sorted(paths)], check=True)
+              shutil.rmtree(clone.parent)
+              return {'repo': repo, 'snapshot': sha, 'paths': sorted(paths), 'archive': archive.name}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              snapshots = list(pool.map(collect, sources))
+          (out / 'snapshots.json').write_text(json.dumps({'checked_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'sources': snapshots}, indent=2) + '\n')
+          base = 'https://api.github.com/repos/marcmarti9/agentit/'
+          def get(path):
+              req = urllib.request.Request(base + path, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'User-Agent': 'agentit-repository-audit'})
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+          def pages(path):
+              items, page = [], 1
+              sep = '&' if '?' in path else '?'
+              while True:
+                  result = get(path + sep + 'per_page=100&page=' + str(page))
+                  items.extend(result)
+                  if len(result) < 100:
+                      return items
+                  page += 1
+          prs = pages('pulls?state=all')
+          issues = [i for i in pages('issues?state=all') if 'pull_request' not in i]
+          def review(pr):
+              n = str(pr['number'])
+              return {'number': pr['number'], 'state': pr['state'], 'merged_at': pr['merged_at'], 'title': pr['title'], 'body': pr['body'], 'head': pr['head']['sha'], 'comments': pages('issues/' + n + '/comments'), 'reviews': pages('pulls/' + n + '/reviews'), 'review_comments': pages('pulls/' + n + '/comments'), 'files': pages('pulls/' + n + '/files')}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              reviews = list(pool.map(review, prs))
+          for issue in issues:
+              issue['thread_comments'] = pages('issues/' + str(issue['number']) + '/comments')
+          (out / 'repository-review.json').write_text(json.dumps({'pull_requests': reviews, 'issues': issues, 'branches': pages('branches')}, indent=2) + '\n')
+          print('Collected', len(snapshots), 'upstreams,', len(reviews), 'PRs and', len(issues), 'issues.')
+          PY
       - uses: actions/upload-artifact@v4
         with:
-          name: agentit-audit-source
-          path: ${{ runner.temp }}/agentit-source.tar
+          name: agentit-audit-evidence
+          path: ${{ runner.temp }}/evidence/
           retention-days: 1
           if-no-files-found: error

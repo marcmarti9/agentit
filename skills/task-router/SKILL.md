@@ -145,6 +145,8 @@ selected_skills:
 
 A different design task may justify one skill or seven. The pack never decides that number.
 
+User-facing web work already inherits the compact anti-slop baseline from `using-agentit`. Do **not** load a dedicated design skill merely to restate those baseline rules for a small localized edit. For substantial visual design, redesign, design-system work, or an explicit anti-slop/design audit, consider `hallmark` JIT because deeper design judgment is then materially useful.
+
 Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage.
 
 ## Reference plan

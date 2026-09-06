@@ -21,6 +21,7 @@ class AppSecurityGateProfileTests(unittest.TestCase):
 
         self.assertNotIn("app-security-gate", core)
         self.assertIn("app-security-gate", release)
+        self.assertIn("security-and-hardening", release)
         self.assertIn("app-security-gate", all_skills)
 
     def test_security_gate_package_contains_required_contract(self) -> None:

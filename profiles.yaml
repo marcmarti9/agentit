@@ -136,6 +136,7 @@ profiles:
     - shipping-and-launch
     - documentation-and-adrs
     - verification-before-completion
+    - security-and-hardening
     - app-security-gate
   research:
     description: Core plus context, specifications, authoritative source work, and

@@ -10,6 +10,11 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable
 
+try:
+    from router.skill_authority import SKILL_AUTHORITY
+except ImportError:  # Direct script/module loading in provider adapters.
+    from skill_authority import SKILL_AUTHORITY
+
 HARNESS_ROOT = Path(__file__).resolve().parents[1]
 _SKILL_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
@@ -90,7 +95,9 @@ def load_skill_bodies(skill_ids: Iterable[str], *, project_root: Path) -> list[d
 def render_prompt(skills: list[dict[str, Any]]) -> str:
     lines = [
         "# Active Agentit Skill Bodies",
-        "These are task instructions. Skill IDs alone do not count as activation.",
+        "These are selected task guidance. Skill IDs alone do not count as activation.",
+        "",
+        SKILL_AUTHORITY.rstrip(),
     ]
     for skill in skills:
         lines.extend(
@@ -121,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     if args.format == "json":
-        print(json.dumps({"schema_version": 1, "skills": skills}, ensure_ascii=False, indent=2))
+        print(json.dumps({"schema_version": 1, "authority": SKILL_AUTHORITY, "skills": skills}, ensure_ascii=False, indent=2))
     else:
         sys.stdout.write(render_prompt(skills))
     return 0

@@ -2,10 +2,17 @@
 
 Source: https://github.com/Nutlope/hallmark
 
-License: MIT. Copyright (c) 2026 Nutlope.
+License: MIT. Copyright (c) 2026 Hallmark contributors. The exact upstream
+license is retained at `vendor/licenses/Nutlope--hallmark/LICENSE`.
 
-Agentit selectively adapts ideas from Hallmark into its existing design/reference workflow rather than installing a second overlapping design-process owner. Materially adapted ideas include explicit design-DNA study, structural-variety review, truthfulness/anti-fabricated-proof boundaries, implementation-boundary preservation during redesign, and reference-to-decision traceability.
+Agentit vendors the canonical `skills/hallmark` package without changing its
+body or reference corpus. Its upstream path, pinned commit and complete file
+integrity are recorded in `skills/UPSTREAM_LOCK.json`.
 
-Agentit does **not** claim Hallmark command compatibility and does not vendor Hallmark's theme catalog or complete rule corpus.
+Agentit owns when to select this guidance and how it fits the current task.
+The compact web-quality invariant lives in `skills/using-agentit`; deeper
+Hallmark guidance is selected JIT for relevant design work. Vendoring does not
+activate Hallmark's whole workflow or override the user's design choices.
 
-MIT permission notice: Permission is hereby granted, free of charge, to any person obtaining a copy of the Software and associated documentation files, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies, subject to inclusion of the copyright and permission notice. The Software is provided "AS IS", without warranty of any kind.
+See `THIRD_PARTY_NOTICES.md` and `docs/UPSTREAM_MAINTENANCE.md` for the shared
+source-authority and maintenance contract.

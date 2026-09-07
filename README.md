@@ -1,429 +1,171 @@
 # Agentit
 
-[![CI Status](https://github.com/marcmarti9/agentit/actions/workflows/ci.yml/badge.svg)](https://github.com/marcmarti9/agentit/actions)
+[![CI](https://github.com/marcmarti9/agentit/actions/workflows/ci.yml/badge.svg)](https://github.com/marcmarti9/agentit/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**A provider-neutral reliability and just-in-time expertise layer for capable AI agents.**
+**Provider-neutral workflows and a small execution runtime for coding agents.**
 
-Agentit gives coding agents a compact operating protocol for material work: start from a tiny clean core, choose the right expertise only when it is useful, challenge important decisions independently, use current references when needed, delegate with bounded context, preserve durable project knowledge, verify execution with fresh evidence, and ship reviewable changes.
+Agentit helps an agent select relevant expertise, carry bounded context into
+workers, track verifiable work, and leave useful project documentation. The
+active model makes semantic decisions. Python handles explicit IDs, files,
+permissions, state and evidence.
 
-It is open source under Apache-2.0 and is designed to sit around the coding agent you already use.
+Use it with an agent that can read skills, inspect your project and run the
+required tools. The user can work in ordinary language; Agentit's CLI is an
+implementation surface for the agent.
 
-```text
-You + capable coding agent
-          │
-          ▼
- DISPATCH: bare | agentit
-          │
-          ▼
- tiny clean Agentit core
-          │
-          ▼
- semantic domain packs
-          │
-          ▼
- selected skills only
- + references/tools JIT
-          │
-          ▼
- independent decision audit
-          │
-          ▼
- Loop / Graph execution
-          │
-          ▼
- fresh verification
- + durable docs / private continuity
-          │
-          ▼
- JIT tooling cleanup
-          │
-          ▼
- branch → PR → human merge
-```
+## Install or update
 
-## Quick start
-
-Give this repository to a compatible coding agent and ask it:
-
-```text
-Install Agentit for this environment, inspect the installation plan before applying it,
-and then use Agentit automatically for material work.
-```
-
-After installation, work normally. The agent makes a first-task semantic decision:
-
-```text
-DISPATCH_DECISION: bare | agentit
-```
-
-Trivial work can stay direct. Material work activates Agentit's JIT workflow.
-
-For maintainers and agents that want the explicit bootstrap surface:
+Requirements: Python 3.10+, Git, and GNU/Linux or macOS. Applying an installation
+creates an isolated virtual environment and installs PyYAML. The plan itself is
+read-only.
 
 ```bash
-python3 bootstrap.py --provider <claude|codex|antigravity>
-python3 bootstrap.py --provider <claude|codex|antigravity> --apply
+git clone https://github.com/marcmarti9/agentit.git
+cd agentit
+python3 bootstrap.py --provider codex
+python3 bootstrap.py --provider codex --apply
 ```
 
-The canonical bootstrap supports macOS and GNU/Linux and produces verified, reversible installation state.
+Choose `claude`, `codex`, `grok`, `gemini`, `antigravity`, or `all`. Review the
+plan before applying it. The generated CLI is available at
+`~/.local/bin/agentit`; it does not need to be on the user's PATH.
 
-## What Agentit gives an agent
+To update a clean checkout, fetch and fast-forward its reviewed branch, then
+run the same plan/apply commands. Preserve local modifications before changing
+Git state. General settings and hooks require explicit opt-in flags.
 
-### Tiny global core
+For installation tests, pass `--home /path/to/existing/temporary/home`. Apply
+returns a backup manifest that can also recover an interrupted installation:
 
-A normal installation exposes only three global navigation skills:
+```bash
+python3 bootstrap.py --rollback /path/to/manifest.json
+python3 bootstrap.py --rollback /path/to/manifest.json --apply
+```
+
+See [bootstrap and recovery](docs/PORTABLE_BOOTSTRAP.md) for transaction limits,
+concurrent-edit protection and retryable rollback. Legacy shell install/update
+entrypoints remain for compatibility; the Python bootstrap is canonical.
+
+## A small core, selected expertise
+
+A fresh installation publishes exactly three Agentit skill IDs to each selected
+provider's discovery directory:
+
+- `using-agentit`: dispatch, execution modes, shared quality and completion rules;
+- `task-router`: the model's current task decision and review contract;
+- `using-agent-skills`: Agentit's own navigation and source-authority adapter.
+
+The complete library stays under `~/.agentit/runtime/skills`. Project profiles
+use `.agentit/profile-skills`, outside provider skill discovery. Existing
+unrelated or modified host skills remain the user's configuration.
 
 ```text
-using-agentit
-+ task-router
-+ using-agent-skills
+current request → bare or Agentit → current task decision
+  → selected skills, references and tools
+  → implementation and proportionate independent review
+  → fresh verification and durable project documentation
 ```
 
-Everything deeper is loaded just in time.
+The core distinguishes FAST localized edits, NORMAL functional changes and DEEP
+audits or high-risk work. Small edits get targeted verification. Architectural
+or consequential changes justify stronger review and broader checks.
 
-The core also carries two universal invariants without loading extra specialist bodies:
+A profile makes skills available. A pack exposes bounded discovery metadata.
+Reading a selected body consumes context. Removing its selection cannot erase
+text already read by the model, and each new session makes fresh selections.
 
-- every new execution session is **semantically cold**;
-- substantial repository work must leave durable architecture/component knowledge accurate enough for another competent agent or engineer to continue without replaying the chat.
-
-### Clean-session JIT model
-
-Agentit deliberately separates what is installed from what is active:
-
-```text
-profile installed      = skills available for discovery
-pack inspected         = capabilities visible as possibilities
-selected skill body    = active context for this stage
-MCP configured         = tool available to the host
-MCP selected/enabled   = tool justified for this task
+```bash
+agentit skills packs
+agentit skills candidates engineering
+agentit skills show debugging-and-error-recovery --project .
 ```
 
-A new session does not inherit the previous session's selected skills, references, workers or MCP decisions. It starts from the three-skill core and re-selects non-core context from the current task.
+These commands expose pack metadata, then candidates, then only the requested
+bodies. Prompt and JSON output include an explicit authority boundary. A source
+skill cannot activate another skill, force its entire lifecycle, or authorize
+scripts, downloads, external actions or provider changes by saying “always.”
+Host instructions, user authorization and the current task govern execution.
 
-Provider MCP configuration may physically persist. That does not make a stale MCP semantically active. Agentit tracks task-added MCP enablement and cleans up what the task owns when safe, without blanket-disabling unrelated user or concurrent-session tooling.
+See [JIT loading and host isolation](docs/JIT_SKILL_LOADING.md).
 
-### Agent-owned task decisions
+## What is included
 
-The active model owns semantic judgment from the real conversation, repository, files, tools, constraints and project state.
+| Capability | Purpose and contract |
+| --- | --- |
+| Task decisions and review | Select relevant expertise, identify uncertainty and challenge consequential choices. [Decision protocol](docs/LLM_NATIVE_DECISION_PROTOCOL.md) |
+| Engineering, design and product skills | Implementation, debugging, interfaces, visual design, accessibility and requirements. [Pack map](references/agentit-skill-packs.md) |
+| Writing and source research | Preserve claims and voice, inspect current authoritative evidence when needed. [Reference Intelligence](docs/REFERENCE_INTELLIGENCE.md) |
+| Executive and growth profiles | Discover strategy, finance, operations, marketing and related expertise only when relevant. [Executive profile](docs/EXECUTIVE_PROFILE.md) |
+| Worker context | Project constraints, selected skills, allowed paths and capabilities, expected output and verifier. [Runtime contract](docs/RUNTIME_ENGINEERING.md) |
+| App security gate | An opt-in adversarial retest before a consequential release. [Security gate](skills/app-security-gate/SKILL.md) |
+| Loop and Graph runtime | Observable goals, bounded retries, dependency and write ownership, receipts backed by fresh evidence. [Runtime engineering](docs/RUNTIME_ENGINEERING.md) |
+| MCP and capabilities | Resolve explicitly selected capabilities and keep task-owned tool changes bounded. [Capabilities](docs/CAPABILITIES.md), [MCP catalog](docs/MCP_CATALOG.md) |
+| Continuity and documentation | Private operational state plus durable component and architecture knowledge. [Continuity](docs/PROJECT_CONTINUITY.md), [documentation contract](docs/DOCUMENTATION_CONTRACT.md) |
 
-For material work it creates a compact `TASK_DECISION` covering the relevant outcome, unknowns, execution mode, risk, skills, references, tools, MCP lifecycle/cleanup ownership, topology, ownership, plan and verification strategy.
+Client-facing work also inherits two compact rules from the installed core:
+use truthful product evidence and intentional design choices; give clients a
+safe way to manage routine mutable business content when the operating model
+requires it. These rules do not require a CMS for a genuinely static site.
 
-Mechanical software then enforces the reviewed plan through deterministic state and execution contracts.
+## Upstream content and maintenance
 
-### Execution modes: FAST | NORMAL | DEEP
+Agentit-owned code, adapters and compositions are separate in authority and
+provenance from canonical third-party packages. Public skill IDs remain stable.
+Canonical task packages stay in `skills/<id>`, identified by the lock registry;
+the raw upstream meta-workflow is kept under `vendor/agent-skills`, separate from
+Agentit's global adapter. Original licenses and notices live in `vendor/licenses`.
 
-To eliminate overengineering and keep iterative development responsive, Agentit calibrates execution depth:
+[The source registry](skills/UPSTREAM_SOURCES.md) records pinned source commits.
+[The lock](skills/UPSTREAM_LOCK.json) records every canonical package file's
+SHA-256 and mode, shared references and exact license/NOTICE copies. Repository-root
+packages explicitly record which package entries are included.
 
-- **FAST (Default for iterative development)**: Localized UI, styling, layout, copy, component, or behavior changes. Smallest diff, targeted checks, no unrelated refactors, no documentation churn, no subagents, and strict verification budget (implement -> check affected -> fix obvious -> stop). **Priority: iteration speed > exhaustive validation > documentation.**
-- **NORMAL**: Medium functional changes, multi-component features, relevant targeted test suites, durable docs updated only for materially changed contracts.
-- **DEEP**: Audits, migrations, production releases, security, auth, payments, high-risk systems. Comprehensive testing, independent reviews, and complete documentation contracts.
+```bash
+# Offline check; changes nothing.
+python3 scripts/sync_upstream_skills.py
 
-### JIT skill packs
-
-Agentit organizes expertise into flat semantic discovery maps such as:
-
-```text
-engineering  frontend  design  backend  data  product  executive
-marketing    seo       research writing release agency
+# Inspect a refresh plan.
+python3 scripts/sync_upstream_skills.py --refresh
 ```
 
-A pack helps the model discover useful capabilities. The model chooses the concrete skill bodies and how many are worth their context cost.
+Save the plan's `source_commits` object to a JSON file, review those revisions,
+then apply that exact cached selection:
 
-Example:
-
-```text
-relevant_packs:
-- engineering
-
-selected_skills:
-- debugging-and-error-recovery
-- verification-before-completion
+```bash
+python3 scripts/sync_upstream_skills.py --refresh --heads-file /path/to/reviewed-commits.json --offline --apply
 ```
 
-Only selected skill bodies enter the working context. Profiles are installation/discovery bundles, not runtime context bundles.
+Refresh reads pinned source archives, refuses local edits and unowned collisions,
+and preserves complete selected packages. It does not execute upstream scripts,
+install upstream dependencies or modify provider configuration. Optional tools
+inside a package may require separate downloads or services when deliberately
+selected; for example, current Impeccable uses a versioned binary launcher.
 
-### Executive operating profile
+See [upstream maintenance](docs/UPSTREAM_MAINTENANCE.md) and
+[third-party notices](THIRD_PARTY_NOTICES.md). Agentit's original material is
+Apache-2.0; third-party material retains its own license.
 
-`executive` is a deliberately deep installation/discovery profile for company-level decisions. It exposes JIT expertise for strategy, finance, people, legal, operations, marketing, product, board/governance, chief-of-staff triage and cross-functional executive orchestration.
+## Verification and limits
 
-A finance-only task can load just `executive-finance`. A genuinely cross-functional decision can load `executive-orchestration` plus only the independent specialists whose analysis can change the recommendation. Installing or enabling the profile never activates the whole executive bench, and each new session still starts from the same three-skill core.
-
-The executive layer is provider-neutral and materially informed by Sente Labs' OpenExecutive architecture without vendoring its app/runtime or model stack. See [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md).
-
-### Design memory and visual systems
-
-Design work can now select two additional JIT capabilities when they actually help:
-
-- `design-md-workflow` — read, create and verify an optional durable `DESIGN.md` visual-identity contract without making Google's alpha format a global dependency;
-- `diagram-design` — choose between simple project-native diagrams, polished/branded diagram workflows, and code-grounded validated architecture maps such as Archify.
-
-Both stay outside core and are loaded only for relevant stages.
-
-### Anti-AI-slop writing
-
-`humanizer` treats humanization as more than deleting a few buzzwords. It preserves factual claims/citations, adapts to destination and authentic writer/brand voice, catches repeated structural AI tells, and keeps technical prose precise.
-
-### Reference Intelligence
-
-For material tasks the model can choose:
-
-```text
-reference_plan.mode: none | curated | live | both
+```bash
+python3 -m unittest discover -s router -p 'test_*.py' -v
+python3 -m unittest discover -s tests -p 'test_*.py' -v
+python3 scripts/sync_upstream_skills.py
+bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh
+python3 -m py_compile agentit bootstrap.py router/entrypoint.py router/bootstrap.py
+git diff --check
 ```
 
-Agentit can combine reusable curated procedures with live authoritative sources when freshness or domain authority matters. Durable external knowledge can be distilled into the skill that actually uses it while provenance remains explicit.
-
-### Independent decision review
-
-Material `TASK_DECISION`s can receive a bounded independent review:
-
-```text
-AUDIT: CLEAR | CHALLENGE | ESCALATE
-```
-
-The reviewer checks intent, risk, skill/reference/tool selection, delegation, ownership and verification. Higher-consequence work can escalate to a stronger independent critic.
-
-### Adaptive delegation
-
-The primary model can choose direct execution or a useful topology such as:
-
-```text
-direct
-probe
-fan_out
-pipeline
-writer_reviewer
-audit
-custom DAG
-```
-
-Delegated workers receive bounded context: objective, selected skills, selected references, project constraints, permissions, ownership, handoff and verifier.
-
-### Loop Engineering
-
-Every executable unit can be bound to a Loop Contract:
-
-```text
-observable goal
-→ action
-→ fresh evidence
-→ verifier
-→ accept / retry / escalate
-```
-
-Loops have explicit stop conditions, bounded attempts and persisted receipts.
-
-### Graph Engineering
-
-Multi-node work can be materialized as a DAG with explicit:
-
-- dependencies;
-- read/write ownership;
-- handoff artifacts;
-- per-node Loop Contracts;
-- final Graph Receipt.
-
-The runtime validates execution state and prevents invalid dependency or ownership transitions.
-
-### Resumable project state
-
-Substantial work can maintain compact **private operational continuity** in:
-
-```text
-.agentit/STATE.md
-.agentit/checkpoints/*.json
-```
-
-A fresh session can recover resumable operational state when needed without committing raw task history. This state is distinct from normal tracked project documentation and stays local/private by default.
-
-### Provider-neutral capabilities
-
-Agentit uses stable capability IDs and explicit host inventories so semantic roles are not tied to one vendor-specific tool name.
-
-Capability resolution produces least-privilege envelopes containing the selected provider binding and the permissions required for that task.
-
-### MCP runtime
-
-Agentit includes a curated MCP catalog and runtime management surface. It can inspect, enable and disable approved MCP integrations for supported hosts while keeping semantic selection with the primary model.
-
-Current MCP configuration surfaces include Claude Code, Cursor, Codex, Grok, Antigravity and portable project `.mcp.json` files.
-
-Named stacks are convenience/discovery sets, not always-on bundles. A task can select none, one or several MCPs and should clean up task-added enablement when safe.
-
-### Verification receipts
-
-Agentit records fresh evidence rather than accepting narrative success. Verification can include project-native tests/builds, explicit semantic verification signals, Loop Receipts and Graph Receipts.
-
-### Durable documentation
-
-Substantial architecture, component responsibilities, interfaces, configuration/invariants, operations, failure/recovery behavior, verification procedures and durable decisions stay in normal project documentation.
-
-Agentit's core requires a documentation-drift check before substantial repository work is called complete. The deeper `documentation-and-adrs` procedure remains JIT and is loaded only when the task needs the extra documentation/ADR guidance.
-
-### Reviewable Git workflow
-
-Repository changes default to:
-
-```text
-work branch → implementation → fresh verification → documentation drift check → pull request → human merge
-```
-
-## Example flow
-
-A request such as:
-
-```text
-Fix the authentication regression and make sure it cannot silently recur.
-```
-
-can produce a task-specific Agentit flow like:
-
-```text
-DISPATCH_DECISION: agentit
-
-packs:
-- engineering
-
-selected skills:
-- debugging-and-error-recovery
-- security-and-hardening
-- verification-before-completion
-
-reference plan:
-- current sources only if the implementation depends on a changing API/protocol
-
-review:
-- independent decision audit
-
-execution:
-- reproduce
-- localize
-- implement bounded fix
-- run Loop verifier
-- preserve relevant regression coverage
-- update durable docs if architecture/contracts/operations changed
-- clean up task-added JIT tooling where safe
-- create PR with fresh evidence
-```
-
-The exact skills, references, tools and topology remain decisions of the active model for the actual task.
-
-## Architecture boundary
-
-Agentit separates two kinds of work:
-
-```text
-LLM judgment
-├─ understand intent
-├─ choose packs / skills / references / tools
-├─ assess risk and alternatives
-├─ choose topology
-└─ define verification
-
-Deterministic runtime
-├─ manifests and profiles
-├─ capability resolution
-├─ MCP configuration
-├─ continuity state
-├─ Loop / Graph state machines
-├─ verification receipts
-└─ reversible bootstrap operations
-```
-
-This keeps semantic interpretation with the model that has the richest context while making execution state inspectable and testable.
-
-## Installation and discovery profiles
-
-`profiles.yaml` controls installation/discovery availability. Runtime skill selection remains JIT and resets semantically to core for each new execution session.
-
-| Profile | Discovery scope |
-|---|---|
-| `core` | three-skill Agentit navigation core + minimum cold-start/documentation invariants |
-| `frontend` | frontend implementation and runtime verification |
-| `backend` | APIs, services, observability and backend engineering |
-| `supabase` | backend plus PostgreSQL/Supabase-specific guidance |
-| `product` | discovery, requirements and product decisions |
-| `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
-| `writing` | technical writing and anti-slop/documentation support |
-| `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
-| `release` | CI/CD, migrations and release readiness |
-| `research` | source-driven and context-heavy research |
-| `growth` / `agency` | marketing, growth and multi-domain delivery |
-| `all` | complete repository skill inventory |
-
-## Safety and reversibility
-
-Agentit's mechanical surfaces are designed around explicit state and bounded mutation. The portable bootstrap includes:
-
-- read-only planning before apply;
-- bounded provider/package allowlists;
-- symlink checks;
-- SHA-256 verification;
-- per-file backups;
-- atomic replacement;
-- machine-readable receipts;
-- rollback guarded against post-install user modifications.
-
-Risk-sensitive Agentit work can require independent review, rollback planning, dry runs and post-change verification according to the task's actual impact.
-
-MCP cleanup follows ownership: Agentit should undo task-added enablement when safe, not erase unrelated global configuration merely to claim a clean session.
-
-## Evaluation
-
-Agentit keeps mechanical/runtime evaluation separate from agent-quality evaluation.
-
-CI covers deterministic contracts including bootstrap/rollback, profiles, capability and MCP resolution, continuity, worker context, Loop/Graph execution, verification receipts and architecture-policy invariants.
-
-Paired real-agent evaluation is tracked in [issue #29](https://github.com/marcmarti9/agentit/issues/29). The protocol compares the same model/provider/environment with and without Agentit and records task success, regressions, retries, model calls, exposed token usage, elapsed time, interventions, verifier evidence and documentation drift.
-
-Benchmark claims are intended to follow that evidence rather than precede it.
-
-See:
-
-- [`evals/evaluation-plan.md`](evals/evaluation-plan.md)
-- [`evals/results.md`](evals/results.md)
-
-## Repository map
-
-| Path | Purpose |
-|---|---|
-| `AGENTS.md` | compact global Agentit rules and dispatch |
-| `skills/using-agentit/` | canonical Agentit lifecycle, cold-start and minimum documentation contract |
-| `skills/task-router/` | model-owned task decision + review contract |
-| `skills/using-agent-skills/` | semantic pack discovery and JIT projection |
-| `skills/reference-intelligence/` | curated/live source and provenance workflow |
-| `skills/executive-orchestration/` | cross-functional executive routing, bounded fan-out and single-parent synthesis contract |
-| `skills/design-md-workflow/` | optional durable visual-identity contract workflow |
-| `skills/diagram-design/` | JIT diagram/tool routing and architecture-visual evidence discipline |
-| `skills/` | concrete JIT expertise modules, including the `executive-*` specialist skills |
-| `router/` | deterministic capabilities, context, Loop/Graph, MCP and verification runtime |
-| `profiles.yaml` | installation/discovery profiles |
-| `probes/` | mechanical verification catalog |
-| `docs/EXECUTIVE_PROFILE.md` | executive profile architecture, routing, evidence, authority and verification contract |
-| `docs/` | architecture, runtime, continuity and policy documentation |
-| `evals/` | mechanical and paired agent-level evaluation plan/results |
-
-## Core docs
-
-- [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md)
-- [`references/agentit-skill-packs.md`](references/agentit-skill-packs.md)
-- [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md)
-- [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md)
-- [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md)
-- [`docs/RUNTIME_ENGINEERING.md`](docs/RUNTIME_ENGINEERING.md)
-- [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md)
-- [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md)
-- [`docs/MCP_CATALOG.md`](docs/MCP_CATALOG.md)
-- [`docs/REFERENCE_INTELLIGENCE.md`](docs/REFERENCE_INTELLIGENCE.md)
-- [`evals/evaluation-plan.md`](evals/evaluation-plan.md)
-
-## Contributing
-
-Contributions are welcome when they add durable capability, improve execution contracts, strengthen verification, expand provider portability, or remove unnecessary protocol cost.
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
-
-## License
-
-Apache License 2.0. See [`LICENSE`](LICENSE) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+CI verifies mechanical runtime contracts and portable bootstrap behavior on
+GNU/Linux and macOS. Tests can prove that selected bodies and authority rules
+are transported; they cannot prove that every model will follow them.
+
+Agentit has not established universal improvements in model quality, speed,
+cost or token usage. Paired agent evaluations are tracked in
+[issue #29](https://github.com/marcmarti9/agentit/issues/29) and the
+[evaluation plan](evals/evaluation-plan.md).
+
+Repository changes normally end in a reviewed PR. Publishing a branch, merging
+and deploying remain distinct actions governed by the user's actual authority.
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md).

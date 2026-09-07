@@ -44,22 +44,42 @@ class JitHygieneTests(unittest.TestCase):
         self.assertIn("installed project profiles", text)
         self.assertIn("task-added MCP", text)
 
+    def test_core_skill_contains_compact_web_anti_slop_invariant(self) -> None:
+        core_text = (REPOSITORY / "skills" / "using-agentit" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        router_text = (REPOSITORY / "skills" / "task-router" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## User-facing web quality invariant", core_text)
+        self.assertIn("Never fabricate reviews, testimonials, counters", core_text)
+        self.assertIn("anti-default rules, not absolute bans", core_text)
+        self.assertIn("`hallmark` JIT", core_text)
+        self.assertIn("compact anti-slop baseline from `using-agentit`", router_text)
+        self.assertIn("consider `hallmark` JIT", router_text)
+
     def test_profiles_packs_and_selected_context_remain_distinct(self) -> None:
-        # Agentit's pack/runtime policy belongs outside the canonical Addy meta-skill.
+        # The global adapter owns policy; upstream remains separate and verbatim.
         pack_text = (REPOSITORY / "references" / "agentit-skill-packs.md").read_text(
             encoding="utf-8"
         )
         core_text = (REPOSITORY / "skills" / "using-agentit" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        upstream_meta = (
+        adapter = (
             REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        upstream_meta = (
+            REPOSITORY / "vendor" / "agent-skills" / "using-agent-skills" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("flat semantic discovery maps", pack_text)
         self.assertIn("Only the selected skill bodies consume worker skill context", pack_text)
         self.assertIn("semantically cold", pack_text)
         self.assertIn("installed project profiles", core_text)
+        self.assertIn("Agentit's own adapter", adapter)
+        self.assertIn("do not activate other skills", adapter)
+        self.assertNotIn("## Lifecycle Sequence", adapter)
         self.assertIn("name: using-agent-skills", upstream_meta)
         self.assertIn("Agent Skills is a collection of engineering workflow skills", upstream_meta)
 

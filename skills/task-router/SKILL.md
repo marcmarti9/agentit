@@ -48,67 +48,11 @@ user_method_assessment
 
 ## Execution modes: FAST | NORMAL | DEEP
 
-To eliminate overengineering and keep iterative work responsive, calibrate execution depth:
-
-```text
-EXECUTION_MODE: FAST | NORMAL | DEEP
-```
-
-### FAST MODE — Default for iterative development
-
-When the user requests a localized UI, styling, layout, copy, component, or behavior change, optimize for iteration speed.
-
-#### Default behavior
-* Make the smallest change that correctly satisfies the request.
-* Modify only files directly necessary for the requested change.
-* Do NOT refactor unrelated code.
-* Do NOT redesign surrounding systems.
-* Do NOT perform architecture reviews unless required.
-* Do NOT update documentation unless the change makes existing documentation incorrect.
-* Do NOT create additional abstractions unless necessary.
-* Do NOT launch subagents for normal implementation tasks (topology is `direct`).
-* Do NOT perform broad repository audits.
-* Do NOT search the entire repository when the relevant implementation is already known.
-* Do NOT run the complete test suite for a localized change.
-* Run only the minimum targeted checks necessary to detect obvious regressions.
-* For visual changes, perform one desktop verification and one mobile verification unless something is visibly broken.
-* Do NOT repeatedly inspect the same result after it is already correct.
-* Do NOT spend time polishing things the user did not request.
-* Preserve existing functionality instead of revalidating every existing feature.
-* Do NOT create GitHub checkpoints/commits unless requested or unless this project explicitly requires one.
-
-#### Scope rule
-Treat the user's request literally. If the user asks to change a layout, move an element, adjust spacing, or alter a product grid, do only that. Do not turn a localized request into a general quality, architecture, accessibility, performance, documentation, or regression-testing project.
-
-#### Verification budget
-For normal iterative changes:
-1. Implement.
-2. Check the affected page.
-3. Fix obvious issues.
-4. Stop.
-
-Do not continue improving after the requested result has been achieved.
-
-#### Priority
-During interactive design/development sessions:
-**iteration speed > exhaustive validation > documentation.**
-
-The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
-
-### NORMAL MODE — Medium functional changes
-Use for standard feature work, multi-component fixes, and bounded non-critical changes:
-* Direct implementation with targeted test coverage.
-* Run relevant test suites for affected modules, not the entire repository.
-* Update durable documentation only for materially changed contracts or responsibilities.
-* Subagents used only if genuine isolation/specialization provides clear value.
-
-### DEEP MODE — High-risk, architectural, and production releases
-Reserved for high-consequence work:
-* Explicit deep audit/review/refactor requests from the user.
-* Infrastructure, security, authentication, payments, production data, migrations, or high-blast-radius changes (`RISK_3`/`RISK_4`).
-* Architecture reviews, independent critic/auditor review, comprehensive testing, durable documentation contract, and formal verification gates.
-
-Unless DEEP MODE criteria are met, **FAST MODE is mandatory for iterative development.**
+`using-agentit` owns the canonical execution-mode and verification policy.
+Select FAST for localized iterative work, NORMAL for standard functional
+changes, and DEEP for audits, structural work or high-risk changes. Scope and
+verification follow that current decision; do not infer a full lifecycle from
+an upstream skill. Host instructions and explicit user requirements still govern.
 
 ## Packs and skill selection
 
@@ -144,6 +88,8 @@ selected_skills:
 ```
 
 A different design task may justify one skill or seven. The pack never decides that number.
+
+User-facing web work already inherits the compact anti-slop baseline from `using-agentit`. Do **not** load a dedicated design skill merely to restate those baseline rules for a small localized edit. For substantial visual design, redesign, design-system work, or an explicit anti-slop/design audit, consider `hallmark` JIT because deeper design judgment is then materially useful.
 
 Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage.
 

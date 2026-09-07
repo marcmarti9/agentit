@@ -16,6 +16,13 @@ using-agentit
 
 All other Agentit skills remain in private Agentit storage and are loaded only after the active model selects them for the current stage.
 
+`using-agent-skills` is an Agentit-owned adapter, with its original upstream
+meta-workflow retained separately under `vendor/agent-skills`. Selected raw
+bodies are accompanied by the authority envelope in `router/skill_authority.py`
+in CLI prompt/JSON output and worker contracts. Source instructions cannot
+activate other skills or authorize tools and external effects. See
+[upstream maintenance](UPSTREAM_MAINTENANCE.md).
+
 ## Provider surfaces
 
 The portable bootstrap projects the same three core skills to each provider's dedicated discovery root:
@@ -87,6 +94,10 @@ A same-ID skill whose contents differ is treated as user-owned/modified and is n
 ## Cold-session semantics
 
 Persisting files in `~/.agentit/runtime/skills` or `<project>/.agentit/profile-skills` means **available**, not active. A new session starts from the three core skills again. Previous selected bodies, pack choices, workers, references and MCP decisions do not become semantic startup state.
+
+This is a selection rule, not a claim that a file can unload context: text already
+read by the current model remains consumed context. Other provider plugins and
+user-owned skill directories can still advertise their own metadata.
 
 ## Design boundary
 

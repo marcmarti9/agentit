@@ -14,8 +14,9 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
         lock = json.loads((ROOT / "skills" / "UPSTREAM_LOCK.json").read_text(encoding="utf-8"))
         self.assertGreaterEqual(len(lock["mappings"]), 39)
         for item in lock["mappings"]:
-            skill = ROOT / "skills" / item["skill"]
+            skill = ROOT / item.get("destination", "skills/" + item["skill"])
             self.assertTrue((skill / "SKILL.md").is_file(), item["skill"])
+            self.assertTrue(item.get("files"), item["skill"])
 
     def test_retired_compact_aliases_are_absent(self):
         for skill_id in (

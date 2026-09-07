@@ -12,7 +12,7 @@ For material Agentit work, the decision covers outcome, known facts/unknowns, re
 
 Discoverable project facts should normally be inspected rather than turned into questions. Ask the user only for unresolved material decisions, permissions, preferences, or trade-offs that cannot be safely inferred.
 
-When an interactive interview is actually needed, follow the canonical `interview-me` workflow: ask one focused question at a time, attach the agent's current best guess, and stop once the user's intent is explicitly confirmed. Non-interactive execution must still escalate unresolved material decisions rather than guessing.
+When an interactive interview is actually needed, select `interview-me` for its useful requirements-discovery guidance. Choose question grouping and format from the current task and host interaction affordances; do not force repeated confirmation or a fixed confidence threshold from a source workflow. Inspect discoverable facts first, state reasonable assumptions, and stop asking once the material unknowns are resolved. Non-interactive execution must still escalate unresolved material decisions that cannot be inferred safely.
 
 ## 3. Packs are flat discovery maps
 

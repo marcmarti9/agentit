@@ -238,9 +238,32 @@ def validate_removed_tree_record(record: dict[str, Any], *, home: Path) -> tuple
     return destination, backup
 
 
+def removed_tree_is_restored(record: dict[str, Any], *, home: Path) -> bool:
+    """Recognize an exact original tree when resuming an explicit rollback."""
+    destination = Path(str(record["destination"]))
+    try:
+        relative = destination.relative_to(home)
+    except ValueError as exc:
+        raise HostSkillHygieneError(f"rollback destination escapes home: {destination}") from exc
+    if ".." in relative.parts:
+        raise HostSkillHygieneError(f"unsafe rollback destination: {destination}")
+    current = destination
+    while current != home:
+        if current.is_symlink():
+            raise HostSkillHygieneError(f"symlink rollback path rejected: {current}")
+        current = current.parent
+    return destination.is_dir() and _tree_manifest(destination) == record.get("tree_manifest")
+
+
 def restore_removed_tree(record: dict[str, Any], *, home: Path) -> None:
     destination, backup = validate_removed_tree_record(record, home=home)
+    # Check ancestor paths before creating a sibling staging directory.
+    removed_tree_is_restored(record, home=home)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(backup, destination, symlinks=False)
-    if _tree_manifest(destination) != (record.get("tree_manifest") or {}):
-        raise HostSkillHygieneError(f"restored skill tree mismatch: {destination}")
+    with tempfile.TemporaryDirectory(prefix=".agentit-restore-", dir=destination.parent) as temporary:
+        staged = Path(temporary) / "tree"
+        shutil.copytree(backup, staged, symlinks=False)
+        if _tree_manifest(staged) != (record.get("tree_manifest") or {}):
+            raise HostSkillHygieneError(f"restored skill tree mismatch: {destination}")
+        validate_removed_tree_record(record, home=home)
+        os.replace(staged, destination)

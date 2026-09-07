@@ -99,6 +99,27 @@ class RuntimeInventoryTests(unittest.TestCase):
             self.plan()
         self.assertTrue(self.installed_old.exists())
 
+    def test_inventory_alias_collisions_are_rejected_before_retirement(self):
+        self.retire_source_file()
+        original = self.inventory.read_text()
+        for alias in ("payload/./old.txt", "payload//old.txt", "./payload/old.txt"):
+            with self.subTest(alias=alias):
+                data = json.loads(original)
+                data["files"][alias] = data["files"]["payload/old.txt"]
+                self.inventory.write_text(json.dumps(data))
+                with self.assertRaisesRegex(bootstrap.BootstrapError, "duplicate runtime inventory path"):
+                    self.plan()
+                self.assertTrue(self.installed_old.exists())
+
+    def test_inventory_repeated_json_keys_are_rejected_before_retirement(self):
+        self.retire_source_file()
+        record = json.loads(self.inventory.read_text())["files"]["payload/old.txt"]
+        entry = '"payload/old.txt":' + json.dumps(record)
+        self.inventory.write_text('{"kind":"agentit.runtime.inventory","schema_version":1,"files":{' + entry + ',' + entry + '}}')
+        with self.assertRaisesRegex(bootstrap.BootstrapError, "duplicate runtime inventory key"):
+            self.plan()
+        self.assertTrue(self.installed_old.exists())
+
     def test_inventory_symlink_is_rejected(self):
         target = self.base / "unrelated.json"
         self.inventory.rename(target)

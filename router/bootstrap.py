@@ -227,12 +227,24 @@ def _validated_runtime_files(raw: Any) -> dict[str, dict[str, Any]]:
         if not isinstance(relative, str):
             raise BootstrapError("runtime inventory paths must be strings")
         rel = _assert_relative(relative)
+        canonical = rel.as_posix()
+        if canonical in result:
+            raise BootstrapError(f"duplicate runtime inventory path: {relative}")
         if not isinstance(record, dict) or not re.fullmatch(r"[0-9a-f]{64}", str(record.get("sha256", ""))):
             raise BootstrapError(f"invalid runtime inventory hash: {relative}")
         mode = record.get("mode")
         if type(mode) is not int or not 0 <= mode <= 0o777:
             raise BootstrapError(f"invalid runtime inventory mode: {relative}")
-        result[rel.as_posix()] = {"sha256": record["sha256"], "mode": mode}
+        result[canonical] = {"sha256": record["sha256"], "mode": mode}
+    return result
+
+
+def _unique_inventory_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise BootstrapError(f"duplicate runtime inventory key: {key}")
+        result[key] = value
     return result
 
 
@@ -251,7 +263,7 @@ def _runtime_inventory_specs(home: Path, specs: list[CopySpec]) -> tuple[list[Co
         if not inventory.is_file():
             raise BootstrapError("runtime inventory is not a regular file")
         try:
-            data = json.loads(inventory.read_text(encoding="utf-8"))
+            data = json.loads(inventory.read_text(encoding="utf-8"), object_pairs_hook=_unique_inventory_keys)
         except (OSError, ValueError) as exc:
             raise BootstrapError("runtime inventory is unreadable or invalid") from exc
         if not isinstance(data, dict) or data.get("kind") != "agentit.runtime.inventory" or data.get("schema_version") != 1:
@@ -763,7 +775,7 @@ def rollback_plan(manifest_path: Path) -> dict[str, Any]:
     for record in reversed(receipt.get("records") or []):
         if record.get("kind") == "removed_skill_tree":
             try:
-                if receipt.get("rollback_in_progress") and removed_tree_is_restored(record, home=home):
+                if (receipt.get("recovery_only") or receipt.get("rollback_in_progress")) and removed_tree_is_restored(record, home=home):
                     continue
                 destination, backup = validate_removed_tree_record(record, home=home)
             except HostSkillHygieneError as exc:

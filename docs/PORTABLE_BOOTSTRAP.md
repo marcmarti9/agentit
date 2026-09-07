@@ -42,9 +42,11 @@ installed state if interruption happened after atomic replacement. Recovery
 accepts those two exact states and refuses any other content or permission
 state. Backups must also match their recorded hashes.
 
-Legacy host skill removal has its own durable receipt before deletion. Removal
-is limited to exact Agentit copies; modified or unrecognized directories are
-preserved. Updating source packages can make a historical copy unrecognizable:
+Legacy host skill removal has its own durable receipt before deletion. New
+plans and receipts bind file hashes plus versioned metadata for file/directory
+modes and directory shape, including empty directories. Removal is limited to
+exact Agentit copies; modified or unrecognized directories are preserved.
+Updating source packages can make a historical copy unrecognizable:
 that copy remains for manual inspection rather than being deleted by name.
 
 Private runtime files are tracked separately in
@@ -79,6 +81,14 @@ first mutation. Retrying an interrupted rollback skips exact already-restored
 originals and resumes remaining operations. Modified files fail closed; resolve
 their changes before retrying. Skill trees are copied into a staging directory,
 verified and atomically restored.
+
+An interrupted hygiene pass can also leave a tree's original contents and
+metadata intact because its backup failed before deletion. Recovery skips that
+proven original and restores earlier removed trees. Partial deletion or drift
+is preserved and rejected for manual resolution. Historical hash-only tree
+receipts can restore an absent destination using their original hash contract;
+they cannot certify an existing tree as already restored, so retry with such a
+legacy receipt fails closed if that destination exists.
 
 The receipt covers managed files and identified legacy skill trees. It does
 not restore Python dependency versions, uninstall the virtual environment, or

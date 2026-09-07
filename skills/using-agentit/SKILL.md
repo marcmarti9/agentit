@@ -203,7 +203,7 @@ Otherwise FAST MODE is mandatory.
 #### Priority
 During interactive design/development sessions:
 **iteration speed > exhaustive validation > documentation.**
-The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
+Adjust the iteration pace to the current user's request and the task's risk.
 
 ### NORMAL MODE — Medium functional changes
 Use for standard feature work, multi-component fixes, and bounded non-critical changes:
@@ -264,7 +264,9 @@ Do not create documentation for trivial helpers, obvious syntax, temporary execu
 
 Material Agentit work gets a bounded read-only second opinion when independent review materially improves reliability. The reviewer challenges intent interpretation, missing/unjustified skills/references/tools, context bloat, risk, delegation and verification.
 
-In FAST MODE, the audit is lightweight: ensure no multi-agent overengineering or excessive verification is planned, and proceed without delay.
+In FAST MODE, the active owner briefly checks scope and verification, then
+proceeds. This self-check is not independent review; use the escalation criteria
+below or explicit host/user requirements when independence is needed.
 
 Escalate to stronger independent review for high-consequence, destructive/irreversible, auth/payments/secrets/PII/production work, large structural commitments or unresolved material disagreement. Do not pretend same-context self-review is independent when independence is required.
 

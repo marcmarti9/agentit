@@ -150,9 +150,14 @@ If a realistic alternative is materially better for correctness, simplicity, cos
 
 Do not manufacture disagreement for personality.
 
-## Cheap independent audit
+## Independent audit when warranted
 
-Before material execution, give the proposed `TASK_DECISION` to the cheapest competent independent read-only model, normally semantic tier `fast`.
+Follow `using-agentit`'s execution-mode and independent-review policy. When the
+task warrants an independent review, give the proposed `TASK_DECISION` to a
+competent read-only reviewer selected within the host's available capabilities
+and the user's model requirements. Cost matters only after competence and
+required independence are satisfied. FAST localized work normally uses the
+active owner's brief scope check and does not spawn a separate audit.
 
 Use `references/economy-reviewer.md` for the detailed contract.
 

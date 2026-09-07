@@ -16,6 +16,12 @@ Canonical task packages remain under their stable `skills/<id>` paths. The raw
 Agentit-owned navigation adapter. Source-informed composites and attribution
 are documented in `THIRD_PARTY_NOTICES.md`.
 
+The relocated raw meta-workflow is archived for provenance rather than loaded
+as an executable workflow. Its unchanged relative reference paths describe the
+original source layout; inspect the matching root `references/` files or the
+pinned upstream repository when following them. Regular task packages retain
+their original relationship to Agentit's shared reference directory.
+
 ## Actual loading boundary
 
 `router/skill_authority.py` defines one shared authority envelope. It is emitted

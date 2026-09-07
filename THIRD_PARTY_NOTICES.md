@@ -10,9 +10,14 @@ Source: https://github.com/addyosmani/agent-skills
 
 License: MIT. Copyright (c) 2025 Addy Osmani.
 
-Agentit vendors the canonical upstream packages for matching engineering skill IDs without compressing or rewriting their skill bodies. Addy's repo-level shared `references/` files are vendored at Agentit's root `references/` so upstream relative links continue to resolve.
+Agentit vendors the canonical upstream packages for matching engineering skill IDs without compressing or rewriting their skill bodies. Addy's repo-level shared `references/` files are vendored at Agentit's root `references/` so upstream relative links from those `skills/<id>` packages continue to resolve.
 
 The raw upstream `using-agent-skills` meta-workflow is retained separately under `vendor/agent-skills/using-agent-skills`. The globally discoverable `skills/using-agent-skills` is an Agentit-owned adapter informed by that source; it is not represented as a verbatim upstream package. Agentit owns selective loading and authority policy outside the canonical packages.
+
+That relocated raw meta-workflow is a provenance archive, not a separately
+activated or self-contained workflow package. Its unchanged `../../references/`
+links describe the upstream layout; when inspecting the archive, consult the
+matching shared files in Agentit's root `references/` or the pinned source.
 
 ### Leonxlnx / taste-skill
 

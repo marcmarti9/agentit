@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import tarfile
 import tempfile
@@ -104,7 +105,7 @@ def installed_files(root: Path, package: str) -> dict[str, dict]:
         if path.is_symlink():
             raise SyncError(f"symlink in package: {path.relative_to(root)}")
         if path.is_file():
-            result[path.relative_to(base).as_posix()] = file_record(path.read_bytes(), path.stat().st_mode & 0o777)
+            result[path.relative_to(base).as_posix()] = file_record(path.read_bytes(), stat.S_IMODE(path.stat().st_mode))
     return result
 
 
@@ -131,7 +132,7 @@ def check_integrity(root: Path, lock: dict) -> dict:
     files = managed_files(lock)
     for relative, record in files.items():
         path = destination(root, relative)
-        if not path.is_file() or file_record(path.read_bytes(), path.stat().st_mode & 0o777) != record:
+        if not path.is_file() or file_record(path.read_bytes(), stat.S_IMODE(path.stat().st_mode)) != record:
             raise SyncError(f"managed file integrity differs: {relative}")
     return {"status": "verified", "packages": len(lock["mappings"]), "files": len(files), "sources": len({item["repo"] for item in lock.get("licenses", [])})}
 
@@ -315,7 +316,7 @@ def apply_candidate(root: Path, old: dict, updated: dict, desired: dict) -> dict
     changed = {}
     for relative in sorted(previous.keys() | desired.keys()):
         path = destination(root, relative)
-        current = (path.read_bytes(), path.stat().st_mode & 0o777) if path.is_file() else None
+        current = (path.read_bytes(), stat.S_IMODE(path.stat().st_mode)) if path.is_file() else None
         wanted = desired.get(relative)
         if current == wanted:
             continue
@@ -331,7 +332,7 @@ def apply_candidate(root: Path, old: dict, updated: dict, desired: dict) -> dict
         for relative in sorted(changed, key=lambda path: (path == LOCK, path)):
             before, wanted = changed[relative]
             path = destination(root, relative)
-            current = (path.read_bytes(), path.stat().st_mode & 0o777) if path.is_file() else None
+            current = (path.read_bytes(), stat.S_IMODE(path.stat().st_mode)) if path.is_file() else None
             if current != before:
                 raise SyncError(f"managed file changed during refresh: {relative}")
             applied.append(relative)
@@ -348,7 +349,7 @@ def apply_candidate(root: Path, old: dict, updated: dict, desired: dict) -> dict
                 path = destination(root, relative)
                 if path.exists() and not path.is_file():
                     raise SyncError("recovery destination is not a regular file")
-                current = (path.read_bytes(), path.stat().st_mode & 0o777) if path.is_file() else None
+                current = (path.read_bytes(), stat.S_IMODE(path.stat().st_mode)) if path.is_file() else None
             except (SyncError, OSError):
                 conflicts.append(relative)
                 continue

@@ -110,9 +110,11 @@ class UpstreamSyncTests(unittest.TestCase):
     def test_integrity_covers_original_license_and_package_modes(self):
         old, updated, desired = self.candidate()
         sync.apply_candidate(self.root, old, updated, desired)
-        (self.package / "SKILL.md").chmod(0o600)
-        with self.assertRaisesRegex(sync.SyncError, "integrity differs"):
-            sync.check_integrity(self.root, updated)
+        for mode in (0o600, 0o4644, 0o1644):
+            with self.subTest(mode=oct(mode)):
+                (self.package / "SKILL.md").chmod(mode)
+                with self.assertRaisesRegex(sync.SyncError, "integrity differs"):
+                    sync.check_integrity(self.root, updated)
 
     def test_overlapping_normalized_package_destinations_are_rejected(self):
         self.lock["mappings"].append({**self.lock["mappings"][0], "skill": "second-owner", "destination": "skills/./example"})

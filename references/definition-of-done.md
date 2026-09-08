@@ -45,7 +45,9 @@ The depth behind these items lives in `code-review-and-quality` (the five-axis r
 - [ ] Documentation describes the current state in timeless language, not the change history
 
 ### Ship-readiness
-- [ ] Security implications reviewed for any untrusted input, auth, or data handling (see `security-and-hardening`)
+- [ ] Every development change is classified for security impact; purely presentational work may be N/A, but changes to trust boundaries must be reviewed with `security-and-hardening`
+- [ ] `app-security-gate` was run for substantial or sensitive application surfaces: auth/authorization, API/backend boundaries, admin/tenant access, payments, uploads, webhooks, secrets/sensitive data, or production release/deploy
+- [ ] No unresolved Critical/High security finding remains when the strong gate applies; otherwise status is BLOCKED rather than "done"
 - [ ] Observability in place for new critical paths (logs, metrics, traces) (see `observability-and-instrumentation`)
 - [ ] Rollback path exists for anything risky (see `shipping-and-launch`)
 - [ ] The human has reviewed and approved before merge or deploy
@@ -54,14 +56,17 @@ The depth behind these items lives in `code-review-and-quality` (the five-axis r
 
 - **Per task**: confirm the Correctness and Quality sections before checking the task off.
 - **Per feature**: confirm Integration and Documentation before considering the feature complete.
-- **Per release**: the full checklist is the floor; `shipping-and-launch` adds the deploy-specific gates on top.
+- **Per development task**: classify security impact even when no strong gate is required; do not make security depend on the user remembering to ask.
+- **Per release**: the full checklist is the floor; `shipping-and-launch` adds the deploy-specific gates on top and `app-security-gate` is mandatory for application surfaces in scope.
 
 Tailor the list to the project once, then reuse it unchanged. A Definition of Done that is renegotiated every sprint is not a Definition of Done.
 
 ## Red Flags
 
 - "It's done, I just haven't run it yet": unverified work is not done.
-- "Tests pass" used as a synonym for done while docs, regressions, or runtime verification are skipped.
+- "It's only a small auth/API change": requested diff size does not lower the actual security risk.
+- "The user didn't ask for security": development security is a standing invariant, not an optional request.
+- "Tests pass" used as a synonym for done while docs, regressions, runtime verification, or applicable security checks are skipped.
 - A different bar applied depending on deadline pressure.
 - Acceptance criteria treated as the whole bar, with no standing quality floor.
 - "Done" declared before human review on changes that need it.

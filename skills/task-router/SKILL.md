@@ -46,6 +46,41 @@ safety / rollback / post-check
 user_method_assessment
 ```
 
+## Development security invariant
+
+Security is a standing requirement for **development work**, not a global context tax for every Agentit task.
+
+When the task builds or changes executable software, the primary model must explicitly classify whether the change creates or modifies a security-relevant application surface. Do not rely on the user to ask for a security review.
+
+### Base rule
+
+For development tasks, load `security-and-hardening` whenever the change touches or can materially affect any of these boundaries:
+
+- untrusted input or rendered user/model content;
+- authentication, sessions, authorization, roles, ownership, tenancy, or admin behavior;
+- API endpoints, server actions, backend handlers, webhooks, callbacks, redirects, or third-party integrations;
+- database queries, storage, uploads/downloads, caches, exports, secrets, environment variables, PII, payments, or other sensitive data;
+- CORS, cookies, headers, CSP, HTTPS, rate limiting, abuse controls, debug/admin surfaces, deployment configuration, dependencies, CI/CD, or supply-chain behavior.
+
+For purely presentational edits with no executable/trust-boundary effect (for example copy, spacing, colors, typography, static layout), do **not** load security merely because the repository is a web app.
+
+### Strong gate rule
+
+Load `app-security-gate` in addition to `security-and-hardening` when any of the following is true:
+
+- substantial application functionality is implemented or modified;
+- auth, authorization, admin, multi-tenant data, payments, uploads, webhooks, privileged secrets, or sensitive-data flows are involved;
+- an API/backend boundary is added or materially changed;
+- a prototype becomes user-facing/production-facing;
+- the task is a release, deploy, production-readiness check, or asks whether the app is safe to ship;
+- the change is `RISK_3` or `RISK_4` for security reasons.
+
+The gate is evidence-driven and may end `PASS` or `BLOCKED`. Do not downgrade it to a prose checklist.
+
+### FAST mode compatibility
+
+This invariant does not authorize broad security audits for trivial UI iteration. In FAST MODE, apply only the bounded security checks implied by the affected surface. A CSS-only change should stay fast. A "small" login or API change is not merely visual and must be reclassified by actual risk, not requested diff size.
+
 ## Execution modes: FAST | NORMAL | DEEP
 
 To eliminate overengineering and keep iterative work responsive, calibrate execution depth:
@@ -79,6 +114,8 @@ When the user requests a localized UI, styling, layout, copy, component, or beha
 
 #### Scope rule
 Treat the user's request literally. If the user asks to change a layout, move an element, adjust spacing, or alter a product grid, do only that. Do not turn a localized request into a general quality, architecture, accessibility, performance, documentation, or regression-testing project.
+
+The development security invariant still applies: presentational-only work stays presentational, but any changed trust boundary must receive the bounded security treatment required above.
 
 #### Verification budget
 For normal iterative changes:
@@ -145,7 +182,7 @@ selected_skills:
 
 A different design task may justify one skill or seven. The pack never decides that number.
 
-Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage.
+Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage, except where the development security invariant makes a security skill mandatory for the affected surface.
 
 ## Reference plan
 
@@ -216,7 +253,7 @@ The auditor should challenge:
 - misunderstood intent or hidden constraints;
 - risk classified too low;
 - wrong/missing semantic pack(s);
-- selected skills that are unjustified, redundant, or missing a material capability;
+- selected skills that are unjustified, redundant, or missing a material capability, including failure to apply the development security invariant;
 - any fixed-count/tier logic replacing model judgment;
 - full-pack/context dumping;
 - missing relevant references or unnecessary reference overload;

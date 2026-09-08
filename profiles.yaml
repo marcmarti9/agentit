@@ -12,8 +12,10 @@ profiles:
     - task-router
     - using-agent-skills
   frontend:
-    description: Core plus browser, performance, and UI maintenance guidance. Installation/discovery
-      only; runtime selection remains JIT.
+    description: Core plus browser, performance, UI maintenance, and development-security
+      guidance. Installation/discovery only; runtime selection remains JIT, but security
+      implications are part of the standing development bar and app-security-gate becomes
+      mandatory when the change exposes or modifies a meaningful application attack surface.
     extends:
     - core
     skills:
@@ -21,12 +23,16 @@ profiles:
     - browser-testing-with-devtools
     - performance-optimization
     - code-simplification
+    - security-and-hardening
+    - app-security-gate
     - hallmark
     - design-taste-frontend
     - specialist-agent-routing
   backend:
-    description: Core plus API boundaries, observability, and service maintenance.
-      Installation/discovery only; runtime selection remains JIT.
+    description: Core plus API boundaries, observability, service maintenance, and
+      development-security guidance. Installation/discovery only; runtime selection remains
+      JIT, but security implications are part of the standing development bar and
+      app-security-gate becomes mandatory for material auth/API/data/admin/deploy surfaces.
     extends:
     - core
     skills:
@@ -34,6 +40,8 @@ profiles:
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
+    - security-and-hardening
+    - app-security-gate
   supabase:
     description: Backend profile plus PostgreSQL/Supabase-specific guidance.
     extends:

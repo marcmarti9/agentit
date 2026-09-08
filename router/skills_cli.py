@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from router.skill_loader import SkillLoadError, load_skill_bodies, render_prompt
+from router.skill_authority import SKILL_AUTHORITY
 
 
 HARNESS_ROOT = Path(__file__).resolve().parents[1]
@@ -148,7 +149,7 @@ def main(argv: list[str] | None = None) -> int:
 
         skills = load_skill_bodies(args.skill_ids, project_root=args.project)
         if args.format == "json":
-            print(json.dumps({"schema_version": 1, "skills": skills}, ensure_ascii=False, indent=2))
+            print(json.dumps({"schema_version": 1, "authority": SKILL_AUTHORITY, "skills": skills}, ensure_ascii=False, indent=2))
         else:
             sys.stdout.write(render_prompt(skills))
         return 0

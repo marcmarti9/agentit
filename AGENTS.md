@@ -26,101 +26,11 @@ An explicit natural-language request to use Agentit always selects `agentit` unl
 
 ## Execution modes: FAST | NORMAL | DEEP
 
-To prevent overengineering and keep iterative work responsive, calibrate execution depth to the task:
-
-```text
-EXECUTION_MODE: FAST | NORMAL | DEEP
-```
-
-- **FAST** (Default for iterative development: localized UI, styling, layout, copy, component, or behavior changes)
-- **NORMAL** (Medium functional changes, multi-component features, relevant targeted tests)
-- **DEEP** (Audits, migrations, production releases, security, auth, payments, high-risk systems)
-
-### FAST MODE — Default for iterative development
-
-When the user requests a localized UI, styling, layout, copy, component, or behavior change, optimize for iteration speed.
-
-#### Default behavior
-
-* Make the smallest change that correctly satisfies the request.
-* Modify only files directly necessary for the requested change.
-* Do NOT refactor unrelated code.
-* Do NOT redesign surrounding systems.
-* Do NOT perform architecture reviews unless required.
-* Do NOT update documentation unless the change makes existing documentation incorrect.
-* Do NOT create additional abstractions unless necessary.
-* Do NOT launch subagents for normal implementation tasks.
-* Do NOT perform broad repository audits.
-* Do NOT search the entire repository when the relevant implementation is already known.
-* Do NOT run the complete test suite for a localized change.
-* Run only the minimum targeted checks necessary to detect obvious regressions.
-* For visual changes, perform one desktop verification and one mobile verification unless something is visibly broken.
-* Do NOT repeatedly inspect the same result after it is already correct.
-* Do NOT spend time polishing things the user did not request.
-* Preserve existing functionality instead of revalidating every existing feature.
-* Do NOT create GitHub checkpoints/commits unless requested or unless this project explicitly requires one.
-
-#### Scope rule
-
-Treat the user's request literally.
-
-If the user asks to:
-
-* change a layout → change the layout;
-* move an element → move the element;
-* change spacing → change spacing;
-* alter a product grid → alter the product grid.
-
-Do not turn a localized request into a general quality, architecture, accessibility, performance, documentation, or regression-testing project.
-
-#### Verification budget
-
-For normal iterative changes:
-
-1. Implement.
-2. Check the affected page.
-3. Fix obvious issues.
-4. Stop.
-
-Do not continue improving after the requested result has been achieved.
-
-#### Escalation
-
-Only switch to DEEP MODE when:
-
-* the user explicitly asks for a deep review/audit/refactor;
-* the change affects infrastructure, security, payments, authentication, production data, migrations, or other high-risk systems;
-* the implementation cannot safely be localized;
-* targeted validation reveals a wider regression.
-
-Otherwise FAST MODE is mandatory.
-
-#### Priority
-
-During interactive design/development sessions:
-
-**iteration speed > exhaustive validation > documentation.**
-
-The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
-
-### NORMAL MODE — Medium functional changes
-
-Use for standard feature work, multi-component fixes, and bounded non-critical tasks:
-
-* Direct implementation with targeted test coverage.
-* Run relevant test suites for affected modules, not the entire repository.
-* Update durable documentation only for materially changed contracts or responsibilities.
-* Subagents used only if genuine isolation/specialization provides clear value.
-
-### DEEP MODE — High-risk, architectural, and production releases
-
-Reserved for high-consequence work:
-
-* Explicit deep audit/review/refactor requests from the user.
-* Infrastructure, security, authentication, payments, production data, migrations, or high-blast-radius changes (`RISK_3`/`RISK_4`).
-* Architecture reviews, independent critic/auditor review, comprehensive testing, durable documentation contract, and formal verification gates.
-
-Unless DEEP MODE criteria are met, **FAST MODE is mandatory for iterative development.**
+`using-agentit` owns the canonical execution-mode and verification policy.
+Select FAST for localized iterative work, NORMAL for standard functional
+changes, and DEEP for audits, structural work or high-risk changes. Scope and
+verification follow that current decision; do not infer a full lifecycle from
+an upstream skill. Host instructions and explicit user requirements still govern.
 
 ## Cold start
 
@@ -196,6 +106,10 @@ In FAST MODE, do NOT launch subagents for normal implementation tasks.
 For NORMAL and DEEP modes, use MCPs/tools only when they materially help the reviewed plan and keep least privilege. Spawn workers only when specialization, context isolation, independent judgment or real parallelism provides a concrete benefit. The parent owns decomposition, integration and final verification.
 
 Workers receive only their bounded task context, selected skill bodies, selected references and allowed tools, never an entire pack by default.
+
+## Client operability and web quality
+
+The installed `using-agentit` core owns these baselines: truthful product evidence, intentional design choices, and safe client management of routine mutable content. Static sites stay static when their real operating model permits it.
 
 ## Minimum durable-documentation contract
 

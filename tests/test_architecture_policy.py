@@ -138,10 +138,10 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("guess:", skill)
         self.assertIn("95% confidence", skill)
         self.assertIn("when not to use", skill)
-        self.assertIn("interview_one_question_at_a_time: true", catalog)
-        self.assertNotIn("interview_batch_all_current_questions", catalog)
+        self.assertIn("interview_question_format_owned_by_primary_ai: true", catalog)
+        self.assertNotIn("interview_one_question_at_a_time", catalog)
         self.assertIn("ask the user only for unresolved material decisions", policy)
-        self.assertIn("one focused question at a time", policy)
+        self.assertIn("current task and host interaction affordances", policy)
         self.assertNotIn("product-affecting work is interviewed before", policy)
 
     def test_legacy_mcp_helper_is_exact_stack_only(self):
@@ -154,13 +154,11 @@ class ArchitecturePolicyTests(unittest.TestCase):
         using_agentit = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
 
-        for text, src in ((agents, "AGENTS.md"), (using_agentit, "using-agentit"), (task_router, "task-router")):
-            self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", text, f"missing mode declaration in {src}")
-            self.assertIn("FAST MODE — Default for iterative development", text, f"missing FAST MODE in {src}")
-            self.assertIn("iteration speed > exhaustive validation > documentation", text, f"missing priority in {src}")
-            self.assertIn("Do NOT launch subagents for normal implementation tasks", text, f"missing subagent constraint in {src}")
-            self.assertIn("Verification budget", text, f"missing verification budget in {src}")
-            self.assertIn("Treat the user's request literally", text, f"missing scope rule in {src}")
+        for required in ("EXECUTION_MODE: FAST | NORMAL | DEEP", "FAST MODE — Default for iterative development", "iteration speed > exhaustive validation > documentation", "Do NOT launch subagents for normal implementation tasks", "Verification budget", "Treat the user's request literally"):
+            self.assertIn(required, using_agentit)
+        for text in (agents, task_router):
+            self.assertIn("`using-agentit` owns the canonical execution-mode", text)
+            self.assertNotIn("### FAST MODE", text)
 
 
 if __name__ == "__main__":

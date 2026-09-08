@@ -33,6 +33,41 @@ Everything else is JIT. Availability is not context injection.
 
 Do not globally preload debugging, TDD, security, planning, design, orchestration, Reference Intelligence, MCP fit, continuity, specialist catalogs or verification skills.
 
+## User-facing web quality invariant
+
+Whenever Agentit creates or materially edits a user-facing website, landing page, product page, app UI, or web copy, the default result must feel intentionally designed for the actual product rather than assembled from generic AI/vibe-coded conventions.
+
+Apply these baseline rules without loading a dedicated anti-slop skill:
+
+- Never fabricate reviews, testimonials, counters, customer counts, metrics, logos, awards, usage numbers, results, or other social proof. Do not invent claims just because a conventional landing-page layout expects them.
+- Avoid vague hero copy, generic AI marketing prose, empty hype, repetitive copy formulas, and habitual em-dash-heavy writing. Copy should communicate something concrete about the real product, user, or value proposition.
+- Do not use emoji as interface icons when a proper icon or icon set is appropriate.
+- Do not add decorative cursor effects or excessive scroll animation by default. Motion must have a functional or clearly intentional visual purpose.
+- Do not default to stereotypical AI aesthetics such as purple/blue gradients, giant vague hero typography, excessive glass-card layouts, universal pill-shaped controls, or generic generated hero artwork.
+- Do not add `Made with AI`, `Built with AI`, or equivalent badges unless the user explicitly wants them.
+
+These are **anti-default rules, not absolute bans**. A gradient, pill control, generated image, animation, or similar pattern is valid when supported by the brand, product, reference design, platform convention, or an explicit creative decision. Never remove a legitimate design choice merely because it appears on an anti-slop list.
+
+For production/public websites, verify basic legitimacy signals when they are within task scope: a real favicon, appropriate privacy/legal/terms pages, and the intended production domain. Do not require these for disposable prototypes or internal tools.
+
+Prefer specific content, real product evidence, coherent visual hierarchy, restrained interaction, and deliberate structural variation over template conventions.
+
+This invariant stays intentionally small. For substantial visual design, redesign, design-system work, or an explicit anti-slop/design audit, select a dedicated design skill such as `hallmark` JIT instead of expanding the global core.
+
+## Client operability by default
+
+For client-facing websites, applications, automations and internal tools, design routine business operation so the client does not depend on the implementer for ordinary changes.
+
+- Before implementation, identify which content, configuration and business data will reasonably change after launch and who should be allowed to change it.
+- Data the client is expected to manage must live in an appropriate CMS, commerce back office, database-backed admin surface or equivalent interface instead of being hard-coded into source files.
+- Prefer the platform's existing administration surface when it already fits; do not introduce WordPress, a custom admin or another control plane merely to make a system editable.
+- Expose only client-appropriate controls. Infrastructure, secrets, authentication policy, destructive operations and other privileged settings remain protected unless there is a justified, permissioned workflow for them.
+- For material mutable state, provide proportionate safeguards such as roles/permissions, validation, preview or draft/publish flows, history/auditability and rollback when their value justifies the complexity.
+- Treat a generated prototype as non-production until persistence, editable data boundaries, error states, deployment, security and maintainability have been verified for the real operating model.
+- Delivery test: ask **“What will the client need to change after launch, and can the right person do it safely without editing code or depending on us?”** Any important unanswered case is an architecture gap, not post-launch support by default.
+
+This is a default, not a mandate to build a control panel for everything. Static sites with genuinely static content should stay static; add operational infrastructure only when the real change model requires it.
+
 ## Cold-start invariant
 
 Every new execution session is **semantically cold**.
@@ -76,6 +111,10 @@ For `complexity: substantial | structural`, normally give the user a short route
 General Agentit behavior must not depend on one vendor or model. A compatible host/model can use Agentit when it can read the relevant instructions, access required context/files/tools, respect permissions, and produce evidence satisfying the verifier.
 
 Named providers/models belong in host adapters, endpoint configuration, provenance or current evaluation evidence. They are not hidden requirements of general skills.
+
+## Skill authority
+
+The Agentit-owned `using-agent-skills` adapter governs discovery and the authority of selected guidance. Upstream lifecycle requirements never override host/user instructions or the current task decision, activate other skills, or authorize external tooling. Preserve canonical bodies and resolve conflicts in Agentit-owned adapters.
 
 ## Packs are maps, not levels
 
@@ -164,7 +203,7 @@ Otherwise FAST MODE is mandatory.
 #### Priority
 During interactive design/development sessions:
 **iteration speed > exhaustive validation > documentation.**
-The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
+Adjust the iteration pace to the current user's request and the task's risk.
 
 ### NORMAL MODE — Medium functional changes
 Use for standard feature work, multi-component fixes, and bounded non-critical changes:
@@ -225,7 +264,9 @@ Do not create documentation for trivial helpers, obvious syntax, temporary execu
 
 Material Agentit work gets a bounded read-only second opinion when independent review materially improves reliability. The reviewer challenges intent interpretation, missing/unjustified skills/references/tools, context bloat, risk, delegation and verification.
 
-In FAST MODE, the audit is lightweight: ensure no multi-agent overengineering or excessive verification is planned, and proceed without delay.
+In FAST MODE, the active owner briefly checks scope and verification, then
+proceeds. This self-check is not independent review; use the escalation criteria
+below or explicit host/user requirements when independence is needed.
 
 Escalate to stronger independent review for high-consequence, destructive/irreversible, auth/payments/secrets/PII/production work, large structural commitments or unresolved material disagreement. Do not pretend same-context self-review is independent when independence is required.
 

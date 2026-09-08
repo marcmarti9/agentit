@@ -15,6 +15,11 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 try:
+    from router.skill_authority import SKILL_AUTHORITY
+except ImportError:
+    from skill_authority import SKILL_AUTHORITY
+
+try:
     from router.capabilities import (
         CapabilityCatalogError,
         load_capability_catalog,
@@ -453,6 +458,7 @@ def build_worker_context(
         "project_instruction_paths": [item.path for item in instructions],
         "relevant_packs": _dedup_text(spec.relevant_packs),
         "skills_projected": skills_projected,
+        "skill_authority": SKILL_AUTHORITY,
         "references_projected": reference_refs,
         "specialist_ids": _dedup_text(spec.specialist_ids),
         "capability_envelope": capability_envelope,
@@ -608,6 +614,7 @@ def render_worker_prompt(payload: Mapping[str, Any]) -> str:
         lines.append("## Project instructions\n(none found at project root or work_subdir)")
 
     lines.append("## Active skills for this task (only these; not the full catalog)")
+    lines.append(SKILL_AUTHORITY.rstrip())
     skills = context.get("skills_projected") or []
     lines.extend(f"- {item}" for item in skills) if skills else lines.append("- (none projected for this task)")
 

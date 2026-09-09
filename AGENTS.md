@@ -197,6 +197,20 @@ For NORMAL and DEEP modes, use MCPs/tools only when they materially help the rev
 
 Workers receive only their bounded task context, selected skill bodies, selected references and allowed tools, never an entire pack by default.
 
+## Client operability by default
+
+For client-facing websites, applications, automations and internal tools, design routine business operation so the client does not depend on the implementer for ordinary changes.
+
+- Before implementation, identify which content, configuration and business data will reasonably change after launch and who should be allowed to change it.
+- Data the client is expected to manage must live in an appropriate CMS, commerce back office, database-backed admin surface or equivalent interface instead of being hard-coded into source files.
+- Prefer the platform's existing administration surface when it already fits; do not introduce WordPress, a custom admin or another control plane merely to make a system editable.
+- Expose only client-appropriate controls. Infrastructure, secrets, authentication policy, destructive operations and other privileged settings remain protected unless there is a justified, permissioned workflow for them.
+- For material mutable state, provide proportionate safeguards such as roles/permissions, validation, preview or draft/publish flows, history/auditability and rollback when their value justifies the complexity.
+- Treat a generated prototype as non-production until persistence, editable data boundaries, error states, deployment, security and maintainability have been verified for the real operating model.
+- Delivery test: ask **“What will the client need to change after launch, and can the right person do it safely without editing code or depending on us?”** Any important unanswered case is an architecture gap, not post-launch support by default.
+
+This is a default, not a mandate to build a control panel for everything. Static sites with genuinely static content should stay static; add operational infrastructure only when the real change model requires it.
+
 ## Minimum durable-documentation contract
 
 In FAST MODE, do NOT update documentation unless the change makes existing documentation incorrect.

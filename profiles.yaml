@@ -157,7 +157,6 @@ profiles:
     skills:
     - context-engineering
     - source-driven-development
-    - reference-intelligence
     - adversarial-idea-review
     - doubt-driven-development
     - spec-driven-development

@@ -147,6 +147,12 @@
       "snapshot": "e2e92e7b4b8229253ed5c8e81dc65463fdeddda5"
     },
     {
+      "skill": "i-have-adhd",
+      "repo": "ayghri/i-have-adhd",
+      "path": "skills/i-have-adhd",
+      "snapshot": "6f1f982d0a47c65899af3c5a7450b7098bc65325"
+    },
+    {
       "skill": "idea-refine",
       "repo": "addyosmani/agent-skills",
       "path": "skills/idea-refine",

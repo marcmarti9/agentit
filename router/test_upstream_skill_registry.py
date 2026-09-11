@@ -27,6 +27,34 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
         ):
             self.assertFalse((ROOT / "skills" / skill_id).exists(), skill_id)
 
+    def test_sync_script_retires_aliases_without_deleting_canonical_packages(self):
+        script = (ROOT / "scripts" / "sync-upstream-skills.sh").read_text(encoding="utf-8")
+        cleanup = script.split(
+            "# Retire local compact/adaptor IDs where a canonical package now replaces them.", 1
+        )[1].split("# Addy's skills intentionally use", 1)[0]
+
+        retired = (
+            "anti-ai-slop-design",
+            "anti-ai-slop-writing",
+            "ui-ux-pro-max-intelligence",
+            "mobile-native-app-design",
+            "diagram-and-architecture-visuals",
+        )
+        canonical = (
+            "hallmark",
+            "humanizer",
+            "ui-ux-pro-max",
+            "appllama-app-design-skill",
+            "diagram-design",
+        )
+        for skill_id in retired:
+            self.assertIn(f'$ROOT/skills/{skill_id}', cleanup)
+        for skill_id in canonical:
+            self.assertNotIn(f'$ROOT/skills/{skill_id}', cleanup)
+
+        for replacement in retired:
+            self.assertIn(f'"replaces": ["{replacement}"]', script)
+
     def test_multifile_private_jit_package_includes_every_regular_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             skill = Path(tmp) / "skill"

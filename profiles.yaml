@@ -95,6 +95,7 @@ profiles:
     - documentation-and-adrs
     - humanizer
     - stop-slop
+    - i-have-adhd
   design:
     description: Craft-first design studio profile. Runtime workers still load only
       the selected design pack skills JIT; this profile is an installation/discovery
@@ -181,6 +182,7 @@ profiles:
     - hallmark
     - humanizer
     - stop-slop
+    - i-have-adhd
     - api-and-interface-design
     - app-security-gate
     - architect-orchestrator

@@ -49,11 +49,12 @@ profiles:
     skills:
     - supabase-postgres-best-practices
   product:
-    description: Core plus discovery, marketing, CRO, and product decision support.
+    description: Core plus discovery, adversarial ideation, marketing, CRO, and product decision support.
     extends:
     - core
     skills:
     - idea-refine
+    - adversarial-idea-review
     - interview-me
     - documentation-and-adrs
     - spec-driven-development
@@ -84,6 +85,7 @@ profiles:
     - source-driven-development
     - reference-intelligence
     - doubt-driven-development
+    - adversarial-idea-review
     - documentation-and-adrs
     - verification-before-completion
     - interview-me
@@ -149,13 +151,14 @@ profiles:
     - security-and-hardening
     - app-security-gate
   research:
-    description: Core plus context, specifications, authoritative source work, and
-      adversarial review.
+    description: Core plus context, specifications, authoritative source work, adversarial idea review, and verification.
     extends:
     - core
     skills:
     - context-engineering
     - source-driven-development
+    - reference-intelligence
+    - adversarial-idea-review
     - doubt-driven-development
     - spec-driven-development
     - spec-kit-workflow
@@ -181,6 +184,7 @@ profiles:
     description: Every repository skill; use only when explicitly requested for installation/discovery,
       never as a worker context bundle.
     skills:
+    - adversarial-idea-review
     - hallmark
     - humanizer
     - stop-slop

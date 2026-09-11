@@ -75,6 +75,7 @@ These have no single canonical upstream skill package to sync 1:1. They remain A
 - `reference-intelligence`
 - `scrollytelling-web`
 - `specialist-agent-routing`
+- `spec-kit-workflow`
 - `task-router`
 - `threejs-product-storytelling`
 - `threejs-spatial-experiences`

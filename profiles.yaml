@@ -57,6 +57,7 @@ profiles:
     - interview-me
     - documentation-and-adrs
     - spec-driven-development
+    - spec-kit-workflow
     - marketing-and-growth
     - verification-before-completion
   executive:
@@ -157,6 +158,7 @@ profiles:
     - source-driven-development
     - doubt-driven-development
     - spec-driven-development
+    - spec-kit-workflow
     - verification-before-completion
   growth:
     description: 'Digital growth delivery on demand: product discovery, CRO, copy,
@@ -240,6 +242,7 @@ profiles:
     - source-driven-development
     - specialist-agent-routing
     - spec-driven-development
+    - spec-kit-workflow
     - supabase-postgres-best-practices
     - task-router
     - test-driven-development

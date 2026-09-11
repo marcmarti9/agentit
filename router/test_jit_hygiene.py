@@ -28,6 +28,7 @@ class JitHygieneTests(unittest.TestCase):
         self.assertIn("diagram-design", resolved)
         self.assertIn("humanizer", resolved)
         self.assertIn("stop-slop", resolved)
+        self.assertIn("i-have-adhd", resolved)
 
     def test_mcp_catalog_never_auto_activates(self) -> None:
         catalog = load_mcp_catalog(REPOSITORY / "mcp" / "catalog.yaml")

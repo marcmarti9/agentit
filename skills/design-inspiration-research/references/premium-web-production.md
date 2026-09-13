@@ -11,6 +11,10 @@ Primary bookmarked sources reviewed 2026-08-25:
 - https://x.com/xiathis/status/2077468692493791353 — cinematic high-craft web production reference.
 - https://x.com/monokern/status/2074889830501155091 — 21st.dev component catalog with ready-made prompts to paste into a coding agent; useful for discovering interaction primitives, not a wholesale site-production method.
 
+Related launch-surface source reviewed 2026-09-13:
+
+- https://x.com/Manixh02/status/2098985979067724192 — checklist of public-site items that remain missing after the page already looks finished. Distilled into `references/website-ship-surface.md`; not treated as conversion evidence.
+
 Authority: **process/design inspiration**, not independent evidence that a website is worth any quoted dollar amount or that cinematic motion improves conversion.
 
 ## The valuable idea
@@ -223,6 +227,8 @@ Require evidence appropriate to the claim:
 - factual/content review;
 - reference-to-decision map for material external influences.
 
+If the site will be deployed to a public domain, also clear `references/website-ship-surface.md`. Pretty is not shipped.
+
 ## Anti-patterns extracted from the source set
 
 - “Make it look like a $10k/$50k website.”
@@ -234,6 +240,7 @@ Require evidence appropriate to the claim:
 - Preserve creator price/revenue claims as project facts.
 - Use screenshots/reference assets in production without rights.
 - Let the first generated version become the final version because it looks superficially polished.
+- Call a public site done while 404, meta/OG, robots/sitemap, form failure, or legal/contact surfaces are still missing.
 
 ## What Agentit should carry forward
 
@@ -251,6 +258,7 @@ truth
 -> rendered defect pass
 -> polish pass
 -> browser/accessibility/performance verification
+-> public ship-surface gate when launching
 -> provenance
 ```
 

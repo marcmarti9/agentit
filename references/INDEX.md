@@ -49,6 +49,12 @@ Use the component scouting reference only when a frontend task materially benefi
 
 The premium-web playbook distills useful workflow patterns such as section-level references, design DNA, decision-frontier questions, a vertical slice, intentional signature interaction when justified, rendered defect/polish passes, and real desktop/mobile/performance/accessibility QA.
 
+A site that already looks finished can still be unshipped. For public landings and marketing sites approaching a real domain, load:
+
+- `references/website-ship-surface.md`
+
+That gate covers discoverability, sharing cards, 404, form completion/failure, mobile CTA reachability, and honest legal/contact/measurement surfaces. It is a launch checklist, not a visual-craft method.
+
 Useful external sources are design/process inputs, not conversion or pricing evidence. Re-verify current tool/setup details live before depending on them.
 
 ## Marketing / growth / SEO

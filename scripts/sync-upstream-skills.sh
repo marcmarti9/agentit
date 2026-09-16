@@ -38,6 +38,7 @@ clone_repo hardikpandya/stop-slop "$TMP/stopslop"
 clone_repo cathrynlavery/diagram-design "$TMP/diagram"
 clone_repo vercel-labs/skills "$TMP/vercel-skills"
 clone_repo obra/superpowers "$TMP/superpowers"
+clone_repo ayghri/i-have-adhd "$TMP/adhd"
 
 ADDY_SKILLS=(
   api-and-interface-design
@@ -45,6 +46,7 @@ ADDY_SKILLS=(
   ci-cd-and-automation
   code-review-and-quality
   code-simplification
+  constraint-driven-development
   context-engineering
   debugging-and-error-recovery
   deprecation-and-migration
@@ -98,14 +100,16 @@ fi
 copy_package "$TMP/diagram/skills/diagram-design" "$ROOT/skills/diagram-design"
 copy_package "$TMP/vercel-skills/skills/find-skills" "$ROOT/skills/find-skills"
 copy_package "$TMP/superpowers/skills/verification-before-completion" "$ROOT/skills/verification-before-completion"
+copy_package "$TMP/adhd/skills/i-have-adhd" "$ROOT/skills/i-have-adhd"
 
 # Retire local compact/adaptor IDs where a canonical package now replaces them.
+# These are the old Agentit wrapper IDs, not the canonical vendored names.
 rm -rf \
-  "$ROOT/skills/hallmark" \
-  "$ROOT/skills/humanizer" \
-  "$ROOT/skills/ui-ux-pro-max" \
-  "$ROOT/skills/appllama-app-design-skill" \
-  "$ROOT/skills/diagram-design"
+  "$ROOT/skills/anti-ai-slop-design" \
+  "$ROOT/skills/anti-ai-slop-writing" \
+  "$ROOT/skills/ui-ux-pro-max-intelligence" \
+  "$ROOT/skills/mobile-native-app-design" \
+  "$ROOT/skills/diagram-and-architecture-visuals"
 
 # Addy's skills intentionally use ../../references/<file>.md for shared checklists.
 # Preserve those upstream files at Agentit's repository root without overwriting
@@ -160,6 +164,7 @@ repos = {
     "cathrynlavery/diagram-design": tmp / "diagram",
     "vercel-labs/skills": tmp / "vercel-skills",
     "obra/superpowers": tmp / "superpowers",
+    "ayghri/i-have-adhd": tmp / "adhd",
 }
 heads = {
     slug: subprocess.check_output(["git", "-C", str(path), "rev-parse", "HEAD"], text=True).strip()
@@ -168,13 +173,14 @@ heads = {
 
 addy = [
     "api-and-interface-design", "browser-testing-with-devtools", "ci-cd-and-automation",
-    "code-review-and-quality", "code-simplification", "context-engineering",
-    "debugging-and-error-recovery", "deprecation-and-migration", "documentation-and-adrs",
-    "doubt-driven-development", "frontend-ui-engineering", "git-workflow-and-versioning",
-    "idea-refine", "incremental-implementation", "interview-me",
-    "observability-and-instrumentation", "performance-optimization", "planning-and-task-breakdown",
-    "security-and-hardening", "shipping-and-launch", "source-driven-development",
-    "spec-driven-development", "test-driven-development", "using-agent-skills",
+    "code-review-and-quality", "code-simplification", "constraint-driven-development",
+    "context-engineering", "debugging-and-error-recovery", "deprecation-and-migration",
+    "documentation-and-adrs", "doubt-driven-development", "frontend-ui-engineering",
+    "git-workflow-and-versioning", "idea-refine", "incremental-implementation",
+    "interview-me", "observability-and-instrumentation", "performance-optimization",
+    "planning-and-task-breakdown", "security-and-hardening", "shipping-and-launch",
+    "source-driven-development", "spec-driven-development", "test-driven-development",
+    "using-agent-skills",
 ]
 
 mappings = [
@@ -188,15 +194,16 @@ mappings = [
     {"skill": "gsap-performance", "repo": "greensock/gsap-skills", "path": "skills/gsap-performance"},
     {"skill": "gsap-scrolltrigger", "repo": "greensock/gsap-skills", "path": "skills/gsap-scrolltrigger"},
     {"skill": "supabase-postgres-best-practices", "repo": "supabase/agent-skills", "path": "skills/supabase-postgres-best-practices"},
-    {"skill": "hallmark", "repo": "Nutlope/hallmark", "path": "skills/hallmark", "replaces": ["hallmark"]},
-    {"skill": "ui-ux-pro-max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "path": ".claude/skills/ui-ux-pro-max", "replaces": ["ui-ux-pro-max"]},
-    {"skill": "appllama-app-design-skill", "repo": "Appllama/appllama-skills", "path": "skills/appllama-app-design-skill", "replaces": ["appllama-app-design-skill"]},
+    {"skill": "hallmark", "repo": "Nutlope/hallmark", "path": "skills/hallmark", "replaces": ["anti-ai-slop-design"]},
+    {"skill": "ui-ux-pro-max", "repo": "nextlevelbuilder/ui-ux-pro-max-skill", "path": ".claude/skills/ui-ux-pro-max", "replaces": ["ui-ux-pro-max-intelligence"]},
+    {"skill": "appllama-app-design-skill", "repo": "Appllama/appllama-skills", "path": "skills/appllama-app-design-skill", "replaces": ["mobile-native-app-design"]},
     {"skill": "appllama-usage", "repo": "Appllama/appllama-skills", "path": "skills/appllama-usage"},
-    {"skill": "humanizer", "repo": "blader/humanizer", "path": ".", "replaces": ["humanizer"]},
+    {"skill": "humanizer", "repo": "blader/humanizer", "path": ".", "replaces": ["anti-ai-slop-writing"]},
     {"skill": "stop-slop", "repo": "hardikpandya/stop-slop", "path": "."},
-    {"skill": "diagram-design", "repo": "cathrynlavery/diagram-design", "path": "skills/diagram-design", "replaces": ["diagram-design"]},
+    {"skill": "diagram-design", "repo": "cathrynlavery/diagram-design", "path": "skills/diagram-design", "replaces": ["diagram-and-architecture-visuals"]},
     {"skill": "find-skills", "repo": "vercel-labs/skills", "path": "skills/find-skills"},
     {"skill": "verification-before-completion", "repo": "obra/superpowers", "path": "skills/verification-before-completion"},
+    {"skill": "i-have-adhd", "repo": "ayghri/i-have-adhd", "path": "skills/i-have-adhd"},
 ]
 for item in mappings:
     item["snapshot"] = heads[item["repo"]]
@@ -251,6 +258,8 @@ lines += [
     "./scripts/sync-upstream-skills.sh",
     "```",
     "",
+    "The refresh copies canonical packages 1:1, then `scripts/apply-agentit-skill-overlays.py` re-applies Agentit's ideation overlay onto `using-agent-skills` and `idea-refine` so adversarial idea review stays mandatory.",
+    "",
     "The exact machine-readable mapping and snapshots live in `skills/UPSTREAM_LOCK.json`.",
 ]
 (root / "skills" / "UPSTREAM_SOURCES.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -261,3 +270,5 @@ for slug, sha in sorted(heads.items()):
 print(f"Canonical skill packages: {len(mappings)}")
 print(f"Agentit-owned skill packages: {len(owned)}")
 PY
+
+python3 "$ROOT/scripts/apply-agentit-skill-overlays.py"

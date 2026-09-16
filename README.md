@@ -62,11 +62,11 @@ Trivial work can stay direct. Material work activates Agentit's JIT workflow.
 For maintainers and agents that want the explicit bootstrap surface:
 
 ```bash
-python3 bootstrap.py --provider <claude|codex|antigravity>
-python3 bootstrap.py --provider <claude|codex|antigravity> --apply
+python3 bootstrap.py --provider <claude|codex|grok|gemini|antigravity>
+python3 bootstrap.py --provider <claude|codex|grok|gemini|antigravity> --apply
 ```
 
-The canonical bootstrap supports macOS and GNU/Linux and produces verified, reversible installation state.
+The canonical bootstrap supports macOS and GNU/Linux and produces verified, reversible installation state. Use `--provider all` when installing across every detected host.
 
 ## What Agentit gives an agent
 
@@ -124,8 +124,8 @@ To eliminate overengineering and keep iterative development responsive, Agentit 
 Agentit organizes expertise into flat semantic discovery maps such as:
 
 ```text
-engineering  frontend  design  backend  data  product  executive
-marketing    seo       research writing release agency
+engineering  frontend  design  mobile  backend  data  product
+executive    marketing seo     research writing release agency
 ```
 
 A pack helps the model discover useful capabilities. The model chooses the concrete skill bodies and how many are worth their context cost.
@@ -143,6 +143,8 @@ selected_skills:
 
 Only selected skill bodies enter the working context. Profiles are installation/discovery bundles, not runtime context bundles.
 
+A project without a written quality bar can load `constraint-driven-development` to record `CONSTRAINTS.md` and keep agents from quietly lowering coverage, lint, or security checks.
+
 ### Executive operating profile
 
 `executive` is a deliberately deep installation/discovery profile for company-level decisions. It exposes JIT expertise for strategy, finance, people, legal, operations, marketing, product, board/governance, chief-of-staff triage and cross-functional executive orchestration.
@@ -151,18 +153,41 @@ A finance-only task can load just `executive-finance`. A genuinely cross-functio
 
 The executive layer is provider-neutral and materially informed by Sente Labs' OpenExecutive architecture without vendoring its app/runtime or model stack. See [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md).
 
-### Design memory and visual systems
+### Security is a standing development invariant
 
-Design work can now select two additional JIT capabilities when they actually help:
+Security is not a global context tax, but it is part of the development bar whenever executable software changes a trust boundary.
 
-- `design-md-workflow` — read, create and verify an optional durable `DESIGN.md` visual-identity contract without making Google's alpha format a global dependency;
-- `diagram-design` — choose between simple project-native diagrams, polished/branded diagram workflows, and code-grounded validated architecture maps such as Archify.
+- `security-and-hardening` loads for untrusted input, auth, APIs, data, secrets, uploads, webhooks, or deployment/supply-chain surfaces.
+- `app-security-gate` is the evidence-driven release gate for substantial application/API work, production-readiness questions, and `RISK_3`/`RISK_4` security changes. It must end `PASS` or `BLOCKED`.
+- Purely presentational edits stay in FAST mode and do not pull in a security audit.
 
-Both stay outside core and are loaded only for relevant stages.
+### Adversarial idea review
 
-### Anti-AI-slop writing
+Non-trivial ideation cannot jump from `idea-refine` to a recommended direction. Serious candidates must pass `adversarial-idea-review` first: attack adoption, incumbents, operations, economics, support, scale, and evidence quality before commitment. The overlay is re-applied after every upstream skill refresh so that contract does not drift out of the vendored Addy meta-skill.
 
-`humanizer` treats humanization as more than deleting a few buzzwords. It preserves factual claims/citations, adapts to destination and authentic writer/brand voice, catches repeated structural AI tells, and keeps technical prose precise.
+### Design studio
+
+Design work stays JIT. The `design` and `mobile` profiles are installation/discovery bundles, not context dumps. Typical capabilities include visual taste (`design-taste-frontend`, `hallmark`, `impeccable`, `emil-design-eng`), durable design memory (`design-md-workflow`), diagrams (`diagram-design`), motion (`gsap-*`, `scrollytelling-web`), native app UI (`appllama-*`), and optional Figma/3D/storytelling specialists.
+
+### Writing and anti-slop
+
+Writing work can select:
+
+- `humanizer` — preserve claims and voice while removing generic/robotic wording and structural AI tells;
+- `stop-slop` — a complementary slop-detection rule set;
+- `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state.
+
+### Upstream skills
+
+Most engineering, design, and writing skill bodies are copied 1:1 from their upstream repositories. Agentit-owned skills cover runtime, orchestration, security gating, executive judgment, and source-informed composites.
+
+Refresh the canonical registry with:
+
+```bash
+./scripts/sync-upstream-skills.sh
+```
+
+That command copies the latest upstream packages, records snapshots in `skills/UPSTREAM_LOCK.json`, and re-applies Agentit's ideation overlay. See [`skills/UPSTREAM_SOURCES.md`](skills/UPSTREAM_SOURCES.md) and [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
 
 ### Reference Intelligence
 
@@ -288,6 +313,7 @@ packs:
 selected skills:
 - debugging-and-error-recovery
 - security-and-hardening
+- app-security-gate
 - verification-before-completion
 
 reference plan:
@@ -340,15 +366,16 @@ This keeps semantic interpretation with the model that has the richest context w
 | Profile | Discovery scope |
 |---|---|
 | `core` | three-skill Agentit navigation core + minimum cold-start/documentation invariants |
-| `frontend` | frontend implementation and runtime verification |
-| `backend` | APIs, services, observability and backend engineering |
+| `frontend` | frontend implementation, runtime verification, and development-security guidance |
+| `backend` | APIs, services, observability, and development-security guidance |
 | `supabase` | backend plus PostgreSQL/Supabase-specific guidance |
-| `product` | discovery, requirements and product decisions |
+| `product` | discovery, adversarial ideation, requirements and product decisions |
 | `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
-| `writing` | technical writing and anti-slop/documentation support |
+| `writing` | technical writing, documentation, humanizer, stop-slop and ADHD-shaped output |
 | `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
-| `release` | CI/CD, migrations and release readiness |
-| `research` | source-driven and context-heavy research |
+| `mobile` | Expo/React Native product UI and simulator-verified native-feeling screens |
+| `release` | CI/CD, migrations, launch, security gate and operational readiness |
+| `research` | source-driven research, adversarial idea review and verification |
 | `growth` / `agency` | marketing, growth and multi-domain delivery |
 | `all` | complete repository skill inventory |
 
@@ -391,11 +418,14 @@ See:
 | `AGENTS.md` | compact global Agentit rules and dispatch |
 | `skills/using-agentit/` | canonical Agentit lifecycle, cold-start and minimum documentation contract |
 | `skills/task-router/` | model-owned task decision + review contract |
-| `skills/using-agent-skills/` | semantic pack discovery and JIT projection |
+| `skills/using-agent-skills/` | vendored Addy engineering workflow meta-skill, plus Agentit's ideation overlay |
+| `skills/UPSTREAM_SOURCES.md` | provenance registry and snapshots for vendored third-party skills |
 | `skills/reference-intelligence/` | curated/live source and provenance workflow |
 | `skills/executive-orchestration/` | cross-functional executive routing, bounded fan-out and single-parent synthesis contract |
+| `skills/app-security-gate/` | evidence-driven application security release gate |
+| `skills/adversarial-idea-review/` | mandatory red-team for non-trivial ideation |
 | `skills/design-md-workflow/` | optional durable visual-identity contract workflow |
-| `skills/diagram-design/` | JIT diagram/tool routing and architecture-visual evidence discipline |
+| `skills/diagram-design/` | vendored diagram package for branded, code-grounded, or project-native visuals |
 | `skills/` | concrete JIT expertise modules, including the `executive-*` specialist skills |
 | `router/` | deterministic capabilities, context, Loop/Graph, MCP and verification runtime |
 | `profiles.yaml` | installation/discovery profiles |
@@ -408,6 +438,8 @@ See:
 
 - [`skills/using-agentit/SKILL.md`](skills/using-agentit/SKILL.md)
 - [`references/agentit-skill-packs.md`](references/agentit-skill-packs.md)
+- [`skills/UPSTREAM_SOURCES.md`](skills/UPSTREAM_SOURCES.md)
+- [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md)
 - [`docs/EXECUTIVE_PROFILE.md`](docs/EXECUTIVE_PROFILE.md)
 - [`docs/DOCUMENTATION_CONTRACT.md`](docs/DOCUMENTATION_CONTRACT.md)
 - [`docs/ADAPTIVE_AGENT_ARCHITECTURE.md`](docs/ADAPTIVE_AGENT_ARCHITECTURE.md)

@@ -49,7 +49,9 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `test-driven-development` — use behavioral tests to drive or prove implementation when TDD fits the change.
 - `code-review-and-quality` — independent correctness/quality review before accepting meaningful code changes.
 - `code-simplification` — reduce unnecessary complexity while preserving proven behavior.
+- `constraint-driven-development` — write a project quality bar (`CONSTRAINTS.md`) and keep agents from quietly lowering it.
 - `verification-before-completion` — fresh evidence before done/fixed/passing claims.
+- `app-security-gate` — evidence-driven pre-deploy security gate when an application/API surface is being shipped or materially changed.
 - `verification-gauntlet` — broader verification discipline when multiple evidence surfaces matter.
 - `doubt-driven-development` — adversarially challenge unfamiliar, risky or consequential engineering decisions.
 - `security-and-hardening` — threat modeling, trust boundaries, auth, secrets, input handling and hardening when security is materially involved.
@@ -82,6 +84,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `design-md-workflow` — read/maintain a durable project visual-identity contract when `DESIGN.md` or equivalent persistent design memory materially applies.
 - `source-driven-development` — current framework/browser/API behavior matters.
 - `security-and-hardening` — auth/session/input/trust-boundary work in frontend surfaces.
+- `app-security-gate` — adversarial application security gate when a frontend change exposes or modifies a meaningful attack surface.
 - `test-driven-development` — component/behavior tests when useful.
 - `verification-before-completion` — fresh runtime/build/test evidence before completion claims.
 
@@ -152,6 +155,7 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 - `code-simplification` — avoid accidental service/framework complexity.
 - `verification-before-completion` — fresh runtime/test evidence.
 - `security-and-hardening` — auth, secrets, PII, permissions and trust boundaries.
+- `app-security-gate` — evidence-driven security gate before shipping or materially changing an API/backend surface.
 - `performance-optimization` — measured server/data-path optimization.
 - `source-driven-development` — current protocols/framework/provider contracts.
 - `architect-orchestrator` — structural or multi-service work.
@@ -191,7 +195,9 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 
 - `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
 - `idea-refine` — explore and refine an early concept before committing to one shape.
+- `adversarial-idea-review` — try to kill serious candidate directions before a recommendation is allowed to stand.
 - `spec-driven-development` — explicit requirements, scope and acceptance criteria.
+- `spec-kit-workflow` — GitHub Spec Kit / spec-kit workflow when that artifact family is the project's spec process.
 - `planning-and-task-breakdown` — turn a decided outcome into executable units when useful.
 - `documentation-and-adrs` — preserve durable product/architecture decisions.
 - `doubt-driven-development` — challenge high-impact assumptions and alternatives.
@@ -218,6 +224,7 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 - `executive-product` — customer problem, PMF evidence, prioritization, sequencing, make/buy and product investment gates.
 - `executive-board` — board/investor narrative, KPI/variance, governance, material risks and explicit asks.
 - `executive-chief-of-staff` — triage, decision queue, ownership, blockers, follow-ups and operating cadence.
+- `adversarial-idea-review` — kill/pivot/gate a company-level idea before commitment.
 - `specialist-agent-routing` — bounded executive specialists only when independent expertise/context isolation/parallelism earns its coordination cost.
 - `reference-intelligence` — current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
 - `source-driven-development` — current authoritative sources for changing domain rules/contracts/platform behavior.
@@ -275,6 +282,7 @@ Executive skills decide at the business-function level. Pair them with engineeri
 **Skills in this pack:**
 
 - `source-driven-development` — establish authoritative/canonical source hierarchy and verify current contracts.
+- `adversarial-idea-review` — attack a research/product direction before treating it as decided.
 - `reference-intelligence` — decide curated vs live sources, distinguish source roles and preserve provenance.
 - `context-engineering` — manage large source/context sets without flooding the synthesis model.
 - `verification-before-completion` — evidence-backed final claims.
@@ -294,6 +302,8 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 **Skills in this pack:**
 
 - `humanizer` — preserve meaning/voice while removing generic, repetitive, robotic or templated prose.
+- `stop-slop` — catch structural AI-writing tells beyond buzzword deletion.
+- `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state, no tangents.
 - `documentation-and-adrs` — durable technical/project documentation and decision records.
 - `source-driven-development` — factual/current source-grounded writing.
 - `reference-intelligence` — multi-source reports, source roles and provenance.
@@ -316,6 +326,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `observability-and-instrumentation` — know whether a release is healthy after change.
 - `deprecation-and-migration` — compatibility, retirement and migration plans.
 - `security-and-hardening` — production/security boundaries.
+- `app-security-gate` — release-blocking application security review with adversarial retest.
 - `doubt-driven-development` — high-risk rollout review.
 - `architect-orchestrator` — multi-stage releases/migrations and dependency coordination.
 - `git-workflow-and-versioning` — clean release/merge history and handoff.

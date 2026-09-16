@@ -10,7 +10,7 @@ Source: https://github.com/addyosmani/agent-skills
 
 License: MIT. Copyright (c) 2025 Addy Osmani.
 
-Agentit vendors the canonical upstream packages for matching engineering skill IDs without compressing or rewriting their skill bodies. Addy's repo-level shared `references/` files are vendored at Agentit's root `references/` so upstream relative links continue to resolve.
+Agentit vendors the canonical upstream packages for matching engineering skill IDs without compressing or rewriting their skill bodies. After each refresh, Agentit re-applies a documented ideation overlay onto `using-agent-skills` and `idea-refine` so `adversarial-idea-review` remains mandatory. Addy's repo-level shared `references/` files are vendored at Agentit's root `references/` so upstream relative links continue to resolve.
 
 ### Leonxlnx / taste-skill
 
@@ -115,6 +115,14 @@ Source: https://github.com/obra/superpowers
 License: MIT. Copyright (c) 2025 Jesse Vincent.
 
 Agentit vendors the canonical `verification-before-completion` package in full. Agentit-specific Loop/Graph receipt enforcement remains in Agentit's runtime and core policy instead of being injected into the vendored skill body.
+
+### Ayoub Ghriss / i-have-adhd
+
+Source: https://github.com/ayghri/i-have-adhd
+
+License: MIT. Copyright (c) 2026 Ayoub Ghriss.
+
+Agentit vendors the canonical `i-have-adhd` package in full as a writing/output-style skill. Exact snapshots are recorded in `skills/UPSTREAM_LOCK.json`.
 
 ## Agentit-owned adaptations and source-informed skills
 

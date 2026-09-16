@@ -6,7 +6,7 @@
       "skill": "api-and-interface-design",
       "repo": "addyosmani/agent-skills",
       "path": "skills/api-and-interface-design",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "appllama-app-design-skill",
@@ -15,55 +15,61 @@
       "replaces": [
         "mobile-native-app-design"
       ],
-      "snapshot": "629818a094844bd383cbcc336e6bc1d953fc193f"
+      "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707"
     },
     {
       "skill": "appllama-usage",
       "repo": "Appllama/appllama-skills",
       "path": "skills/appllama-usage",
-      "snapshot": "629818a094844bd383cbcc336e6bc1d953fc193f"
+      "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707"
     },
     {
       "skill": "browser-testing-with-devtools",
       "repo": "addyosmani/agent-skills",
       "path": "skills/browser-testing-with-devtools",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "ci-cd-and-automation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/ci-cd-and-automation",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "code-review-and-quality",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-review-and-quality",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "code-simplification",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-simplification",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
+    },
+    {
+      "skill": "constraint-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/constraint-driven-development",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "context-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/context-engineering",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "debugging-and-error-recovery",
       "repo": "addyosmani/agent-skills",
       "path": "skills/debugging-and-error-recovery",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "deprecation-and-migration",
       "repo": "addyosmani/agent-skills",
       "path": "skills/deprecation-and-migration",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "design-taste-frontend",
@@ -78,43 +84,43 @@
       "replaces": [
         "diagram-and-architecture-visuals"
       ],
-      "snapshot": "4451eadc484d76aa860edf3289c16fcd082dcdbf"
+      "snapshot": "9874ad73813715fc36875e45afd9cd94c68f3c3f"
     },
     {
       "skill": "documentation-and-adrs",
       "repo": "addyosmani/agent-skills",
       "path": "skills/documentation-and-adrs",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "doubt-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/doubt-driven-development",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "emil-design-eng",
       "repo": "emilkowalski/skills",
       "path": "skills/emil-design-eng",
-      "snapshot": "d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7"
+      "snapshot": "85e8e2363b713506e1d5b6e07a0eb2da66be1bc3"
     },
     {
       "skill": "find-skills",
       "repo": "vercel-labs/skills",
       "path": "skills/find-skills",
-      "snapshot": "435076e78988e1e6ec40d00b0b1d76bdbbc5419a"
+      "snapshot": "d6b37f62ae23c3825b0ed16c73e123eee0a41fdc"
     },
     {
       "skill": "frontend-ui-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/frontend-ui-engineering",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "git-workflow-and-versioning",
       "repo": "addyosmani/agent-skills",
       "path": "skills/git-workflow-and-versioning",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "gsap-performance",
@@ -144,79 +150,79 @@
       "replaces": [
         "anti-ai-slop-writing"
       ],
-      "snapshot": "e2e92e7b4b8229253ed5c8e81dc65463fdeddda5"
+      "snapshot": "9862685f575c65a8247f90369951df1b3416e3d6"
     },
     {
       "skill": "i-have-adhd",
       "repo": "ayghri/i-have-adhd",
       "path": "skills/i-have-adhd",
-      "snapshot": "6f1f982d0a47c65899af3c5a7450b7098bc65325"
+      "snapshot": "0a84de401019a3a822248df586d88a2b56f8c6af"
     },
     {
       "skill": "idea-refine",
       "repo": "addyosmani/agent-skills",
       "path": "skills/idea-refine",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
-      "snapshot": "695df68a5860da4d25cd629fc3727ec8f3c0991b"
+      "snapshot": "0a4e72a254f3b175c95b36b82e5f2e60fa63f116"
     },
     {
       "skill": "incremental-implementation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/incremental-implementation",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "interview-me",
       "repo": "addyosmani/agent-skills",
       "path": "skills/interview-me",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "observability-and-instrumentation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/observability-and-instrumentation",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "performance-optimization",
       "repo": "addyosmani/agent-skills",
       "path": "skills/performance-optimization",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "planning-and-task-breakdown",
       "repo": "addyosmani/agent-skills",
       "path": "skills/planning-and-task-breakdown",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "security-and-hardening",
       "repo": "addyosmani/agent-skills",
       "path": "skills/security-and-hardening",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "shipping-and-launch",
       "repo": "addyosmani/agent-skills",
       "path": "skills/shipping-and-launch",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "source-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/source-driven-development",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "spec-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/spec-driven-development",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "stop-slop",
@@ -234,7 +240,7 @@
       "skill": "test-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/test-driven-development",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "ui-ux-pro-max",
@@ -243,13 +249,13 @@
       "replaces": [
         "ui-ux-pro-max-intelligence"
       ],
-      "snapshot": "f3ac195224eac1eb0dfe1a3059c2a6add78ffbe3"
+      "snapshot": "15de38fb70bc80ae9276fa7703b48ae861a672e6"
     },
     {
       "skill": "using-agent-skills",
       "repo": "addyosmani/agent-skills",
       "path": "skills/using-agent-skills",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39"
     },
     {
       "skill": "verification-before-completion",
@@ -263,7 +269,7 @@
       "repo": "addyosmani/agent-skills",
       "path": "references",
       "destination": "references",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
       "manifest": "references/.addy-agent-skills-files"
     }
   ]

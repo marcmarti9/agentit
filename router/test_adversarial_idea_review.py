@@ -42,6 +42,45 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
         self.assertIn("Any serious non-trivial candidate? → adversarial-idea-review BEFORE convergence", meta_skill)
         self.assertIn("Exploration is not complete until the serious candidate has survived attack", meta_skill)
 
+    def test_ideation_overlay_is_idempotent(self) -> None:
+        import subprocess
+
+        overlay = REPOSITORY / "scripts" / "apply-agentit-skill-overlays.py"
+        first = subprocess.run(
+            ["python3", str(overlay)],
+            cwd=REPOSITORY,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, first.returncode, first.stderr)
+        using_agent_skills = (
+            REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        idea_refine = (REPOSITORY / "skills" / "idea-refine" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        second = subprocess.run(
+            ["python3", str(overlay)],
+            cwd=REPOSITORY,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, second.returncode, second.stderr)
+        self.assertEqual(
+            using_agent_skills,
+            (REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md").read_text(
+                encoding="utf-8"
+            ),
+        )
+        self.assertEqual(
+            idea_refine,
+            (REPOSITORY / "skills" / "idea-refine" / "SKILL.md").read_text(
+                encoding="utf-8"
+            ),
+        )
+
     def test_skill_has_evidence_and_kill_gate_contracts(self) -> None:
         skill = (
             REPOSITORY / "skills" / SKILL_ID / "SKILL.md"

@@ -1,6 +1,6 @@
 ---
 name: using-agent-skills
-description: Discovers and invokes agent skills. Use when starting a session or when you need to discover which skill applies to the current task. This is the meta-skill that governs how all other skills are discovered and invoked.
+description: Discovers and invokes agent skills. Use when starting a session, or when you need to decide which skill or workflow applies to the piece of work at hand. This is the meta-skill that governs how all other skills are discovered and invoked.
 ---
 
 # Using Agent Skills
@@ -13,7 +13,7 @@ Agent Skills is a collection of engineering workflow skills organized by develop
 
 When a task arrives, identify the development phase and apply the corresponding skill:
 
-```text
+```
 Task arrives
     │
     ├── Don't know what you want yet? ──────→ interview-me
@@ -70,7 +70,7 @@ These behaviors apply at all times, across all skills. They are non-negotiable.
 
 Before implementing anything non-trivial, explicitly state your assumptions:
 
-```text
+```
 ASSUMPTIONS I'M MAKING:
 1. [assumption about requirements]
 2. [assumption about architecture]
@@ -166,7 +166,7 @@ These are the subtle errors that look like productivity but create problems:
 
 For a complete feature, the typical skill sequence is:
 
-```text
+```
 1.  interview-me                → Extract what the user actually wants
 2.  idea-refine                 → Expand and refine vague ideas
 3.  adversarial-idea-review     → Try to kill serious candidate directions before commitment

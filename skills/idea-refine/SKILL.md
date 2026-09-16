@@ -68,7 +68,7 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
    - What's been tried before?
    - Why now?
 
-   Use the `AskUserQuestion` tool to gather this input when genuinely necessary. Do NOT proceed until you understand who this is for and what success looks like, unless those facts are already available in the current context or discoverable from project sources.
+   Use the `AskUserQuestion` tool to gather this input. Do NOT proceed until you understand who this is for and what success looks like.
 
 3. **Generate 5-8 idea variations** using these lenses:
    - **Inversion:** "What if we did the opposite?"
@@ -81,7 +81,7 @@ When the user invokes this skill with an idea (`$ARGUMENTS`), guide them through
 
    Push beyond what the user initially asked for. Create products people don't know they need yet.
 
-**If running inside a codebase:** Use available repository search/read tools to scan for relevant context — existing architecture, patterns, constraints, prior art. Ground your variations in what actually exists. Reference specific files and patterns when relevant.
+**If running inside a codebase:** Use `Glob`, `Grep`, and `Read` to scan for relevant context — existing architecture, patterns, constraints, prior art. Ground your variations in what actually exists. Reference specific files and patterns when relevant.
 
 Read `frameworks.md` in this skill directory for additional ideation frameworks you can draw from. Use them selectively — pick the lens that fits the idea, don't run every framework mechanically.
 
@@ -165,15 +165,15 @@ Produce a concrete artifact — a markdown one-pager that moves work forward:
 
 **The "Not Doing" and "Kill / Validation Gates" lists are load-bearing.** Focus is about saying no to good ideas, and rigor is about naming what evidence would prove the recommendation wrong.
 
-Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a location of their choosing). Only save if they confirm, unless the surrounding task already explicitly requested a durable artifact.
+Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a location of their choosing). Only save if they confirm.
 
 ### Anti-patterns to Avoid
 
 - **Don't generate 20+ ideas.** Quality over quantity. 5-8 well-considered variations beat 20 shallow ones.
-- **Don't be a yes-machine.** Push back on weak ideas with specificity.
+- **Don't be a yes-machine.** Push back on weak ideas with specificity and kindness.
 - **Don't skip "who is this for."** Every good idea starts with a person and their problem.
 - **Don't produce a plan without surfacing assumptions.** Untested assumptions are the #1 killer of good ideas.
-- **Don't over-engineer the process.** Three phases, each doing one thing well. Resist adding ceremony that does not change decisions.
+- **Don't over-engineer the process.** Three phases, each doing one thing well. Resist adding steps.
 - **Don't just list ideas — tell a story.** Each variation should have a reason it exists, not just be a bullet point.
 - **Don't ignore the codebase/project context.** Existing architecture and business constraints are constraints and opportunities. Use them.
 - **Don't choose a favorite before the adversarial gate.** That turns red-team into rationalization.
@@ -182,7 +182,7 @@ Ask the user if they'd like to save this to `docs/ideas/[idea-name].md` (or a lo
 
 ### Tone
 
-Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a facilitator reading from a script. Channel the energy of "that's interesting, but how does this die?" and then "what would have to change for it to survive?".
+Direct, thoughtful, slightly provocative. You're a sharp thinking partner, not a facilitator reading from a script. Channel the energy of "that's interesting, but what if..." -- always pushing one step further without being exhausting.
 
 Read `examples.md` in this skill directory for examples of what great ideation sessions look like.
 
@@ -193,7 +193,7 @@ Read `examples.md` in this skill directory for examples of what great ideation s
 - No assumptions surfaced before committing to a direction
 - Yes-machining weak ideas instead of pushing back with specificity
 - Producing a plan without a "Not Doing" list
-- Ignoring existing project constraints when ideating inside a project
+- Ignoring existing codebase constraints when ideating inside a project
 - Jumping straight to Phase 3 output without running Phases 1 and 2
 - Recommending a non-trivial direction without applying `adversarial-idea-review`
 - Running the adversarial review after the recommendation is already fixed
@@ -204,7 +204,7 @@ Read `examples.md` in this skill directory for examples of what great ideation s
 After completing an ideation session:
 
 - [ ] A clear "How Might We" problem statement exists
-- [ ] The target user, economic buyer when different, and success criteria are defined
+- [ ] The target user and success criteria are defined
 - [ ] Multiple directions were explored, not just the first idea
 - [ ] Every serious non-trivial candidate passed through `adversarial-idea-review` before final convergence
 - [ ] The top failure modes, competitor/substitute attack, adoption/operations risk, and economics/support burden were considered where relevant

@@ -58,6 +58,7 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
             "humanizer",
             "stop-slop",
             "i-have-adhd",
+            "constraint-driven-development",
             "hallmark",
             "ui-ux-pro-max",
             "appllama-app-design-skill",

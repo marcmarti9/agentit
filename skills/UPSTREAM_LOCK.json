@@ -6,20 +6,21 @@
       "skill": "api-and-interface-design",
       "repo": "addyosmani/agent-skills",
       "path": "skills/api-and-interface-design",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "5dafd0c44a3aabf11cae5bcb34f6fcc24dfa5c01ba6e0d3176bce997f4d68bc8",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "appllama-app-design-skill",
       "repo": "Appllama/appllama-skills",
       "path": "skills/appllama-app-design-skill",
       "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "be47c957ad097be96916a088a803281c933513fd98a71aedca7cef25a967d7a5",
@@ -45,14 +46,14 @@
           "sha256": "65962c40204c946924137c8c4c7cc41f519cccc333ac9413ea926a21750f8f9c",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "appllama-usage",
       "repo": "Appllama/appllama-skills",
       "path": "skills/appllama-usage",
       "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "2d0c706a5c43aba26a6f5e0b833f3aa45f5c0fe05a519e04065a7c0a0b1f492d",
@@ -74,121 +75,138 @@
           "sha256": "a0c4abdce9502d9678b87ddb6f67153ef8e2bf23d73c342261cc7da18a7b54a3",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "browser-testing-with-devtools",
       "repo": "addyosmani/agent-skills",
       "path": "skills/browser-testing-with-devtools",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "4e3aacd6a380cd25bc6c2d67fdd1c926a9b22535b8a62109ecd33cefd909e3d9",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "ci-cd-and-automation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/ci-cd-and-automation",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "a6ed8ed56456b01ff8314c44eefc69897d9905ae4e06bb2b7036286efb79b5f0",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "code-review-and-quality",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-review-and-quality",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "8f3cabca581bbf7cb5f0add3f7454e7a4523f9d4353a6a4a217e6fa515309612",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "code-simplification",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-simplification",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "f0c5ed754057eb0c1e027e2587f59de816651feb5e837242296c43ea21cf621d",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
+    },
+    {
+      "skill": "constraint-driven-development",
+      "repo": "addyosmani/agent-skills",
+      "path": "skills/constraint-driven-development",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
+      "files": {
+        "SKILL.md": {
+          "sha256": "06479d4305f286d23cfb99f5dc85695896785269664e1f6a8d800e3b71e70c10",
+          "mode": 420
+        },
+        "references/floor-guard.md": {
+          "sha256": "dba15dad8f5a5cbae464ec8457e6dd014a7bcb3ad13a360a6908d54991a5415e",
+          "mode": 420
+        }
+      }
     },
     {
       "skill": "context-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/context-engineering",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "1392005054efb0a5c9cbbd83811f95ac30d34e5228a1f6837baf59fb7d588017",
+          "sha256": "8b736cb9e55b82b265ab6ff78349c0e826e8a6df550deddf665b7fb3ff858b63",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "debugging-and-error-recovery",
       "repo": "addyosmani/agent-skills",
       "path": "skills/debugging-and-error-recovery",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "67ce2c9442da0c5a6e3515617fc9c4003cfe232ef7c7210da342f40f508f9958",
+          "sha256": "21f3960f5d7ae2cc95c40896545004dbbcbbd752ea65fc2d53962554d4174220",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "deprecation-and-migration",
       "repo": "addyosmani/agent-skills",
       "path": "skills/deprecation-and-migration",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "6a624f942e09c69863a4219b9bd5d56975026b67b0c70bc83385ffd2120b6142",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "design-taste-frontend",
       "repo": "Leonxlnx/taste-skill",
       "path": "skills/taste-skill",
       "snapshot": "ccbc15639c97057cbfcf32ecebc38ef716e4bb37",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "aa194351b246b8b4799099d4ed7b033d29eab6e6e3d58d8d2172978be7b3ec89",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "diagram-design",
       "repo": "cathrynlavery/diagram-design",
       "path": "skills/diagram-design",
-      "snapshot": "2724fd2efd8c6737f6fa704fbf5da52d67375497",
+      "snapshot": "9874ad73813715fc36875e45afd9cd94c68f3c3f",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "1801db2ce04d82e52154098c99d63ddc87c552fda5186d261919ed6e02183158",
+          "sha256": "74f7f3e7f4ba771910bf0bfece5e2eff2f59c8279598d5b67ffa797f32627498",
           "mode": 420
         },
         "assets/example-architecture-dark.html": {
@@ -409,6 +427,10 @@
         },
         "assets/example-import-drawio.html": {
           "sha256": "f6b4cc1e49c1a680dbc1914cc2efabe1f6be418f4473019d8358819a8fbf6d63",
+          "mode": 420
+        },
+        "assets/example-import-excalidraw.html": {
+          "sha256": "5c247643065004228e3e07061d4435608abc03c5fa4e2c404c6ef2a2d6b9da80",
           "mode": 420
         },
         "assets/example-import-mermaid.html": {
@@ -683,6 +705,18 @@
           "sha256": "bdcd07a2f12fb3ae0afe34b8f3d9fc455a7fbe02f671b97a7163d35726894017",
           "mode": 420
         },
+        "assets/example-state-lifecycle-dark.html": {
+          "sha256": "caf933ffcfffd7cc46e4354d5d3dd4d2c0ea8fc5c56e5fefb9b0ec63dc3358d9",
+          "mode": 420
+        },
+        "assets/example-state-lifecycle-full.html": {
+          "sha256": "fdfa99fd013a6703987ca573417821849833b844125773007bf90fdccb21bd1c",
+          "mode": 420
+        },
+        "assets/example-state-lifecycle.html": {
+          "sha256": "a09228bc242faa5eb4e31bb28375eca99ddfc5af1edf23581851018b1b16d7eb",
+          "mode": 420
+        },
         "assets/example-state.html": {
           "sha256": "75521144ce5aaf477096f355e86ae2d3301eb136391a6bd0702a844a8fe7ce30",
           "mode": 420
@@ -795,24 +829,36 @@
           "sha256": "b0ffc8f5bde65a8d77d863f22cd6c0d0211490c059dbcb503798851d1413860a",
           "mode": 420
         },
+        "assets/example-waterfall-dark.html": {
+          "sha256": "ce4eb6038b09b87eca88b6981a7b43d19f603f480b6e91fb16d5d7c58a9103a6",
+          "mode": 420
+        },
+        "assets/example-waterfall-full.html": {
+          "sha256": "0fc4fdb8af3cdc49efb75d713303751c3d37c360ac3e27ea282945359ed67f9a",
+          "mode": 420
+        },
+        "assets/example-waterfall.html": {
+          "sha256": "10c4445b0582ddd6644ac734914c3549e9eb39075ee6e258ea78044a43c0ca3d",
+          "mode": 420
+        },
         "assets/icons.html": {
           "sha256": "8e7f54214b31e9152020e012aff18cb97defdec47ac09cee2081499c0bb0eb4f",
           "mode": 420
         },
         "assets/index.html": {
-          "sha256": "5a7d710c264cf98f1e23238524e21cce4f1b93bea0814994394b9c69654d278e",
+          "sha256": "95011d994b8e706da3e296f001c6d9b7c561eea4d00d1f4a7d8200c58a5f5d8e",
           "mode": 420
         },
         "assets/template-dark.html": {
-          "sha256": "5ce8643786f648a706fd775602ce657c29dc943ad934ce08a2b9a2c43db59501",
+          "sha256": "95c77e10212507d8bf85092ceed09bde04628d31e73fb92bbd082bbf23ba92a5",
           "mode": 420
         },
         "assets/template-full.html": {
-          "sha256": "ccd6feb25c934d4cf1af4b3a3d4d0b82c2f18f4a09a50856f1115a3d5e43c66a",
+          "sha256": "7967e0491c7e14b79bc38de7eea328822c697e313647802d18220c1354e31891",
           "mode": 420
         },
         "assets/template-motion.html": {
-          "sha256": "0b8063b37d4192b6d7de50c43c96ba8ae29208e71795380f1365f856a7764757",
+          "sha256": "e03e3384c86830b52e57e4b984b4517b682cf0a72b3d4147bb2b5341e962017e",
           "mode": 420
         },
         "assets/template-terminal.html": {
@@ -820,7 +866,7 @@
           "mode": 420
         },
         "assets/template.html": {
-          "sha256": "78097811877b253fdf755867fd66efdb30ac93498f058c9b2c852a0fe333272a",
+          "sha256": "375997645efd975a059950c909abcef2494f79900ae164a00a5a0e774a85591c",
           "mode": 420
         },
         "references/animation.md": {
@@ -828,7 +874,7 @@
           "mode": 420
         },
         "references/doctor.md": {
-          "sha256": "bd2331eb5eaf751f254f94332abf8c78b32f22849effb180883fbc7c1e9ab471",
+          "sha256": "d689c47c3673898dbd5b9efbd0099953289438a657a81ddceebf17b580ba7691",
           "mode": 420
         },
         "references/export-registry.md": {
@@ -836,11 +882,15 @@
           "mode": 420
         },
         "references/export.md": {
-          "sha256": "8782b3e64fc1d51347e835b50043cebcf6643287592c72af80f310e0920ea38b",
+          "sha256": "523a073b5fb8a9f1e80a6f4fa913befa8cdc48789d6a368a0b7a15060aa92bda",
           "mode": 420
         },
         "references/import-drawio.md": {
           "sha256": "2615ba8efb300ecc498df72223a91c6c712411efb38892fc779b583ad8b7b4ce",
+          "mode": 420
+        },
+        "references/import-excalidraw.md": {
+          "sha256": "02168ea7793a0fab546e84c410f2c946336f1088fa3c9c301504aec81d34dad4",
           "mode": 420
         },
         "references/import-mermaid.md": {
@@ -848,11 +898,11 @@
           "mode": 420
         },
         "references/onboarding.md": {
-          "sha256": "bd547d69c0206da2ffcbb5e5652da645a80aad2b97bac2026566828dbfdd28c9",
+          "sha256": "a8e1b9ae576b47acd0ff88b1379c51a29a8749591df957223c8f3a01de0c6f97",
           "mode": 420
         },
         "references/output-spec.md": {
-          "sha256": "374a4f1f7e70e5e970d6df427516273fe67e7616aa3a9d06c5787924daa1ed9b",
+          "sha256": "303cb7d2db0b6b29f663d5d952a84d51c51ea589324c0b2e0e6b9aad76ffb5f2",
           "mode": 420
         },
         "references/primitive-annotation.md": {
@@ -876,11 +926,11 @@
           "mode": 420
         },
         "references/semantic-patterns.md": {
-          "sha256": "c87b59f025fba1dd6dff404dee64c22eca4db96d2bd14baf6d60ef430eeebaba",
+          "sha256": "211ecf32d1a4cc6c5528e3f9d6a8b9cbed14cc3a98f1c3bdb7c60f8490e3e788",
           "mode": 420
         },
         "references/style-guide.md": {
-          "sha256": "7bc931f3b80e2704f4554f522bb03886b70a4a6389735ede9aff3087420f6238",
+          "sha256": "c2f533b00bb0eb3effa4dd73f44a6b46a5bcfdb596fc30c06c9aa9bcd9c1b500",
           "mode": 420
         },
         "references/type-architecture.md": {
@@ -1004,7 +1054,7 @@
           "mode": 420
         },
         "references/type-state.md": {
-          "sha256": "7fed5690161e6f75d510cf89d1e989885b2d900fdadca5116e7f5b49ad8529a5",
+          "sha256": "f5cda20b18da2bb92f291d200ac37ffd8af13328768ae0acf42d688384aa0433",
           "mode": 420
         },
         "references/type-story-map.md": {
@@ -1039,8 +1089,16 @@
           "sha256": "aa93eb728a022b85f38de69c1d287752f91c487b05c50396ee21e769162900a9",
           "mode": 420
         },
+        "references/type-waterfall.md": {
+          "sha256": "1079c0915c7e651d8556369aebed180154afb05799192c7eebaf442f7c16f8e1",
+          "mode": 420
+        },
         "scripts/drawio_extract.py": {
-          "sha256": "302b357688de234e5a46818a25120fd8fe5a58e5c3338f1f027ec269f24424d9",
+          "sha256": "5ebca512ea913f4e11d7a013715d832f62a016d3af05d0fa2c7ca9f1f14fb602",
+          "mode": 420
+        },
+        "scripts/excalidraw_extract.py": {
+          "sha256": "fd895d16be7f75032ae3d77dd2f15e91c3631e7c7af8a2a1a65474c4c7781f2a",
           "mode": 420
         },
         "scripts/mermaid_extract.py": {
@@ -1048,121 +1106,121 @@
           "mode": 420
         },
         "scripts/self_check.py": {
-          "sha256": "5bb48bdd41378a5bde2cfae64363316e8435ba63a72f9a1e062ff0018d6ba0c7",
+          "sha256": "b5f798725d4a76693b6d1c2ff5ecfc0aa162c69ffe38cd63c32bb192f49afd13",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "documentation-and-adrs",
       "repo": "addyosmani/agent-skills",
       "path": "skills/documentation-and-adrs",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "b867bb80fb681257c7625ae59a0dfd849b1fc0f0a2f0338e7923f38030df9793",
+          "sha256": "87ae44a0c7bb3eefc2131a9d11caabcc14e4d8dcb27d66a3a675551ee2ce1671",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "doubt-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/doubt-driven-development",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "0a058297aa6bdf90b0ff45c3537af4cb0005f4af6b0d202fc07b7b5984db50ea",
+          "sha256": "6fa1fcd8420c28daf7e53c5b08b0f20b907911efd2a6d9bce0b9740da20a4008",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "emil-design-eng",
       "repo": "emilkowalski/skills",
       "path": "skills/emil-design-eng",
-      "snapshot": "d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7",
+      "snapshot": "85e8e2363b713506e1d5b6e07a0eb2da66be1bc3",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "e71de849347050c2c573c1cf24d742d5a13459557ecffa6e562f08006f46b5b7",
+          "sha256": "ffbe68e6007fb42cb8149f089b400a1ca007d59ba23e8948e2be4476f3175939",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "find-skills",
       "repo": "vercel-labs/skills",
       "path": "skills/find-skills",
-      "snapshot": "1682051d48c34f5eb135e6475c1a965dce05e820",
+      "snapshot": "d6b37f62ae23c3825b0ed16c73e123eee0a41fdc",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "frontend-ui-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/frontend-ui-engineering",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "2b74ac4862be3902ec918dceac9366a6fe83b9e003601c0deaf6be09c1766aca",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "git-workflow-and-versioning",
       "repo": "addyosmani/agent-skills",
       "path": "skills/git-workflow-and-versioning",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "39665e84d944fbb394dde5e4e60fc6497cd056002b5c7de6762213f7018ff0a3",
+          "sha256": "b7465d187935c52546d39fdc7bd6ac36d94eda25a9500ef8c18b767d2eb116ea",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "gsap-performance",
       "repo": "greensock/gsap-skills",
       "path": "skills/gsap-performance",
       "snapshot": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "cb5408d6fba707aabcbfe3320317a14c1f8fca6070074e5261047930f50d441e",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "gsap-scrolltrigger",
       "repo": "greensock/gsap-skills",
       "path": "skills/gsap-scrolltrigger",
       "snapshot": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "9351b6666a4749c0740406ea363aaccb99a087ff45cc5e8b99a0f367facf3ef4",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "hallmark",
       "repo": "Nutlope/hallmark",
       "path": "skills/hallmark",
       "snapshot": "13ac0ec7e148655948100b6396439e481361d690",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "59469635bbbd21acddbc664d95e8d97147f454b2d8f4a0a89c7d2c5afbe67577",
@@ -1592,14 +1650,19 @@
           "sha256": "c2830f3b7d68e9622f55d376048a5a454c5ef59d309a211e716d1142e86acbdf",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "humanizer",
       "repo": "blader/humanizer",
       "path": ".",
       "snapshot": "9862685f575c65a8247f90369951df1b3416e3d6",
+      "kind": "canonical-vendored",
+      "include": [
+        "SKILL.md",
+        "agents",
+        "scripts"
+      ],
       "files": {
         "SKILL.md": {
           "sha256": "e8269e236bed06ed0fe4824c274112e54950b0cb46b0bafe5e1576ef7c9f93d5",
@@ -1613,19 +1676,35 @@
           "sha256": "750e5f50561b8a5285bd1a20ed8b127af65b1b25d50e88c2ce5fe8522943c8fd",
           "mode": 493
         }
-      },
-      "include": [
-        "SKILL.md",
-        "agents",
-        "scripts"
-      ],
-      "kind": "canonical-vendored"
+      }
+    },
+    {
+      "skill": "i-have-adhd",
+      "repo": "ayghri/i-have-adhd",
+      "path": "skills/i-have-adhd",
+      "snapshot": "0a84de401019a3a822248df586d88a2b56f8c6af",
+      "kind": "canonical-vendored",
+      "files": {
+        "SKILL.md": {
+          "sha256": "3170b16ace00aecb0dd7feb54c0b5aa642e7502acda06ecd24fd89a11c7127e9",
+          "mode": 420
+        },
+        "agents/gemini.toml": {
+          "sha256": "5108a6123beb9df24846e0dd3f902c652d18522dfbc56e5762032ea383041c62",
+          "mode": 420
+        },
+        "agents/openai.yaml": {
+          "sha256": "2c51291283dcefdca43ca6b0c08172f225c7c26a9783ec444d6bdfa51ca96f8f",
+          "mode": 420
+        }
+      }
     },
     {
       "skill": "idea-refine",
       "repo": "addyosmani/agent-skills",
       "path": "skills/idea-refine",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "79e773058963adc7646b0115b4f8a4afc974c5ff95843e4ef1cafff3cb51899e",
@@ -1647,25 +1726,25 @@
           "sha256": "f02a52408a4218047c032d221483abfbb48d11f090bb4915965c7419bf2e0e47",
           "mode": 493
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
-      "snapshot": "2bc2879276c1f321a53c4ca99d3371e411329b52",
+      "snapshot": "0a4e72a254f3b175c95b36b82e5f2e60fa63f116",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "0c20e5619ce94704f8a86b64e26f350ade0c6fb86b6b886c2881c01caec5a662",
+          "sha256": "fa0cb3ef01a25b9094266109a63c1d01d4b2d4973f75b324f5c4ad7e568d148f",
           "mode": 420
         },
         "agents/impeccable_asset_producer.toml": {
-          "sha256": "4a200cdc0bbe2ae0ee91d88d1f97dd0cfdc828bc32685eea14e86f5ebc82d966",
+          "sha256": "37080ea5e5b381adb7eae7a427231b0ad0dee0f0916fc1d6b673b7101a5b425b",
           "mode": 420
         },
         "agents/impeccable_documenter.toml": {
-          "sha256": "d5922228b571900e21a47855d7de9e081c2246fc9cec6c6235b1a6da31098896",
+          "sha256": "2feb3768125ba6469c92a50d516727e6d42f44579165ddfd33409948e2a3803d",
           "mode": 420
         },
         "agents/impeccable_finish_reviewer.toml": {
@@ -1681,7 +1760,7 @@
           "mode": 420
         },
         "reference/adapt.md": {
-          "sha256": "bead87679caad7c537dd7c04c3bb78be56ac7eec279ad6aad7322f48ff2df2d9",
+          "sha256": "871a8e4d749b807c693ebabd83defbd6c76e1bd2a0f53a28a460cb1308ba8634",
           "mode": 420
         },
         "reference/adapt.native.md": {
@@ -1697,7 +1776,7 @@
           "mode": 420
         },
         "reference/audit.md": {
-          "sha256": "910461b1c1f8216155165955c860a884a1e2f557cb38f21ef512ea90ef6503c2",
+          "sha256": "d5f83912eda93d42f93522bb74aeff0ea04d9c559577ec52fcccc130dd03166d",
           "mode": 420
         },
         "reference/audit.native.md": {
@@ -1729,11 +1808,11 @@
           "mode": 420
         },
         "reference/degraded/asset-producer.md": {
-          "sha256": "fadd4a57ec67175230191b4a6d7415580ca24caf2fbfb359496ffec0f6442f50",
+          "sha256": "a8547c8565979894f0c07f92a96ac2a38e681a31fbf155ffeefc7566e185d9c2",
           "mode": 420
         },
         "reference/degraded/documenter.md": {
-          "sha256": "97a09e350c383cb2f6bba027b83bedffd12a23b1b439ad4a045a48953eb19365",
+          "sha256": "bcc05ea92faebb5c74037a9d4263a5ce9a56f5ab07c8ab3c59ee704d8cade745",
           "mode": 420
         },
         "reference/degraded/finish-reviewer.md": {
@@ -1764,8 +1843,12 @@
           "sha256": "31b90048c0b540daec46762a10c2b6b6434737a89af005054d8b848d829d003b",
           "mode": 420
         },
+        "reference/generate.md": {
+          "sha256": "53628d05b7eff0d4f48b95e48fad40266452fe1b42f398bd88dd9328353e0dd8",
+          "mode": 420
+        },
         "reference/harden.md": {
-          "sha256": "b31ff29c7a1ea979c6d039f7e8d17007410697ab49536690dca109f0af3f20f8",
+          "sha256": "16ba7fca1973c5faf53dd2ca523559129c0fe9e5f8d50b645f527afa78186cd2",
           "mode": 420
         },
         "reference/hooks.md": {
@@ -1793,7 +1876,7 @@
           "mode": 420
         },
         "reference/new-work.md": {
-          "sha256": "0e26bc3f24067ccb5c08bce4a673fab96164c81b8794206dfdd124e566b2c45d",
+          "sha256": "85b9c2d051de94ee9129c58be111946f73035ca62bbd2a3936f4fa48768fe5cf",
           "mode": 420
         },
         "reference/onboard.md": {
@@ -1821,7 +1904,7 @@
           "mode": 420
         },
         "reference/routing.md": {
-          "sha256": "ef0b8eca20e1321cf7216fd0bda41ce54b0cca197cfd1b075eb51f3436f59059",
+          "sha256": "77ae09542fbc10aa4e8b119d6fd19359908a47c13c30068d6a150bfdb50e3e10",
           "mode": 420
         },
         "reference/shape.md": {
@@ -1833,15 +1916,15 @@
           "mode": 420
         },
         "reference/visualize.md": {
-          "sha256": "2806ada0ec5b488409e57bdbf639626b77661aba6cfde9899df7291fdb7abfcc",
+          "sha256": "896da399bafcffb0623bdd81bb18709d6eab25c9d5917e739c8798f31ff0d076",
           "mode": 420
         },
         "scripts/VERSION": {
-          "sha256": "2d2454ef0edeb462a6ce8b25d387aaa74df08093d5cea0428a10ce55510c6326",
+          "sha256": "800cf1c0392b24de7c0a1c6ea6778ecb433dec71c49a150bce96a98477527b2f",
           "mode": 420
         },
         "scripts/command-metadata.json": {
-          "sha256": "6bdbc3f745ceee15e10b050f109ce42bbeb53ab3c3b5239257de1d596654dee7",
+          "sha256": "e8720f3aa41135211cc58cc299a39eeda86c75651f4279cc1ede8db10dcc0584",
           "mode": 420
         },
         "scripts/data/font-index-failures.json": {
@@ -1853,11 +1936,11 @@
           "mode": 420
         },
         "scripts/impeccable": {
-          "sha256": "0a88d2c7d7b40789758ae42f78437587fb05893454f64f9271e49378b6235a7d",
+          "sha256": "39d9600489073e227e4f4d55c451ce4252a6632ed7ae37923efbbcbc91f16d07",
           "mode": 493
         },
         "scripts/impeccable.cmd": {
-          "sha256": "c29367992504a8da13697443672641317de6a92adef537adbad2e64143b9ec89",
+          "sha256": "759bab1d8adc071fdde2efcf6e2157aa4026f3c2b4f3c342a8070bf328011616",
           "mode": 420
         },
         "scripts/live-browser-dom.js": {
@@ -1873,138 +1956,142 @@
           "mode": 420
         },
         "scripts/live-browser.js": {
-          "sha256": "7af0a8665057c83b39bca2c8c7427ef2343734f70d4128c377113a6726a1e3b1",
+          "sha256": "f68a3d68ac92606e91aa8878e003d9432ddd09aa97ca01c6b3ce46c937dca316",
           "mode": 420
         },
         "scripts/modern-screenshot.umd.js": {
           "sha256": "bb36665889124a0b6e15f16045265737449c3bdcf2712cdb08af3cfa01563e2b",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "incremental-implementation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/incremental-implementation",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "3a3581e7084a0dc85af420afcc91211a159d3dc46f3d81075a4d53c566b70b80",
+          "sha256": "df66536610071727feae1ca95f3c391c248ad828041750ccd3699cce763aa00b",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "interview-me",
       "repo": "addyosmani/agent-skills",
       "path": "skills/interview-me",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "1d94741d10d2c826cd0c191aea3981ee94c8abb27ef2a166f6a372117d06448f",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "observability-and-instrumentation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/observability-and-instrumentation",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "3170fdbfe029173bf0a2b6969afd6b926c6b5fecaa74d2a5cfee570915f68043",
+          "sha256": "e7fcb0820306d46268de9594d676ad98e35040858926c412b7000faa52a61f87",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "performance-optimization",
       "repo": "addyosmani/agent-skills",
       "path": "skills/performance-optimization",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "00694d0c69bbde674d0e39de24052d90afea32d9fef9553eaee21a50a7e9b8cf",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "planning-and-task-breakdown",
       "repo": "addyosmani/agent-skills",
       "path": "skills/planning-and-task-breakdown",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "ed0f90cc5951ddd4bcab7f871f64efec93a49af9279ef93bc470da77ad8da3f7",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "security-and-hardening",
       "repo": "addyosmani/agent-skills",
       "path": "skills/security-and-hardening",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "287e2a2850f9d9fcec68a0dbf2cf20ee587928beadcef4937aeb120754915cb6",
+          "sha256": "4aa7a433a0a8042f47197f05893343bd9d1cc02a9179537ef3437c05c49b385d",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "shipping-and-launch",
       "repo": "addyosmani/agent-skills",
       "path": "skills/shipping-and-launch",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "273a88481191b98f1cb2e15cb7e038d304670a7bfe9c3bdb45517151a64bab5e",
+          "sha256": "af610cf4892db7eab2e91c899e33feba90e1000bac4528b2f8dde930816ac125",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "source-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/source-driven-development",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "719d4e54083c90ded62112fb41df3dbc4619309118ee0e6aa4d846f92d8204af",
+          "sha256": "c59faf851377f0eeda45306398d16eb96d77ab1c2fd3e1a7fb58e9a0af33c1e9",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "spec-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/spec-driven-development",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "615ff006266af06f36195a46e7db864512fc9b272fcb653bb51d601214701d04",
+          "sha256": "f7129bca8742bad73f60209bd237e8b10dab6f1fae8576dc552fb1923bc1e721",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "stop-slop",
       "repo": "hardikpandya/stop-slop",
       "path": ".",
       "snapshot": "8da1f030185bdfe8471220585162991eaeb970e9",
+      "kind": "canonical-vendored",
+      "include": [
+        "SKILL.md",
+        "references"
+      ],
       "files": {
         "SKILL.md": {
           "sha256": "7432a1d9ebdd42b27666da8458af252edf549f723fb14bcd4791425103930310",
@@ -2022,18 +2109,14 @@
           "sha256": "ffbf1316c7fb5aaf552de005609a64a9639b546ecd76bfb0e482864d5bbe6f58",
           "mode": 420
         }
-      },
-      "include": [
-        "SKILL.md",
-        "references"
-      ],
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "supabase-postgres-best-practices",
       "repo": "supabase/agent-skills",
       "path": "skills/supabase-postgres-best-practices",
       "snapshot": "8331f910845103c08d51f6ca1d86ebb7d1f745e3",
+      "kind": "canonical-vendored",
       "files": {
         "CHANGELOG.md": {
           "sha256": "751ad110037c85d400018c9894716a04fa46357ff55c22b1169b280752e19e88",
@@ -2179,27 +2262,27 @@
           "sha256": "2e1faeca7d5746e246b1c78f9492fe2a9cfa41c4d7fa1e23c402d58fa18ea014",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "test-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/test-driven-development",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "440fb3c9b76f4f1b0b564dfbaec19d370beab0167a3e2ab048ce59c5a865ecef",
+          "sha256": "7c0c6ac057c19d7f8be65d9f49c3a638703b868f4625c78b70da5439d5d74fca",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "ui-ux-pro-max",
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
       "path": ".claude/skills/ui-ux-pro-max",
-      "snapshot": "4aad0584d92131626b16d4ff4d77f0455385013c",
+      "snapshot": "15de38fb70bc80ae9276fa7703b48ae861a672e6",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "ea087c341bfb5b23195c7302027268ede86da802554c18a5c4896a6017b439f9",
@@ -2493,35 +2576,34 @@
           "sha256": "a599aa256049cf30954d1f164721b99e453eb7e4cb8241bcab2d5573e6cf58b8",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "using-agent-skills",
       "repo": "addyosmani/agent-skills",
       "path": "skills/using-agent-skills",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+      "kind": "canonical-vendored",
+      "destination": "vendor/agent-skills/using-agent-skills",
       "files": {
         "SKILL.md": {
-          "sha256": "8bdbecb2f98cff2dbb70b3852c67d8dca179b27d2b1042aac040866d258ad471",
+          "sha256": "30787ef2c77bf1a4729fffed0f6523ba6fcbe81bdc436b36371b78c21394d3c3",
           "mode": 420
         }
-      },
-      "destination": "vendor/agent-skills/using-agent-skills",
-      "kind": "canonical-vendored"
+      }
     },
     {
       "skill": "verification-before-completion",
       "repo": "obra/superpowers",
       "path": "skills/verification-before-completion",
       "snapshot": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+      "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3",
           "mode": 420
         }
-      },
-      "kind": "canonical-vendored"
+      }
     }
   ],
   "shared": [
@@ -2529,7 +2611,7 @@
       "repo": "addyosmani/agent-skills",
       "path": "references",
       "destination": "references",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
       "manifest": "references/.addy-agent-skills-files",
       "files": {
         "accessibility-checklist.md": {
@@ -2591,10 +2673,18 @@
     },
     {
       "repo": "addyosmani/agent-skills",
-      "snapshot": "48cb1168aeaaa70dfc2bbf709eddfa2a8ed8129a",
+      "snapshot": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
       "source": "LICENSE",
       "destination": "vendor/licenses/addyosmani--agent-skills/LICENSE",
       "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
+      "mode": 420
+    },
+    {
+      "repo": "ayghri/i-have-adhd",
+      "snapshot": "0a84de401019a3a822248df586d88a2b56f8c6af",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/ayghri--i-have-adhd/LICENSE",
+      "sha256": "8acbb618089b738404f76ac60fca1aaa995d9a87995eddf95f0b777acd7f7d2c",
       "mode": 420
     },
     {
@@ -2607,7 +2697,7 @@
     },
     {
       "repo": "cathrynlavery/diagram-design",
-      "snapshot": "2724fd2efd8c6737f6fa704fbf5da52d67375497",
+      "snapshot": "9874ad73813715fc36875e45afd9cd94c68f3c3f",
       "source": "LICENSE",
       "destination": "vendor/licenses/cathrynlavery--diagram-design/LICENSE",
       "sha256": "bb7e12e91fecef43024111123ff784cec6c485585561d8b552557c0173b3ed29",
@@ -2615,7 +2705,7 @@
     },
     {
       "repo": "emilkowalski/skills",
-      "snapshot": "d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7",
+      "snapshot": "85e8e2363b713506e1d5b6e07a0eb2da66be1bc3",
       "source": "LICENSE",
       "destination": "vendor/licenses/emilkowalski--skills/LICENSE",
       "sha256": "4ff5bdb7887ec1435c9cab0e8d1a7caee704d894d65c2a008ccc68b1cc2f260b",
@@ -2639,7 +2729,7 @@
     },
     {
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "snapshot": "4aad0584d92131626b16d4ff4d77f0455385013c",
+      "snapshot": "15de38fb70bc80ae9276fa7703b48ae861a672e6",
       "source": "LICENSE",
       "destination": "vendor/licenses/nextlevelbuilder--ui-ux-pro-max-skill/LICENSE",
       "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
@@ -2655,7 +2745,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "2bc2879276c1f321a53c4ca99d3371e411329b52",
+      "snapshot": "0a4e72a254f3b175c95b36b82e5f2e60fa63f116",
       "source": "LICENSE",
       "destination": "vendor/licenses/pbakaus--impeccable/LICENSE",
       "sha256": "02bb8c3b4e70190e3986c0404ad2fd8d639b4f534252d82379cc1b502b6d1812",
@@ -2663,7 +2753,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "2bc2879276c1f321a53c4ca99d3371e411329b52",
+      "snapshot": "0a4e72a254f3b175c95b36b82e5f2e60fa63f116",
       "source": "NOTICE.md",
       "destination": "vendor/licenses/pbakaus--impeccable/NOTICE.md",
       "sha256": "c60a093c2845fd9fb82f9c6f742ece31f379f8190b535309d32d66c45ccffdcb",
@@ -2679,7 +2769,7 @@
     },
     {
       "repo": "vercel-labs/skills",
-      "snapshot": "1682051d48c34f5eb135e6475c1a965dce05e820",
+      "snapshot": "d6b37f62ae23c3825b0ed16c73e123eee0a41fdc",
       "source": "LICENSE",
       "destination": "vendor/licenses/vercel-labs--skills/LICENSE",
       "sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca",

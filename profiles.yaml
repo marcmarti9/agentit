@@ -23,6 +23,7 @@ profiles:
     - browser-testing-with-devtools
     - performance-optimization
     - code-simplification
+    - constraint-driven-development
     - security-and-hardening
     - app-security-gate
     - hallmark
@@ -40,6 +41,7 @@ profiles:
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
+    - constraint-driven-development
     - security-and-hardening
     - app-security-gate
   supabase:
@@ -150,6 +152,7 @@ profiles:
     - verification-before-completion
     - security-and-hardening
     - app-security-gate
+    - constraint-driven-development
   research:
     description: Core plus context, specifications, authoritative source work, adversarial idea review, and verification.
     extends:
@@ -161,6 +164,7 @@ profiles:
     - doubt-driven-development
     - spec-driven-development
     - spec-kit-workflow
+    - constraint-driven-development
     - verification-before-completion
   growth:
     description: 'Digital growth delivery on demand: product discovery, CRO, copy,
@@ -195,6 +199,7 @@ profiles:
     - ci-cd-and-automation
     - code-review-and-quality
     - code-simplification
+    - constraint-driven-development
     - context-engineering
     - creative-tool-scout
     - creative-web-experiences

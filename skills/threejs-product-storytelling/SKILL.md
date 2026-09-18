@@ -1,6 +1,6 @@
 ---
 name: threejs-product-storytelling
-description: Premium Three.js / React Three Fiber product visualization for web storytelling: GLB/glTF scene structure, exploded views, camera direction, lighting, materials, scroll coupling, labels, post-processing, responsive degradation, and GPU validation.
+description: "Premium Three.js / React Three Fiber product visualization for web storytelling: GLB/glTF scene structure, exploded views, camera direction, lighting, materials, scroll coupling, labels, post-processing, responsive degradation, and GPU validation."
 license: MIT-inspired-original
 research: https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills
 ---

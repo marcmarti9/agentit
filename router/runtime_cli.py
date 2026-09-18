@@ -26,6 +26,8 @@ try:
         loop_receipt,
         new_loop,
         record_attempt,
+        run_verifier,
+        validate_current_subject,
         validate_loop,
         validate_loop_receipt,
     )
@@ -44,6 +46,8 @@ except ImportError:
         loop_receipt,
         new_loop,
         record_attempt,
+        run_verifier,
+        validate_current_subject,
         validate_loop,
         validate_loop_receipt,
     )
@@ -53,7 +57,15 @@ class RuntimeCLIError(RuntimeError):
     pass
 
 
+def _safe_state_path(path: Path) -> None:
+    path = path.absolute()
+    for item in (path, *path.parents):
+        if item.is_symlink():
+            raise RuntimeCLIError(f"symlink state path rejected: {item}")
+
+
 def _load(path: Path) -> dict[str, Any]:
+    _safe_state_path(path)
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise RuntimeCLIError(f"state must be a JSON object: {path}")
@@ -61,6 +73,7 @@ def _load(path: Path) -> dict[str, Any]:
 
 
 def _write_atomic(path: Path, payload: dict[str, Any]) -> None:
+    _safe_state_path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     encoded = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
     fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
@@ -99,10 +112,11 @@ def _bind_graph_nodes(spec_path: Path, spec: dict[str, Any]) -> list[dict[str, A
             raise RuntimeCLIError(f"graph node {node.get('id')} requires loop_state or loop_contract_sha256")
         loop_path = Path(loop_state)
         if not loop_path.is_absolute():
-            loop_path = (spec_path.parent / loop_path).resolve()
+            loop_path = (spec_path.parent / loop_path).absolute()
         loop = _load(loop_path)
         validate_loop(loop)
         node["loop_contract_sha256"] = loop["contract_sha256"]
+        node["evidence_requirement"] = loop["contract"].get("evidence_requirement", "reported")
         bound.append(node)
     return bound
 
@@ -117,6 +131,13 @@ def main(argv: list[str] | None = None) -> int:
     loop_init.add_argument("--verifier", required=True)
     loop_init.add_argument("--stop", required=True)
     loop_init.add_argument("--max-attempts", type=int, default=2)
+    loop_init.add_argument("--verifier-argv", help="Explicit JSON string array. No shell interpolation.")
+    loop_init.add_argument("--project", type=Path, default=Path.cwd())
+    loop_init.add_argument("--subject", action="append", default=[], help="Relative source path to bind to observed evidence.")
+
+    loop_run = sub.add_parser("loop-run", help="Execute the bound verifier with current host permissions.")
+    loop_run.add_argument("--state", type=Path, required=True)
+    loop_run.add_argument("--timeout", type=float, default=300)
 
     loop_attempt = sub.add_parser("loop-attempt")
     loop_attempt.add_argument("--state", type=Path, required=True)
@@ -129,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
     loop_check = sub.add_parser("loop-check")
     loop_check.add_argument("--state", type=Path, required=True)
     loop_check.add_argument("--receipt", type=Path, default=None)
+    loop_check.add_argument("--require-command", action="store_true")
 
     graph_init = sub.add_parser("graph-init")
     graph_init.add_argument("--state", type=Path, required=True)
@@ -155,11 +177,17 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "loop-init":
+            _safe_state_path(args.state)
+            if args.state.exists():
+                raise RuntimeCLIError("refusing to overwrite loop history; use a new state path")
             state = new_loop(
                 goal=args.goal,
                 verifier=args.verifier,
                 stop_condition=args.stop,
                 max_attempts=args.max_attempts,
+                verifier_argv=json.loads(args.verifier_argv) if args.verifier_argv is not None else None,
+                verifier_cwd=str(args.project.absolute()) if args.verifier_argv is not None else None,
+                subject_paths=args.subject,
             )
             _write_atomic(args.state, state)
             _print({"status": state["status"], "contract_sha256": state["contract_sha256"], "state": str(args.state)})
@@ -179,11 +207,18 @@ def main(argv: list[str] | None = None) -> int:
             _print({"status": state["status"], "receipt": loop_receipt(state)})
             return 0
 
+        if args.command == "loop-run":
+            state = run_verifier(_load(args.state), timeout=args.timeout)
+            _write_atomic(args.state, state)
+            _print({"status": state["status"], "receipt": loop_receipt(state)})
+            return 0 if state["status"] == "passed" else 1
+
         if args.command == "loop-check":
             state = _load(args.state)
             validate_loop(state)
+            validate_current_subject(state)
             receipt = loop_receipt(state)
-            validate_loop_receipt(receipt, require_passed=True)
+            validate_loop_receipt(receipt, require_passed=True, require_command=args.require_command)
             if args.receipt:
                 _write_atomic(args.receipt, receipt)
             _print({"passed": True, "receipt": receipt})

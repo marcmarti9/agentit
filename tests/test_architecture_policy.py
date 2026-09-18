@@ -128,20 +128,16 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("references_projected", text)
 
     def test_interview_is_jit_not_mandatory_product_ceremony(self):
-        skill = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8").lower()
-        policy = (ROOT / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md").read_text(
-            encoding="utf-8"
-        ).lower()
-        catalog = (ROOT / "agents" / "catalog.yaml").read_text(encoding="utf-8")
-
-        self.assertIn("ask one question at a time", skill)
-        self.assertIn("guess:", skill)
-        self.assertIn("95% confidence", skill)
-        self.assertIn("when not to use", skill)
-        self.assertIn("interview_one_question_at_a_time: true", catalog)
-        self.assertNotIn("interview_batch_all_current_questions", catalog)
+        # Scope belongs to native Agentit policy, not mutable upstream phrasing.
+        policy = (ROOT / "docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md").read_text().lower()
+        adapter = (ROOT / "skills/using-agent-skills/SKILL.md").read_text().lower()
+        from router.skill_authority import SKILL_AUTHORITY
         self.assertIn("ask the user only for unresolved material decisions", policy)
-        self.assertIn("one focused question at a time", policy)
+        self.assertIn("do not force repeated confirmation or a fixed confidence threshold", policy)
+        self.assertIn("stop asking once the material unknowns are resolved", policy)
+        self.assertIn("question grouping and format from the current task", policy)
+        self.assertIn("do not run a full project lifecycle", adapter)
+        self.assertIn("require a new interview/specification", SKILL_AUTHORITY)
         self.assertNotIn("product-affecting work is interviewed before", policy)
 
     def test_legacy_mcp_helper_is_exact_stack_only(self):
@@ -154,13 +150,18 @@ class ArchitecturePolicyTests(unittest.TestCase):
         using_agentit = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
 
-        for text, src in ((agents, "AGENTS.md"), (using_agentit, "using-agentit"), (task_router, "task-router")):
-            self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", text, f"missing mode declaration in {src}")
-            self.assertIn("FAST MODE — Default for iterative development", text, f"missing FAST MODE in {src}")
-            self.assertIn("iteration speed > exhaustive validation > documentation", text, f"missing priority in {src}")
-            self.assertIn("Do NOT launch subagents for normal implementation tasks", text, f"missing subagent constraint in {src}")
-            self.assertIn("Verification budget", text, f"missing verification budget in {src}")
-            self.assertIn("Treat the user's request literally", text, f"missing scope rule in {src}")
+        # Detailed modes have one canonical owner, rather than requiring three
+        # duplicate paragraphs that contradicted each other in the baseline.
+        for text in (agents, using_agentit):
+            self.assertIn("task-router", text)
+        self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", task_router)
+        self.assertIn("FAST MODE", task_router)
+        self.assertIn("NORMAL MODE", task_router)
+        self.assertIn("DEEP MODE", task_router)
+        self.assertIn("Verification budget", task_router)
+        self.assertIn("Do NOT launch subagents for normal implementation tasks", task_router)
+        self.assertNotIn("iteration speed > exhaustive validation > documentation", agents + using_agentit + task_router)
+
 
 
 if __name__ == "__main__":

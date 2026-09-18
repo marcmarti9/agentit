@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -35,8 +37,15 @@ class WorkerSkillLoaderTests(unittest.TestCase):
             root = Path(tmp)
             private = root / ".agentit" / "profile-skills" / "design-taste-frontend"
             private.mkdir(parents=True)
-            private_body = "# Private Agentit profile skill\n\nUse the enabled project profile.\n"
+            private_body = (Path(__file__).resolve().parents[1] / "skills/design-taste-frontend/SKILL.md").read_text()
             (private / "SKILL.md").write_text(private_body, encoding="utf-8")
+            digest = hashlib.sha256(private_body.encode()).hexdigest()
+            (root / ".agentit/skills-manifest.json").write_text(json.dumps({
+                "schema_version": 1, "skills": {"design-taste-frontend": {
+                    "managed": True, "destination": ".agentit/profile-skills/design-taste-frontend/SKILL.md",
+                    "installed_sha256": digest, "source_sha256": digest,
+                }}
+            }))
 
             skills = load_skill_bodies(["design-taste-frontend"], project_root=root)
             self.assertEqual("project-agentit-profile", skills[0]["source"])

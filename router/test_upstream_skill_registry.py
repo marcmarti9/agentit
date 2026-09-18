@@ -12,10 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 class UpstreamSkillRegistryTests(unittest.TestCase):
     def test_every_canonical_mapping_exists_as_complete_skill_package(self):
         lock = json.loads((ROOT / "skills" / "UPSTREAM_LOCK.json").read_text(encoding="utf-8"))
-        self.assertGreaterEqual(len(lock["mappings"]), 40)
+        self.assertEqual(41, len(lock["mappings"]))
+        meta = next(item for item in lock["mappings"] if item["skill"] == "using-agent-skills")
+        self.assertEqual(meta["destination"], "vendor/agent-skills/using-agent-skills")
+        self.assertNotEqual((ROOT / meta["destination"] / "SKILL.md").read_bytes(),
+                            (ROOT / "skills/using-agent-skills/SKILL.md").read_bytes())
         for item in lock["mappings"]:
-            skill = ROOT / "skills" / item["skill"]
+            skill = ROOT / item.get("destination", "skills/" + item["skill"])
             self.assertTrue((skill / "SKILL.md").is_file(), item["skill"])
+            self.assertTrue(item.get("files"), item["skill"])
 
     def test_retired_compact_aliases_are_absent(self):
         for skill_id in (
@@ -26,6 +31,16 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
             "diagram-and-architecture-visuals",
         ):
             self.assertFalse((ROOT / "skills" / skill_id).exists(), skill_id)
+
+    def test_portable_updater_has_no_unconditional_canonical_deletion(self):
+        # The old textual rm guard is superseded by complete offline refresh tests.
+        wrapper = (ROOT / "scripts/sync-upstream-skills.sh").read_text()
+        self.assertIn('exec python3 "$ROOT/scripts/sync_upstream_skills.py" "$@"', wrapper)
+        self.assertNotIn("rm -rf", wrapper)
+        lock = json.loads((ROOT / "skills/UPSTREAM_LOCK.json").read_text())
+        for skill in ("hallmark", "humanizer", "ui-ux-pro-max", "appllama-app-design-skill", "diagram-design"):
+            item = next(i for i in lock["mappings"] if i["skill"] == skill)
+            self.assertTrue((ROOT / item.get("destination", "skills/" + skill) / "SKILL.md").is_file())
 
     def test_multifile_private_jit_package_includes_every_regular_file(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -56,6 +71,7 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
             "humanizer",
             "stop-slop",
             "i-have-adhd",
+            "constraint-driven-development",
             "hallmark",
             "ui-ux-pro-max",
             "appllama-app-design-skill",

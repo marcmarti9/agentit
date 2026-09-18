@@ -1,0 +1,420 @@
+test_idea_refine_requires_adversarial_review_before_convergence (test_adversarial_idea_review.AdversarialIdeaReviewTests.test_idea_refine_requires_adversarial_review_before_convergence) ... ok
+test_meta_skill_routes_exploration_through_adversarial_gate (test_adversarial_idea_review.AdversarialIdeaReviewTests.test_meta_skill_routes_exploration_through_adversarial_gate) ... ok
+test_skill_has_evidence_and_kill_gate_contracts (test_adversarial_idea_review.AdversarialIdeaReviewTests.test_skill_has_evidence_and_kill_gate_contracts) ... ok
+test_skill_is_available_in_idea_profiles_but_not_core (test_adversarial_idea_review.AdversarialIdeaReviewTests.test_skill_is_available_in_idea_profiles_but_not_core) ... ok
+test_router_defines_development_security_invariant (test_app_security_gate.AppSecurityGateProfileTests.test_router_defines_development_security_invariant) ... ok
+test_security_gate_package_contains_required_contract (test_app_security_gate.AppSecurityGateProfileTests.test_security_gate_package_contains_required_contract) ... ok
+test_security_is_development_scoped_not_global_core (test_app_security_gate.AppSecurityGateProfileTests.test_security_is_development_scoped_not_global_core) ... ok
+test_antigravity_uses_its_dedicated_global_skill_path (test_bootstrap.PortableBootstrapTests.test_antigravity_uses_its_dedicated_global_skill_path) ... ok
+test_apply_installs_runtime_provider_surfaces_and_cli (test_bootstrap.PortableBootstrapTests.test_apply_installs_runtime_provider_surfaces_and_cli) ... ok
+test_bootstrap_manifest_core_matches_profile_catalog (test_bootstrap.PortableBootstrapTests.test_bootstrap_manifest_core_matches_profile_catalog) ... ok
+test_every_provider_projects_exactly_core_but_keeps_private_library (test_bootstrap.PortableBootstrapTests.test_every_provider_projects_exactly_core_but_keeps_private_library) ... ok
+test_existing_file_is_backed_up_and_safe_rollback_restores_it (test_bootstrap.PortableBootstrapTests.test_existing_file_is_backed_up_and_safe_rollback_restores_it) ... ok
+test_legacy_exact_non_core_copy_is_pruned_and_rollback_restores_it (test_bootstrap.PortableBootstrapTests.test_legacy_exact_non_core_copy_is_pruned_and_rollback_restores_it) ... ok
+test_machine_local_settings_come_only_from_explicit_template (test_bootstrap.PortableBootstrapTests.test_machine_local_settings_come_only_from_explicit_template) ... ok
+test_modified_same_id_skill_is_never_auto_pruned (test_bootstrap.PortableBootstrapTests.test_modified_same_id_skill_is_never_auto_pruned) ... ok
+test_plan_is_read_only_and_contains_agent_cli (test_bootstrap.PortableBootstrapTests.test_plan_is_read_only_and_contains_agent_cli) ... ok
+test_provider_paths_match_current_host_surfaces (test_bootstrap.PortableBootstrapTests.test_provider_paths_match_current_host_surfaces) ... ok
+test_rollback_refuses_post_install_user_changes (test_bootstrap.PortableBootstrapTests.test_rollback_refuses_post_install_user_changes) ... ok
+test_all_specialist_capability_references_exist (test_capabilities.CapabilityCatalogTests.test_all_specialist_capability_references_exist) ... ok
+test_mcp_provider_bindings_exist_in_agentit_mcp_catalog (test_capabilities.CapabilityCatalogTests.test_mcp_provider_bindings_exist_in_agentit_mcp_catalog) ... ok
+test_rejects_capability_with_unknown_provider_binding (test_capabilities.CapabilityCatalogTests.test_rejects_capability_with_unknown_provider_binding) ... ok
+test_repository_catalog_is_valid_and_provider_neutral (test_capabilities.CapabilityCatalogTests.test_repository_catalog_is_valid_and_provider_neutral) ... ok
+test_cli_resolves_specialist_with_explicit_inventory (test_capabilities.CapabilityCliTests.test_cli_resolves_specialist_with_explicit_inventory) ... ok
+test_omitted_inventory_is_unknown_not_unavailable (test_capabilities.CapabilityResolutionTests.test_omitted_inventory_is_unknown_not_unavailable) ... ok
+test_reports_missing_required_without_granting_unrelated_providers (test_capabilities.CapabilityResolutionTests.test_reports_missing_required_without_granting_unrelated_providers) ... ok
+test_skips_available_binding_that_is_incompatible_with_host (test_capabilities.CapabilityResolutionTests.test_skips_available_binding_that_is_incompatible_with_host) ... ok
+test_specialist_requirements_merge_and_deduplicate (test_capabilities.CapabilityResolutionTests.test_specialist_requirements_merge_and_deduplicate) ... ok
+test_unknown_host_fails_closed (test_capabilities.CapabilityResolutionTests.test_unknown_host_fails_closed) ... ok
+test_uses_ordered_fallback_when_mcp_is_unavailable (test_capabilities.CapabilityResolutionTests.test_uses_ordered_fallback_when_mcp_is_unavailable) ... ok
+test_artifact_reference_creation_and_uri_resolver (test_context_engines.ContextEnginesTestCase.test_artifact_reference_creation_and_uri_resolver) ... ok
+test_cli_artifact_and_context_commands (test_context_engines.ContextEnginesTestCase.test_cli_artifact_and_context_commands) ... ok
+test_dedup_file_symlink_rejection (test_context_engines.ContextEnginesTestCase.test_dedup_file_symlink_rejection) ... ok
+test_format_aware_tool_filter_adapters (test_context_engines.ContextEnginesTestCase.test_format_aware_tool_filter_adapters) ... ok
+test_orphan_artifact_sidecar_recovery (test_context_engines.ContextEnginesTestCase.test_orphan_artifact_sidecar_recovery) ... ok
+test_persistent_cross_process_deduplication (test_context_engines.ContextEnginesTestCase.test_persistent_cross_process_deduplication) ... ok
+test_protected_content_type_matrix (test_context_engines.ContextEnginesTestCase.test_protected_content_type_matrix) ... ok
+test_session_id_path_traversal_rejection (test_context_engines.ContextEnginesTestCase.test_session_id_path_traversal_rejection) ... ok
+test_sessions_parent_directory_symlink_rejection (test_context_engines.ContextEnginesTestCase.test_sessions_parent_directory_symlink_rejection) ... ok
+test_sha256_tampering_detection (test_context_engines.ContextEnginesTestCase.test_sha256_tampering_detection) ... ok
+test_symlink_component_rejection_in_artifact_resolution (test_context_engines.ContextEnginesTestCase.test_symlink_component_rejection_in_artifact_resolution) ... ok
+test_checkpoint_roundtrip (test_continuity.ContinuityAndProjectSignalTests.test_checkpoint_roundtrip) ... ok
+test_evaluate_done_claims_requires_receipt (test_continuity.ContinuityAndProjectSignalTests.test_evaluate_done_claims_requires_receipt) ... ok
+test_project_signals_detect_python_repo (test_continuity.ContinuityAndProjectSignalTests.test_project_signals_detect_python_repo) ... ok
+test_state_init_and_resume (test_continuity.ContinuityAndProjectSignalTests.test_state_init_and_resume) ... ok
+test_state_init_does_not_invent_semantic_defaults (test_continuity.ContinuityAndProjectSignalTests.test_state_init_does_not_invent_semantic_defaults) ... ok
+test_state_init_persists_explicit_ai_decision_fields (test_continuity.ContinuityAndProjectSignalTests.test_state_init_persists_explicit_ai_decision_fields) ... ok
+test_design_profile_contains_full_craft_stack (test_design_studio.DesignStudioTests.test_design_profile_contains_full_craft_stack) ... ok
+test_design_studio_mcp_stack_includes_figma_and_browser_verification (test_design_studio.DesignStudioTests.test_design_studio_mcp_stack_includes_figma_and_browser_verification) ... ok
+test_figma_uses_official_remote_oauth_shape (test_design_studio.DesignStudioTests.test_figma_uses_official_remote_oauth_shape) ... ok
+test_heavy_design_specialists_do_not_expand_global_core (test_design_studio.DesignStudioTests.test_heavy_design_specialists_do_not_expand_global_core) ... ok
+test_durable_executive_architecture_doc_exists (test_executive_profile.ExecutiveProfileTests.test_durable_executive_architecture_doc_exists) ... ok
+test_every_executive_skill_has_a_body (test_executive_profile.ExecutiveProfileTests.test_every_executive_skill_has_a_body) ... ok
+test_executive_pack_preserves_installation_vs_activation_boundary (test_executive_profile.ExecutiveProfileTests.test_executive_pack_preserves_installation_vs_activation_boundary) ... ok
+test_executive_profile_is_discoverable_but_not_global_core (test_executive_profile.ExecutiveProfileTests.test_executive_profile_is_discoverable_but_not_global_core) ... ok
+test_executive_specialists_reference_real_executive_skills (test_executive_profile.ExecutiveProfileTests.test_executive_specialists_reference_real_executive_skills) ... ok
+test_cycle_is_rejected (test_graph_runtime.GraphRuntimeTests.test_cycle_is_rejected) ... ok
+test_dependency_cannot_be_skipped (test_graph_runtime.GraphRuntimeTests.test_dependency_cannot_be_skipped) ... ok
+test_expected_artifact_is_required (test_graph_runtime.GraphRuntimeTests.test_expected_artifact_is_required) ... ok
+test_fan_out_then_join_readiness (test_graph_runtime.GraphRuntimeTests.test_fan_out_then_join_readiness) ... ok
+test_manually_completed_node_with_pending_dependency_is_rejected (test_graph_runtime.GraphRuntimeTests.test_manually_completed_node_with_pending_dependency_is_rejected) ... ok
+test_overlapping_write_ownership_is_rejected (test_graph_runtime.GraphRuntimeTests.test_overlapping_write_ownership_is_rejected) ... ok
+test_receipt_from_another_node_cannot_complete_target (test_graph_runtime.GraphRuntimeTests.test_receipt_from_another_node_cannot_complete_target) ... ok
+test_same_receipt_cannot_complete_two_nodes_even_when_contract_hash_matches (test_graph_runtime.GraphRuntimeTests.test_same_receipt_cannot_complete_two_nodes_even_when_contract_hash_matches) ... ok
+test_unknown_dependency_is_rejected (test_graph_runtime.GraphRuntimeTests.test_unknown_dependency_is_rejected) ... ok
+test_generated_inventory_records_machine_observations_outside_catalog (test_inventory.LocalInventoryTests.test_generated_inventory_records_machine_observations_outside_catalog) ... ok
+test_inventory_write_does_not_follow_predictable_temporary_symlink (test_inventory.LocalInventoryTests.test_inventory_write_does_not_follow_predictable_temporary_symlink) ... ok
+test_catalog_paths_must_use_portable_roots (test_inventory_registry.InventoryRegistryTests.test_catalog_paths_must_use_portable_roots) ... ok
+test_checked_in_registry_builds_mechanical_inventory (test_inventory_registry.InventoryRegistryTests.test_checked_in_registry_builds_mechanical_inventory) ... ok
+test_duplicate_ids_are_rejected (test_inventory_registry.InventoryRegistryTests.test_duplicate_ids_are_rejected) ... ok
+test_missing_and_malformed_registry_are_rejected (test_inventory_registry.InventoryRegistryTests.test_missing_and_malformed_registry_are_rejected) ... ok
+test_provider_shapes_are_validated (test_inventory_registry.InventoryRegistryTests.test_provider_shapes_are_validated) ... ok
+test_registry_requires_schema_and_entry_list (test_inventory_registry.InventoryRegistryTests.test_registry_requires_schema_and_entry_list) ... ok
+test_symlink_escape_is_rejected (test_inventory_registry.InventoryRegistryTests.test_symlink_escape_is_rejected) ... ok
+test_unknown_state_is_rejected (test_inventory_registry.InventoryRegistryTests.test_unknown_state_is_rejected) ... ok
+test_core_has_bounded_delivery_size (test_jit_adversarial.CatalogRegressionTests.test_core_has_bounded_delivery_size) ... ok
+test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) ... ok
+test_availability_never_becomes_selection (test_jit_adversarial.DeliveryRegressionTests.test_availability_never_becomes_selection) ... ok
+test_intermediate_instructions_reach_worker (test_jit_adversarial.DeliveryRegressionTests.test_intermediate_instructions_reach_worker) ... ok
+test_no_arbitrary_twelve_skill_cap (test_jit_adversarial.DeliveryRegressionTests.test_no_arbitrary_twelve_skill_cap) ... ok
+test_separate_worker_does_not_inherit_previous_selection (test_jit_adversarial.DeliveryRegressionTests.test_separate_worker_does_not_inherit_previous_selection) ... ok
+test_unread_references_do_not_pass_spawn (test_jit_adversarial.DeliveryRegressionTests.test_unread_references_do_not_pass_spawn) ... ok
+test_worker_contains_selected_body_not_just_id (test_jit_adversarial.DeliveryRegressionTests.test_worker_contains_selected_body_not_just_id) ... ok
+test_worker_rejects_missing_or_tampered_body (test_jit_adversarial.DeliveryRegressionTests.test_worker_rejects_missing_or_tampered_body) ... ok
+test_cli_receipt_is_bound_to_explicit_task_and_stage (test_jit_adversarial.LoaderRegressionTests.test_cli_receipt_is_bound_to_explicit_task_and_stage) ... ok
+test_dangling_skill_symlink_rejected (test_jit_adversarial.LoaderRegressionTests.test_dangling_skill_symlink_rejected) ... ok
+test_resources_use_explicit_roots_and_reject_traversal (test_jit_adversarial.LoaderRegressionTests.test_resources_use_explicit_roots_and_reject_traversal) ... ok
+test_symlink_root_rejected (test_jit_adversarial.LoaderRegressionTests.test_symlink_root_rejected) ... ok
+test_unmanaged_cache_does_not_override_harness (test_jit_adversarial.LoaderRegressionTests.test_unmanaged_cache_does_not_override_harness) ... ok
+test_command_contract_rejects_self_report (test_jit_adversarial.VerificationRegressionTests.test_command_contract_rejects_self_report) ... ok
+test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) ... ok
+test_reported_evidence_is_honestly_labelled (test_jit_adversarial.VerificationRegressionTests.test_reported_evidence_is_honestly_labelled) ... ok
+test_all_profile_resolves_every_registered_skill (test_jit_hygiene.JitHygieneTests.test_all_profile_resolves_every_registered_skill) ... ok
+test_core_skill_contains_cold_start_and_minimum_docs_contract (test_jit_hygiene.JitHygieneTests.test_core_skill_contains_cold_start_and_minimum_docs_contract) ... ok
+test_documentation_contract_requires_component_level_understanding (test_jit_hygiene.JitHygieneTests.test_documentation_contract_requires_component_level_understanding) ... ok
+test_global_core_stays_exactly_three_navigation_skills (test_jit_hygiene.JitHygieneTests.test_global_core_stays_exactly_three_navigation_skills) ... ok
+test_mcp_catalog_never_auto_activates (test_jit_hygiene.JitHygieneTests.test_mcp_catalog_never_auto_activates) ... ok
+test_profiles_packs_and_selected_context_remain_distinct (test_jit_hygiene.JitHygieneTests.test_profiles_packs_and_selected_context_remain_distinct) ... ok
+test_graph_requires_observed_command_when_its_contract_says_so (test_jit_integration.JitIntegrationTests.test_graph_requires_observed_command_when_its_contract_says_so) ... ok
+test_real_profile_cache_is_readable_and_tampering_is_rejected (test_jit_integration.JitIntegrationTests.test_real_profile_cache_is_readable_and_tampering_is_rejected) ... ok
+test_separate_processes_deliver_only_their_selected_skill (test_jit_integration.JitIntegrationTests.test_separate_processes_deliver_only_their_selected_skill) ... ok
+test_source_drift_in_cache_is_rejected (test_jit_integration.JitIntegrationTests.test_source_drift_in_cache_is_rejected) ... ok
+test_stale_source_cannot_reuse_command_receipt (test_jit_integration.JitIntegrationTests.test_stale_source_cannot_reuse_command_receipt) ... ok
+test_state_symlink_is_rejected_without_overwriting_target (test_jit_integration.JitIntegrationTests.test_state_symlink_is_rejected_without_overwriting_target) ... ok
+test_verifier_mutating_its_subject_does_not_pass (test_jit_integration.JitIntegrationTests.test_verifier_mutating_its_subject_does_not_pass) ... ok
+test_worker_contains_reference_data_not_just_a_locator (test_jit_integration.JitIntegrationTests.test_worker_contains_reference_data_not_just_a_locator) ... ok
+test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt) ... ok
+test_host_cleanup_revalidates_exact_planned_tree_before_deletion (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_host_cleanup_revalidates_exact_planned_tree_before_deletion) ... ok
+test_private_cleanup_revalidates_hash_immediately_before_removal (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_private_cleanup_revalidates_hash_immediately_before_removal) ... ok
+test_profile_refresh_removes_reference_deleted_from_source_and_manifest (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_profile_refresh_removes_reference_deleted_from_source_and_manifest) ... ok
+test_contract_tampering_is_rejected (test_loop_runtime.LoopRuntimeTests.test_contract_tampering_is_rejected) ... ok
+test_default_budget_allows_one_retry_then_escalates (test_loop_runtime.LoopRuntimeTests.test_default_budget_allows_one_retry_then_escalates) ... ok
+test_non_passed_receipt_cannot_unlock_downstream_work (test_loop_runtime.LoopRuntimeTests.test_non_passed_receipt_cannot_unlock_downstream_work) ... ok
+test_passed_receipt_is_hash_checked (test_loop_runtime.LoopRuntimeTests.test_passed_receipt_is_hash_checked) ... ok
+test_retry_needs_fresh_evidence_or_strategy (test_loop_runtime.LoopRuntimeTests.test_retry_needs_fresh_evidence_or_strategy) ... ok
+test_success_requires_evidence_and_verifier_result (test_loop_runtime.LoopRuntimeTests.test_success_requires_evidence_and_verifier_result) ... ok
+test_catalog_summary (test_mcp_catalog.McpCatalogTestCase.test_catalog_summary) ... ok
+test_cli_list (test_mcp_catalog.McpCatalogTestCase.test_cli_list) ... ok
+test_cli_recommend_named_stack (test_mcp_catalog.McpCatalogTestCase.test_cli_recommend_named_stack) ... ok
+test_cli_recommend_rejects_free_text (test_mcp_catalog.McpCatalogTestCase.test_cli_recommend_rejects_free_text) ... ok
+test_cli_snippet (test_mcp_catalog.McpCatalogTestCase.test_cli_snippet) ... ok
+test_free_text_task_recommendation_is_rejected (test_mcp_catalog.McpCatalogTestCase.test_free_text_task_recommendation_is_rejected) ... ok
+test_load_and_list_core (test_mcp_catalog.McpCatalogTestCase.test_load_and_list_core) ... ok
+test_max_risk_filter (test_mcp_catalog.McpCatalogTestCase.test_max_risk_filter) ... ok
+test_mobile_design_stack_is_opt_in_remote_research (test_mcp_catalog.McpCatalogTestCase.test_mobile_design_stack_is_opt_in_remote_research) ... ok
+test_plan_merges_json (test_mcp_catalog.McpCatalogTestCase.test_plan_merges_json) ... ok
+test_recommend_developer_core (test_mcp_catalog.McpCatalogTestCase.test_recommend_developer_core) ... ok
+test_snippet_claude_text (test_mcp_catalog.McpCatalogTestCase.test_snippet_claude_text) ... ok
+test_snippet_context7_json (test_mcp_catalog.McpCatalogTestCase.test_snippet_context7_json) ... ok
+test_unknown_server (test_mcp_catalog.McpCatalogTestCase.test_unknown_server) ... ok
+test_cli_enable_apply_project_only (test_mcp_runtime.McpRuntimeTestCase.test_cli_enable_apply_project_only) ... ok
+test_cli_enable_stack_rejects_unknown_stack_instead_of_falling_back (test_mcp_runtime.McpRuntimeTestCase.test_cli_enable_stack_rejects_unknown_stack_instead_of_falling_back) ... ok
+test_cli_status (test_mcp_runtime.McpRuntimeTestCase.test_cli_status) ... ok
+test_enable_disable_project_provider (test_mcp_runtime.McpRuntimeTestCase.test_enable_disable_project_provider) ... ok
+test_gateway_recommend_rejects_task_text_contract (test_mcp_runtime.McpRuntimeTestCase.test_gateway_recommend_rejects_task_text_contract) ... ok
+test_gateway_recommend_uses_explicit_stack_id (test_mcp_runtime.McpRuntimeTestCase.test_gateway_recommend_uses_explicit_stack_id) ... ok
+test_gateway_self_test (test_mcp_runtime.McpRuntimeTestCase.test_gateway_self_test) ... ok
+test_gateway_tools_call_status (test_mcp_runtime.McpRuntimeTestCase.test_gateway_tools_call_status) ... ok
+test_risk3_requires_force (test_mcp_runtime.McpRuntimeTestCase.test_risk3_requires_force) ... ok
+test_status_shape (test_mcp_runtime.McpRuntimeTestCase.test_status_shape) ... ok
+test_toml_upsert_via_provider_helpers (test_mcp_runtime.McpRuntimeTestCase.test_toml_upsert_via_provider_helpers) ... ok
+test_mobile_skill_is_opt_in_and_not_core (test_mobile_design.MobileDesignProfileTests.test_mobile_skill_is_opt_in_and_not_core) ... ok
+test_atomic_file_permissions (test_preferences.PreferencesTestCase.test_atomic_file_permissions) ... ok
+test_defaults_load_without_persisted_file (test_preferences.PreferencesTestCase.test_defaults_load_without_persisted_file) ... ok
+test_dotted_key_get_and_set (test_preferences.PreferencesTestCase.test_dotted_key_get_and_set) ... ok
+test_core_profile_is_minimal_and_all_repository_skills_remain_catalogued (test_profiles.ProfileCatalogTests.test_core_profile_is_minimal_and_all_repository_skills_remain_catalogued) ... ok
+test_growth_and_agency_profiles_add_real_skill_bodies (test_profiles.ProfileCatalogTests.test_growth_and_agency_profiles_add_real_skill_bodies) ... ok
+test_unknown_profile_fails_closed (test_profiles.ProfileCatalogTests.test_unknown_profile_fails_closed) ... ok
+test_activate_is_an_enable_alias (test_profiles.ProjectProfileCliTests.test_activate_is_an_enable_alias) ... ok
+test_agency_profile_keeps_distinct_operating_skills_private (test_profiles.ProjectProfileCliTests.test_agency_profile_keeps_distinct_operating_skills_private) ... ok
+test_disable_does_not_remove_unmanaged_or_modified_files (test_profiles.ProjectProfileCliTests.test_disable_does_not_remove_unmanaged_or_modified_files) ... ok
+test_disable_removes_only_unmodified_private_profile_files (test_profiles.ProjectProfileCliTests.test_disable_removes_only_unmodified_private_profile_files) ... ok
+test_enable_is_plan_first_and_apply_keeps_profile_skills_private (test_profiles.ProjectProfileCliTests.test_enable_is_plan_first_and_apply_keeps_profile_skills_private) ... ok
+test_enable_without_profile_name_emits_clean_error (test_profiles.ProjectProfileCliTests.test_enable_without_profile_name_emits_clean_error) ... ok
+test_legacy_agentit_profile_is_migrated_out_of_host_visible_root (test_profiles.ProjectProfileCliTests.test_legacy_agentit_profile_is_migrated_out_of_host_visible_root) ... ok
+test_manifest_symlink_is_rejected_before_installing_project_skills (test_profiles.ProjectProfileCliTests.test_manifest_symlink_is_rejected_before_installing_project_skills) ... ok
+test_matching_preexisting_project_skill_is_not_adopted_or_removed (test_profiles.ProjectProfileCliTests.test_matching_preexisting_project_skill_is_not_adopted_or_removed) ... ok
+test_matching_preexisting_skill_stays_unmanaged_across_profile_overlap (test_profiles.ProjectProfileCliTests.test_matching_preexisting_skill_stays_unmanaged_across_profile_overlap) ... ok
+test_modified_legacy_agentit_profile_fails_closed (test_profiles.ProjectProfileCliTests.test_modified_legacy_agentit_profile_fails_closed) ... ok
+test_profile_cache_refreshes_unmodified_body_when_source_changes (test_profiles.ProjectProfileCliTests.test_profile_cache_refreshes_unmodified_body_when_source_changes) ... ok
+test_architect_orchestrator_lives_in_shared_runtime_for_every_provider (test_provider_neutral_architect_orchestrator.ProviderNeutralArchitectOrchestratorTests.test_architect_orchestrator_lives_in_shared_runtime_for_every_provider) ... ok
+test_legacy_installer_does_not_project_claude_only_semantic_agents (test_provider_neutral_architect_orchestrator.ProviderNeutralArchitectOrchestratorTests.test_legacy_installer_does_not_project_claude_only_semantic_agents) ... ok
+test_no_provider_gets_semantic_architect_roles_by_default (test_provider_neutral_architect_orchestrator.ProviderNeutralArchitectOrchestratorTests.test_no_provider_gets_semantic_architect_roles_by_default) ... ok
+test_provider_global_skill_projection_remains_exactly_core (test_provider_neutral_architect_orchestrator.ProviderNeutralArchitectOrchestratorTests.test_provider_global_skill_projection_remains_exactly_core) ... ok
+test_graph_cli_binds_nodes_to_loop_states_and_advances (test_runtime_cli.RuntimeCLITests.test_graph_cli_binds_nodes_to_loop_states_and_advances) ... ok
+test_graph_cli_rejects_receipt_for_wrong_node (test_runtime_cli.RuntimeCLITests.test_graph_cli_rejects_receipt_for_wrong_node) ... ERROR: loop receipt belongs to a different node contract: b
+ok
+test_loop_cli_persists_and_requires_pass_for_check (test_runtime_cli.RuntimeCLITests.test_loop_cli_persists_and_requires_pass_for_check) ... ERROR: loop receipt is not passed: ready
+ok
+test_direct_state_is_project_local_private (test_scout.ScoutPipelineTestCase.test_direct_state_is_project_local_private) ... ok
+test_reject_roundtrip_stays_project_local (test_scout.ScoutPipelineTestCase.test_reject_roundtrip_stays_project_local) ... ok
+test_scout_add_and_inspect_cli_uses_project_argument (test_scout.ScoutPipelineTestCase.test_scout_add_and_inspect_cli_uses_project_argument) ... ok
+test_scout_status_cli (test_scout.ScoutPipelineTestCase.test_scout_status_cli) ... ok
+test_harness_skill_is_loaded_and_rendered (test_skill_loader.WorkerSkillLoaderTests.test_harness_skill_is_loaded_and_rendered) ... ok
+test_missing_skill_is_rejected (test_skill_loader.WorkerSkillLoaderTests.test_missing_skill_is_rejected) ... ok
+test_private_agentit_profile_cache_precedes_harness_but_not_project_native (test_skill_loader.WorkerSkillLoaderTests.test_private_agentit_profile_cache_precedes_harness_but_not_project_native) ... ok
+test_project_local_skill_wins (test_skill_loader.WorkerSkillLoaderTests.test_project_local_skill_wins) ... ok
+test_design_profile_uses_canonical_impeccable_package (test_skill_packages.SkillPackageTests.test_design_profile_uses_canonical_impeccable_package) ... ok
+test_package_discovery_includes_all_regular_files (test_skill_packages.SkillPackageTests.test_package_discovery_includes_all_regular_files) ... ok
+test_package_discovery_rejects_symlinks (test_skill_packages.SkillPackageTests.test_package_discovery_rejects_symlinks) ... ok
+test_candidates_are_bounded_to_requested_pack (test_skills_cli.JitSkillsCliTests.test_candidates_are_bounded_to_requested_pack) ... ok
+test_cross_pack_candidates_dedupe_by_pack_and_skill (test_skills_cli.JitSkillsCliTests.test_cross_pack_candidates_dedupe_by_pack_and_skill) ... ok
+test_pack_listing_is_metadata_only (test_skills_cli.JitSkillsCliTests.test_pack_listing_is_metadata_only) ... ok
+test_selected_body_is_loaded_only_after_explicit_selection (test_skills_cli.JitSkillsCliTests.test_selected_body_is_loaded_only_after_explicit_selection) ... ok
+test_catalog_has_unique_specialist_ids (test_specialist_agents.SpecialistAgentCatalogTests.test_catalog_has_unique_specialist_ids) ... ok
+test_catalog_skill_references_exist (test_specialist_agents.SpecialistAgentCatalogTests.test_catalog_skill_references_exist) ... ok
+test_continuity_is_private_by_default_and_resumable (test_specialist_agents.SpecialistAgentCatalogTests.test_continuity_is_private_by_default_and_resumable) ... ok
+test_design_specialists_cover_research_direction_tools_delight_and_spatial (test_specialist_agents.SpecialistAgentCatalogTests.test_design_specialists_cover_research_direction_tools_delight_and_spatial) ... ok
+test_interview_uses_canonical_one_question_at_a_time_workflow (test_specialist_agents.SpecialistAgentCatalogTests.test_interview_uses_canonical_one_question_at_a_time_workflow) ... ok
+test_legacy_effort_tier_catalog_is_removed (test_specialist_agents.SpecialistAgentCatalogTests.test_legacy_effort_tier_catalog_is_removed) ... ok
+test_policy_is_provider_neutral_and_degrades_gracefully (test_specialist_agents.SpecialistAgentCatalogTests.test_policy_is_provider_neutral_and_degrades_gracefully) ... ok
+test_policy_preserves_intelligent_optional_delegation (test_specialist_agents.SpecialistAgentCatalogTests.test_policy_preserves_intelligent_optional_delegation) ... ok
+test_pr_first_is_default_but_explicit_override_is_allowed (test_specialist_agents.SpecialistAgentCatalogTests.test_pr_first_is_default_but_explicit_override_is_allowed) ... ok
+test_specialists_have_valid_model_readable_contract (test_specialist_agents.SpecialistAgentCatalogTests.test_specialists_have_valid_model_readable_contract) ... ok
+test_triggers_are_hints_not_programmatic_router (test_specialist_agents.SpecialistAgentCatalogTests.test_triggers_are_hints_not_programmatic_router) ... ok
+test_ui_ux_intelligence_remains_jit_and_discoverable (test_specialist_agents.SpecialistAgentCatalogTests.test_ui_ux_intelligence_remains_jit_and_discoverable) ... ok
+test_addy_shared_reference_manifest_resolves (test_upstream_skill_registry.UpstreamSkillRegistryTests.test_addy_shared_reference_manifest_resolves) ... ok
+test_every_canonical_mapping_exists_as_complete_skill_package (test_upstream_skill_registry.UpstreamSkillRegistryTests.test_every_canonical_mapping_exists_as_complete_skill_package) ... ok
+test_multifile_private_jit_package_includes_every_regular_file (test_upstream_skill_registry.UpstreamSkillRegistryTests.test_multifile_private_jit_package_includes_every_regular_file) ... ok
+test_profiles_resolve_canonical_replacements (test_upstream_skill_registry.UpstreamSkillRegistryTests.test_profiles_resolve_canonical_replacements) ... ok
+test_retired_compact_aliases_are_absent (test_upstream_skill_registry.UpstreamSkillRegistryTests.test_retired_compact_aliases_are_absent) ... ok
+test_agentit_verify_plan_lists_generic_probes_without_parsing_task (test_verify.VerifyCliTests.test_agentit_verify_plan_lists_generic_probes_without_parsing_task) ... ok
+test_apply_runs_secret_script_and_writes_receipt (test_verify.VerifyPlannerTests.test_apply_runs_secret_script_and_writes_receipt) ... ok
+test_detects_python_and_plans_generic_blocking_probes (test_verify.VerifyPlannerTests.test_detects_python_and_plans_generic_blocking_probes) ... ok
+test_explicit_ai_signal_selects_postgres_probe (test_verify.VerifyPlannerTests.test_explicit_ai_signal_selects_postgres_probe) ... ok
+test_free_text_does_not_create_semantic_signals (test_verify.VerifyPlannerTests.test_free_text_does_not_create_semantic_signals) ... ok
+test_plain_pyproject_does_not_imply_pytest (test_verify.VerifyPlannerTests.test_plain_pyproject_does_not_imply_pytest) ... ok
+test_pytest_config_takes_precedence_over_unittest_fallback (test_verify.VerifyPlannerTests.test_pytest_config_takes_precedence_over_unittest_fallback) ... ok
+test_tests_directory_without_pytest_config_uses_unittest (test_verify.VerifyPlannerTests.test_tests_directory_without_pytest_config_uses_unittest) ... ok
+test_unittest_project_does_not_invent_pytest_dependency (test_verify.VerifyPlannerTests.test_unittest_project_does_not_invent_pytest_dependency) ... ok
+test_explicit_auth_signal_reaches_auth_probe (test_verify_cli.VerifyCliTests.test_explicit_auth_signal_reaches_auth_probe) ... ok
+test_repeated_signals_are_supported (test_verify_cli.VerifyCliTests.test_repeated_signals_are_supported) ... ok
+test_task_text_is_not_used_as_semantic_router (test_verify_cli.VerifyCliTests.test_task_text_is_not_used_as_semantic_router) ... ok
+test_cli_build_and_skip_gate (test_worker_context.WorkerContextTests.test_cli_build_and_skip_gate) ... ok
+test_empty_skills_allowed (test_worker_context.WorkerContextTests.test_empty_skills_allowed) ... ok
+test_full_catalog_dump_rejected (test_worker_context.WorkerContextTests.test_full_catalog_dump_rejected) ... ok
+test_instruction_conflict_is_advisory_metadata (test_worker_context.WorkerContextTests.test_instruction_conflict_is_advisory_metadata) ... ok
+test_new_contract_projects_packs_references_without_legacy_tiers (test_worker_context.WorkerContextTests.test_new_contract_projects_packs_references_without_legacy_tiers) ... ok
+test_preferences_drop_secret_shaped_values (test_worker_context.WorkerContextTests.test_preferences_drop_secret_shaped_values) ... ok
+test_project_instructions_and_selected_skills_survive_projection (test_worker_context.WorkerContextTests.test_project_instructions_and_selected_skills_survive_projection) ... ok
+test_project_instructions_and_subdir_scope_are_projected (test_worker_context.WorkerContextTests.test_project_instructions_and_subdir_scope_are_projected) ... ok
+test_reviewer_is_read_only (test_worker_context.WorkerContextTests.test_reviewer_is_read_only) ... ok
+test_secret_shaped_artifact_rejected (test_worker_context.WorkerContextTests.test_secret_shaped_artifact_rejected) ... ok
+test_selected_skills_are_bounded_and_unknown_skill_fails_closed (test_worker_context.WorkerContextTests.test_selected_skills_are_bounded_and_unknown_skill_fails_closed) ... ok
+test_skip_project_instruction_projection_fails (test_worker_context.WorkerContextTests.test_skip_project_instruction_projection_fails) ... ok
+test_symlink_project_root_rejected (test_worker_context.WorkerContextTests.test_symlink_project_root_rejected) ... ok
+test_tampered_permissions_rejected (test_worker_context.WorkerContextTests.test_tampered_permissions_rejected) ... ok
+test_unresolved_or_uninventoried_capability_rejects_spawn (test_worker_context.WorkerContextTests.test_unresolved_or_uninventoried_capability_rejects_spawn) ... ok
+test_worker_projects_specialist_capabilities_least_privilege (test_worker_context.WorkerContextTests.test_worker_projects_specialist_capabilities_least_privilege) ... ok
+
+----------------------------------------------------------------------
+Ran 226 tests in 30.699s
+
+OK
+{
+  "status": "ready",
+  "contract_sha256": "0ebb6ec486fe17314e0f797b1bdfaa06472d175b691e0d97fd864055f1a70d65",
+  "state": "/tmp/tmpq8m6bb47/research-loop.json"
+}
+{
+  "status": "ready",
+  "contract_sha256": "d40027bbcf019aebe46a21bce040abe1aac27e6a11ba9073377a6dacc314d1da",
+  "state": "/tmp/tmpq8m6bb47/implement-loop.json"
+}
+{
+  "status": "running",
+  "ready": [
+    "research"
+  ],
+  "contract_sha256": "d31eda4a2e3bedc8214fe5d431ea79611b9ef4b47ec52e23be6b3440a2e2f829",
+  "state": "/tmp/tmpq8m6bb47/graph.json"
+}
+{
+  "status": "passed",
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "0ebb6ec486fe17314e0f797b1bdfaa06472d175b691e0d97fd864055f1a70d65",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "evidence review",
+    "stop_condition": "evidence exists",
+    "last_evidence_sha256": "31eaacc8bcbb672c1a3d60c2510cbbb8d0c662d8bc01637ba9e49fea804d245f",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "f91b6fa3f8a13c27e82ed50fae182510b2631783b8ea0b744fe1cdc0ac810157"
+  }
+}
+{
+  "passed": true,
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "0ebb6ec486fe17314e0f797b1bdfaa06472d175b691e0d97fd864055f1a70d65",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "evidence review",
+    "stop_condition": "evidence exists",
+    "last_evidence_sha256": "31eaacc8bcbb672c1a3d60c2510cbbb8d0c662d8bc01637ba9e49fea804d245f",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "f91b6fa3f8a13c27e82ed50fae182510b2631783b8ea0b744fe1cdc0ac810157"
+  }
+}
+{
+  "status": "running",
+  "ready": [
+    "implement"
+  ],
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.graph.receipt",
+    "contract_sha256": "d31eda4a2e3bedc8214fe5d431ea79611b9ef4b47ec52e23be6b3440a2e2f829",
+    "status": "running",
+    "nodes": {
+      "research": {
+        "status": "completed",
+        "loop_receipt_sha256": "f91b6fa3f8a13c27e82ed50fae182510b2631783b8ea0b744fe1cdc0ac810157",
+        "artifacts": []
+      },
+      "implement": {
+        "status": "pending",
+        "loop_receipt_sha256": null,
+        "artifacts": []
+      }
+    },
+    "receipt_sha256": "0d6787d05f297ba93de8afe149ec4b9e4e2785d962febba487df04f6a4c56604"
+  }
+}
+{
+  "status": "ready",
+  "contract_sha256": "c3b8f87320402dbe0de799da58dd013668af37503882710a35d8be0f61fe841f",
+  "state": "/tmp/tmpd8vbig8r/a-loop.json"
+}
+{
+  "status": "ready",
+  "contract_sha256": "e55733c9bd05d8a1f15e2fc73e458581b228478eafa0176ac1426cf1e4ad3f8e",
+  "state": "/tmp/tmpd8vbig8r/b-loop.json"
+}
+{
+  "status": "running",
+  "ready": [
+    "a",
+    "b"
+  ],
+  "contract_sha256": "2bb3ab104f2b1fc427087483c84eb9d73e5dbba8d346c5686f64a4801b96c3fc",
+  "state": "/tmp/tmpd8vbig8r/graph.json"
+}
+{
+  "status": "passed",
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "c3b8f87320402dbe0de799da58dd013668af37503882710a35d8be0f61fe841f",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "check a",
+    "stop_condition": "a good",
+    "last_evidence_sha256": "915cfe442a27bf046ccad1fcfc8d0a56da921784787ac59e35d780306abc5588",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "4dfa4d5951dbaa6041c6a757c6df3e7b6a7feb74775d403553f3ba4139ee5871"
+  }
+}
+{
+  "passed": true,
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "c3b8f87320402dbe0de799da58dd013668af37503882710a35d8be0f61fe841f",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "check a",
+    "stop_condition": "a good",
+    "last_evidence_sha256": "915cfe442a27bf046ccad1fcfc8d0a56da921784787ac59e35d780306abc5588",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "4dfa4d5951dbaa6041c6a757c6df3e7b6a7feb74775d403553f3ba4139ee5871"
+  }
+}
+{
+  "status": "ready",
+  "contract_sha256": "cc457ae5ce9d0a9b533ef2465f03d1bb1bd3151ccc3013a4a41e1b86dbacbe14",
+  "state": "/tmp/tmp0z61tsq0/loop.json"
+}
+{
+  "status": "passed",
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "cc457ae5ce9d0a9b533ef2465f03d1bb1bd3151ccc3013a4a41e1b86dbacbe14",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "pytest -q",
+    "stop_condition": "tests pass",
+    "last_evidence_sha256": "fd31541eef0d867c1c07cc29518407d1f77643e96a6c8853de8ad6f6c3d7f92f",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "b04b81a3e5004dddc00e1d4ea5e2adfa09f961de2a4a93c64cfbe6e1a93ff939"
+  }
+}
+{
+  "passed": true,
+  "receipt": {
+    "schema_version": 1,
+    "kind": "agentit.loop.receipt",
+    "contract_sha256": "cc457ae5ce9d0a9b533ef2465f03d1bb1bd3151ccc3013a4a41e1b86dbacbe14",
+    "status": "passed",
+    "attempts_used": 1,
+    "max_attempts": 2,
+    "verifier": "pytest -q",
+    "stop_condition": "tests pass",
+    "last_evidence_sha256": "fd31541eef0d867c1c07cc29518407d1f77643e96a6c8853de8ad6f6c3d7f92f",
+    "artifacts": [],
+    "escalation_reason": null,
+    "evidence_source": "reported",
+    "execution": null,
+    "evidence_requirement": "reported",
+    "receipt_sha256": "b04b81a3e5004dddc00e1d4ea5e2adfa09f961de2a4a93c64cfbe6e1a93ff939"
+  }
+}

@@ -13,6 +13,14 @@ from typing import Sequence
 def main(argv: Sequence[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
 
+    if args and args[0] == "runtime":
+        from router.runtime_cli import main as runtime_main
+        return runtime_main(args[1:])
+
+    if args and args[0] == "worker":
+        from router.worker_context import main as worker_main
+        return worker_main(args[1:])
+
     if args and args[0] == "verify":
         from router.verify_cli import main as verify_main
 

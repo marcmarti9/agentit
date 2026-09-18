@@ -1,0 +1,475 @@
+test_core_has_bounded_delivery_size (test_jit_adversarial.CatalogRegressionTests.test_core_has_bounded_delivery_size) ... FAIL
+test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) ... 
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='adversarial-idea-review') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='app-security-gate') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='appllama-usage') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='find-skills') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='i-have-adhd') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='local-model-routing') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='local-seo-playbook') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='long-horizon-recovery') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='scrollytelling-web') ... ERROR
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='spec-kit-workflow') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='stop-slop') ... FAIL
+  test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='threejs-product-storytelling') ... ERROR
+test_availability_never_becomes_selection (test_jit_adversarial.DeliveryRegressionTests.test_availability_never_becomes_selection) ... FAIL
+test_intermediate_instructions_reach_worker (test_jit_adversarial.DeliveryRegressionTests.test_intermediate_instructions_reach_worker) ... FAIL
+test_no_arbitrary_twelve_skill_cap (test_jit_adversarial.DeliveryRegressionTests.test_no_arbitrary_twelve_skill_cap) ... ERROR
+test_separate_worker_does_not_inherit_previous_selection (test_jit_adversarial.DeliveryRegressionTests.test_separate_worker_does_not_inherit_previous_selection) ... ok
+test_unread_references_do_not_pass_spawn (test_jit_adversarial.DeliveryRegressionTests.test_unread_references_do_not_pass_spawn) ... FAIL
+test_worker_contains_selected_body_not_just_id (test_jit_adversarial.DeliveryRegressionTests.test_worker_contains_selected_body_not_just_id) ... FAIL
+test_worker_rejects_missing_or_tampered_body (test_jit_adversarial.DeliveryRegressionTests.test_worker_rejects_missing_or_tampered_body) ... FAIL
+test_cli_receipt_is_bound_to_explicit_task_and_stage (test_jit_adversarial.LoaderRegressionTests.test_cli_receipt_is_bound_to_explicit_task_and_stage) ... FAIL
+test_dangling_skill_symlink_rejected (test_jit_adversarial.LoaderRegressionTests.test_dangling_skill_symlink_rejected) ... FAIL
+test_resources_use_explicit_roots_and_reject_traversal (test_jit_adversarial.LoaderRegressionTests.test_resources_use_explicit_roots_and_reject_traversal) ... ERROR
+test_symlink_root_rejected (test_jit_adversarial.LoaderRegressionTests.test_symlink_root_rejected) ... FAIL
+test_unmanaged_cache_does_not_override_harness (test_jit_adversarial.LoaderRegressionTests.test_unmanaged_cache_does_not_override_harness) ... FAIL
+test_command_contract_rejects_self_report (test_jit_adversarial.VerificationRegressionTests.test_command_contract_rejects_self_report) ... ERROR
+test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) ... 
+  test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='print("observed")') ... ERROR
+  test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='raise SystemExit(7)') ... ERROR
+  test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='import time;time.sleep(5)') ... ERROR
+test_reported_evidence_is_honestly_labelled (test_jit_adversarial.VerificationRegressionTests.test_reported_evidence_is_honestly_labelled) ... ERROR
+test_all_profile_resolves_every_registered_skill (test_jit_hygiene.JitHygieneTests.test_all_profile_resolves_every_registered_skill) ... ok
+test_core_skill_contains_cold_start_and_minimum_docs_contract (test_jit_hygiene.JitHygieneTests.test_core_skill_contains_cold_start_and_minimum_docs_contract) ... ok
+test_documentation_contract_requires_component_level_understanding (test_jit_hygiene.JitHygieneTests.test_documentation_contract_requires_component_level_understanding) ... ok
+test_global_core_stays_exactly_three_navigation_skills (test_jit_hygiene.JitHygieneTests.test_global_core_stays_exactly_three_navigation_skills) ... ok
+test_mcp_catalog_never_auto_activates (test_jit_hygiene.JitHygieneTests.test_mcp_catalog_never_auto_activates) ... ok
+test_profiles_packs_and_selected_context_remain_distinct (test_jit_hygiene.JitHygieneTests.test_profiles_packs_and_selected_context_remain_distinct) ... ok
+test_graph_requires_observed_command_when_its_contract_says_so (test_jit_integration.JitIntegrationTests.test_graph_requires_observed_command_when_its_contract_says_so) ... FAIL
+test_real_profile_cache_is_readable_and_tampering_is_rejected (test_jit_integration.JitIntegrationTests.test_real_profile_cache_is_readable_and_tampering_is_rejected) ... FAIL
+test_separate_processes_deliver_only_their_selected_skill (test_jit_integration.JitIntegrationTests.test_separate_processes_deliver_only_their_selected_skill) ... FAIL
+test_source_drift_in_cache_is_rejected (test_jit_integration.JitIntegrationTests.test_source_drift_in_cache_is_rejected) ... FAIL
+test_stale_source_cannot_reuse_command_receipt (test_jit_integration.JitIntegrationTests.test_stale_source_cannot_reuse_command_receipt) ... ERROR
+test_state_symlink_is_rejected_without_overwriting_target (test_jit_integration.JitIntegrationTests.test_state_symlink_is_rejected_without_overwriting_target) ... ok
+test_verifier_mutating_its_subject_does_not_pass (test_jit_integration.JitIntegrationTests.test_verifier_mutating_its_subject_does_not_pass) ... ERROR
+test_worker_contains_reference_data_not_just_a_locator (test_jit_integration.JitIntegrationTests.test_worker_contains_reference_data_not_just_a_locator) ... FAIL
+test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt) ... ok
+test_host_cleanup_revalidates_exact_planned_tree_before_deletion (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_host_cleanup_revalidates_exact_planned_tree_before_deletion) ... ok
+test_private_cleanup_revalidates_hash_immediately_before_removal (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_private_cleanup_revalidates_hash_immediately_before_removal) ... ok
+test_profile_refresh_removes_reference_deleted_from_source_and_manifest (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_profile_refresh_removes_reference_deleted_from_source_and_manifest) ... ok
+
+======================================================================
+ERROR: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='scrollytelling-web')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 112, in test_every_skill_has_valid_discoverable_metadata
+    meta=yaml.safe_load(path.read_text().split('---',2)[1])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/__init__.py", line 125, in safe_load
+    return load(stream, SafeLoader)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/__init__.py", line 81, in load
+    return loader.get_single_data()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 36, in get_single_node
+    document = self.compose_document()
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 127, in compose_mapping_node
+    while not self.check_event(MappingEndEvent):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+                         ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/parser.py", line 428, in parse_block_mapping_key
+    if self.check_token(KeyToken):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 116, in check_token
+    self.fetch_more_tokens()
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 223, in fetch_more_tokens
+    return self.fetch_value()
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 577, in fetch_value
+    raise ScannerError(None, None,
+yaml.scanner.ScannerError: mapping values are not allowed here
+  in "<unicode string>", line 3, column 73:
+     ... tic scroll-driven web narratives: pinned scenes, scrubbed timeli ... 
+                                         ^
+
+======================================================================
+ERROR: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='threejs-product-storytelling')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 112, in test_every_skill_has_valid_discoverable_metadata
+    meta=yaml.safe_load(path.read_text().split('---',2)[1])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/__init__.py", line 125, in safe_load
+    return load(stream, SafeLoader)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/__init__.py", line 81, in load
+    return loader.get_single_data()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 36, in get_single_node
+    document = self.compose_document()
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/composer.py", line 127, in compose_mapping_node
+    while not self.check_event(MappingEndEvent):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+                         ^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/parser.py", line 428, in parse_block_mapping_key
+    if self.check_token(KeyToken):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 116, in check_token
+    self.fetch_more_tokens()
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 223, in fetch_more_tokens
+    return self.fetch_value()
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/yaml/scanner.py", line 577, in fetch_value
+    raise ScannerError(None, None,
+yaml.scanner.ScannerError: mapping values are not allowed here
+  in "<unicode string>", line 3, column 93:
+     ... sualization for web storytelling: GLB/glTF scene structure, expl ... 
+                                         ^
+
+======================================================================
+ERROR: test_no_arbitrary_twelve_skill_cap (test_jit_adversarial.DeliveryRegressionTests.test_no_arbitrary_twelve_skill_cap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 59, in test_no_arbitrary_twelve_skill_cap
+    p=worker_context.build_and_validate(worker_context.WorkerTaskSpec(objective='Explicitly compare 13 short procedures',skills=names),project_root=root)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/baseline-red/router/worker_context.py", line 694, in build_and_validate
+    validate_for_spawn(
+  File "/home/runner/work/_temp/baseline-red/router/worker_context.py", line 550, in validate_for_spawn
+    raise WorkerContextError(
+router.worker_context.WorkerContextError: spawn rejected: 13 skills projected exceeds max_skills=12
+
+======================================================================
+ERROR: test_resources_use_explicit_roots_and_reject_traversal (test_jit_adversarial.LoaderRegressionTests.test_resources_use_explicit_roots_and_reject_traversal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 93, in test_resources_use_explicit_roots_and_reject_traversal
+    resources=skill_loader.load_reference_bodies(['skill:test-procedure/references/one.md'],project_root=root)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'router.skill_loader' has no attribute 'load_reference_bodies'
+
+======================================================================
+ERROR: test_command_contract_rejects_self_report (test_jit_adversarial.VerificationRegressionTests.test_command_contract_rejects_self_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 125, in test_command_contract_rejects_self_report
+    loop=loop_runtime.new_loop(goal='Test',verifier='python check',stop_condition='zero',verifier_argv=[sys.executable,'-c','pass'],verifier_cwd=str(ROOT))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+ERROR: test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='print("observed")')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 132, in test_real_command_pass_failure_and_timeout
+    loop=loop_runtime.new_loop(goal='Test',verifier='execute fixture',stop_condition='zero',verifier_argv=[sys.executable,'-c',code],verifier_cwd=tmp)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+ERROR: test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='raise SystemExit(7)')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 132, in test_real_command_pass_failure_and_timeout
+    loop=loop_runtime.new_loop(goal='Test',verifier='execute fixture',stop_condition='zero',verifier_argv=[sys.executable,'-c',code],verifier_cwd=tmp)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+ERROR: test_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) (code='import time;time.sleep(5)')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 132, in test_real_command_pass_failure_and_timeout
+    loop=loop_runtime.new_loop(goal='Test',verifier='execute fixture',stop_condition='zero',verifier_argv=[sys.executable,'-c',code],verifier_cwd=tmp)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+ERROR: test_reported_evidence_is_honestly_labelled (test_jit_adversarial.VerificationRegressionTests.test_reported_evidence_is_honestly_labelled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 142, in test_reported_evidence_is_honestly_labelled
+    self.assertEqual('reported',receipt['evidence_source'])
+                                ~~~~~~~^^^^^^^^^^^^^^^^^^^
+KeyError: 'evidence_source'
+
+======================================================================
+ERROR: test_stale_source_cannot_reuse_command_receipt (test_jit_integration.JitIntegrationTests.test_stale_source_cannot_reuse_command_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 81, in test_stale_source_cannot_reuse_command_receipt
+    loop = loop_runtime.new_loop(goal='verify source', verifier='fixture', stop_condition='zero',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+ERROR: test_verifier_mutating_its_subject_does_not_pass (test_jit_integration.JitIntegrationTests.test_verifier_mutating_its_subject_does_not_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 92, in test_verifier_mutating_its_subject_does_not_pass
+    loop = loop_runtime.new_loop(goal='verify', verifier='mutating fixture', stop_condition='unchanged',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: new_loop() got an unexpected keyword argument 'verifier_argv'
+
+======================================================================
+FAIL: test_core_has_bounded_delivery_size (test_jit_adversarial.CatalogRegressionTests.test_core_has_bounded_delivery_size)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 121, in test_core_has_bounded_delivery_size
+    self.assertLessEqual(total,16000)
+AssertionError: 41481 not less than or equal to 16000
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='adversarial-idea-review')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'adversarial-idea-review' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='app-security-gate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'app-security-gate' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='appllama-usage')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'appllama-usage' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='find-skills')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'find-skills' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='i-have-adhd')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'i-have-adhd' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='local-model-routing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'local-model-routing' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='local-seo-playbook')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'local-seo-playbook' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='long-horizon-recovery')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'long-horizon-recovery' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='spec-kit-workflow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'spec-kit-workflow' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) (skill='stop-slop')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 115, in test_every_skill_has_valid_discoverable_metadata
+    self.assertIn(path.parent.name,core|covered)
+AssertionError: 'stop-slop' not found in {'frontend-ui-engineering', 'ui-ux-pro-max', 'creative-tool-scout', 'executive-strategy', 'executive-legal', 'verification-gauntlet', 'gsap-scrolltrigger', 'executive-finance', 'reference-intelligence', 'api-and-interface-design', 'threejs-spatial-experiences', 'executive-marketing', 'incremental-implementation', 'executive-orchestration', 'executive-board', 'task-router', 'executive-product', 'emil-design-eng', 'visual-storytelling-director', 'code-review-and-quality', 'test-driven-development', 'marketing-and-growth', 'deprecation-and-migration', 'design-md-workflow', 'design-inspiration-research', 'observability-and-instrumentation', 'specialist-agent-routing', 'using-agent-skills', 'source-driven-development', 'documentation-and-adrs', 'spec-driven-development', 'security-and-hardening', 'supabase-postgres-best-practices', 'diagram-design', 'humanizer', 'figma-design-workflow', 'mcp-tooling-fit', 'shipping-and-launch', 'executive-chief-of-staff', 'debugging-and-error-recovery', 'git-workflow-and-versioning', 'executive-operations', 'code-simplification', 'hallmark', 'design-taste-frontend', 'interview-me', 'architect-orchestrator', 'executive-people', 'verification-before-completion', 'doubt-driven-development', 'gsap-performance', 'performance-optimization', 'appllama-app-design-skill', 'browser-testing-with-devtools', 'planning-and-task-breakdown', 'creative-web-experiences', 'scrollytelling-web', 'context-engineering', 'delight-and-whimsy', 'threejs-product-storytelling', 'impeccable', 'design-trend-researcher', 'using-agentit', 'ci-cd-and-automation', 'idea-refine'}
+
+======================================================================
+FAIL: test_availability_never_becomes_selection (test_jit_adversarial.DeliveryRegressionTests.test_availability_never_becomes_selection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 46, in test_availability_never_becomes_selection
+    self.assertEqual([],result)
+AssertionError: Lists differ: [] != ['unselected']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'unselected'
+
+- []
++ ['unselected']
+
+======================================================================
+FAIL: test_intermediate_instructions_reach_worker (test_jit_adversarial.DeliveryRegressionTests.test_intermediate_instructions_reach_worker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 53, in test_intermediate_instructions_reach_worker
+    self.assertEqual(['AGENTS.md','packages/AGENTS.md','packages/web/AGENTS.md'],p['worker_context']['project_instruction_paths'])
+AssertionError: Lists differ: ['AGENTS.md', 'packages/AGENTS.md', 'packages/web/AGENTS.md'] != ['AGENTS.md', 'packages/web/AGENTS.md']
+
+First differing element 1:
+'packages/AGENTS.md'
+'packages/web/AGENTS.md'
+
+First list contains 1 additional elements.
+First extra element 2:
+'packages/web/AGENTS.md'
+
+- ['AGENTS.md', 'packages/AGENTS.md', 'packages/web/AGENTS.md']
+?              ----------------------
+
++ ['AGENTS.md', 'packages/web/AGENTS.md']
+
+======================================================================
+FAIL: test_unread_references_do_not_pass_spawn (test_jit_adversarial.DeliveryRegressionTests.test_unread_references_do_not_pass_spawn)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 65, in test_unread_references_do_not_pass_spawn
+    with self.assertRaises(worker_context.WorkerContextError): worker_context.validate_for_spawn(p)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: WorkerContextError not raised
+
+======================================================================
+FAIL: test_worker_contains_selected_body_not_just_id (test_jit_adversarial.DeliveryRegressionTests.test_worker_contains_selected_body_not_just_id)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 32, in test_worker_contains_selected_body_not_just_id
+    self.assertIn(body.read_text(),worker_context.render_worker_prompt(p))
+AssertionError: 'UNIQUE_PROCEDURE_749: preserve the audit sentinel.' not found in '# Worker Context Contract\n\nYou are a delegated worker. You do not speak to the user.\nObey the precedence rule: safety > explicit user instruction > project instruction > preferences > defaults.\n\n## Role\nimplementer\n## Risk\nRISK_2\n## Objective\nReview sentinel\n## Constraints (mandatory)\n- no commits\n- no pushes\n- no external changes\n- no dependency changes\n## Project instructions\n(none found at project root or work_subdir)\n## Active skills for this task (only these; not the full catalog)\n- test-procedure\n## Capability envelope (least privilege)\n- provider inventory required before execution: none\n\n## Forbidden\n- Silently dropping project instructions\n- Loading every global skill or whole pack by default\n- Forwarding secrets unrelated to the task\n- Commits, pushes, or external changes unless explicitly authorized\n\n## Return receipt\nresult; files/artifacts; verification evidence; risks; stop reason.\n'
+
+======================================================================
+FAIL: test_worker_rejects_missing_or_tampered_body (test_jit_adversarial.DeliveryRegressionTests.test_worker_rejects_missing_or_tampered_body)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 40, in test_worker_rejects_missing_or_tampered_body
+    with self.assertRaises(worker_context.WorkerContextError): worker_context.validate_for_spawn(stripped)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: WorkerContextError not raised
+
+======================================================================
+FAIL: test_cli_receipt_is_bound_to_explicit_task_and_stage (test_jit_adversarial.LoaderRegressionTests.test_cli_receipt_is_bound_to_explicit_task_and_stage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 101, in test_cli_receipt_is_bound_to_explicit_task_and_stage
+    self.assertEqual(0,result.returncode,result.stderr)
+AssertionError: 0 != 2 : usage: agentit skills [-h] {packs,candidates,show} ...
+agentit skills: error: unrecognized arguments: --task-id audit-749 --stage implementation --receipt
+
+
+======================================================================
+FAIL: test_dangling_skill_symlink_rejected (test_jit_adversarial.LoaderRegressionTests.test_dangling_skill_symlink_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 83, in test_dangling_skill_symlink_rejected
+    with self.assertRaises(skill_loader.SkillLoadError): skill_loader.load_skill_bodies(['task-router'],project_root=root)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_symlink_root_rejected (test_jit_adversarial.LoaderRegressionTests.test_symlink_root_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 78, in test_symlink_root_rejected
+    with self.assertRaises(skill_loader.SkillLoadError): skill_loader.load_skill_bodies(['task-router'],project_root=p/'link')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_unmanaged_cache_does_not_override_harness (test_jit_adversarial.LoaderRegressionTests.test_unmanaged_cache_does_not_override_harness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_adversarial.py", line 88, in test_unmanaged_cache_does_not_override_harness
+    with self.assertRaises(skill_loader.SkillLoadError): skill_loader.load_skill_bodies(['task-router'],project_root=root)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_graph_requires_observed_command_when_its_contract_says_so (test_jit_integration.JitIntegrationTests.test_graph_requires_observed_command_when_its_contract_says_so)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 106, in test_graph_requires_observed_command_when_its_contract_says_so
+    with self.assertRaises((graph_runtime.GraphRuntimeError, loop_runtime.LoopRuntimeError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (<class 'router.graph_runtime.GraphRuntimeError'>, <class 'router.loop_runtime.LoopRuntimeError'>) not raised
+
+======================================================================
+FAIL: test_real_profile_cache_is_readable_and_tampering_is_rejected (test_jit_integration.JitIntegrationTests.test_real_profile_cache_is_readable_and_tampering_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 49, in test_real_profile_cache_is_readable_and_tampering_is_rejected
+    with self.assertRaisesRegex(skill_loader.SkillLoadError, 'hash mismatch'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_separate_processes_deliver_only_their_selected_skill (test_jit_integration.JitIntegrationTests.test_separate_processes_deliver_only_their_selected_skill)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 33, in test_separate_processes_deliver_only_their_selected_skill
+    self.assertEqual(0, first.returncode, first.stderr)
+AssertionError: 0 != 2 : usage: agentit [-h] [--repo-root REPO_ROOT] [--catalog CATALOG]
+               [--project PROJECT] [--profile PROFILE]
+               [--format {ids,json,text}] [--apply] [--session SESSION]
+               [--description DESCRIPTION] [--lines LINES] [--reason REASON]
+               [--provider {claude,cursor,codex,json}]
+               [--tier {core,recommended,situational}] [--category CATEGORY]
+               [--max-risk {RISK_1,RISK_2,RISK_3,RISK_4}]
+               [--providers PROVIDERS] [--force] [--host HOST]
+               [--available AVAILABLE] [--required REQUIRED]
+               [--preferred PREFERRED] [--specialist SPECIALIST]
+               [{enable,activate,disable,status,artifact,context,scout,worker,mcp,verify,continuity,capabilities}]
+               [subcommand] [target] [extra_arg]
+agentit: error: unrecognized arguments: --objective --skill
+
+
+======================================================================
+FAIL: test_source_drift_in_cache_is_rejected (test_jit_integration.JitIntegrationTests.test_source_drift_in_cache_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 65, in test_source_drift_in_cache_is_rejected
+    with self.assertRaisesRegex(skill_loader.SkillLoadError, 'source is stale'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_worker_contains_reference_data_not_just_a_locator (test_jit_integration.JitIntegrationTests.test_worker_contains_reference_data_not_just_a_locator)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/baseline-red/router/test_jit_integration.py", line 73, in test_worker_contains_reference_data_not_just_a_locator
+    self.assertIn('EVIDENCE_SENTINEL_812', worker_context.render_worker_prompt(payload))
+AssertionError: 'EVIDENCE_SENTINEL_812' not found in '# Worker Context Contract\n\nYou are a delegated worker. You do not speak to the user.\nObey the precedence rule: safety > explicit user instruction > project instruction > preferences > defaults.\n\n## Role\nimplementer\n## Risk\nRISK_2\n## Objective\nRead evidence\n## Constraints (mandatory)\n- no commits\n- no pushes\n- no external changes\n- no dependency changes\n## Project instructions\n(none found at project root or work_subdir)\n## Active skills for this task (only these; not the full catalog)\n- (none projected for this task)\n## Selected references\n- project:proof.md\n## Capability envelope (least privilege)\n- provider inventory required before execution: none\n\n## Forbidden\n- Silently dropping project instructions\n- Loading every global skill or whole pack by default\n- Forwarding secrets unrelated to the task\n- Commits, pushes, or external changes unless explicitly authorized\n\n## Return receipt\nresult; files/artifacts; verification evidence; risks; stop reason.\n'
+
+----------------------------------------------------------------------
+Ran 35 tests in 1.213s
+
+FAILED (failures=25, errors=11)

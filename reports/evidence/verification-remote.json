@@ -1,0 +1,15 @@
+{
+  "repository": "marcmarti9/agentit",
+  "canonical_pr": 54,
+  "baseline_commit": "bf880fd7e04cb541eff48527ad9b54bf4bf0270c",
+  "seo_commit_absorbed_from_pr53": "3bee47f726baa8e77bf9e0229edd32b2e4a7f12c",
+  "previous_verified_commit": "ac4f74e5c5f25e722e3a560535f2ad4302cd4dae",
+  "baseline_run_id": 35371883907,
+  "baseline_artifact_id": 10558103335,
+  "final_ci_run_id": 35377988115,
+  "final_evidence_run_id": 35377988111,
+  "final_evidence_artifact_id": 10560429753,
+  "materialization_run_id": 35387352228,
+  "native_model_evaluation": "not_run",
+  "independent_model_review": "not_run"
+}

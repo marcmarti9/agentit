@@ -142,3 +142,13 @@ Load only the task/stage skills the primary AI selected. A skill ID in a catalog
 - hardcoded local runtime paths;
 - unbounded correction loops;
 - completion claims without the required fresh verifier/receipt.
+
+
+## Evidence boundary
+
+For executable acceptance use a command-bound loop (`--verifier-argv`, optional
+source `--subject`, then `loop-run` and `loop-check --require-command`). A manually
+reported passing result is not observed execution. Worker schema 3 must deliver
+actual selected bodies and material source contents. Capability envelopes and
+worker JSON are not host sandboxing or independent model invocations. See
+`repo:docs/RUNTIME_ENGINEERING.md` and `repo:docs/JIT_SKILL_LOADING.md`.

@@ -1,0 +1,2583 @@
+{
+  "base": "bf880fd7e04cb541eff48527ad9b54bf4bf0270c",
+  "code_commit": "2682d29c4e3030fc4d81a1ab4cfbc582cb637ae9",
+  "scope": "Complete tracked difference at code checkpoint; review report/evidence commits follow.",
+  "changes": [
+    {
+      "path": ".github/workflows/audit-evidence.yml",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "5306f6b95ac27aa049340e4ee36db68de4c5ddb3"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "e6779f4978cab4fa51dc75acbaa0ff26c7a5393e",
+      "new_blob": "cc530327f68473dc2748812a15d516835197732c"
+    },
+    {
+      "path": "AGENTS.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "1e76c115c978abf4a22eaa8379f820035a4f2dc6",
+      "new_blob": "0bee922206f65f0de1732c458cddc5c91e988f54"
+    },
+    {
+      "path": "README.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "fa425b9341f9157feccc402fa20ae1f001bb17af",
+      "new_blob": "c5816a7623f9c496367fb33e4c0c91a0d41dde62"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "764a2abfd0f056b3f9c1c4e6335d69f1decf2089",
+      "new_blob": "041660646ed07842030f96b0840d27447e94a1bf"
+    },
+    {
+      "path": "agents/catalog.yaml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "1a5ccf33b39bb644cd9ee01495d9a826fb90ad8e",
+      "new_blob": "d3c54b381b4146340ce5b7db2d4d2d45acb89cb7"
+    },
+    {
+      "path": "bootstrap-manifest.json",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "1d1283ca1052a17573d485fa4c23b1f0e2aa3f9c",
+      "new_blob": "aa5dfe1a596a75753ac17727f0051a9a0b3bd331"
+    },
+    {
+      "path": "docs/ADAPTIVE_AGENT_ARCHITECTURE.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "600d4c0c92bcc3245f1977ece3efc7c4bcbf7e4a",
+      "new_blob": "c7ec8682b7e472aa2dffe793609567e42d95cf7d"
+    },
+    {
+      "path": "docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7cc503a1f3b46363afe71c4cb67523c538a267af",
+      "new_blob": "65c267ac660f05e86c3b2f37768a6de994ed02d3"
+    },
+    {
+      "path": "docs/JIT_SKILL_LOADING.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "3e2cc1757fdc325a334032356d14e6cd8e98e18d",
+      "new_blob": "5cd1cb37df166dbbfe85350613b9a32524610840"
+    },
+    {
+      "path": "docs/PORTABLE_BOOTSTRAP.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "5bc9d084cbcb9afa38b87cfec0b74f6b3b7ee482"
+    },
+    {
+      "path": "docs/REFERENCE_INTELLIGENCE.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "222d675b9d2cc273ef2b5541fd559cd103091794",
+      "new_blob": "b3fb2cd4631afd3997cfdd80f835ab16b5b4e666"
+    },
+    {
+      "path": "docs/RUNTIME_ENGINEERING.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ee7527687fb7ba56cf5f773b644d6103fb1403ba",
+      "new_blob": "fb0a15fd5b751673a9f9e0e992642bdce04de88d"
+    },
+    {
+      "path": "docs/UPSTREAM_MAINTENANCE.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bddc8daea44d17a72757a5f9d7dd4f0a8190b7ba"
+    },
+    {
+      "path": "docs/third-party/HALLMARK.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "0267f5f1bd421e714ac67f8b97ce23ea2add6005",
+      "new_blob": "ebbc0d01fe664d4b1eaea2c86f40bccf76e064cb"
+    },
+    {
+      "path": "evals/jit-host-cases.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ebbffc7a262c280570e988ebabfa5999f175bf0f"
+    },
+    {
+      "path": "hooks/precompact-memory.sh",
+      "status": "M",
+      "old_mode": "100755",
+      "new_mode": "100755",
+      "old_blob": "21850a80600031e4adbe9f7d6800762eb4675c91",
+      "new_blob": "f5b3c9cccb765e01314cfbbe83edce08242a69db"
+    },
+    {
+      "path": "profiles.yaml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7286579949844fc8e0fad8cb92745b3938bdb07a",
+      "new_blob": "cb4b001c44c4f64406a2647005e3dfecef218c70"
+    },
+    {
+      "path": "references/INDEX.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "a9fa6b53a0605ba3c40fe46182f9f44f19536b2a",
+      "new_blob": "c8208696194353526d59ae89365021af38000192"
+    },
+    {
+      "path": "references/agentit-skill-packs.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "814778f1c0b7f2839ebba4f06c2de10f94a56f07",
+      "new_blob": "284b44dfafb7f929d7411dc632384fab4817e875"
+    },
+    {
+      "path": "references/definition-of-done.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ea0d76840e76279c1e7e791fd258a731c81ea5da",
+      "new_blob": "35e39f9e15f6dd0ff4725a6e5cbce7f2aa69064a"
+    },
+    {
+      "path": "references/observability-checklist.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "fff9f5843c38ef8024c94e8afb540209e5530b34",
+      "new_blob": "ad40d7aa3fca5d2091fa45be234c14aee22c3588"
+    },
+    {
+      "path": "references/security-checklist.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "0f656479b05812383abfd8d11ab72a6d7dd47e14",
+      "new_blob": "b7df3eb04178e4a24bfa405431bf8dee6a89a8c4"
+    },
+    {
+      "path": "references/web-quality-baseline.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c0a709d1e01b821f3bd5136ef1f4016507bd53f5"
+    },
+    {
+      "path": "references/website-ship-surface.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "aa7581fe036d7ffd77a54890ee40242641dabef1"
+    },
+    {
+      "path": "reports/evidence/MANIFEST.sha256",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4ef6d391aeabff1f9c8dd1f8d542cfd67346ea09"
+    },
+    {
+      "path": "reports/evidence/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4b03b0a35af42b4e4d57f48e46120d68cae1d60d"
+    },
+    {
+      "path": "reports/evidence/baseline/commit.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b7a63f4b3232b0c46c0bab70db5c700f536a1140"
+    },
+    {
+      "path": "reports/evidence/baseline/router-tests.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1cd03ad461ad9da9b0f83abdb2cb8b5e5af8ee72"
+    },
+    {
+      "path": "reports/evidence/baseline/script-tests.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9161895eef169790d80f2c8784cb1d009f1fe02f"
+    },
+    {
+      "path": "reports/evidence/baseline/source-archive.sha256",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1e611cc119dc84104d62677a51f15982db16a9b2"
+    },
+    {
+      "path": "reports/evidence/baseline/test-status.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "899631f8755f047485acaa9559836225f0fa48b6"
+    },
+    {
+      "path": "reports/evidence/final-ci/commit.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "6ecef5f72a879128cdd5e1cc8d88551319b12446"
+    },
+    {
+      "path": "reports/evidence/final-ci/router-tests.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "02de0a3c8511bdacc72c63a09033a9cb726d4f01"
+    },
+    {
+      "path": "reports/evidence/final-ci/script-tests.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "fcc59d29c070d60d1a3419e65ef940b5e36beb85"
+    },
+    {
+      "path": "reports/evidence/final-ci/source-archive.sha256",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "6a356aa80d07b34cb94e0fa7afc7b964e1694878"
+    },
+    {
+      "path": "reports/evidence/final-ci/test-status.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ef8a3b8e3042be39b62573a8443c14a723de2e41"
+    },
+    {
+      "path": "reports/evidence/local/command-receipt.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f3fdc31b2c684fca28f2563f7679480571c9ec09"
+    },
+    {
+      "path": "reports/evidence/local/jit-red-status.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "2968ef7e2c899db00fea34fe3e435af55ce6c6c1"
+    },
+    {
+      "path": "reports/evidence/local/jit-red-tests.log",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3e20ca5cd213c6bc48395607b696195c152903af"
+    },
+    {
+      "path": "reports/evidence/local/post-probes.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e5fb15b6413a53735304d43ba6f8675e9f481611"
+    },
+    {
+      "path": "reports/evidence/local/post-skills-inventory.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "da2787b5bf3d0afca9ac4c42f7ce490f2fe70a84"
+    },
+    {
+      "path": "reports/evidence/verification-remote.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "27a50450ebed56a269df1162fc69ece394bf80d0"
+    },
+    {
+      "path": "reports/jit-adversarial-audit-2026-09-18.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "623124ca1cc215563b417a9f827628e333ec34f9"
+    },
+    {
+      "path": "reports/jit-baseline-probes.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e35d19a6fbb3874f7e5b0650d2781ba1f2d3b802"
+    },
+    {
+      "path": "reports/jit-implementation-2026-09-18.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7fb20af909a3cb9e278792dee952c3ca236ef056"
+    },
+    {
+      "path": "reports/jit-skill-dispositions-2026-09-18.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7768c00614fae75135df1f9946ff703ec0a7307d"
+    },
+    {
+      "path": "reports/jit-skills-baseline.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "93ba117cb647b1ce591d8907625a623442eb92cd"
+    },
+    {
+      "path": "reports/jit-verification-2026-09-18.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "8a65bcd028a6aa8057423aa3ea9cf48f6bb4d4a1"
+    },
+    {
+      "path": "reports/overlap-matrix.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "95dfd2b63a9d52265c710b1d1ed3a8e328a89133",
+      "new_blob": "2a83599f66e49b0b2f192a648da5e455b0777af9"
+    },
+    {
+      "path": "reports/reproduce_jit_baseline.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "023306b9c8e0851b0edac3b57e9b150e97215e25"
+    },
+    {
+      "path": "router/bootstrap.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f2123ab8724d373e8544b9ec7ddc580a8adae622",
+      "new_blob": "335c527dc1496ffe580c593973e50c7a4e906908"
+    },
+    {
+      "path": "router/entrypoint.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "22764c7d3169424d183c8b78737dd1fd2b2a5124",
+      "new_blob": "4ee2eb5cf72f910919fd7c40400b920fe6863faf"
+    },
+    {
+      "path": "router/graph_runtime.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "418c18c8386743d8469d286fb72c63485b7613b8",
+      "new_blob": "42d09a009b3192f0f39acc597749737444541257"
+    },
+    {
+      "path": "router/host_skill_hygiene.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "11a93091e258055f1bd06a994776880492591a73",
+      "new_blob": "abe9a79e7e7062479b9ae45e1d24e9e0b7d34d75"
+    },
+    {
+      "path": "router/loop_runtime.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "8aef5b261d1e5e587e04335f0e1f4bcab287ee03",
+      "new_blob": "c08ca742fe5c7f2364956c7633bf8bf26904d15e"
+    },
+    {
+      "path": "router/runtime_cli.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "d0a951b59818bb3e61c3794634cc819365b1e51f",
+      "new_blob": "321ccb65a967bddfe72667acb15318d7f2928095"
+    },
+    {
+      "path": "router/skill_authority.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ec46ff932207ef025e2494a0bb561b01f64efd21"
+    },
+    {
+      "path": "router/skill_loader.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "6893be2b1322fd9fc917d94301b398cd11999b8c",
+      "new_blob": "cd91ccf1736f8ac7ae1f81beaf67df26ab9632d0"
+    },
+    {
+      "path": "router/skills_cli.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "9bbc5c59c94ae8ef1f02c897ab425dc79837513c",
+      "new_blob": "34c20738c5f9c43b9ce6711482e840e0e9b46e90"
+    },
+    {
+      "path": "router/test_adversarial_idea_review.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f4123f9abfd0b01f31793bc16ac9b03f553e27c8",
+      "new_blob": "871daa1be6ce52ef366f3d8ffb74e81063cb8fe6"
+    },
+    {
+      "path": "router/test_bootstrap.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f474cb0a44ab48db9c4957bad7d30e6282292b22",
+      "new_blob": "cb843d30ae6d3746ac4df3035b49c97f95dfe847"
+    },
+    {
+      "path": "router/test_bootstrap_transactions.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4d49fef5bd79130b4e6a45737dd8b338231b602c"
+    },
+    {
+      "path": "router/test_jit_adversarial.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "6d1cfc9a63ff0e91602dd655d433c28c30902a49"
+    },
+    {
+      "path": "router/test_jit_hygiene.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "78c72e6b333334f662460a039ec28dd1581f4499",
+      "new_blob": "9116d7ea9ea3167e047959b7acc0bb4a18e337c8"
+    },
+    {
+      "path": "router/test_jit_integration.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e277b300ff48db53a0a827c302c0856649809f7c"
+    },
+    {
+      "path": "router/test_jit_safety_regressions.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7cfe90e1fe2663bfa26abcc76876bbf2757a501e",
+      "new_blob": "ad06a8f550d5a3f8b2f9edaef703e5b3055dc7ef"
+    },
+    {
+      "path": "router/test_pr_integration_regressions.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c35e1c9db0561ec65a94f472dadddd495d7344a3"
+    },
+    {
+      "path": "router/test_runtime_inventory.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3a25058e7414c21d9bdffad4b3ec547b383e4474"
+    },
+    {
+      "path": "router/test_skill_authority.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1aa17fc3d284607eb1b1f78244e5ca925e0afb82"
+    },
+    {
+      "path": "router/test_skill_loader.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "4a2003b451689f5e64c5b894ce85292d66214429",
+      "new_blob": "5eaa8979b6b5f0fe0e680a757f4a356d966838fb"
+    },
+    {
+      "path": "router/test_specialist_agents.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "8ca88f56453597d48932d8448f6c99553ac362ab",
+      "new_blob": "22f71858947d02b2235c95d6cb555c0533c307e0"
+    },
+    {
+      "path": "router/test_upstream_skill_registry.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f5757d3c3361e5630d04e5e271b084b1bc8e3ce9",
+      "new_blob": "0be6ea705dd92eb5782d2abcd1e37b8c94743874"
+    },
+    {
+      "path": "router/test_worker_context.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "16137eab8da7fcb3443cc3b5a961fdf2b1cb2b2d",
+      "new_blob": "5032217977600d0449e46ea9e82327870d9efcc0"
+    },
+    {
+      "path": "router/worker_context.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "cafdc41afd7999b6aae9c69ca47bd3705d3bb5d8",
+      "new_blob": "ac7dc78d65e4a7cd2cd93f8bbb11319851b5b734"
+    },
+    {
+      "path": "scripts/align-canonical-skill-policy.py",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "3241e534f6e6a991f0548fb3db416bddb9016c32",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "scripts/reconcile-upstream-skill-registry.py",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "126868768a91de0465b0178bfb61213d798e53e0",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "scripts/sync-upstream-skills.sh",
+      "status": "M",
+      "old_mode": "100755",
+      "new_mode": "100755",
+      "old_blob": "8e0fa30968522815134113869c5ffab99ec7c8ad",
+      "new_blob": "37d733213c8db701967a845e2b75768bafb233ba"
+    },
+    {
+      "path": "scripts/sync_upstream_skills.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c4bedc60266b3b8be9dbd1a10d6fa7f505cc9b01"
+    },
+    {
+      "path": "skills/UPSTREAM_LOCK.json",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "5578456ea1aabe6b5c548de63a90fa5cd0db04ff",
+      "new_blob": "1a690d3aa414e1891bb301c285154dacfd37e39d"
+    },
+    {
+      "path": "skills/UPSTREAM_SOURCES.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "2069046b01b87614864d06b2a8dac1f6fc3737ad",
+      "new_blob": "ebe04008dcbc6d45ee0eaae6c16fe888ab7b67ab"
+    },
+    {
+      "path": "skills/appllama-usage/agents/openai.yaml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c808d7e711c445614fd5cb07519e393001519c3b",
+      "new_blob": "89ab7942e238d6f5784cc3078f7ecc9f212343e2"
+    },
+    {
+      "path": "skills/architect-orchestrator/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "6d630954bd1faa01ccb5ce2d3c044a2b6962c555",
+      "new_blob": "219457a172d9a14be591314da952dff2d4077187"
+    },
+    {
+      "path": "skills/constraint-driven-development/SKILL.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3028719c0bad95b3e439024b2f52255c0c9f1ffe"
+    },
+    {
+      "path": "skills/constraint-driven-development/references/floor-guard.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "81b4ca89bfd91f1633099d52bc8adf74430a7eb9"
+    },
+    {
+      "path": "skills/context-engineering/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "be991103fe2b13f7e5f6f5da9d3c6029ad30ac64",
+      "new_blob": "fb8bb5f85128302b231d301c1201da1e223f6869"
+    },
+    {
+      "path": "skills/debugging-and-error-recovery/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "03775802b244cddf2f58f6c54039f6e6ee8702f2",
+      "new_blob": "356da20365a7cd6825b4ffad14be39280c92cdfc"
+    },
+    {
+      "path": "skills/design-inspiration-research/references/premium-web-production.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "685d5d4766895678eb5db50c0d571029195bfeec",
+      "new_blob": "0dd5cb25d1e94c8e627630184863c5fcb3eccb28"
+    },
+    {
+      "path": "skills/diagram-design/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "33b3671eaa4c78711952ead2e1c8cc5b574122f5",
+      "new_blob": "48f2727e9ab151b17f6ef601825d27ef12d8aaaf"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-import-excalidraw.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c5735e18067607a617ac9292a46027cae61b889b"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-state-lifecycle-dark.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b30555ad082facbfff0c882ea897a81b3c3c8150"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-state-lifecycle-full.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d8b0dca361a10783939754e37de37a7bd9289fba"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-state-lifecycle.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "88a30353e7281fbb7f846e30b976279a8c4247e1"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-tree-block-decomposition-dark.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e90284d7e61e1ba73b6f6d1aa37adb12b8837f75"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-tree-block-decomposition-full.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d55464ef7f9b0b39fd0853097c40d8d3d6d5b96d"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-tree-block-decomposition.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "15fd9772a7fdabc91d1d64895ed3b6ddebb8775a"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-waterfall-dark.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "2e7d0275061ccc2264bde342ac936a36fc095808"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-waterfall-full.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4cad064fa1d416f2951d387ad1a41d100d023395"
+    },
+    {
+      "path": "skills/diagram-design/assets/example-waterfall.html",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a864206b5e5435cbeb87b8b9eb8620de4239c89d"
+    },
+    {
+      "path": "skills/diagram-design/assets/index.html",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "809a0b522aa670982e266cbf5ed2a520bcc83a94",
+      "new_blob": "18da438fd612f6dca462119341e3cbb9d5ef9809"
+    },
+    {
+      "path": "skills/diagram-design/assets/template-dark.html",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "bcf484787ce9f0126dbafcc11fc551616e71ced2",
+      "new_blob": "be75e5c94782b975991db1af8c63e205c22a9dfa"
+    },
+    {
+      "path": "skills/diagram-design/assets/template-full.html",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "239768045fe5ac585bde2bb2a8dc7c913ec9d53a",
+      "new_blob": "66b27d0c2b7f6048e2c511491d86d71705b1680e"
+    },
+    {
+      "path": "skills/diagram-design/assets/template-motion.html",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "d1a8588c5fce57114c4df125c72d4c89e927ef32",
+      "new_blob": "7a4646c83de5d9f621520bcc9c630fa925359d56"
+    },
+    {
+      "path": "skills/diagram-design/assets/template.html",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "74ed4d544c4e9fa79a2c659b43875a53244b878a",
+      "new_blob": "d617652eae3c803eaf1639619c9c4c072c20140e"
+    },
+    {
+      "path": "skills/diagram-design/references/doctor.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "a2d4b3749c3f633ab8a2e7136d1bbf55f179592b",
+      "new_blob": "86e9e8e47c7d1089ed63ba6f722f3e1d5566feff"
+    },
+    {
+      "path": "skills/diagram-design/references/export-registry.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b150f0fb8b0c7a5a0194c40530c7f48aad741596"
+    },
+    {
+      "path": "skills/diagram-design/references/export.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "9f26e926b9992ebec73ef1d1266d4bd0a0fc66ed",
+      "new_blob": "9cf535b7da3ce4f533354355d4f7bcabc0bb9029"
+    },
+    {
+      "path": "skills/diagram-design/references/import-excalidraw.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9a776d9963cdea0addb787db3fb22fc862724d8b"
+    },
+    {
+      "path": "skills/diagram-design/references/onboarding.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c7533ff8689ef219575cecd3e9743850b009946f",
+      "new_blob": "da4c0f7de296171ac59f4840b4cc8f1d65a7345c"
+    },
+    {
+      "path": "skills/diagram-design/references/output-spec.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "180a0e9b6e84ea3ea7497929caed4e855f100fd3",
+      "new_blob": "4829df2815063be297a1afa21db81131f4ccd4cd"
+    },
+    {
+      "path": "skills/diagram-design/references/semantic-patterns.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "b12e39d73b85f33aa9dc83a24635402d1f6082a8",
+      "new_blob": "9130ebbdfe1eac744173469c8e3490d392f078f6"
+    },
+    {
+      "path": "skills/diagram-design/references/style-guide.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c79186106f766567820b3cd28a13eb569a5e20c5",
+      "new_blob": "730e78fc11139854e3b85a349800a0eea310d341"
+    },
+    {
+      "path": "skills/diagram-design/references/type-data-flow.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "0afee1330f63459fdf361af2db97db8de7e3d587",
+      "new_blob": "dab7447ed6c64dd348350516f74a1a1ee8903096"
+    },
+    {
+      "path": "skills/diagram-design/references/type-dp-integration.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "778535233be8933375646273649fcd6b6a39bfb5",
+      "new_blob": "347de4832c526e764e83112f875c8b01ad7e00b9"
+    },
+    {
+      "path": "skills/diagram-design/references/type-it-state.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "78080da2dc9cc488916113738c86ab45cc038002",
+      "new_blob": "9d874520c56467b8ddf878e8e4602d8e47d19a77"
+    },
+    {
+      "path": "skills/diagram-design/references/type-process.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "a6c555d0c8a5ae2a8963ec4d556646d8aae5a0fb",
+      "new_blob": "8447d0652bcf5925f203bd1d4b0e1908718ef42c"
+    },
+    {
+      "path": "skills/diagram-design/references/type-state.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c5fe97a69196d4172d41226a9c5895ef5182c8c0",
+      "new_blob": "7e8cbb227664255b12cf61c54c70e25775ef9f29"
+    },
+    {
+      "path": "skills/diagram-design/references/type-tree.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f03baee9259f7f333d32fd03d26deac2a4c6e584",
+      "new_blob": "e0fd644c4aa9ddae3020346b99c5b896bb632379"
+    },
+    {
+      "path": "skills/diagram-design/references/type-waterfall.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "76c69590fbbfcad8d7b28c6f4c487f6859169ec7"
+    },
+    {
+      "path": "skills/diagram-design/scripts/drawio_extract.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "01b567cbf59e2f58346deaa4b7d0c1893793a38f",
+      "new_blob": "cd0ca80a02b973b834bd26db6aad45335439c9c8"
+    },
+    {
+      "path": "skills/diagram-design/scripts/excalidraw_extract.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3b71db18b1751f975fe4365b0ea17111c7b37baf"
+    },
+    {
+      "path": "skills/diagram-design/scripts/self_check.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "d76ee3ae660b084cb0e6fd4ed9ba5c5daa2cf4fb",
+      "new_blob": "bf758a0c99ce6f59175bdf21ddc404f8c96508f3"
+    },
+    {
+      "path": "skills/documentation-and-adrs/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7faf52c9558fa60faf7362cf473cf24784f9209b",
+      "new_blob": "94d1c3622adfa61f40d934b2063a9a6bece2d7d5"
+    },
+    {
+      "path": "skills/doubt-driven-development/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ea46342c5dcfe445004a6fa5bc43e71f3f25e78d",
+      "new_blob": "472c35ab9f32e8ec8b592e5cc7d228ad8cdce278"
+    },
+    {
+      "path": "skills/emil-design-eng/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "1e14a5013714ee5b00382c210053134a48ae2168",
+      "new_blob": "62ce902af8dd32c590ea7203e9ab2edb1d6ef81a"
+    },
+    {
+      "path": "skills/git-workflow-and-versioning/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c64f9f2697b0e4a65978c5fab80327da56ad6069",
+      "new_blob": "0e03a2323ed3f0131626660c3142f69c4a6f8830"
+    },
+    {
+      "path": "skills/humanizer/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c9c22422f822f07767ad1b6e79eedccbfe4e9f63",
+      "new_blob": "d375fbf3e3ee8fb047c379bced82df3713c6ed3b"
+    },
+    {
+      "path": "skills/humanizer/scripts/validate-package.py",
+      "status": "M",
+      "old_mode": "100755",
+      "new_mode": "100755",
+      "old_blob": "30f07797227555bf908f0584ebd6a41c0dc53e3a",
+      "new_blob": "ed4ed3f754f8b0abfd9cb88c1324393fbd692012"
+    },
+    {
+      "path": "skills/i-have-adhd/agents/gemini.toml",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a7d766c9dbf5188f3adadfe59cbf6aa1de3bc4ca"
+    },
+    {
+      "path": "skills/i-have-adhd/agents/openai.yaml",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "0e8285b9bb854e7ee4c25f4c48f593a87e9eb85d"
+    },
+    {
+      "path": "skills/idea-refine/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ddca597ae5325ecbbaf34fac838cfb0d550d326d",
+      "new_blob": "38955e8943f2ea68c041f10ef1902d94bdfb1cb9"
+    },
+    {
+      "path": "skills/impeccable/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "440808f21bebdbaa25b74f7a44e070b557c67340",
+      "new_blob": "2f12a53b1e5eaa38fd69625926340704a4ced54b"
+    },
+    {
+      "path": "skills/impeccable/agents/impeccable_asset_producer.toml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "e05f22a4331347508ea13242183fcb3991f01d10",
+      "new_blob": "30f49ab65fff68050f4a7ba6cc389bc8ae840636"
+    },
+    {
+      "path": "skills/impeccable/agents/impeccable_documenter.toml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "245a30ed7e3d0f1791e3b63eb30db551d1d21e8d",
+      "new_blob": "45203ec73dc5d2509d0bd4f13e0eccbe51b4366e"
+    },
+    {
+      "path": "skills/impeccable/agents/impeccable_finish_reviewer.toml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "6b57ec84bd5e0949ceef2043bbf23546cc15fe31",
+      "new_blob": "cdecfe4dc2bef1990ca255cdcd99c54ade23d2e9"
+    },
+    {
+      "path": "skills/impeccable/agents/impeccable_manual_edit_applier.toml",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "a69ecb4056bd31279c72f1fc0544251581684ffe",
+      "new_blob": "469dd2da6512966a110b94e20abd18283d3689e7"
+    },
+    {
+      "path": "skills/impeccable/reference/adapt.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "314d11f1c4070c7a4bce7bcee2b906ef60cb84d8",
+      "new_blob": "85f7c022f5c65baebdd8df16b996898a4f520e3a"
+    },
+    {
+      "path": "skills/impeccable/reference/audit.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "b6a0bb358520c9016c58cb2a11081abb20d6863e",
+      "new_blob": "0af13e165f6768d7b20e1d03dbd64ce36a2704ab"
+    },
+    {
+      "path": "skills/impeccable/reference/audit.native.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "21bc5586f5d7e6aa317b45d55f79ae5471a367b2",
+      "new_blob": "321847a79680fd61908fced1ddab0ac20581aeb7"
+    },
+    {
+      "path": "skills/impeccable/reference/critique.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "cdf30e0956a3782ec7d9e8895375ecdca585e26f",
+      "new_blob": "c1285ca137d9aa1280e538601a0e84140246fe56"
+    },
+    {
+      "path": "skills/impeccable/reference/degraded/asset-producer.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "89d850f902f01e2eb3b76a1a276d11aea1c4acd4",
+      "new_blob": "903b977764fd1a6e864e0862a7d1d695a7c4a6e8"
+    },
+    {
+      "path": "skills/impeccable/reference/degraded/documenter.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "26b9773a8cb946894bac6833a2a3732d7570914b",
+      "new_blob": "e9dfb799bcece32233386bf9702bc3141d56d196"
+    },
+    {
+      "path": "skills/impeccable/reference/degraded/finish-reviewer.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c055569ae037e8155aabf433bcfa1b73209df305",
+      "new_blob": "b5a131005b3bb617dbdfec584ac79100e17af02f"
+    },
+    {
+      "path": "skills/impeccable/reference/degraded/manual-edit-applier.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "dd177a6cb2002503087532b5dbd5cbaf3bf9f293",
+      "new_blob": "ef5095b924623ce04e02188a6790ebd98a273bcd"
+    },
+    {
+      "path": "skills/impeccable/reference/doctor.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "10a80ea52f9ce4b98226a30139b2d3b4a962cad7",
+      "new_blob": "2d41282821fab74e95165d0277d9d561e32311b9"
+    },
+    {
+      "path": "skills/impeccable/reference/generate.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b28b3f96e97327fbc96901934ff517a058633904"
+    },
+    {
+      "path": "skills/impeccable/reference/harden.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "0bbb16499bc5d4445e952f8d6caa22735cb9cb33",
+      "new_blob": "124742e1cca3caff2c495009a8f408382e73e7d1"
+    },
+    {
+      "path": "skills/impeccable/reference/hooks.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "80256b80e7f3139add7b015586da6f5f680e909c",
+      "new_blob": "bf297ed66bc9242760177d7375e921d0302e267c"
+    },
+    {
+      "path": "skills/impeccable/reference/init.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "4c6822f7a7052a74cf2ecfe5ae3dfbd84b1c7f06",
+      "new_blob": "0612fdde8a82dfe585a0a84eaaee833a5f0b146a"
+    },
+    {
+      "path": "skills/impeccable/reference/layout.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7875fe45ddc2c089848a71b074ae11ca3cea9698",
+      "new_blob": "aa547c742fc373bc459bdbb7977683441aa48ec0"
+    },
+    {
+      "path": "skills/impeccable/reference/live-setup.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "950d1346fdfbced3cd1d30ee91b38785ab7cbde4",
+      "new_blob": "6e10f00f7f2a789da582f38cdaef89de39ead266"
+    },
+    {
+      "path": "skills/impeccable/reference/live.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "dd221ce17adb147c2180246b8b8eea3a297e9a02",
+      "new_blob": "fb85b3fdd99f94c78752da4c4d2d2c06bdaa1439"
+    },
+    {
+      "path": "skills/impeccable/reference/new-work.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "9e25872196422ac756388b6cd7b27a60f5f8e7ef",
+      "new_blob": "cd2a22b98eac53ddfe5c2d61b4a31be693e58fe4"
+    },
+    {
+      "path": "skills/impeccable/reference/polish.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "cc38587b5886ad1453520558cf605bb7768bd205",
+      "new_blob": "f93170f773cac058f51e289603aed7575d62a6a2"
+    },
+    {
+      "path": "skills/impeccable/reference/routing.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "fd0937d2d730598500bc45d352a6254b6efaea05",
+      "new_blob": "21c12a626e7ef084fa6ed5d03b93b91e3eb122ce"
+    },
+    {
+      "path": "skills/impeccable/reference/typeset.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "47dfd452e86d594cb9b73ae20abaae2b9fdbada0",
+      "new_blob": "6f117f429cdefe60c0a07cbd5f02f72a40eb8a7d"
+    },
+    {
+      "path": "skills/impeccable/reference/visualize.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "1a52fa52bf73e735aa5911df5b8e7f8a2de8e216",
+      "new_blob": "f4dc6613eff861e34aa9123392afc9e59b0ca3a2"
+    },
+    {
+      "path": "skills/impeccable/scripts/VERSION",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9faa1b7a7339db85692f91ad4b922554624a3ef7"
+    },
+    {
+      "path": "skills/impeccable/scripts/build-phase.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6f3a9bd9d9f0d2a8741dc20b78cfd158246cd8a5",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/command-metadata.json",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "dad8ef2e0ca304f6a0fe48c0c6b90880df93e01b",
+      "new_blob": "89891ea4df179d5a07cf3aef42e84dafb1d05689"
+    },
+    {
+      "path": "skills/impeccable/scripts/comp-diff.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "082dfe1729b8f93805308d6cd8431d580bf5e1e4",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/comp-spec.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "46d5118cdb10a3b08bc7c8700ffc247f0ce92423",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/concept-seed.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "8887f9b32a7765ceb0099c70b3c15eac297e9796",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/context-signals.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c307a1ea9a0935727f4ff25f9251728283f8a958",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/context.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "05accaf8fe91dbf8e3b5d98967c4863f9dbb7b88",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/critique-storage.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "86d297390fe05160167845b4947898f30dd59860",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detect-csp.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "1a5664b4df0641cda412c992916e807c16e3ca91",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detect.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "1299d4642a8c8b0ec3ba143265f4aab6c662e502",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/browser/injected/index.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "76fc558e5d0a951cd42f2af97dd41bb6c2473612",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/cli/main.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "663b7e86091b4b6c05ecec2b035f924804001727",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/design-system.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "7b7e588e9c021febbca4f34ab04908722282c9a7",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/detect-antipatterns-browser.js",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "7d46e31122dd5f0849dccf82cfa214c2481dea30",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/detect-antipatterns.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "e88397e37c020e22fd98c9d159614f90ed1e3312",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/engines/browser/detect-url.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ac4bd0a7c7b06dc9be4e1fd58de9c037201c8aea",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/engines/regex/detect-text.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "cce79e62d2f75d4094716cab0a99e611f806cf8f",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/engines/static-html/css-cascade.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "7f6080b6165d4b20a03a874909acf8390f296c41",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/engines/static-html/detect-html.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "dac6939b0c7f7c8fd0fdab2ea71c21848e129a1c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/engines/visual/screenshot-contrast.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c9668dbd7a35922bc898873cb9edc2eb748cddf4",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/findings.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ae7e134f9f9f0bddc938b4ed5e04b656f97fb591",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/node/file-system.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "654705a895cfae47cc5526dc5845f4458698dfd1",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/profile/profiler.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b05fbf3ef1fe255d8f15068deeb6c8a94f4ad7aa",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/registry/antipatterns.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "7c692c79ab57439b30d5355bf4fbf7c45e551d58",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/rules/checks.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "0a02492ff232e75b203a5e10dab6b5b1647c1d61",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/shared/color.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "983e15330e5277a2e377078bde0ebc6ac87393f0",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/shared/constants.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ea9bb361a5be9eb50423d5e51418440325ac014a",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/shared/fonts.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "4c4d7fc4528a8dafdd759a0ed6e3f7392758d71b",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/shared/inline-ignores.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "e5d64b18a825e571c22acb5e5865e93dbaaad912",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/detector/shared/page.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b0f6e1ab532c2019a05ab4f8a46ee31c80522d81",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/doctor.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b311f0366de4f971bde39fc739a12a7ca2be4fbf",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/embed-prompt.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "f2cb570adabb466d3c2fe3b8938dfcede1f20218",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/font-match.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "f69a000ac619ed7292b64561e0132764e06994a3",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/generate-image.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c6ba5d39347f4e006498abc9bc72a90529769543",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/hook-admin.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b8af519758a06c4b71efb6a6d8c725a20548772a",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/hook-before-edit.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "04050a8eb3a247d25807862aa5cd3390c12947dd",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/hook-lib.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6d8c3db8141d77f78a4d6714ab5456f6cb147b33",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/hook.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "a190ad697d64b8defd58da079471aabe76223d75",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/impeccable",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100755",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "eb60f8667dd6924bc6271e9e1a0761ea5f945751"
+    },
+    {
+      "path": "skills/impeccable/scripts/impeccable.cmd",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7ebe419bfe5b58c6214e39e8ce566181c72781d2"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/artifact-schema.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c1f5978b1365af19225354142266edb61a71bd50",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/composition-catalog.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "16378187eb2a434c61808d9911215af77af4b5ad",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/concept-catalog.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "949594d0df91d7ca84fa8fc98198107a28ff90b0",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/design-parser.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6f240a51e289d5206453c1469b46c936a5bd8f61",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/font-fingerprint.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6d25a26bdcf38f6ad83b54f0f4c7f35b9d71fbf9",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/font-index.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "609d0e2865d52fa9ba4e4ad814258ad7ebf93967",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/hero-checks.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "0f7f3fd28c57a2de6a90d1ab13ef5f0e5748543e",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/image-metrics.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "baa5c95a16c346e69f222e4e6aa5024d95e282ce",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/impeccable-config.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "827b26845346f6b3280f61c0bad989e2c4ff7013",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/impeccable-paths.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ee68358be045862f6d6e2f78e902507376f2241c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/is-generated.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "5e5948ad8dd7b48eb582766de866a91e84e773d6",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/live-path-globs.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "4a3eebda0c9c55bb53d19983050b3452c8d8eb10",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/open-system-browser.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c44cd847a919ea4c4e39a603699545580e377426",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/png.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "1d5130cc2e0211661df82274b303dda15de325a1",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/provider.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "5397c4bcaca07b9fdcbd927f2f743d318b542fef",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/raster.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "2d3e0ae3a06750a68ddbdd9cbbff27562b3aeaa1",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/roll-selection.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6fab19396ee345da43ab6dc3df83adc477e06789",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/staleness-deep.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "f3ce76d9fd6711e1389af746816cd915b319c439",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/staleness-notice.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b7b68d1e0a99e5d7860dac1eaba4065edeb780e3",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/staleness.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "dde3b27150161509edbd2447dc50f6a76db38613",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/surface-briefs.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "83783517feaf0cd5ca8a7b95339a1ed6ac19eb99",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/target-args.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "967925a42ee0cee6dbf5aa5282c92f4cfe6efde8",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/target-slug.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "025915ad50e94847da48ff9537168e98caa96992",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/lib/template-extensions.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6a115bd7d4dd15fc2528a1e28c9be862cc10ebe9",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-accept.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "2a34dc12a06d714f85ae39b4a574a0eac61a20df",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-browser.js",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "277c60e2ca49586cf569b6b1e452caef8228e0fd",
+      "new_blob": "2b149cbd90cfd4d2392cec740ba8b75e22981ff5"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-commit-manual-edits.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "eee702595825768e8403558b8fd1f6437968c985",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-complete.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "cfd1bb77788c95097dd26367ece13e14da5f1dcb",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-copy-edit-agent.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "febc8456daf8f6c58fb64767c635e39c9c8291f8",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-discard-manual-edits.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "aa669fd202b91e34c6d7bdb4b4fe1ba9fba80b60",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-inject.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "0b5fe9c18ba4cf6dd0778bb641054238f5fd6e56",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-insert.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "8d5829ea4a8772c41f518ab3f8dcafaa7933d6b3",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-manual-edit-evidence.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ee8e2b778c63c1788006a2fe6c5fed82ec3ae83d",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-poll.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "59e21b9d3a996ca0cc19574e4d01e34ef68d87f1",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-resume.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b9459a8d456dbe3499e16be3f858aa3483c5e352",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-server.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "546b668adbe1ac94a8f24980423a06660f59a698",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-status.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6ed2b890a52b23985544d98ac8a2ad6ab7d007f3",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-target.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "498bc55196aeaefd2c9a980e0482b3aef7ca44fe",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live-wrap.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "87d4c41f2c451f1c9377a0f790c7ce04c7b303a4",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ccbef49494df8d333d8b3a3635eb1f4528c77386",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/accept-css.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "e7c241190911b3938a5040e5ca3ec8c91adec358",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/accept-verify.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c1261a62bd8bfa48dbeea9d4c263aa552346b0f2",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/browser-script-parts.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "347a0f3f1f7addd6d2a037d50a404d38ca0f3020",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/completion.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6f539336d8ac07ffe1d0860dcc1c094159133b51",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/event-validation.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "18d3291d5daba23e3563035aabd5e9eef011c632",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/astro.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c3937512e81290447e7219fd6f788c784b76d869",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/detect-utils.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "d513e5c0df3f14cc08cd58b1cad0f6138a5b17eb",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/index.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "0efaa1f6d13b8beb645e120ec42e638c9778f020",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/journal.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "c06fc58cb219660e6c1b1a16b819276bd5ebbbe2",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/nextjs.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "74e2861c420daadd86c039ef24770ca3be3ea528",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/nuxt.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "a15ee2a65280d362c5fd72813576cc30eea42a37",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/script-src.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "76c6617138d7e563c7dc8fc70bc8ede092768d2c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/static-html.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "89cc82daad17cbc91188020373bf2804d9e0394b",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/sveltekit.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "cf8b4b5634e1ed263befb8c3c043d7e6c2eb2ceb",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/tag-strategy.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "be67611369b8583e98ae39de11a5d9e42ddcc544",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/tanstack-start.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "9bfb3db4af2b07dd683ff3718d8c1f12fb695b66",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/frameworks/vite-generic.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "4713670f4f5c84f68097da94ef212fe9f3297a5c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/generation-preflight.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "bfe81b32fbb4882b3c761a116baa23442e7fb01c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/insert-ui.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ae54f6f938828d7d08e357adabfadc90cc860e22",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/instructions.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "19f6a1ae3a66f443fd2eec554fe5fbd8d6be36a6",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/manual-apply.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "376958d7db355f8b313873d8aad799f7264035e9",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/manual-edit-routes.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "acd250ec493791c985fe49699b4f8c4d2ba242c8",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/manual-edits-buffer.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "d96ebbe342f8f44c671942284a0f0b3965da3d6e",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/poll-lanes.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "65f20a87a7e8385eb5328f85e854f5f08ccabf8c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/project-ignores.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "e99acaed1f95cafc59d59dcb3ff5c6a0ea0f1c88",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/roots.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "1e27d9a6c215343dbb79b1788102df2c69fc81ee",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/session-store.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "a017cb157cb2e136ed0ad2ad0414da32afd87230",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/source-lock.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "9ccc557be85222d57e7a3eecceec7848e0b6cd0e",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/source-search.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "0b7d26b5def1809341d4e4b8a9df0709461ae012",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/svelte-ast.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "7481b87300f52df98fad329db91211bf9ffc53ea",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/svelte-component.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "8e2c33debed3227aee8259eb817fcab3a1eb20a2",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/sveltekit-adapter.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b96e955a6faf27dcc8f01dd97514dd003a202c1b",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/tanstack-adapter.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b53978f4fd73ade9101aedf001a1c8b240414663",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/ui-surfaces.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b39ca5846ba84a15f610de80def1278eb06e6b16",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/live/vocabulary.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ce4e0927a84a43e14a040d3f2322f6e03f29c50b",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/palette.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "ea692cd0fe33cf57a229caf74be62a7ffb90b3ba",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/pin.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "6a4323194fecab4bbbce2ffeca987aea36c90298",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/serve-question.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "689c9559a176654fff327936882aa0a4babe9d32",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/impeccable/scripts/surface-brief.mjs",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "723f7c1b4c7edcc66da88b644648a13e9eb7c4f4",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/incremental-implementation/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "6df12f9a878c80305c42bcdbe8a43a10d2e0c933",
+      "new_blob": "9c4f49bc841adb3c0f98baaa9eabd435a5b64ef9"
+    },
+    {
+      "path": "skills/local-model-routing/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ab692da5fba6192f3f3f0a53165c4e1d98134bca",
+      "new_blob": "68a0d743608d05c08c87d4d590828e5816488556"
+    },
+    {
+      "path": "skills/local-seo-playbook/SKILL.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "5e253574ac8f6a4dcca87797c4956b0a70f3cbef",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/ai-visibility.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b0835a01a1fd38c87c4e5d2ef30ab50fc1f744bb",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/audit.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "f25a0c7c0cf6d56854f7f8539a184d41c1f36e8f",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/gbp.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "daa467eb56a141bfe74286418c836f3f507d0f38",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/links.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "f393f47b53c8d1ebbfaa4b39adb7163de9fda44c",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/reviews-citations.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "b30ab39f2b3526c310ee6fbe41723fa767ee5ef6",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/local-seo-playbook/references/website.md",
+      "status": "D",
+      "old_mode": "100644",
+      "new_mode": "000000",
+      "old_blob": "fd90bc9b164bbb9c9a49d33e167e3adaaf94c08e",
+      "new_blob": "0000000000000000000000000000000000000000"
+    },
+    {
+      "path": "skills/marketing-and-growth/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "5465bcbd0441a0b8250c70b1fdbc95e6cc0ace27",
+      "new_blob": "7f79d9e27e1edfc30942a644306cd13245d14902"
+    },
+    {
+      "path": "skills/marketing-and-growth/references/local-seo.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "52a01ca35cd223b2df4b793e3253ed182a611a1c"
+    },
+    {
+      "path": "skills/marketing-and-growth/references/seo-growth-loop.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "c1120a13281b8c0867c5d7aff33e267ce0551bf9",
+      "new_blob": "f53024eb21d6facb6916e0d8702f9042f523d614"
+    },
+    {
+      "path": "skills/observability-and-instrumentation/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "7d56593ec599cce0bae12aa46862884d0208cc59",
+      "new_blob": "84d9cb373467fe0e15236e190833ecc90f840c38"
+    },
+    {
+      "path": "skills/scrollytelling-web/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ee752f466029f1e24306f16017af313a2b604966",
+      "new_blob": "aaf97b8488a949e49e5b6530198694fd7e0967c8"
+    },
+    {
+      "path": "skills/security-and-hardening/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "cf093e933eab7db520bcb9e16f7a610599fd5938",
+      "new_blob": "c168e65e0d8e2ce1ec48bdaf0c1a76c0a4aa9d30"
+    },
+    {
+      "path": "skills/shipping-and-launch/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "acef513b77a33b366220d58224e472cb83ffd21d",
+      "new_blob": "f3fba8a01265db5547a8755c81902d0aa56c4104"
+    },
+    {
+      "path": "skills/source-driven-development/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "d1f599a9fe8eb77d4af7dc2f45404c2f6363e441",
+      "new_blob": "2704f0e130bc4659951aa552373914b2d63d18c9"
+    },
+    {
+      "path": "skills/spec-driven-development/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "f3f5877c5d6be8f74408c308393bfb45cbcf53c4",
+      "new_blob": "912bbc0dbbd2a348d95dd769847a862b1164c657"
+    },
+    {
+      "path": "skills/task-router/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "e93419dc9d95536a98209bef88df88eeb611df78",
+      "new_blob": "5f78a5210de06df48575a9cb41c16fca06b6c18c"
+    },
+    {
+      "path": "skills/test-driven-development/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "0cfd2f33d78961a23365b34bd92e08026dd140bc",
+      "new_blob": "8898bcbba4c4f6acca473ece95e82105bd9cfea0"
+    },
+    {
+      "path": "skills/threejs-product-storytelling/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "3bf0dd65e6043962d6c4f3704bb4f1d1fe086667",
+      "new_blob": "913ed01bf5630f86727952f1df511f2285d44c82"
+    },
+    {
+      "path": "skills/ui-ux-pro-max/scripts/search.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "07be642c10e59a182f02822663eab95a8860a289",
+      "new_blob": "5038aa875a0d39f24dea803a4c73b38f8f56915f"
+    },
+    {
+      "path": "skills/ui-ux-pro-max/scripts/tests/test_design_system_stack.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "50f0080300b56f4891014d878edddb781b36d7de"
+    },
+    {
+      "path": "skills/using-agent-skills/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "aee8bcb6d75ade5aada1a3cfb33bc5dd90fcb398",
+      "new_blob": "b40d6829a1edb72b77bf31126de592c91913d423"
+    },
+    {
+      "path": "skills/using-agentit/SKILL.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "d132d5822497f95f0de1f2d87f5444e1262a4490",
+      "new_blob": "ebbcb40d7dbbd8e8e38a18dd607533e8f4cb93b5"
+    },
+    {
+      "path": "tests/test_architecture_policy.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "a6feb4b83c2f4270e1b82888bebb6b311457a99f",
+      "new_blob": "7fdbae120b98f3d8e7ced2ff7fea5c8b5e637d6f"
+    },
+    {
+      "path": "tests/test_jit_maintenance.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "481651f730a3e977bd3b8071f7953385df437e3d"
+    },
+    {
+      "path": "tests/test_upstream_sync.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "2e297449172bfa116b07c8df228727184d871024"
+    },
+    {
+      "path": "vendor/agent-skills/using-agent-skills/SKILL.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d56ac03ab057036c1bdcc9127c88952758ee2f0d"
+    },
+    {
+      "path": "vendor/licenses/Appllama--appllama-skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1053d12088308bffa9261121b5f17de0373ac907"
+    },
+    {
+      "path": "vendor/licenses/Leonxlnx--taste-skill/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "48a2f6640b81ff8eca9ce7f6a96337692713ef5b"
+    },
+    {
+      "path": "vendor/licenses/Nutlope--hallmark/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f4bfc53d8d773d3b10d95c2d58a5773dd4e2f3aa"
+    },
+    {
+      "path": "vendor/licenses/addyosmani--agent-skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d67778ada6b9cda6227e9130da182c13e73c8b2e"
+    },
+    {
+      "path": "vendor/licenses/ayghri--i-have-adhd/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "19db5f1b0ca65e277c158bd4c4263139ccfd859c"
+    },
+    {
+      "path": "vendor/licenses/blader--humanizer/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "625297fb778f32eb39d3a5b97e3e3b611b7304d6"
+    },
+    {
+      "path": "vendor/licenses/cathrynlavery--diagram-design/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "5270ecfc40942fc2da652a7a2f3e687fc6851ba3"
+    },
+    {
+      "path": "vendor/licenses/emilkowalski--skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "57b46f1fd11dc62351ea548104a88aa3f659c11b"
+    },
+    {
+      "path": "vendor/licenses/greensock--gsap-skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "fa2fe218371ee47b741db9d0fa7cf17cddc03eb8"
+    },
+    {
+      "path": "vendor/licenses/hardikpandya--stop-slop/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e0ede9b66618724f59a1bad9ef1681db43d0334c"
+    },
+    {
+      "path": "vendor/licenses/nextlevelbuilder--ui-ux-pro-max-skill/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1e71cbf26660f31903807d099fe902c098fc7e4c"
+    },
+    {
+      "path": "vendor/licenses/obra--superpowers/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "abf0390320aa14406af7a520b9b0739fdda9bf08"
+    },
+    {
+      "path": "vendor/licenses/pbakaus--impeccable/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bb3f6d23b1f8025514a62a12b51b47d73e3c9aa9"
+    },
+    {
+      "path": "vendor/licenses/pbakaus--impeccable/NOTICE.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "0468271c904ae334cfaf27da6f8df3d5f419a1f0"
+    },
+    {
+      "path": "vendor/licenses/supabase--agent-skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d3c9e94fbc6c28f66ecb5a01407d543c99c811b6"
+    },
+    {
+      "path": "vendor/licenses/vercel-labs--skills/LICENSE",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "eabe3008f6c0275929faa8b07d406e82717648cc"
+    }
+  ]
+}

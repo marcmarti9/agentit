@@ -49,6 +49,12 @@ Use the component scouting reference only when a frontend task materially benefi
 
 The premium-web playbook distills useful workflow patterns such as section-level references, design DNA, decision-frontier questions, a vertical slice, intentional signature interaction when justified, rendered defect/polish passes, and real desktop/mobile/performance/accessibility QA.
 
+A site that already looks finished can still be unshipped. For public landings and marketing sites approaching a real domain, load:
+
+- `references/website-ship-surface.md`
+
+That gate covers discoverability, sharing cards, 404, form completion/failure, mobile CTA reachability, and honest legal/contact/measurement surfaces. It is a launch checklist, not a visual-craft method.
+
 Useful external sources are design/process inputs, not conversion or pricing evidence. Re-verify current tool/setup details live before depending on them.
 
 ## Marketing / growth / SEO
@@ -57,6 +63,7 @@ Load only the playbook that matches the current task/stage:
 
 - `skills/marketing-and-growth/references/marketing-operating-system.md`
 - `skills/marketing-and-growth/references/seo-growth-loop.md`
+- `skills/marketing-and-growth/references/local-seo.md`
 - `skills/marketing-and-growth/references/launch-content-system.md`
 
 Creator/vendor performance figures remain claims unless independently verified.
@@ -104,3 +111,5 @@ source
 The promotion test is not “interesting”. It is:
 
 > **Will this reliably improve recurring future work without wasting context or smuggling stale claims into the core?**
+
+- `references/web-quality-baseline.md` — full web quality baseline; compact invariant remains in core.

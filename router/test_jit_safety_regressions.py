@@ -6,8 +6,9 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from router.bootstrap import apply_rollback, rollback_plan
+from router.bootstrap import BootstrapError, apply_rollback, rollback_plan
 from router.host_skill_hygiene import (
     HostSkillHygieneError,
     apply_host_skill_hygiene,
@@ -68,6 +69,18 @@ class HostSkillHygieneSafetyTests(unittest.TestCase):
         self.assertTrue(self.destination.is_dir())
         self.assertIn("user edit", body.read_text(encoding="utf-8"))
 
+    def test_host_cleanup_retains_permission_only_changes(self):
+        body = self.destination / "SKILL.md"
+        body.chmod(0o600)
+        self.assertEqual(self.plan(), [])
+        self.assertEqual(body.stat().st_mode & 0o777, 0o600)
+
+    def test_host_cleanup_retains_added_empty_directory(self):
+        empty = self.destination / "user-empty-directory"
+        empty.mkdir()
+        self.assertEqual(self.plan(), [])
+        self.assertTrue(empty.is_dir())
+
     def test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt(self) -> None:
         backup_root = self.root / "backup"
         records = apply_host_skill_hygiene(
@@ -89,6 +102,110 @@ class HostSkillHygieneSafetyTests(unittest.TestCase):
         result = apply_rollback(manifest_path)
         self.assertEqual("rolled-back", result["status"])
         self.assertTrue((self.destination / "SKILL.md").is_file())
+
+    def two_tree_plan(self):
+        second = self.destination.parent / "interview-me"
+        shutil.copytree(REPOSITORY / "skills/interview-me", second)
+        operations = self.plan()
+        self.assertEqual(len(operations), 2)
+        return operations, [Path(op["destination"]) for op in operations]
+
+    def test_failed_second_backup_does_not_block_recovery_of_first_removed_tree(self):
+        operations, (first, second) = self.two_tree_plan()
+        originals = {p: {f.relative_to(p): f.read_bytes() for f in p.rglob("*") if f.is_file()} for p in (first, second)}
+        backup_root = self.root / "backup"
+        real_copy = shutil.copytree
+
+        def fail_second(source, *args, **kwargs):
+            if Path(source) == second:
+                raise OSError("injected second tree backup failure")
+            return real_copy(source, *args, **kwargs)
+
+        with patch("router.host_skill_hygiene.shutil.copytree", side_effect=fail_second):
+            with self.assertRaisesRegex(OSError, "second tree"):
+                apply_host_skill_hygiene(operations, home=self.home, backup_root=backup_root)
+        self.assertFalse(first.exists())
+        result = apply_rollback(backup_root / "manifest.json")
+        self.assertEqual(result["changed_files"], 1)
+        for path in (first, second):
+            self.assertEqual({f.relative_to(path): f.read_bytes() for f in path.rglob("*") if f.is_file()}, originals[path])
+
+    def test_recovery_preserves_tree_changed_during_backup(self):
+        operations, (first, second) = self.two_tree_plan()
+        backup_root = self.root / "backup"
+        real_copy = shutil.copytree
+
+        def copy_then_edit(source, *args, **kwargs):
+            result = real_copy(source, *args, **kwargs)
+            if Path(source) == second:
+                (second / "user-edit.txt").write_text("preserve user change\n")
+            return result
+
+        with patch("router.host_skill_hygiene.shutil.copytree", side_effect=copy_then_edit):
+            with self.assertRaisesRegex(HostSkillHygieneError, "changed during backup"):
+                apply_host_skill_hygiene(operations, home=self.home, backup_root=backup_root)
+        with self.assertRaisesRegex(BootstrapError, "recreated"):
+            apply_rollback(backup_root / "manifest.json")
+        self.assertEqual((second / "user-edit.txt").read_text(), "preserve user change\n")
+        self.assertFalse(first.exists())
+        self.assertTrue((backup_root / "removed-skill-trees" / first.relative_to(self.home)).is_dir())
+
+    def test_partial_tree_deletion_is_preserved_and_refused_during_recovery(self):
+        backup_root = self.root / "backup"
+
+        def partially_remove(path, *args, **kwargs):
+            (Path(path) / "SKILL.md").unlink()
+            raise OSError("injected partial tree deletion")
+
+        with patch("router.host_skill_hygiene.shutil.rmtree", side_effect=partially_remove):
+            with self.assertRaisesRegex(OSError, "partial tree"):
+                apply_host_skill_hygiene(self.plan(), home=self.home, backup_root=backup_root)
+        with self.assertRaisesRegex(BootstrapError, "recreated"):
+            apply_rollback(backup_root / "manifest.json")
+        self.assertTrue(self.destination.is_dir())
+        self.assertFalse((self.destination / "SKILL.md").exists())
+        self.assertTrue((backup_root / "removed-skill-trees" / self.destination.relative_to(self.home) / "SKILL.md").is_file())
+
+    def test_recovery_does_not_skip_permission_drift_during_backup(self):
+        backup_root = self.root / "backup"
+        real_copy = shutil.copytree
+
+        def copy_then_chmod(source, *args, **kwargs):
+            result = real_copy(source, *args, **kwargs)
+            if Path(source) == self.destination:
+                (self.destination / "SKILL.md").chmod(0o600)
+            return result
+
+        with patch("router.host_skill_hygiene.shutil.copytree", side_effect=copy_then_chmod):
+            with self.assertRaisesRegex(HostSkillHygieneError, "changed during backup"):
+                apply_host_skill_hygiene(self.plan(), home=self.home, backup_root=backup_root)
+        with self.assertRaisesRegex(BootstrapError, "recreated"):
+            apply_rollback(backup_root / "manifest.json")
+        self.assertEqual((self.destination / "SKILL.md").stat().st_mode & 0o777, 0o600)
+
+    def test_hash_only_legacy_receipt_restores_absent_tree_but_cannot_certify_retry(self):
+        backup_root = self.root / "backup"
+        apply_host_skill_hygiene(self.plan(), home=self.home, backup_root=backup_root)
+        manifest_path = backup_root / "manifest.json"
+        data = json.loads(manifest_path.read_text())
+        for record in data["records"]:
+            record.pop("tree_metadata_version")
+            record.pop("tree_metadata")
+        manifest_path.write_text(json.dumps(data))
+        apply_rollback(manifest_path)
+        self.assertTrue((self.destination / "SKILL.md").exists())
+        with self.assertRaisesRegex(BootstrapError, "recreated"):
+            apply_rollback(manifest_path)
+
+    def test_recovery_refuses_backup_permission_drift(self):
+        backup_root = self.root / "backup"
+        apply_host_skill_hygiene(self.plan(), home=self.home, backup_root=backup_root)
+        backup_body = backup_root / "removed-skill-trees" / self.destination.relative_to(self.home) / "SKILL.md"
+        backup_body.chmod(0o600)
+        with self.assertRaisesRegex(BootstrapError, "backup metadata changed"):
+            apply_rollback(backup_root / "manifest.json")
+        self.assertFalse(self.destination.exists())
+        self.assertEqual(backup_body.stat().st_mode & 0o777, 0o600)
 
 
 class PrivateProfileCacheSafetyTests(unittest.TestCase):

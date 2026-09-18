@@ -166,7 +166,7 @@ class WorkerContextTests(unittest.TestCase):
                 known_repository_skills={"debugging-and-error-recovery"},
             )
         context = payload["worker_context"]
-        self.assertEqual(2, context["schema_version"])
+        self.assertEqual(3, context["schema_version"])
         self.assertEqual(["frontend", "engineering"], context["relevant_packs"])
         self.assertEqual(["agentit://artifacts/ui-evidence.txt"], context["references_projected"])
         self.assertNotIn("domain_pack", json.dumps(context))
@@ -218,6 +218,10 @@ class WorkerContextTests(unittest.TestCase):
     def test_full_catalog_dump_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             catalog = [f"skill-{index}" for index in range(20)]
+            for skill in catalog:
+                package = Path(tmp) / ".agents" / "skills" / skill
+                package.mkdir(parents=True)
+                (package / "SKILL.md").write_text(f"---\nname: {skill}\ndescription: Fixture.\n---\nFixture body.\n")
             payload = build_worker_context(
                 WorkerTaskSpec(objective="x", skills=catalog),
                 project_root=Path(tmp),

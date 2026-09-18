@@ -1,0 +1,24 @@
+{
+  "status": "verified",
+  "packages": 41,
+  "files": 579,
+  "sources": 15,
+  "input_pr_52": "6bea892e863e90ac526f3f2032c40892c160744a",
+  "source_commits": {
+    "addyosmani/agent-skills": "be4e44a9fbc5e8df0beaefadbb28bd22ee61cc39",
+    "Appllama/appllama-skills": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
+    "Leonxlnx/taste-skill": "ccbc15639c97057cbfcf32ecebc38ef716e4bb37",
+    "cathrynlavery/diagram-design": "9874ad73813715fc36875e45afd9cd94c68f3c3f",
+    "emilkowalski/skills": "85e8e2363b713506e1d5b6e07a0eb2da66be1bc3",
+    "vercel-labs/skills": "d6b37f62ae23c3825b0ed16c73e123eee0a41fdc",
+    "greensock/gsap-skills": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+    "Nutlope/hallmark": "13ac0ec7e148655948100b6396439e481361d690",
+    "blader/humanizer": "9862685f575c65a8247f90369951df1b3416e3d6",
+    "ayghri/i-have-adhd": "0a84de401019a3a822248df586d88a2b56f8c6af",
+    "pbakaus/impeccable": "0a4e72a254f3b175c95b36b82e5f2e60fa63f116",
+    "hardikpandya/stop-slop": "8da1f030185bdfe8471220585162991eaeb970e9",
+    "supabase/agent-skills": "8331f910845103c08d51f6ca1d86ebb7d1f745e3",
+    "nextlevelbuilder/ui-ux-pro-max-skill": "15de38fb70bc80ae9276fa7703b48ae861a672e6",
+    "obra/superpowers": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797"
+  }
+}

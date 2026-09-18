@@ -1,6 +1,6 @@
 ---
 name: scrollytelling-web
-description: Design and implement cinematic scroll-driven web narratives: pinned scenes, scrubbed timelines, product decomposition, image sequences, section transitions, spatial storytelling, and progressive 3D reveals. Use when scroll itself drives the story.
+description: "Design and implement cinematic scroll-driven web narratives: pinned scenes, scrubbed timelines, product decomposition, image sequences, section transitions, spatial storytelling, and progressive 3D reveals. Use when scroll itself drives the story."
 ---
 
 # Scrollytelling Web

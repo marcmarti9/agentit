@@ -14,6 +14,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import stat
 import subprocess
 import sys
@@ -28,6 +29,7 @@ from router.host_skill_hygiene import (
     HostSkillHygieneError,
     apply_host_skill_hygiene,
     plan_host_skill_hygiene,
+    removed_tree_is_restored,
     restore_removed_tree,
     validate_removed_tree_record,
 )
@@ -48,8 +50,11 @@ class CopySpec:
     content: bytes | None = None
     mode: int | None = None
     category: str = "managed"
+    remove: bool = False
 
-    def payload(self) -> bytes:
+    def payload(self) -> bytes | None:
+        if self.remove:
+            return None
         if self.content is not None:
             return self.content
         if self.source is None:
@@ -69,6 +74,16 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _file_state(path: Path, *, home: Path) -> tuple[str | None, int | None]:
+    """Read the content and permission state without following symlink paths."""
+    _assert_no_symlink_components(path, stop=home)
+    if not path.exists():
+        return None, None
+    if not path.is_file():
+        raise BootstrapError(f"destination is not a regular file: {path}")
+    return _sha256_file(path), stat.S_IMODE(path.stat().st_mode)
+
+
 def _load_manifest(source_root: Path = SOURCE_ROOT) -> dict[str, Any]:
     path = source_root / MANIFEST_NAME
     try:
@@ -82,7 +97,7 @@ def _load_manifest(source_root: Path = SOURCE_ROOT) -> dict[str, Any]:
 
 def _assert_relative(value: str) -> Path:
     path = Path(value)
-    if path.is_absolute() or not value or any(part in {"", ".", ".."} for part in path.parts):
+    if path.is_absolute() or not path.parts or not value or any(part in {"", ".", ".."} for part in path.parts):
         raise BootstrapError(f"unsafe relative path in bootstrap manifest: {value!r}")
     return path
 
@@ -204,6 +219,121 @@ def _runtime_specs(*, home: Path, source_root: Path, manifest: dict[str, Any]) -
     return specs
 
 
+def _validated_runtime_files(raw: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(raw, dict):
+        raise BootstrapError("runtime inventory files must be a mapping")
+    result = {}
+    for relative, record in raw.items():
+        if not isinstance(relative, str):
+            raise BootstrapError("runtime inventory paths must be strings")
+        rel = _assert_relative(relative)
+        canonical = rel.as_posix()
+        if canonical in result:
+            raise BootstrapError(f"duplicate runtime inventory path: {relative}")
+        if not isinstance(record, dict) or not re.fullmatch(r"[0-9a-f]{64}", str(record.get("sha256", ""))):
+            raise BootstrapError(f"invalid runtime inventory hash: {relative}")
+        mode = record.get("mode")
+        if type(mode) is not int or not 0 <= mode <= 0o777:
+            raise BootstrapError(f"invalid runtime inventory mode: {relative}")
+        result[canonical] = {"sha256": record["sha256"], "mode": mode}
+    return result
+
+
+def _unique_inventory_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise BootstrapError(f"duplicate runtime inventory key: {key}")
+        result[key] = value
+    return result
+
+
+def _runtime_inventory_specs(home: Path, specs: list[CopySpec]) -> tuple[list[CopySpec], list[str], list[str]]:
+    """Retire only obsolete private-runtime files with exact recorded ownership."""
+    runtime = _destination(home, ".agentit/runtime")
+    inventory = _destination(home, ".agentit/runtime-inventory.json")
+    desired = {
+        spec.destination.relative_to(runtime).as_posix(): {
+            "sha256": _sha256_bytes(spec.payload()), "mode": spec.mode,
+        }
+        for spec in specs if spec.category == "runtime"
+    }
+    previous: dict[str, dict[str, Any]] = {}
+    if inventory.exists():
+        if not inventory.is_file():
+            raise BootstrapError("runtime inventory is not a regular file")
+        try:
+            data = json.loads(inventory.read_text(encoding="utf-8"), object_pairs_hook=_unique_inventory_keys)
+        except (OSError, ValueError) as exc:
+            raise BootstrapError("runtime inventory is unreadable or invalid") from exc
+        if not isinstance(data, dict) or data.get("kind") != "agentit.runtime.inventory" or data.get("schema_version") != 1:
+            raise BootstrapError("invalid runtime inventory schema")
+        previous = _validated_runtime_files(data.get("files"))
+    else:
+        # Older releases had per-install receipts but no full inventory. Import
+        # only final successful runtime file records from this same home. Missing
+        # receipts never authorize inferring ownership from a matching name.
+        backups = _destination(home, ".agentit/backups")
+        for path in sorted(backups.glob("install-*/manifest.json")):
+            _assert_no_symlink_components(path, stop=home)
+            if not path.is_file():
+                continue
+            try:
+                receipt = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if not isinstance(receipt, dict) or receipt.get("kind") != "agentit.bootstrap.receipt" or receipt.get("schema_version") != 1:
+                continue
+            if receipt.get("home") != str(home) or receipt.get("recovery_only") or receipt.get("rollback_in_progress"):
+                continue
+            records = receipt.get("records", [])
+            if not isinstance(records, list):
+                continue
+            for record in records:
+                if not isinstance(record, dict) or record.get("kind") != "file" or record.get("category") != "runtime":
+                    continue
+                path = Path(str(record.get("destination", "")))
+                try:
+                    relative = path.relative_to(runtime).as_posix()
+                except ValueError as exc:
+                    raise BootstrapError("runtime receipt destination escapes private runtime") from exc
+                entry = {relative: {"sha256": record.get("installed_sha256"), "mode": record.get("installed_mode")}}
+                previous.update(_validated_runtime_files(entry))
+
+    additions = []
+    retained = []
+    for relative, record in previous.items():
+        if relative in desired:
+            continue
+        target = _destination(home, Path(".agentit/runtime") / _assert_relative(relative))
+        current = _file_state(target, home=home)
+        if current == (None, None):
+            continue
+        if current != (record["sha256"], record["mode"]):
+            retained.append(relative)
+            continue
+        additions.append(CopySpec(destination=target, category="runtime-obsolete", remove=True))
+    payload = {"schema_version": 1, "kind": "agentit.runtime.inventory", "files": desired}
+    additions.append(CopySpec(
+        destination=inventory,
+        content=(json.dumps(payload, sort_keys=True, indent=2) + "\n").encode("utf-8"),
+        mode=0o600, category="runtime-inventory",
+    ))
+    unknown = []
+    if runtime.is_dir():
+        for base, directories, filenames in os.walk(runtime, followlinks=False):
+            directories[:] = [name for name in directories if name != "__pycache__"]
+            for name in filenames:
+                relative = (Path(base) / name).relative_to(runtime).as_posix()
+                if relative not in desired and relative not in previous:
+                    unknown.append(relative)
+            for name in directories:
+                path = Path(base) / name
+                if path.is_symlink():
+                    unknown.append(path.relative_to(runtime).as_posix())
+    return additions, sorted(retained), sorted(unknown)
+
+
 def _provider_specs(
     *,
     home: Path,
@@ -233,23 +363,6 @@ def _provider_specs(
                 destination_base=skills_root / skill_id,
                 category=f"provider:{provider}:skill",
             )
-
-        addy_reference_manifest = source_root / "references" / ".addy-agent-skills-files"
-        if "using-agent-skills" in core_skills and addy_reference_manifest.is_file():
-            for raw in addy_reference_manifest.read_text(encoding="utf-8").splitlines():
-                relative = raw.strip()
-                if not relative:
-                    continue
-                rel = _assert_relative(relative)
-                src = _source(source_root, Path("references") / rel)
-                specs.append(
-                    CopySpec(
-                        source=src,
-                        destination=skills_root.parent / "references" / rel,
-                        mode=stat.S_IMODE(src.stat().st_mode),
-                        category=f"provider:{provider}:shared-reference",
-                    )
-                )
 
         if provider == "codex" and config.get("codex_agents_source"):
             destination_root = _destination(home, str(config["agents_root"]))
@@ -353,6 +466,8 @@ def build_install_plan(
         )
     )
     specs.append(_cli_spec(home))
+    inventory_specs, retained_runtime_files, unmanaged_runtime_files = _runtime_inventory_specs(home, specs)
+    specs.extend(inventory_specs)
     specs = _dedupe_specs(specs)
 
     try:
@@ -364,12 +479,14 @@ def build_install_plan(
 
     operations: list[dict[str, Any]] = list(hygiene)
     for spec in specs:
-        _assert_no_symlink_components(spec.destination, stop=home)
-        desired_hash = _sha256_bytes(spec.payload())
-        if spec.destination.exists():
-            if not spec.destination.is_file() or spec.destination.is_symlink():
-                raise BootstrapError(f"existing destination is not a regular file: {spec.destination}")
-            action = "keep" if _sha256_file(spec.destination) == desired_hash else "replace-with-backup"
+        desired = spec.payload()
+        desired_hash = _sha256_bytes(desired) if desired is not None else None
+        before_hash, before_mode = _file_state(spec.destination, home=home)
+        if spec.remove:
+            action = "remove-obsolete-runtime-file"
+        elif before_hash is not None:
+            desired_mode = spec.mode if spec.mode is not None else 0o644
+            action = "keep" if (before_hash, before_mode) == (desired_hash, desired_mode) else "replace-with-backup"
         else:
             action = "install"
         operations.append(
@@ -377,9 +494,11 @@ def build_install_plan(
                 "action": action,
                 "category": spec.category,
                 "destination": str(spec.destination),
-                "source": str(spec.source) if spec.source else "generated:cli",
+                "source": str(spec.source) if spec.source else f"generated:{spec.category}",
                 "sha256": desired_hash,
                 "mode": oct(spec.mode) if spec.mode is not None else None,
+                "before_sha256": before_hash,
+                "before_mode": before_mode,
             }
         )
 
@@ -394,6 +513,8 @@ def build_install_plan(
         "runtime_root": str(_destination(home, Path(".agentit") / "runtime")),
         "cli_path": str(_destination(home, Path(".local") / "bin" / "agentit")),
         "operations": operations,
+        "retained_modified_runtime_files": retained_runtime_files,
+        "retained_unmanaged_runtime_files": unmanaged_runtime_files,
         "_specs": specs,
         "_hygiene": hygiene,
     }
@@ -455,13 +576,39 @@ def apply_install_plan(
     if not isinstance(hygiene, list):
         raise BootstrapError("install plan does not contain validated hygiene operations")
 
+    operations = {item["destination"]: item for item in plan.get("operations", [])}
+    prepared: list[tuple[CopySpec, bytes | None, dict[str, Any]]] = []
+    for spec in specs:
+        try:
+            relative = spec.destination.relative_to(home)
+        except ValueError as exc:
+            raise BootstrapError(f"copy destination escapes home: {spec.destination}") from exc
+        _destination(home, relative)
+        operation = operations.get(str(spec.destination))
+        if operation is None or "before_sha256" not in operation or "before_mode" not in operation:
+            raise BootstrapError(f"copy spec has no validated planned state: {spec.destination}")
+        desired = spec.payload()
+        desired_hash = _sha256_bytes(desired) if desired is not None else None
+        if desired_hash != operation["sha256"] or (
+            oct(spec.mode) if spec.mode is not None else None
+        ) != operation["mode"]:
+            raise BootstrapError(f"source changed after planning: {spec.destination}")
+        if _file_state(spec.destination, home=home) != (
+            operation["before_sha256"], operation["before_mode"]
+        ):
+            raise BootstrapError(f"destination changed after planning: {spec.destination}")
+        if (operation["before_sha256"], operation["before_mode"]) != (
+            operation["sha256"], None if spec.remove else spec.mode if spec.mode is not None else 0o644
+        ):
+            prepared.append((spec, desired, operation))
+
     _install_dependencies(
         home=home,
         dependencies=[str(item) for item in plan.get("python_dependencies") or []],
         skip_dependencies=skip_dependencies,
     )
 
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
     backup_root = (
         backup_dir.expanduser().absolute()
         if backup_dir is not None
@@ -479,24 +626,25 @@ def apply_install_plan(
     except HostSkillHygieneError as exc:
         raise BootstrapError(str(exc)) from exc
 
-    for spec in specs:
-        desired = spec.payload()
-        desired_hash = _sha256_bytes(desired)
+    # Prepare every backup before replacing any file. The complete write-ahead
+    # receipt can recover both applied and not-yet-applied atomic writes after
+    # interruption, without repeatedly rewriting an ever-growing journal.
+    for spec, desired, operation in prepared:
+        desired_hash = operation["sha256"]
         destination = spec.destination
-        _assert_no_symlink_components(destination, stop=home)
-        if destination.exists():
-            if not destination.is_file() or destination.is_symlink():
-                raise BootstrapError(f"destination changed to unsafe type: {destination}")
-            current_hash = _sha256_file(destination)
-            if current_hash == desired_hash:
-                continue
+        current_hash, current_mode = _file_state(destination, home=home)
+        if (current_hash, current_mode) != (operation["before_sha256"], operation["before_mode"]):
+            raise BootstrapError(f"destination changed after planning: {destination}")
+        if current_hash is not None:
             before_state = "present"
-            original_mode = stat.S_IMODE(destination.stat().st_mode)
+            original_mode = current_mode
             rel = destination.relative_to(home)
             backup_path = backup_root / "files" / rel
             _atomic_write(backup_path, destination.read_bytes(), mode=0o600, home=backup_root)
             backup_hash = _sha256_file(backup_path)
             original_hash = current_hash
+            if backup_hash != original_hash:
+                raise BootstrapError(f"backup differs from planned destination: {destination}")
         else:
             before_state = "absent"
             original_mode = None
@@ -504,11 +652,7 @@ def apply_install_plan(
             backup_hash = None
             original_hash = None
 
-        mode = spec.mode if spec.mode is not None else 0o644
-        _atomic_write(destination, desired, mode=mode, home=home)
-        installed_hash = _sha256_file(destination)
-        if installed_hash != desired_hash:
-            raise BootstrapError(f"post-copy hash mismatch: {destination}")
+        mode = None if spec.remove else spec.mode if spec.mode is not None else 0o644
         records.append(
             {
                 "kind": "file",
@@ -520,7 +664,8 @@ def apply_install_plan(
                 "backup_path": str(backup_path) if backup_path else None,
                 "backup_sha256": backup_hash,
                 "installed_mode": mode,
-                "installed_sha256": installed_hash,
+                "installed_sha256": desired_hash,
+                "pending": True,
             }
         )
 
@@ -535,7 +680,31 @@ def apply_install_plan(
         "runtime_root": plan["runtime_root"],
         "cli_path": plan["cli_path"],
         "records": records,
+        "recovery_only": True,
     }
+    _atomic_write(
+        manifest_path,
+        (json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        mode=0o600,
+        home=backup_root,
+    )
+
+    for spec, desired, operation in prepared:
+        if _file_state(spec.destination, home=home) != (
+            operation["before_sha256"], operation["before_mode"]
+        ):
+            raise BootstrapError(f"destination changed after planning: {spec.destination}")
+        mode = None if spec.remove else spec.mode if spec.mode is not None else 0o644
+        if spec.remove:
+            spec.destination.unlink()
+        else:
+            _atomic_write(spec.destination, desired, mode=mode, home=home)
+        if _file_state(spec.destination, home=home) != (operation["sha256"], mode):
+            raise BootstrapError(f"post-copy state mismatch: {spec.destination}")
+
+    for record in records:
+        record.pop("pending", None)
+    receipt.pop("recovery_only", None)
     _atomic_write(
         manifest_path,
         (json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"),
@@ -549,6 +718,8 @@ def apply_install_plan(
         "cli_path": plan["cli_path"],
         "backup_manifest": str(manifest_path),
         "changed_files": len(records),
+        "retained_modified_runtime_files": plan.get("retained_modified_runtime_files", []),
+        "retained_unmanaged_runtime_files": plan.get("retained_unmanaged_runtime_files", []),
         "path_note": "The coding agent may call cli_path directly. ~/.local/bin need not be on the human user's PATH.",
     }
 
@@ -565,6 +736,38 @@ def load_rollback_manifest(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _rollback_file_operation(
+    record: dict[str, Any], *, home: Path, allow_original: bool
+) -> dict[str, Any] | None:
+    destination = Path(record["destination"])
+    try:
+        relative = destination.relative_to(home)
+    except ValueError as exc:
+        raise BootstrapError(f"rollback destination escapes recorded home: {destination}") from exc
+    _destination(home, relative)
+    current_hash, current_mode = _file_state(destination, home=home)
+    if allow_original and (current_hash, current_mode) == (
+        record.get("original_sha256"), record.get("original_mode")
+    ):
+        return None
+    if current_hash != record.get("installed_sha256") or (
+        record.get("installed_mode") is not None and current_mode != record["installed_mode"]
+    ):
+        raise BootstrapError(f"refusing rollback because destination changed after install: {destination}")
+    if record.get("before_state") == "present":
+        backup = Path(str(record.get("backup_path")))
+        _assert_no_symlink_components(backup)
+        if not backup.is_file() or _sha256_file(backup) != record.get("backup_sha256"):
+            raise BootstrapError(f"rollback backup missing or changed: {backup}")
+        action = "restore"
+    elif record.get("before_state") == "absent":
+        backup = None
+        action = "remove"
+    else:
+        raise BootstrapError(f"invalid before_state for {destination}")
+    return {"action": action, "destination": str(destination), "backup": str(backup) if backup else None}
+
+
 def rollback_plan(manifest_path: Path) -> dict[str, Any]:
     receipt = load_rollback_manifest(manifest_path)
     home = _safe_home(Path(receipt["home"]))
@@ -572,6 +775,8 @@ def rollback_plan(manifest_path: Path) -> dict[str, Any]:
     for record in reversed(receipt.get("records") or []):
         if record.get("kind") == "removed_skill_tree":
             try:
+                if (receipt.get("recovery_only") or receipt.get("rollback_in_progress")) and removed_tree_is_restored(record, home=home):
+                    continue
                 destination, backup = validate_removed_tree_record(record, home=home)
             except HostSkillHygieneError as exc:
                 raise BootstrapError(str(exc)) from exc
@@ -580,27 +785,14 @@ def rollback_plan(manifest_path: Path) -> dict[str, Any]:
             )
             continue
 
-        destination = Path(record["destination"])
-        try:
-            destination.relative_to(home)
-        except ValueError as exc:
-            raise BootstrapError(f"rollback destination escapes recorded home: {destination}") from exc
-        _assert_no_symlink_components(destination, stop=home)
-        if not destination.is_file() or destination.is_symlink():
-            raise BootstrapError(f"rollback destination missing/unsafe: {destination}")
-        if _sha256_file(destination) != record.get("installed_sha256"):
-            raise BootstrapError(f"refusing rollback because destination changed after install: {destination}")
-        if record.get("before_state") == "present":
-            backup = Path(str(record.get("backup_path")))
-            if not backup.is_file() or backup.is_symlink() or _sha256_file(backup) != record.get("backup_sha256"):
-                raise BootstrapError(f"rollback backup missing or changed: {backup}")
-            action = "restore"
-        elif record.get("before_state") == "absent":
-            backup = None
-            action = "remove"
-        else:
-            raise BootstrapError(f"invalid before_state for {destination}")
-        operations.append({"action": action, "destination": str(destination), "backup": str(backup) if backup else None})
+        operation = _rollback_file_operation(
+            record, home=home,
+            allow_original=bool(receipt.get("rollback_in_progress") or (
+                record.get("pending") and receipt.get("recovery_only")
+            )),
+        )
+        if operation is not None:
+            operations.append(operation)
     return {"status": "plan", "manifest": str(manifest_path), "home": str(home), "operations": operations}
 
 
@@ -609,10 +801,23 @@ def apply_rollback(manifest_path: Path) -> dict[str, Any]:
     receipt = load_rollback_manifest(manifest_path)
     home = _safe_home(Path(plan["home"]))
     record_by_destination = {str(record["destination"]): record for record in receipt.get("records") or []}
+    # Persist intent before restoring anything so an interrupted rollback can
+    # distinguish already-restored originals from unexpected user edits.
+    receipt["rollback_in_progress"] = True
+    _atomic_write(
+        manifest_path,
+        (json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        mode=0o600, home=manifest_path.parent,
+    )
     changed = 0
     for operation in plan["operations"]:
         destination = Path(operation["destination"])
         record = record_by_destination[str(destination)]
+        if operation["action"] != "restore-tree":
+            # Revalidate each action, not only the initial all-record preflight.
+            current = _rollback_file_operation(record, home=home, allow_original=False)
+            if current != operation:
+                raise BootstrapError(f"rollback operation changed: {destination}")
         if operation["action"] == "restore-tree":
             try:
                 restore_removed_tree(record, home=home)

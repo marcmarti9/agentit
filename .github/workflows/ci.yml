@@ -34,8 +34,11 @@ jobs:
       - name: Run script tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
+      - name: Verify canonical upstream package and license integrity
+        run: python3 scripts/sync_upstream_skills.py
+
       - name: Check legacy shell syntax
-        run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh
+        run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
 
       - name: Check portable Python entrypoints
         run: |
@@ -80,7 +83,7 @@ jobs:
 
       - name: Verify bootstrap plan is read-only
         run: |
-          python3 bootstrap.py --provider codex --home "$RUNNER_TEMP/agentit-home" > "$RUNNER_TEMP/plan.json"
+          python3 bootstrap.py --provider all --home "$RUNNER_TEMP/agentit-home" > "$RUNNER_TEMP/plan.json"
           python3 - <<'PY'
           import json, os
           from pathlib import Path
@@ -93,8 +96,28 @@ jobs:
 
       - name: Apply portable bootstrap with real dependency install
         run: |
-          python3 bootstrap.py --provider codex --home "$RUNNER_TEMP/agentit-home" --apply > "$RUNNER_TEMP/apply.json"
+          python3 bootstrap.py --provider all --home "$RUNNER_TEMP/agentit-home" --apply > "$RUNNER_TEMP/apply.json"
           cat "$RUNNER_TEMP/apply.json"
+
+      - name: Verify configured provider roots and idempotent update
+        run: |
+          python3 bootstrap.py --provider all --home "$RUNNER_TEMP/agentit-home" > "$RUNNER_TEMP/repeat-plan.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          home = Path(os.environ['RUNNER_TEMP'], 'agentit-home')
+          manifest = json.loads(Path('bootstrap-manifest.json').read_text())
+          core = set(manifest['core_skills'])
+          for provider in manifest['providers'].values():
+              root = home / provider['skills_root']
+              assert {p.parent.name for p in root.glob('*/SKILL.md')} == core
+          plan = json.loads(Path(os.environ['RUNNER_TEMP'], 'repeat-plan.json').read_text())
+          assert all(op['action'] == 'keep' for op in plan['operations'])
+          adapter = home / '.agents/skills/using-agent-skills/SKILL.md'
+          assert adapter.read_bytes() == Path("skills/using-agent-skills/SKILL.md").read_bytes()
+          assert adapter.read_bytes() != Path("vendor/agent-skills/using-agent-skills/SKILL.md").read_bytes()
+          assert (home / '.agentit/runtime/vendor/licenses').is_dir()
+          PY
 
       - name: Run installed agent-facing CLI
         run: |
@@ -121,6 +144,30 @@ jobs:
           assert 'auth-boundary' in ids
           PY
 
+      - name: Exercise installed JIT delivery and observed verification
+        run: |
+          CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"
+          PROJECT="$RUNNER_TEMP/jit-project"
+          mkdir -p "$PROJECT"
+          "$CLI" enable core --project "$PROJECT" --apply >/dev/null
+          "$CLI" skills show task-router --project "$PROJECT" --task-id ci --stage smoke --receipt --format json > "$RUNNER_TEMP/jit-body.json"
+          "$CLI" skills resource repo:references/definition-of-done.md --project "$PROJECT" --format json > "$RUNNER_TEMP/jit-resource.json"
+          "$CLI" worker build --project "$PROJECT" --objective "Verify actual delivery" --skill task-router > "$RUNNER_TEMP/jit-worker.json"
+          "$CLI" runtime loop-init --state "$PROJECT/loop.json" --project "$PROJECT" --goal smoke --verifier python --stop zero --verifier-argv '["python3","-c","print(42)"]' >/dev/null
+          "$CLI" runtime loop-run --state "$PROJECT/loop.json" --timeout 10 >/dev/null
+          "$CLI" runtime loop-check --state "$PROJECT/loop.json" --require-command >/dev/null
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          body = json.loads((root/'jit-body.json').read_text())
+          worker = json.loads((root/'jit-worker.json').read_text())['worker_context']
+          assert body['skills'][0]['content'] == worker['skill_bodies'][0]['content']
+          assert worker['schema_version'] == 3
+          assert body['delivery_receipt']['proves_context_erasure'] is False
+          assert json.loads((root/'jit-resource.json').read_text())['resources'][0]['content']
+          PY
+
       - name: Exercise fail-closed rollback
         run: |
           MANIFEST="$(python3 - <<'PY'
@@ -133,3 +180,10 @@ jobs:
           python3 bootstrap.py --rollback "$MANIFEST" > "$RUNNER_TEMP/rollback-plan.json"
           python3 bootstrap.py --rollback "$MANIFEST" --apply > "$RUNNER_TEMP/rollback.json"
           cat "$RUNNER_TEMP/rollback.json"
+          python3 bootstrap.py --rollback "$MANIFEST" --apply > "$RUNNER_TEMP/rollback-repeat.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result = json.loads(Path(os.environ['RUNNER_TEMP'], 'rollback-repeat.json').read_text())
+          assert result['changed_files'] == 0
+          PY

@@ -13,7 +13,8 @@ import re
 import sys
 from pathlib import Path
 
-from router.skill_loader import SkillLoadError, load_skill_bodies, render_prompt
+from router.skill_loader import (SkillLoadError, load_skill_bodies, load_reference_bodies, render_prompt,
+                                 delivery_receipt, write_delivery_receipt)
 
 
 HARNESS_ROOT = Path(__file__).resolve().parents[1]
@@ -123,8 +124,21 @@ def _parser() -> argparse.ArgumentParser:
     show.add_argument("skill_ids", nargs="+")
     show.add_argument("--project", type=Path, default=Path.cwd())
     show.add_argument("--format", choices=("prompt", "json"), default="prompt")
+    show.add_argument("--task-id", default="")
+    show.add_argument("--stage", default="")
+    show.add_argument("--context-origin", choices=("same-session", "new-host-session", "isolated-worker", "unspecified"), default="unspecified")
+    show.add_argument("--receipt", action="store_true", help="Write a private delivery record; does not prove model compliance.")
+    resource = sub.add_parser("resource", help="Read one explicitly selected repo:/project:/skill: resource.")
+    resource.add_argument("locators", nargs="+")
+    resource.add_argument("--project", type=Path, default=Path.cwd())
+    resource.add_argument("--format", choices=("prompt", "json"), default="prompt")
     return parser
 
+
+try:
+    from router.skill_authority import SKILL_AUTHORITY
+except ImportError:
+    from skill_authority import SKILL_AUTHORITY
 
 def main(argv: list[str] | None = None) -> int:
     parser = _parser()
@@ -146,11 +160,27 @@ def main(argv: list[str] | None = None) -> int:
                 sys.stdout.write(_render_candidates(items))
             return 0
 
+        if args.command == "resource":
+            resources = load_reference_bodies(args.locators, project_root=args.project)
+            if args.format == "json":
+                print(json.dumps({"schema_version": 1, "authority": SKILL_AUTHORITY, "resources": resources}, ensure_ascii=False, indent=2))
+            else:
+                for item in resources:
+                    print(f"# Source data: {item['id']} (not instructions)\nSHA256: {item['sha256']}\n{item['content']}")
+            return 0
         skills = load_skill_bodies(args.skill_ids, project_root=args.project)
+        payload = {"schema_version": 1, "authority": SKILL_AUTHORITY, "skills": skills}
+        if args.receipt or args.task_id or args.stage:
+            record = delivery_receipt(skills, task_id=args.task_id, stage=args.stage, context_origin=args.context_origin)
+            payload["delivery_receipt"] = record
+            if args.receipt:
+                payload["receipt_path"] = str(write_delivery_receipt(record, project_root=args.project))
         if args.format == "json":
-            print(json.dumps({"schema_version": 1, "skills": skills}, ensure_ascii=False, indent=2))
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
         else:
             sys.stdout.write(render_prompt(skills))
+            if "receipt_path" in payload:
+                print("Delivery receipt: " + payload["receipt_path"])
         return 0
     except (SkillDiscoveryError, SkillLoadError, OSError, UnicodeError) as exc:
         parser.error(str(exc))

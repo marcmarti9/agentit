@@ -89,9 +89,10 @@ class SpecialistAgentCatalogTests(unittest.TestCase):
         self.assertIn("specialists are optional capabilities", text)
         self.assertIn("provider-neutral", text)
 
-    def test_interview_uses_canonical_one_question_at_a_time_workflow(self):
+    def test_interview_format_remains_a_current_task_decision(self):
         policy = self.catalog["policy"]
-        self.assertTrue(policy["interview_one_question_at_a_time"])
+        self.assertTrue(policy["interview_question_format_owned_by_primary_ai"])
+        self.assertNotIn("interview_one_question_at_a_time", policy)
         self.assertNotIn("interview_batch_all_current_questions", policy)
         text = INTERVIEW_SKILL.read_text(encoding="utf-8").lower()
         self.assertIn("ask one question at a time", text)

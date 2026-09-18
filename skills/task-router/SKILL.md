@@ -1,314 +1,62 @@
 ---
 name: task-router
-description: Compact AI-native decision protocol used after Agentit dispatch. The primary model chooses relevant semantic packs and any justified JIT skill/tool/reference set; cheap AI audits and strong AI arbitrates high-risk or unresolved disagreement.
+description: Model-owned task decision, execution depth and risk gates. Select justified packs, bodies, references, tools and review without keyword classifiers or fixed skill quotas.
 ---
 
-# AI-native task decision protocol
+# Task decision contract
 
-This skill runs **after** `using-agentit` has selected `DISPATCH_DECISION=agentit`.
+The primary model interprets the request using the conversation, project state and constraints. Code resolves explicit IDs and enforces declared contracts; it must not infer intent, relevance or a skill count from task text.
 
-Agentit has no programmatic semantic router. Do not use Python, regexes, keyword tables, scoring code or a cheap model to decide what the request means. The active primary model owns semantic interpretation because it has the richest task/project context.
+Before material execution, record a compact decision covering the desired outcome, known facts, material unknowns, scope, risk/reversibility, relevant packs, selected skills and why, reference mode, actual tools/permissions, ownership, verification and stop/rollback condition. Do not expose private reasoning. Revisit the decision when evidence changes.
 
-## Inspect first
+## Execution modes — canonical policy
 
-Use materially available context before deciding or asking:
-
-- exact request and prior conversation;
-- repository/project state and local instructions;
-- relevant files/docs already inspected;
-- tools/capabilities actually available;
-- current deployment/environment state;
-- unresolved assumptions.
-
-Anything quickly discoverable from the project should normally be inspected instead of turned into a user question.
-
-## `TASK_DECISION`
-
-Before material execution, decide at least:
-
-```text
-intent / desired outcome
-known_facts
-material_unknowns
-relevant_packs
-execution_mode: FAST | NORMAL | DEEP
-complexity: trivial | bounded | substantial | structural
-risk: RISK_0..RISK_4
-reversibility / external_effects
-selected_skills
-selected_tools
-reference_plan
-execution_topology
-workers / ownership / parallelism
-plan
-verification
-safety / rollback / post-check
-user_method_assessment
-```
-
-## Development security invariant
-
-Security is a standing requirement for **development work**, not a global context tax for every Agentit task.
-
-When the task builds or changes executable software, the primary model must explicitly classify whether the change creates or modifies a security-relevant application surface. Do not rely on the user to ask for a security review.
-
-### Base rule
-
-For development tasks, load `security-and-hardening` whenever the change touches or can materially affect any of these boundaries:
-
-- untrusted input or rendered user/model content;
-- authentication, sessions, authorization, roles, ownership, tenancy, or admin behavior;
-- API endpoints, server actions, backend handlers, webhooks, callbacks, redirects, or third-party integrations;
-- database queries, storage, uploads/downloads, caches, exports, secrets, environment variables, PII, payments, or other sensitive data;
-- CORS, cookies, headers, CSP, HTTPS, rate limiting, abuse controls, debug/admin surfaces, deployment configuration, dependencies, CI/CD, or supply-chain behavior.
-
-For purely presentational edits with no executable/trust-boundary effect (for example copy, spacing, colors, typography, static layout), do **not** load security merely because the repository is a web app.
-
-### Strong gate rule
-
-Load `app-security-gate` in addition to `security-and-hardening` when any of the following is true:
-
-- substantial application functionality is implemented or modified;
-- auth, authorization, admin, multi-tenant data, payments, uploads, webhooks, privileged secrets, or sensitive-data flows are involved;
-- an API/backend boundary is added or materially changed;
-- a prototype becomes user-facing/production-facing;
-- the task is a release, deploy, production-readiness check, or asks whether the app is safe to ship;
-- the change is `RISK_3` or `RISK_4` for security reasons.
-
-The gate is evidence-driven and may end `PASS` or `BLOCKED`. Do not downgrade it to a prose checklist.
-
-### FAST mode compatibility
-
-This invariant does not authorize broad security audits for trivial UI iteration. In FAST MODE, apply only the bounded security checks implied by the affected surface. A CSS-only change should stay fast. A "small" login or API change is not merely visual and must be reclassified by actual risk, not requested diff size.
-
-## Execution modes: FAST | NORMAL | DEEP
-
-To eliminate overengineering and keep iterative work responsive, calibrate execution depth:
-
-```text
-EXECUTION_MODE: FAST | NORMAL | DEEP
-```
+`EXECUTION_MODE: FAST | NORMAL | DEEP`
 
 ### FAST MODE — Default for iterative development
 
-When the user requests a localized UI, styling, layout, copy, component, or behavior change, optimize for iteration speed.
+Localized presentational or clearly bounded low-risk iteration stays direct. Treat the user's request literally; preserve unrelated behavior. Do NOT launch subagents for normal implementation tasks, refactor adjacent systems, run blanket audits or create needless documentation/commit ceremony.
 
-#### Default behavior
-* Make the smallest change that correctly satisfies the request.
-* Modify only files directly necessary for the requested change.
-* Do NOT refactor unrelated code.
-* Do NOT redesign surrounding systems.
-* Do NOT perform architecture reviews unless required.
-* Do NOT update documentation unless the change makes existing documentation incorrect.
-* Do NOT create additional abstractions unless necessary.
-* Do NOT launch subagents for normal implementation tasks (topology is `direct`).
-* Do NOT perform broad repository audits.
-* Do NOT search the entire repository when the relevant implementation is already known.
-* Do NOT run the complete test suite for a localized change.
-* Run only the minimum targeted checks necessary to detect obvious regressions.
-* For visual changes, perform one desktop verification and one mobile verification unless something is visibly broken.
-* Do NOT repeatedly inspect the same result after it is already correct.
-* Do NOT spend time polishing things the user did not request.
-* Preserve existing functionality instead of revalidating every existing feature.
-* Do NOT create GitHub checkpoints/commits unless requested or unless this project explicitly requires one.
+Verification budget: implement, inspect the affected result, fix demonstrated failures, stop. For visual changes check relevant desktop/mobile behavior. Prefer iteration speed over exhaustive unrelated validation or documentation, **never over necessary correctness or safety**. A small diff at an auth/payment boundary is not a cosmetic change.
 
-#### Scope rule
-Treat the user's request literally. If the user asks to change a layout, move an element, adjust spacing, or alter a product grid, do only that. Do not turn a localized request into a general quality, architecture, accessibility, performance, documentation, or regression-testing project.
+### NORMAL MODE
 
-The development security invariant still applies: presentational-only work stays presentational, but any changed trust boundary must receive the bounded security treatment required above.
+Bounded functional work: relevant module tests, meaningful behavior checks and documentation only where contracts change. Delegate only when isolation or specialization earns its cost.
 
-#### Verification budget
-For normal iterative changes:
-1. Implement.
-2. Check the affected page.
-3. Fix obvious issues.
-4. Stop.
+### DEEP MODE
 
-Do not continue improving after the requested result has been achieved.
+Explicit deep audit/refactor, architectural commitments, migrations, production data, auth, payments, secrets or high-blast-radius effects require stronger adversarial review, scoped comprehensive tests, durable docs and rollback evidence. No mode grants extra permissions.
 
-#### Priority
-During interactive design/development sessions:
-**iteration speed > exhaustive validation > documentation.**
+## Development security invariant
 
-The user prefers five quick iterations over one supposedly perfect iteration that takes excessively long.
+Do not rely on the user to ask for a security review. For changes touching untrusted inputs, rendering, auth/session/authorization, APIs, integrations, data/storage, uploads, secrets, PII, payments, dependencies, deployment or CI trust boundaries, load `security-and-hardening` and test the affected boundary.
 
-### NORMAL MODE — Medium functional changes
-Use for standard feature work, multi-component fixes, and bounded non-critical changes:
-* Direct implementation with targeted test coverage.
-* Run relevant test suites for affected modules, not the entire repository.
-* Update durable documentation only for materially changed contracts or responsibilities.
-* Subagents used only if genuine isolation/specialization provides clear value.
+Load `app-security-gate` for substantial app/backend changes, sensitive flows, user-facing releases and production readiness. Its result is evidence-driven PASS or BLOCKED, not a prose assurance.
 
-### DEEP MODE — High-risk, architectural, and production releases
-Reserved for high-consequence work:
-* Explicit deep audit/review/refactor requests from the user.
-* Infrastructure, security, authentication, payments, production data, migrations, or high-blast-radius changes (`RISK_3`/`RISK_4`).
-* Architecture reviews, independent critic/auditor review, comprehensive testing, durable documentation contract, and formal verification gates.
+For purely presentational edits with no changed trust boundary, do not load security simply because the project is a web app. **FAST mode compatibility:** scope checks to actual affected risk; escalate when the change is not safely localized.
 
-Unless DEEP MODE criteria are met, **FAST MODE is mandatory for iterative development.**
+## Selection and source rules
 
-## Packs and skill selection
+Packs are flat discovery maps. There is **no fixed minimum or maximum** skill count. Every selected body must earn its context cost. Prefer one accountable workflow for an overlapping concern; add complementary specialists only when required. Never load a whole pack by default.
 
-Read `references/agentit-skill-packs.md` when pack discovery detail is useful.
+Reference mode is `none | curated | live | both`. Load `reference-intelligence` when provenance matters; absence of a curated pack is not permission to invent current facts. Read material sources and bind their relevant content into delegated context. Do not confuse a URI with a read receipt.
 
-A pack is only a **semantic discovery map**. It describes an area and the skills that may be relevant there. It has no levels, no fixed ordering, and no prescribed skill count.
+Choose tools after inspecting real capabilities. Tool configuration, a profile name or a prior session's grant is not current authorization. Use `mcp-tooling-fit` when capability selection itself needs judgment.
 
-The primary AI decides:
+## Risk and review
 
-- which pack(s), if any, are useful discovery scopes;
-- which concrete skill bodies to load;
-- how many to load;
-- whether to add/remove skills later as evidence changes.
+Risk follows consequences, not confidence or requested diff size: read-only / reversible local / bounded implementation / sensitive external effects / destructive production. Use RISK_0 through RISK_4 consistently with those distinctions.
 
-There is **no fixed minimum or maximum** and no `essential / standard / deep` hierarchy.
+For material ambiguous work, an independent read-only reviewer may challenge the decision. Require stronger independent review for high-consequence actions and unresolved material disagreement. Reuse an explicit scoped review authorization where it applies; do not ask about a second model on every trivial step. Do not silently spend money or send private code to a new provider.
 
-Examples:
+If no independent reviewer is available, label the check self-review, use reproducible tests and keep the unavailable gate visible. Never fabricate a worker or claim that a mental reset created isolation. A reviewer sees the artifact and contract, not the author's preferred conclusion.
 
-```text
-relevant_packs:
-- engineering
-selected_skills:
-- debugging-and-error-recovery
-```
+Topology may be direct, probe, pipeline, fan-out, writer/reviewer or audit. It is a task decision, not a mandatory committee. One owner writes shared state; workers get exact selected bodies, necessary project/source material and real host restrictions.
 
-```text
-relevant_packs:
-- design
-- frontend
-selected_skills:
-- design-inspiration-research
-- browser-testing-with-devtools
-```
+## Constructive dissent and stopping
 
-A different design task may justify one skill or seven. The pack never decides that number.
+Separate the goal from the proposed method; explain material alternatives and preserve the user's final safe discretionary choice. Ask only for unresolved consequential choices that cannot be obtained from the project. For reversible work, state a reasonable assumption and proceed within scope instead of stalling on minor ambiguity.
 
-Do not select extra skills just because they are in the pack. Do not omit a useful skill merely to keep a predetermined count small. Every selected skill should have a concrete reason tied to the current task/stage, except where the development security invariant makes a security skill mandatory for the affected surface.
+Stop when the scoped acceptance evidence exists, when a true gate blocks progress, or when bounded retries are exhausted. Explain limits rather than silently weakening tests. Repository implementation remains branch → verification → documentation-drift check → PR → reviewer/user merge decision.
 
-## Reference plan
-
-Decide:
-
-```text
-reference_plan.mode: none | curated | live | both
-```
-
-Use `none` when external/current knowledge would not materially improve correctness or quality.
-
-Use `curated` for relevant Agentit/project reference material, `live` for current/domain-specific authoritative sources, and `both` when each contributes something distinct.
-
-If mode is not `none`, load `reference-intelligence` JIT. It is intentionally not part of the global core.
-
-The absence of curated Agentit material is not permission to use stale model memory for current tax/legal/API/regulatory/platform facts.
-
-Do not research for ceremony and do not load irrelevant references merely because Agentit has them.
-
-## Tools
-
-Choose tools/MCPs only after the semantic task decision. Load `mcp-tooling-fit` JIT when tool selection itself needs judgment. Prefer least privilege and current verified setup.
-
-## Risk
-
-- `RISK_0` — read-only explanation/inspection with no meaningful mutation.
-- `RISK_1` — tiny clearly reversible local mutation.
-- `RISK_2` — meaningful but bounded implementation/product change.
-- `RISK_3` — auth/security/payments/secrets/PII/significant data/infrastructure/external side effects.
-- `RISK_4` — destructive production action, plausible data loss, irreversible/high-blast-radius operation.
-
-Confidence never lowers the actual risk floor.
-
-## Topology
-
-- In FAST MODE, topology defaults to `direct`: do NOT launch subagents for normal implementation tasks.
-- `direct` — one owner; delegation adds no real value.
-- `probe` — investigate first, then decide.
-- `fan_out` — independent branches benefit from isolation/parallelism.
-- `pipeline` — dependent stages with explicit handoffs.
-- `writer_reviewer` — one implementation owner + independent review.
-- `audit` — inspection/critique is the task.
-
-Do not force agents for show. Do not avoid useful delegation just because the primary model is strong.
-
-## Constructive dissent
-
-Separate the user's desired outcome from a suggested implementation method.
-
-If a realistic alternative is materially better for correctness, simplicity, cost, maintenance, security, UX, performance or reversibility:
-
-1. explain the concrete issue;
-2. recommend the alternative;
-3. compare the material trade-off;
-4. preserve the user's final safe discretionary choice.
-
-Do not manufacture disagreement for personality.
-
-## Cheap independent audit
-
-Before material execution, give the proposed `TASK_DECISION` to the cheapest competent independent read-only model, normally semantic tier `fast`.
-
-Use `references/economy-reviewer.md` for the detailed contract.
-
-The auditor should challenge:
-
-- mode violation or overengineering: proposing multi-agent topology, broad audits, full test suites, or documentation churn for localized/iterative tasks that belong in FAST MODE;
-- misunderstood intent or hidden constraints;
-- risk classified too low;
-- wrong/missing semantic pack(s);
-- selected skills that are unjustified, redundant, or missing a material capability, including failure to apply the development security invariant;
-- any fixed-count/tier logic replacing model judgment;
-- full-pack/context dumping;
-- missing relevant references or unnecessary reference overload;
-- stale/current-source mistakes or creator claims promoted to facts;
-- wrong/excessive tools or permissions;
-- unnecessary/missing delegation;
-- unsafe write ownership;
-- weak verification/rollback;
-- uncritical acceptance of a materially worse proposed method.
-
-Expected result:
-
-```text
-AUDIT: CLEAR | CHALLENGE | ESCALATE
-FINDINGS:
-- ...
-SUGGESTED_CHECKS:
-- ...
-CONFIDENCE: low | medium | high
-```
-
-`CHALLENGE` makes the primary reconsider; it does not transfer decision ownership. If material disagreement remains, escalate.
-
-## Strong review
-
-Use an independent `critic`/`judgment` tier before execution for:
-
-- `RISK_3/RISK_4`;
-- destructive/difficult rollback work;
-- auth/payments/secrets/PII/production;
-- large structural architecture/product commitments;
-- an auditor `ESCALATE`;
-- unresolved material disagreement.
-
-Require backup/rollback/post-check where relevant; use preview/dry-run for `RISK_4` when technically meaningful.
-
-## Worker context
-
-When spawning, project only bounded task context plus:
-
-```text
-role/objective
-relevant pack(s) as discovery labels
-selected skill bodies
-selected references if any
-allowed tools/permissions
-read/write ownership
-expected handoff
-verification / stop condition
-```
-
-The parent keeps broader context and integration responsibility.
-
-## Mechanical boundary
-
-Programs may resolve explicit IDs, copy files, manage state/manifests, run tests and enforce Loop/Graph contracts. They must not infer semantic pack/skill/reference/tool choices or skill counts from natural-language task text.
-
-> **Primary AI decides; cheap AI audits; strong AI arbitrates when warranted; software performs the reviewed mechanical plan.**
+Web edits inherit the compact anti-slop baseline from `using-agentit`; for substantial design/audits consider `hallmark` JIT, not for merely restating that baseline.

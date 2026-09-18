@@ -1,0 +1,86 @@
+name: PR review canonical source verification
+
+on:
+  push:
+    branches: [audit/pr-integration-review-20260918]
+    paths: [.github/workflows/pr-review-canonical.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reconstruct pinned canonical sources without executing upstream code
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show e9566092e5885b9e99ebcb093a75b15455d72f15:scripts/sync_upstream_skills.py > "$RUNNER_TEMP/sync_source.py"
+          git show 6bea892e863e90ac526f3f2032c40892c160744a:skills/UPSTREAM_LOCK.json > "$RUNNER_TEMP/selected-lock.json"
+          python3 - <<'PY'
+          import importlib.util, json, os, tarfile
+          from pathlib import Path
+          temp = Path(os.environ['RUNNER_TEMP'])
+          spec = importlib.util.spec_from_file_location('review_sync', temp/'sync_source.py')
+          sync = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(sync)
+          root = temp/'canonical'
+          root.mkdir()
+          lock = json.loads((temp/'selected-lock.json').read_text())
+          lock.update(generated_by='scripts/sync_upstream_skills.py', integrity_version=1, licenses=[])
+          archives = {}
+          def source(repo, sha):
+              key = (repo, sha)
+              if key not in archives:
+                  path = sync.archive_path(temp/'source-cache', repo, sha, offline=False)
+                  archives[key] = sync.read_archive(path)
+              return archives[key]
+          for item in lock['mappings']:
+              item.pop('replaces', None)
+              item['kind'] = 'canonical-vendored'
+              if item['skill'] == 'using-agent-skills':
+                  item['destination'] = 'vendor/agent-skills/using-agent-skills'
+              if item['path'] == '.':
+                  item['include'] = sync.ROOT_PACKAGES[item['skill']]
+              files = sync.select_package(source(item['repo'], item['snapshot']), item)
+              item['files'] = {p: sync.file_record(*v) for p,v in sorted(files.items())}
+              for path, value in files.items():
+                  sync.atomic_write(root/sync.package_destination(item)/path, *value)
+          for item in lock.get('shared', []):
+              prefix = item['path'] + '/'
+              files = {p[len(prefix):]: v for p,v in source(item['repo'], item['snapshot']).items() if p.startswith(prefix)}
+              assert all(v[1] != -1 for v in files.values())
+              item['files'] = {p: sync.file_record(*v) for p,v in sorted(files.items())}
+              for path,value in files.items():
+                  sync.atomic_write(root/item['destination']/path, *value)
+              sync.atomic_write(root/item['manifest'], ('\n'.join(sorted(files))+'\n').encode(), 0o644)
+          for (repo,sha), files in sorted(archives.items()):
+              licenses = {p:v for p,v in files.items() if '/' not in p and p.lower().startswith(('license','notice','copying'))}
+              assert licenses and all(v[1] != -1 for v in licenses.values()), repo
+              for path,value in sorted(licenses.items()):
+                  target = f"vendor/licenses/{repo.replace('/', '--')}/{path}"
+                  lock['licenses'].append(dict(repo=repo, snapshot=sha, source=path, destination=target, **sync.file_record(*value)))
+                  sync.atomic_write(root/target, *value)
+          sync.atomic_write(root/sync.LOCK, (json.dumps(lock, indent=2)+'\n').encode(), 0o644)
+          sync.atomic_write(root/sync.SOURCES, sync.provenance_markdown(lock), 0o644)
+          evidence = sync.check_integrity(root, lock)
+          evidence['input_pr_52'] = '6bea892e863e90ac526f3f2032c40892c160744a'
+          evidence['source_commits'] = {repo:sha for repo,sha in archives}
+          out = temp/'canonical-evidence'
+          out.mkdir()
+          (out/'verification.json').write_text(json.dumps(evidence, indent=2)+'\n')
+          with tarfile.open(out/'canonical.tar.gz', 'w:gz') as archive:
+              archive.add(root, arcname='.')
+          print(json.dumps(evidence, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-review-canonical-${{ github.sha }}
+          path: ${{ runner.temp }}/canonical-evidence/
+          retention-days: 7

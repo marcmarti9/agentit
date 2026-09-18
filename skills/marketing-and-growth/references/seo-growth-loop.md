@@ -4,12 +4,51 @@ This reference distills the useful procedures behind the bookmarked Grok SEO pro
 
 ## Provenance
 
-Reviewed 2026-08-25:
+Reviewed 2026-09-18:
 
 - https://x.com/bloggersarvesh/status/2090789546925642183 — SEO workflow/prompt collection covering audits, competitive gaps, keywords/search intent, schema and content work.
 - https://x.com/SeijinJung/status/2087909540679540898 — vendor architecture reference for a marketing agent connected to analytics/search/ads/CMS/email with scheduled reviews and persistent learnings.
 
-Role: creator/vendor workflow inspiration. Any agency-price, revenue, ROAS or customer-performance claims remain vendor/creator claims unless independently corroborated.
+Canonical/current references added 2026-09-18:
+
+- https://developers.google.com/search/docs/fundamentals/ai-optimization-guide — Google guidance for generative AI features in Search.
+- https://developers.google.com/search/docs/essentials/spam-policies — Google Search spam policies, including scaled content and doorway abuse.
+- https://developers.google.com/search/docs/fundamentals/using-gen-ai-content — Google guidance for AI-assisted/generated web content.
+- https://help.openai.com/en/articles/12627856 — OpenAI publisher/search crawler guidance.
+- https://www.bing.com/webmasters/help/ai-performance-9f8e7d6c — Bing AI citation/grounding reporting.
+
+Role: creator/vendor workflow inspiration plus current first-party platform guidance. Any agency-price, revenue, ROAS or customer-performance claims remain vendor/creator claims unless independently corroborated.
+
+## Search and generative-AI scope
+
+Treat SEO, AEO and GEO as overlapping discovery work rather than three independent stacks. For Google specifically, current official guidance says generative AI features use the core Search index/ranking/quality systems. Foundational SEO remains the base.
+
+Do not create an AI-search-only content factory. Prefer:
+
+- crawlable/indexable content;
+- original, non-commodity information and first-hand evidence;
+- clear entities and consistent facts;
+- useful structure/headings;
+- accurate structured data where supported;
+- real authority/mentions;
+- platform-specific crawler controls only when they materially apply.
+
+Do not assume llms.txt, passage chunking, FAQ spam, prompt-page explosion or inauthentic mentions improve visibility. Verify current first-party guidance and live evidence.
+
+For local businesses, load local-seo.md instead of duplicating GBP/reviews/citation procedures here.
+
+## New-site sequencing
+
+For a new site, sequence matters because structural mistakes become expensive after pages are indexed and linked.
+
+A practical order is:
+
+- before launch: business/search goals -> crawl/index architecture -> URL structure -> core commercial pages -> realistic keyword/topic map -> analytics/search tooling plan;
+- launch: robots/sitemap/canonicals -> Search Console + analytics -> crawl/index verification -> rendered/mobile/performance checks;
+- first 30 days: fix discovery/indexation issues -> publish the first coherent topic/commercial cluster -> strengthen internal linking -> establish baseline impressions/queries/conversions;
+- days 30-90: expand only from evidence -> earn real authority/mentions -> review AI-search visibility where relevant -> iterate from GSC/analytics/conversion data.
+
+Do not encode vendor heuristics such as fixed keyword-difficulty thresholds or guaranteed ranking timelines as universal rules.
 
 ## Core model
 

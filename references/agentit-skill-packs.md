@@ -253,18 +253,20 @@ Executive skills decide at the business-function level. Pair them with engineeri
 
 ## seo
 
-**Use for:** technical SEO, search opportunity discovery, schema, search/content gaps, indexability and measurable organic-growth loops.
+**Use for:** technical SEO, local SEO/GBP, search opportunity discovery, schema, search/content gaps, indexability, generative-AI search visibility and measurable organic-growth loops.
 
 **Skills in this pack:**
 
-- `marketing-and-growth` — load its `references/seo-growth-loop.md` when that procedure is useful.
-- `source-driven-development` — current search engine, structured-data and platform documentation.
-- `context-engineering` — large GSC/site/query/competitor evidence sets.
+- `marketing-and-growth` — the single SEO operating skill. Load `references/seo-growth-loop.md` for general/technical/search-loop work and `references/local-seo.md` for local/GBP work; load both only when the task spans both.
+- `source-driven-development` — current search engine, structured-data, GBP and platform documentation.
+- `context-engineering` — large GSC/site/query/competitor/GBP evidence sets.
 - `reference-intelligence` — current competitor/search evidence, authority classification and provenance.
 - `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
 - `browser-testing-with-devtools` — rendered/indexability/runtime checks.
-- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO or large-scale changes.
-- `verification-before-completion` — evidence that technical changes actually landed and behave as expected.
+- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO, location expansion or large-scale changes.
+- `verification-before-completion` — evidence that technical/local changes actually landed and behave as expected.
+
+AEO/GEO is not a parallel permanent skill by default. Treat it as a search surface inside the same SEO operating loop and use current platform-specific evidence when the behavior diverges.
 
 ---
 

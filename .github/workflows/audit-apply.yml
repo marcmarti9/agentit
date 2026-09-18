@@ -1,0 +1,121 @@
+name: Apply audited source
+on:
+  push:
+    branches: ["audit/jit-adversarial-20260918"]
+    paths: [".agentit-audit/READY"]
+permissions: {}
+jobs:
+  apply:
+    if: github.repository == 'marcmarti9/agentit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: true
+      - name: Fetch exact source parents
+        run: |
+          git fetch --depth=1 origin bf880fd7e04cb541eff48527ad9b54bf4bf0270c
+          git fetch --depth=1 origin 3bee47f726baa8e77bf9e0229edd32b2e4a7f12c
+      - name: Validate all source hashes before writing
+        env:
+          GIT_AUTHOR_NAME: Agentit audit
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: Agentit audit
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, re, subprocess
+          from pathlib import Path, PurePosixPath
+          root = Path.cwd()
+          baseline = 'bf880fd7e04cb541eff48527ad9b54bf4bf0270c'
+          seo = '3bee47f726baa8e77bf9e0229edd32b2e4a7f12c'
+          def git(*args):
+              return subprocess.check_output(['git', *args])
+          def digest(data):
+              return hashlib.sha256(data).hexdigest()
+          def inventory():
+              paths = sorted(p for p in git('ls-tree', '-r', '--name-only', baseline, '--', 'skills').decode().splitlines() if re.fullmatch(r'skills/[^/]+/SKILL[.]md', p))
+              missing = set('adversarial-idea-review app-security-gate appllama-usage find-skills i-have-adhd local-model-routing local-seo-playbook long-horizon-recovery spec-kit-workflow stop-slop'.split())
+              records = []
+              for path in paths:
+                  name = path.split('/')[1]
+                  data = git('show', baseline + ':' + path)
+                  count = len(data.decode('utf-8').splitlines())
+                  issues = []
+                  if name in {'scrollytelling-web', 'threejs-product-storytelling'}:
+                      issues += ['invalid-yaml-frontmatter', 'frontmatter-name-mismatch:None', 'invalid-description']
+                  if name == 'local-seo-playbook':
+                      issues.append('not-in-all-profile')
+                  if name in missing:
+                      issues.append('not-in-pack-discovery')
+                  if count > 500:
+                      issues.append('body-over-500-lines')
+                  if len(data) > 20000:
+                      issues.append('large-body-over-20k-bytes')
+                  records.append(dict(id=name, sha256=digest(data), bytes=len(data), lines=count, issues=issues, broken_markdown_links=['../../site/css/tokens.css', '../../docs/recipes.md', '../../docs/study-examples.md'] if name == 'hallmark' else []))
+              assert len(records) == 75
+              return (json.dumps(records, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
+          records = []
+          chunks = sorted((root / '.agentit-audit').glob('delta-*.json'))
+          assert [p.name for p in chunks] == [f'delta-{i:02d}.json' for i in range(1,12)]
+          for chunk in chunks:
+              value = json.loads(chunk.read_text())
+              assert value['schema'] == 1
+              records.extend(value['files'])
+          assert len(records) == 54
+          prepared = []
+          seen = set()
+          for item in records:
+              name = item['path']
+              path = PurePosixPath(name)
+              assert not path.is_absolute() and '..' not in path.parts and '\\' not in name
+              assert path.parts[0] in {'AGENTS.md','README.md','docs','evals','hooks','references','reports','router','scripts','skills','tests'}
+              assert name not in seen
+              seen.add(name)
+              target = root / name
+              for part in (target, *target.parents):
+                  if part == root:
+                      break
+                  assert not part.is_symlink(), name
+              old = target.read_bytes() if target.is_file() else None
+              assert (digest(old) if old is not None else None) == item['old'], 'base mismatch: ' + name
+              if item['new'] is None:
+                  assert old is not None
+                  new = None
+              elif item.get('generate'):
+                  assert name == 'reports/jit-skills-baseline.json' and item['generate'] == 'baseline-inventory'
+                  new = inventory()
+              else:
+                  source = old or b''
+                  if 'from_commit' in item:
+                      assert item['from_commit'] == seo and name.startswith('skills/marketing-and-growth/references/')
+                      source = git('show', seo + ':' + name)
+                  lines = source.decode('utf-8').splitlines(keepends=True)
+                  previous = 0
+                  for start, end, text in item['edits']:
+                      assert type(start) is int and type(end) is int and isinstance(text, str)
+                      assert previous <= start <= end <= len(lines), name
+                      previous = end
+                  for start, end, text in reversed(item['edits']):
+                      lines[start:end] = [text]
+                  new = ''.join(lines).encode('utf-8')
+              assert (digest(new) if new is not None else None) == item['new'], 'result mismatch: ' + name
+              prepared.append((name, target, new))
+          # No project scripts, tests, package installers or model calls execute in this write job.
+          for name, target, data in prepared:
+              if data is None:
+                  target.unlink()
+              else:
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(data)
+          subprocess.run(['git', 'add', '--', *[x[0] for x in prepared]], check=True)
+          tree = git('write-tree').decode().strip()
+          parent = git('rev-parse', 'HEAD').decode().strip()
+          commit = git('commit-tree', tree, '-p', parent, '-p', seo, '-m', 'fix(jit): apply audited delivery, verification and maintenance implementation').decode().strip()
+          subprocess.run(['git', 'push', 'origin', commit + ':refs/heads/audit/jit-adversarial-20260918'], check=True)
+          print(json.dumps({'commit':commit,'source_files':len(prepared),'all_source_hashes_match':True}))
+          PY

@@ -1,0 +1,1 @@
+Apply the 54 preflight-hash-checked source changes only on audit/jit-adversarial-20260918. Preserve main and PR53. Temporary transport files/workflow will be removed in the final connector commit.

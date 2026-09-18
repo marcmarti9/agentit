@@ -35,7 +35,7 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Check legacy shell syntax
-        run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh
+        run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
 
       - name: Check portable Python entrypoints
         run: |
@@ -119,6 +119,30 @@ jobs:
           payload = json.loads(Path(os.environ['RUNNER_TEMP'], 'verify.json').read_text())
           ids = {probe['id'] for probe in payload['probes']}
           assert 'auth-boundary' in ids
+          PY
+
+      - name: Exercise installed JIT delivery and observed verification
+        run: |
+          CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"
+          PROJECT="$RUNNER_TEMP/jit-project"
+          mkdir -p "$PROJECT"
+          "$CLI" enable core --project "$PROJECT" --apply >/dev/null
+          "$CLI" skills show task-router --project "$PROJECT" --task-id ci --stage smoke --receipt --format json > "$RUNNER_TEMP/jit-body.json"
+          "$CLI" skills resource repo:references/definition-of-done.md --project "$PROJECT" --format json > "$RUNNER_TEMP/jit-resource.json"
+          "$CLI" worker build --project "$PROJECT" --objective "Verify actual delivery" --skill task-router > "$RUNNER_TEMP/jit-worker.json"
+          "$CLI" runtime loop-init --state "$PROJECT/loop.json" --project "$PROJECT" --goal smoke --verifier python --stop zero --verifier-argv '["python3","-c","print(42)"]' >/dev/null
+          "$CLI" runtime loop-run --state "$PROJECT/loop.json" --timeout 10 >/dev/null
+          "$CLI" runtime loop-check --state "$PROJECT/loop.json" --require-command >/dev/null
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          body = json.loads((root/'jit-body.json').read_text())
+          worker = json.loads((root/'jit-worker.json').read_text())['worker_context']
+          assert body['skills'][0]['content'] == worker['skill_bodies'][0]['content']
+          assert worker['schema_version'] == 3
+          assert body['delivery_receipt']['proves_context_erasure'] is False
+          assert json.loads((root/'jit-resource.json').read_text())['resources'][0]['content']
           PY
 
       - name: Exercise fail-closed rollback

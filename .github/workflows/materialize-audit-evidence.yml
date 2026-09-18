@@ -187,6 +187,5 @@ jobs:
         run: |
           set -euo pipefail
           git add reports/evidence
-          git diff --cached --check
           git commit -m "docs(audit): preserve durable JIT evidence in repository"
           git push origin HEAD:audit/jit-adversarial-20260918

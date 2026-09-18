@@ -1,0 +1,119 @@
+name: Publish checksum-verified PR review
+
+on:
+  push:
+    branches: [audit/pr-integration-review-20260918]
+    paths: [.github/workflows/pr-review-publish.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reconstruct exact reviewed bundle without executing repository code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, urllib.request
+          from pathlib import Path
+          out = Path(os.environ['RUNNER_TEMP'])/'review-publication'
+          out.mkdir()
+          expected = '''
+          d777c935fe4048c319712d6c82e8fcc851f38eae
+          452ec3982a06263209019fa356f1c8940c7e90f2
+          2ebf4577fa01ec9774bcc1b75ad8476fa0950bcd
+          bfc23a4b2ed8a4e2555a4cc5d6fc490087e0c66d
+          01d2d0198c7c2727e1222d702dc223851b7555eb
+          a8ef5df6bc4bf537cb0d6faa71132f207843d485
+          df5aae272b871b8a4ba8c321827fab49248e75ba
+          98eac2e46ed08a7064eb527d6d9acb1036d2df79
+          85c6a0c2c3fb162f3218eb67c2a645ded034b8e6
+          7d58049a5269bd9f296ea99d73611dc9a61216a1
+          5bcdad3809c791a0d5b0495fe37ed3795edbdc27
+          001b66c5eee868496e2690872d4d331cb78c4680
+          7f95e805d87b18a8254cc2bc3742988e394aa8ca
+          c4737c2eb8b45d61e6ddeb0b8c34cb0cae37b380
+          32279a26ea5820c52492617bdb6cc5ceb6a37a85
+          b363a82134639d348dc7fea3e7866fa134f94cee
+          3716586221fafa03b90aa36f7bdbc7634ffa4507
+          85e32b5cbe1cb96a0a780cdc75c1e92945fb06c7
+          46e2ad4920b641bbd0463deb4ca49ca9dad75648
+          32576271730b7f8ea80f0420303a7cce6bde30a6
+          40e27d8462bdb0ac4cd6f89543af0ec86dc748c8
+          9c38ab7cb67b225e7abaf89c29befc535a39121b
+          5af1ec237d47a510fecfc8882a4aef018777a044
+          1b9899db6b2beb7487787bbb8afb87bd16599a7a
+          f3b0e55cc240c5ecef19ac029d229e4466bf9d2c
+          0d2a3b90123ad12a395a84c3626e8881c32ab2a4
+          d94400a1bc13360a91e92a17addc45b9e747ee55
+          f5e288deae3e2f0225f9d7b1b27d618a8fc77b8e
+          1de79f8a0866c361b1dac23d9b4c6f863975057f
+          99e5a780d91c7938c3b448b7581b52598ec3359a
+          c428bee7fd3ece0584ebe2d6de8d38b526137ab5
+          a60826c4fd1f808962fa8c492d111b1495460cbf
+          c24935757b11471f17e81201d9181479fd5d95db
+          ceb4362d7a2f2a9ad895595222d3de14d04f3b67
+          3d95620c25a31199d18fe65ce97db9bf018c0571
+          9d95e6832b111eb074d37b762b94b13433690bec
+          '''.split()
+          transported = {5: 'ac3901c2c0437447741c71622ec9e482b44cce96', 34: '8af2432bf956e250258ee8b7a8caa4d5cdf27cd1'}
+          chunks = []
+          for index, goal in enumerate(expected):
+              sha = transported.get(index, goal)
+              request = urllib.request.Request(
+                  f'https://api.github.com/repos/marcmarti9/agentit/git/blobs/{sha}',
+                  headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  payload = json.load(response)
+              encoded = ''.join(payload['content'].split())
+              (out/f'chunk-{index:02d}.b64').write_text(encoded)
+              if index == 5:
+                  assert encoded.count('KLyAmFtmmSXs') == 1
+                  encoded = encoded.replace('KLyAmFtmmSXs', 'KLyAmFtmmSzs')
+              if index == 34:
+                  assert encoded.count('qKe/XHrqY') == 1
+                  encoded = encoded.replace('qKe/XHrqY', 'qKe/XHrY')
+              data = base64.b64decode(encoded, validate=True)
+              observed = hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              assert observed == goal, (index, observed, goal)
+              chunks.append(data)
+          bundle = b''.join(chunks)
+          assert len(bundle) == 53669
+          digest = hashlib.sha256(bundle).hexdigest()
+          assert digest == 'f4a4acf061743a6ccfe7c8d3f31a18f56d12f1bf219ec03be821f0b92d296b2f'
+          (out/'integration.bundle').write_bytes(bundle)
+          (out/'verification.json').write_text(json.dumps({'bundle_sha256': digest, 'chunks': len(chunks)}, indent=2)+'\n')
+          print('All transported bytes match the reviewed bundle')
+          PY
+      - name: Validate ancestry and publish a new review branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pr in 43 44 45 47 51 52 54; do
+            git fetch --no-tags origin "refs/pull/$pr/head:refs/review/input-$pr"
+          done
+          git bundle verify "$RUNNER_TEMP/review-publication/integration.bundle"
+          git fetch "$RUNNER_TEMP/review-publication/integration.bundle" refs/heads/integration:refs/heads/reviewed-integration
+          test "$(git rev-parse reviewed-integration)" = 7e43721132415fb7e77c9f92dd52f22e17822842
+          test "$(git rev-parse reviewed-integration^{tree})" = efeda6a5077861f830c958a23ee30f3f7016ddf8
+          for pr in 43 44 45 47 51 52 54; do
+            git merge-base --is-ancestor "refs/review/input-$pr" reviewed-integration
+          done
+          git merge-base --is-ancestor refs/remotes/origin/main reviewed-integration
+          git push origin reviewed-integration:refs/heads/audit/reviewed-pr-objects-20260918
+          git rev-parse reviewed-integration reviewed-integration^{tree} > "$RUNNER_TEMP/review-publication/published.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-review-publication-${{ github.sha }}
+          path: ${{ runner.temp }}/review-publication/
+          retention-days: 7

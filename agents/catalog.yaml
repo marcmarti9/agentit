@@ -5,7 +5,7 @@ policy:
   provider_neutral: true
   graceful_degradation_to_parent: true
   interview_only_for_unresolved_material_decisions: true
-  interview_one_question_at_a_time: true
+  interview_question_format_owned_by_primary_ai: true
   semantic_complexity_owned_by_primary_ai: true
   continuity_for_substantial_work: true
   continuity_policy: docs/PROJECT_CONTINUITY.md

@@ -17,6 +17,7 @@
     "LICENSE",
     "router",
     "skills",
+    "vendor",
     "agents",
     ".codex/agents",
     "mcp",

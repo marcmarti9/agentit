@@ -15,8 +15,9 @@ class UpstreamSkillRegistryTests(unittest.TestCase):
         self.assertEqual(39, len(lock["mappings"]))  # former meta-skill is now an owned adapter
         self.assertNotIn("using-agent-skills", [item["skill"] for item in lock["mappings"]])
         for item in lock["mappings"]:
-            skill = ROOT / "skills" / item["skill"]
+            skill = ROOT / item.get("destination", "skills/" + item["skill"])
             self.assertTrue((skill / "SKILL.md").is_file(), item["skill"])
+            self.assertTrue(item.get("files"), item["skill"])
 
     def test_retired_compact_aliases_are_absent(self):
         for skill_id in (

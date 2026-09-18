@@ -140,6 +140,7 @@ class PortableBootstrapTests(unittest.TestCase):
             applied = apply_rollback(Path(result["backup_manifest"]))
             self.assertEqual(applied["status"], "rolled-back")
             self.assertTrue((legacy / "SKILL.md").is_file())
+            self.assertEqual(apply_rollback(Path(result["backup_manifest"]))["changed_files"], 0)
 
     def test_modified_same_id_skill_is_never_auto_pruned(self):
         with tempfile.TemporaryDirectory() as temporary:

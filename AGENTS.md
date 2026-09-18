@@ -32,6 +32,21 @@ For delegation, use `agentit worker` and pass the actual validated schema-3 payl
 
 Logical cold start, profile disable and skill deselection do not erase a host's conversation. A fresh context means a real new session/worker or explicitly verified host operation. Same-context critique is not independent review.
 
+## Client operability by default
+
+For client-facing websites, applications, automations and internal tools, design routine business operation so the client does not depend on the implementer for ordinary changes.
+
+- Before implementation, identify which content, configuration and business data will reasonably change after launch and who should be allowed to change it.
+- Data the client is expected to manage must live in an appropriate CMS, commerce back office, database-backed admin surface or equivalent interface instead of being hard-coded into source files.
+- Prefer the platform's existing administration surface when it already fits; do not introduce WordPress, a custom admin or another control plane merely to make a system editable.
+- Expose only client-appropriate controls. Infrastructure, secrets, authentication policy, destructive operations and other privileged settings remain protected unless there is a justified, permissioned workflow for them.
+- For material mutable state, provide proportionate safeguards such as roles/permissions, validation, preview or draft/publish flows, history/auditability and rollback when their value justifies the complexity.
+- Treat a generated prototype as non-production until persistence, editable data boundaries, error states, deployment, security and maintainability have been verified for the real operating model.
+- Delivery test: ask **“What will the client need to change after launch, and can the right person do it safely without editing code or depending on us?”** Any important unanswered case is an architecture gap, not post-launch support by default.
+
+This is a default, not a mandate to build a control panel for everything. Static sites with genuinely static content should stay static; add operational infrastructure only when the real change model requires it.
+
+
 ## Verification, documentation and changes
 
 The Loop/Graph runtime enforces declared state and evidence type; `agentit runtime` exposes it. Executable claims should use command-bound verification and relevant source fingerprints. Manual observations remain labelled reported. Hashes do not authenticate an adversarial producer, and no JSON envelope is an OS sandbox.

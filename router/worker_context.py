@@ -40,6 +40,11 @@ except ImportError:
                               validate_bodies, render_prompt as render_skill_bodies)
 
 
+try:
+    from router.skill_authority import SKILL_AUTHORITY
+except ImportError:
+    from skill_authority import SKILL_AUTHORITY
+
 INSTRUCTION_BASENAMES: tuple[str, ...] = (
     "AGENTS.md",
     "CLAUDE.md",
@@ -382,7 +387,8 @@ def build_worker_context(
     else:
         instructions = discover_project_instructions(root, work_subdir=spec.work_subdir)
 
-    manifest_skills = load_manifest_skill_ids(root)
+    # Availability is not selection. Only validate a private cache if selected.
+    manifest_skills = []
     skills_projected = resolve_skills_projected(
         task_skills=spec.skills,
         manifest_skills=manifest_skills,
@@ -474,6 +480,7 @@ def build_worker_context(
         "relevant_packs": _dedup_text(spec.relevant_packs),
         "skills_projected": skills_projected,
         "skill_bodies": skill_bodies,
+        "skill_authority": SKILL_AUTHORITY,
         "references_projected": reference_refs,
         "reference_bodies": reference_bodies,
         "references_pending": pending_references,
@@ -540,6 +547,23 @@ def assert_projection_complete(payload: Mapping[str, Any]) -> None:
     for key in ("project_instructions", "skills_projected", "relevant_packs", "references_projected"):
         if key not in context:
             raise WorkerContextError(f"{key} field missing")
+
+    if context.get("skill_authority") != SKILL_AUTHORITY:
+        raise WorkerContextError("skill authority envelope missing or changed; rebuild worker context")
+    instructions = context["project_instructions"]
+    paths = context.get("project_instruction_paths")
+    if (not isinstance(instructions, list) or not isinstance(paths, list)
+            or any(not isinstance(item, dict) for item in instructions)
+            or [item.get("path") for item in instructions] != paths
+            or any(not isinstance(path, str) for path in paths)
+            or len(set(paths)) != len(paths)):
+        raise WorkerContextError("project instruction inventory mismatch")
+    for item in instructions:
+        content = item.get("content")
+        if not isinstance(content, str) or item.get("sha256_prefix") != _sha256_prefix(content):
+            raise WorkerContextError("project instruction content hash mismatch")
+    if projection.get("project_instructions_projected") != bool(instructions):
+        raise WorkerContextError("project instruction projection declaration mismatch")
 
     try:
         if "skill_bodies" not in context or "reference_bodies" not in context:

@@ -24,15 +24,17 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
         self.assertIn(SKILL_ID, executive)
         self.assertIn(SKILL_ID, all_skills)
 
-    def test_idea_refine_requires_adversarial_review_before_convergence(self) -> None:
-        idea_refine = (
-            REPOSITORY / "skills" / "idea-refine" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-
-        self.assertIn("adversarial-idea-review", idea_refine)
-        self.assertIn("before choosing a Recommended Direction", idea_refine)
-        self.assertIn("KILL", idea_refine)
-        self.assertIn("PROCEED_WITH_GATES", idea_refine)
+    def test_owned_policy_requires_adversarial_review_without_modifying_canonical_source(self) -> None:
+        adapter = (REPOSITORY / "skills/using-agent-skills/SKILL.md").read_text()
+        specialist = (REPOSITORY / "skills/adversarial-idea-review/SKILL.md").read_text()
+        self.assertIn("serious candidates require `adversarial-idea-review` before convergence", adapter)
+        self.assertIn("KILL", specialist)
+        self.assertIn("PROCEED_WITH_GATES", specialist)
+        import hashlib, json
+        lock = json.loads((REPOSITORY / "skills/UPSTREAM_LOCK.json").read_text())
+        item = next(m for m in lock["mappings"] if m["skill"] == "idea-refine")
+        body = (REPOSITORY / "skills/idea-refine/SKILL.md").read_bytes()
+        self.assertEqual(hashlib.sha256(body).hexdigest(), item["files"]["SKILL.md"]["sha256"])
 
     def test_meta_skill_routes_exploration_through_adversarial_gate(self) -> None:
         meta_skill = (
@@ -42,44 +44,13 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
         self.assertIn("serious candidates require `adversarial-idea-review` before convergence", meta_skill)
         self.assertIn("Exploration is not complete until the serious candidate has survived attack", meta_skill)
 
-    def test_ideation_overlay_is_idempotent(self) -> None:
-        import subprocess
-
-        overlay = REPOSITORY / "scripts" / "apply-agentit-skill-overlays.py"
-        first = subprocess.run(
-            ["python3", str(overlay)],
-            cwd=REPOSITORY,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(0, first.returncode, first.stderr)
-        using_agent_skills = (
-            REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        idea_refine = (REPOSITORY / "skills" / "idea-refine" / "SKILL.md").read_text(
-            encoding="utf-8"
-        )
-        second = subprocess.run(
-            ["python3", str(overlay)],
-            cwd=REPOSITORY,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(0, second.returncode, second.stderr)
-        self.assertEqual(
-            using_agent_skills,
-            (REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md").read_text(
-                encoding="utf-8"
-            ),
-        )
-        self.assertEqual(
-            idea_refine,
-            (REPOSITORY / "skills" / "idea-refine" / "SKILL.md").read_text(
-                encoding="utf-8"
-            ),
-        )
+    def test_canonical_refresh_has_no_native_policy_overlay(self) -> None:
+        self.assertFalse((REPOSITORY / "scripts/apply-agentit-skill-overlays.py").exists())
+        import json
+        lock = json.loads((REPOSITORY / "skills/UPSTREAM_LOCK.json").read_text())
+        destinations = [m.get("destination", "skills/" + m["skill"]) for m in lock["mappings"]]
+        self.assertNotIn("skills/using-agent-skills", destinations)
+        self.assertIn("vendor/agent-skills/using-agent-skills", destinations)
 
     def test_skill_has_evidence_and_kill_gate_contracts(self) -> None:
         skill = (

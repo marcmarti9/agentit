@@ -58,3 +58,5 @@ Topology may be direct, probe, pipeline, fan-out, writer/reviewer or audit. It i
 Separate the goal from the proposed method; explain material alternatives and preserve the user's final safe discretionary choice. Ask only for unresolved consequential choices that cannot be obtained from the project. For reversible work, state a reasonable assumption and proceed within scope instead of stalling on minor ambiguity.
 
 Stop when the scoped acceptance evidence exists, when a true gate blocks progress, or when bounded retries are exhausted. Explain limits rather than silently weakening tests. Repository implementation remains branch → verification → documentation-drift check → PR → reviewer/user merge decision.
+
+Web edits inherit the compact anti-slop baseline from `using-agentit`; for substantial design/audits consider `hallmark` JIT, not for merely restating that baseline.

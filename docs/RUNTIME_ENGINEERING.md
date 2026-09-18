@@ -72,3 +72,15 @@ python3 -m unittest discover -s router -p 'test_jit_*.py' -v
 ```
 
 The CLI is agent-facing. Users should not need to orchestrate loops by hand. A real independent model review and actual host permission enforcement must be separately observed and reported honestly.
+
+## Source fingerprint version 2
+
+Command-bound subject fingerprints include each selected file's kind, permission
+mode and SHA-256, plus selected directories (including empty directories) and their
+modes. Symlinks and special files such as FIFOs are rejected, not silently omitted.
+`.git`, `.agentit` and `__pycache__` remain excluded from subject enumeration. The
+execution record reports `subject_fingerprint_version: 2` when subjects are bound.
+A chmod or directory-shape change after PASS now makes the result stale. Pre-v2
+source-bound evidence must be rerun before a current-source handoff; unchanged
+legacy report-only evidence is not relabelled as command-verified. These are
+before/after observations, not a filesystem snapshot lock or signed attestation.

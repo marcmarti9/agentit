@@ -90,3 +90,21 @@ The tests cover all package metadata/discovery, actual body/resource projection,
 Real-host semantic selection, model compliance, latency and task-quality comparisons remain separate evaluations; see `evals/jit-host-cases.json`. No native host/model run is claimed by a passing Python test. The baseline and finding-to-fix evidence are in `reports/jit-adversarial-audit-2026-09-18.md` and `reports/jit-implementation-2026-09-18.md`.
 
 External references checked 2026-09-18: https://agentskills.io/specification ; https://developers.openai.com/codex/skills/ ; https://code.claude.com/docs/en/skills . They establish platform/spec behavior, not an Agentit certification.
+
+## Integrated PR review: cache retirement and authority
+
+A selected managed private cache must still have a canonical source. A deleted
+skill or resource cannot remain activatable merely because its old hash matches.
+Refresh stale profiles explicitly; project-native `.agents/skills` overrides remain
+intentional and separate. An unrelated malformed availability manifest cannot
+block explicitly selected native/harness skills; a selected malformed cache still
+fails closed. UTF-8 is decoded without newline translation: CRLF and trailing
+whitespace survive body delivery and byte/hash receipts.
+
+CLI JSON, rendered prompts and schema-3 worker contexts carry the common
+`router/skill_authority.py` envelope. It does not modify canonical source bodies;
+upstream lifecycle language cannot authorize extra tools, downloads or stages.
+Workers also validate the ordered project-instruction inventory and content hashes.
+Legacy schema-3 payloads without the authority field must be rebuilt before spawn.
+These unsigned checks detect accidental omission/drift, not a producer that forges
+both content and matching metadata. No model-obedience claim follows from them.

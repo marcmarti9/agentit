@@ -128,20 +128,16 @@ class ArchitecturePolicyTests(unittest.TestCase):
         self.assertIn("references_projected", text)
 
     def test_interview_is_jit_not_mandatory_product_ceremony(self):
-        skill = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8").lower()
-        policy = (ROOT / "docs" / "AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md").read_text(
-            encoding="utf-8"
-        ).lower()
-        catalog = (ROOT / "agents" / "catalog.yaml").read_text(encoding="utf-8")
-
-        self.assertIn("ask one question at a time", skill)
-        self.assertIn("guess:", skill)
-        self.assertIn("95% confidence", skill)
-        self.assertIn("when not to use", skill)
-        self.assertIn("interview_one_question_at_a_time: true", catalog)
-        self.assertNotIn("interview_batch_all_current_questions", catalog)
+        # Scope belongs to native Agentit policy, not mutable upstream phrasing.
+        policy = (ROOT / "docs/AGENTIT_INTERVIEW_AND_PROVIDER_POLICY.md").read_text().lower()
+        adapter = (ROOT / "skills/using-agent-skills/SKILL.md").read_text().lower()
+        from router.skill_authority import SKILL_AUTHORITY
         self.assertIn("ask the user only for unresolved material decisions", policy)
-        self.assertIn("one focused question at a time", policy)
+        self.assertIn("do not force repeated confirmation or a fixed confidence threshold", policy)
+        self.assertIn("stop asking once the material unknowns are resolved", policy)
+        self.assertIn("question grouping and format from the current task", policy)
+        self.assertIn("do not run a full project lifecycle", adapter)
+        self.assertIn("require a new interview/specification", SKILL_AUTHORITY)
         self.assertNotIn("product-affecting work is interviewed before", policy)
 
     def test_legacy_mcp_helper_is_exact_stack_only(self):

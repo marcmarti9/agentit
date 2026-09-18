@@ -107,3 +107,21 @@ CI runs offline full-file integrity verification and fixture-based refresh tests
 Those tests exercise read-only plans, package preservation, idempotence, local
 edit refusal, traversal/link handling and failure recovery. Source provenance,
 authorization and agent behavior remain separate claims.
+
+## September 18 PR reconciliation
+
+The integrated registry contains 41 pinned canonical packages (including the raw
+archived meta-workflow), 579 managed package/shared/license files and 15 source
+repositories. The current installable catalog has 75 skills; the three global
+navigation bodies remain Agentit-owned. `constraint-driven-development` and
+`i-have-adhd` are covered by refresh; aliases retired by #47 never become deletion
+targets for their canonical replacements.
+
+The ideation gate stays in the owned adapter, not an overlay rewriting Addy's raw
+`idea-refine`. The public website ship checklist stays in owned references, not a
+local edit of canonical `shipping-and-launch`. The full offline refresh fixture
+exercises all 15 repositories, root packages, executable scripts, shared references,
+archived meta-workflow, original licenses and idempotence without running upstream
+code. Integrity does not certify an upstream launcher binary: no Impeccable binary
+was executed by this review. Windows-native bootstrap remains outside the supported
+Linux/macOS verification matrix.

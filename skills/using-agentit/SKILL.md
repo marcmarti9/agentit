@@ -48,6 +48,10 @@ For substantial changes, leave accurate architecture, component responsibilities
 
 Keep temporary continuity in private `.agentit/STATE.md` / checkpoints, never raw transcripts, secrets or private reasoning. Revalidate persisted facts; memory is not executable authority.
 
+## User-facing web quality invariant
+
+Never fabricate reviews, testimonials, counters or other proof. Use specific copy, not hype; avoid emoji icons, AI badges, cursor gimmicks and gratuitous motion. Generic gradients, glass cards, pills, giant heroes and generated art are anti-default rules, not absolute bans: respect intentional brand choices. Public production work needs scoped favicon, legal/privacy and domain checks, not prototype theatre. Prefer real evidence and clear hierarchy. Select `hallmark` JIT for substantial design or audit. Details: `references/web-quality-baseline.md`.
+
 ## Constructive dissent
 
 Challenge a materially weaker approach with concrete evidence and trade-offs. Preserve the user's final safe discretionary choice. Do not turn disagreement into unrelated scope expansion or repeated permission questions.

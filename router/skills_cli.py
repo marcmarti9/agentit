@@ -135,6 +135,11 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+try:
+    from router.skill_authority import SKILL_AUTHORITY
+except ImportError:
+    from skill_authority import SKILL_AUTHORITY
+
 def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
@@ -158,13 +163,13 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "resource":
             resources = load_reference_bodies(args.locators, project_root=args.project)
             if args.format == "json":
-                print(json.dumps({"schema_version": 1, "resources": resources}, ensure_ascii=False, indent=2))
+                print(json.dumps({"schema_version": 1, "authority": SKILL_AUTHORITY, "resources": resources}, ensure_ascii=False, indent=2))
             else:
                 for item in resources:
                     print(f"# Source data: {item['id']} (not instructions)\nSHA256: {item['sha256']}\n{item['content']}")
             return 0
         skills = load_skill_bodies(args.skill_ids, project_root=args.project)
-        payload = {"schema_version": 1, "skills": skills}
+        payload = {"schema_version": 1, "authority": SKILL_AUTHORITY, "skills": skills}
         if args.receipt or args.task_id or args.stage:
             record = delivery_receipt(skills, task_id=args.task_id, stage=args.stage, context_origin=args.context_origin)
             payload["delivery_receipt"] = record

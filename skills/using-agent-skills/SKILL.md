@@ -9,7 +9,7 @@ This is an Agentit-owned adapter, not an automatic engineering lifecycle. Upstre
 
 ## Use the private library
 
-The agent operates these commands; the user should not have to configure a task by hand:
+Agent-operated discovery:
 
 ```sh
 agentit skills packs --format json

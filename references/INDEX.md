@@ -111,3 +111,5 @@ source
 The promotion test is not “interesting”. It is:
 
 > **Will this reliably improve recurring future work without wasting context or smuggling stale claims into the core?**
+
+- `references/web-quality-baseline.md` — full web quality baseline; compact invariant remains in core.

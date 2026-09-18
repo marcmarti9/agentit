@@ -51,7 +51,8 @@ context erasure. Command-bound Loop evidence is distinct from self-report.
 
 See [JIT loading and migration](docs/JIT_SKILL_LOADING.md),
 [runtime evidence](docs/RUNTIME_ENGINEERING.md), and the
-[audit](reports/jit-adversarial-audit-2026-09-18.md).
+[audit](reports/jit-adversarial-audit-2026-09-18.md) and the
+[integrated PR review](reports/pr-integration-review-2026-09-18.md).
 Native host/model behavior still needs its own observed evaluation.
 
 ## Quick start
@@ -106,7 +107,7 @@ Agentit deliberately separates what is installed from what is active:
 ```text
 profile installed      = skills available for discovery
 pack inspected         = capabilities visible as possibilities
-selected skill body    = active context for this stage
+delivered skill body   = content available to this stage; not proof of compliance
 MCP configured         = tool available to the host
 MCP selected/enabled   = tool justified for this task
 ```
@@ -175,7 +176,7 @@ Security is not a global context tax, but it is part of the development bar when
 
 ### Adversarial idea review
 
-Non-trivial ideation cannot jump from `idea-refine` to a recommended direction. Serious candidates must pass `adversarial-idea-review` first: attack adoption, incumbents, operations, economics, support, scale, and evidence quality before commitment. The overlay is re-applied after every upstream skill refresh so that contract does not drift out of the vendored Addy meta-skill.
+Non-trivial ideation cannot jump from `idea-refine` to a recommended direction. Serious candidates must pass `adversarial-idea-review` first: attack adoption, incumbents, operations, economics, support, scale, and evidence quality before commitment. The mandate lives in Agentit's owned `using-agent-skills` adapter, outside canonical upstream packages, so refreshes cannot replace it.
 
 ### Design studio
 
@@ -199,7 +200,7 @@ Refresh the canonical registry with:
 ./scripts/sync-upstream-skills.sh
 ```
 
-That command copies the latest upstream packages, records snapshots in `skills/UPSTREAM_LOCK.json`, and re-applies Agentit's ideation overlay. See [`skills/UPSTREAM_SOURCES.md`](skills/UPSTREAM_SOURCES.md) and [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
+That command verifies pinned package bytes and modes offline; it does not refresh or write by default. Plan a reviewed refresh with `--refresh`, then apply with `--refresh --apply` (or pin the reviewed commits with `--heads-file`). Original license files and per-file hashes are recorded in `skills/UPSTREAM_LOCK.json`. Canonical packages stay byte-for-byte upstream; the raw upstream meta-workflow is archived under `vendor/agent-skills`, separate from the owned adapter. See [`skills/UPSTREAM_SOURCES.md`](skills/UPSTREAM_SOURCES.md) and [`docs/SKILL_CURATION.md`](docs/SKILL_CURATION.md).
 
 ### Reference Intelligence
 
@@ -430,7 +431,7 @@ See:
 | `AGENTS.md` | compact global Agentit rules and dispatch |
 | `skills/using-agentit/` | canonical Agentit lifecycle, cold-start and minimum documentation contract |
 | `skills/task-router/` | model-owned task decision + review contract |
-| `skills/using-agent-skills/` | vendored Addy engineering workflow meta-skill, plus Agentit's ideation overlay |
+| `skills/using-agent-skills/` | Agentit-owned JIT navigation and policy adapter (raw upstream source is in `vendor/agent-skills/`) |
 | `skills/UPSTREAM_SOURCES.md` | provenance registry and snapshots for vendored third-party skills |
 | `skills/reference-intelligence/` | curated/live source and provenance workflow |
 | `skills/executive-orchestration/` | cross-functional executive routing, bounded fan-out and single-parent synthesis contract |

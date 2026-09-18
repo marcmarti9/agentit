@@ -15,6 +15,7 @@ import sys
 from datetime import datetime, timezone
 import os
 import signal
+import stat
 import subprocess
 import tempfile
 import time
@@ -258,7 +259,7 @@ def _subject(contract: Mapping[str, Any]) -> str | None:
     if not paths:
         return None  # honest: command observed, but no source snapshot bound
     root = Path(contract["verifier_cwd"])
-    files: dict[str, str] = {}
+    files: dict[str, dict[str, Any]] = {}
     for relative in paths:
         selected = root / relative
         for ancestor in (selected, *selected.parents):
@@ -268,16 +269,23 @@ def _subject(contract: Mapping[str, Any]) -> str | None:
                 raise LoopRuntimeError(f"symlink subject rejected: {ancestor}")
         if not selected.exists():
             raise LoopRuntimeError(f"subject path unavailable: {relative}")
-        candidates = sorted(selected.rglob("*")) if selected.is_dir() else [selected]
+        candidates = [selected, *sorted(selected.rglob("*"))] if selected.is_dir() else [selected]
         for path in candidates:
             rel = path.relative_to(root)
             if any(p in {".git", ".agentit", "__pycache__"} for p in rel.parts):
                 continue
             if path.is_symlink():
                 raise LoopRuntimeError(f"symlink subject rejected: {path}")
-            if path.is_file():
-                files[rel.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return _hash(files)
+            metadata = path.lstat()
+            mode = stat.S_IMODE(metadata.st_mode)
+            if stat.S_ISREG(metadata.st_mode):
+                files[rel.as_posix()] = {"kind": "file", "mode": mode,
+                                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+            elif stat.S_ISDIR(metadata.st_mode):
+                files[rel.as_posix()] = {"kind": "directory", "mode": mode}
+            else:
+                raise LoopRuntimeError(f"non-regular subject rejected: {path}")
+    return _hash({"fingerprint_version": 2, "entries": files})
 
 
 def _validate_execution(execution: Any, *, passed: bool) -> None:
@@ -347,6 +355,7 @@ def run_verifier(loop: Mapping[str, Any], *, timeout: float = 300) -> dict[str, 
                  "duration_seconds": time.monotonic()-clock, "exit_code": exit_code,
                  "timed_out": timed_out, "output_sha256": digest.hexdigest(), "output_bytes": size,
                  "output_excerpt": excerpt, "subject_before": before, "subject_after": after,
+                 "subject_fingerprint_version": 2 if contract.get("subject_paths") else None,
                  "sandbox_enforced": False}
     return record_attempt(loop, passed=(exit_code == 0 and not timed_out and before == after),
                           strategy="execute contract-bound verifier", evidence=json.dumps(execution, sort_keys=True),

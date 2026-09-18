@@ -123,11 +123,10 @@ class PortableBootstrapTests(unittest.TestCase):
             legacy = home / ".codex" / "skills" / old_skill
             legacy.mkdir(parents=True)
             source = ROOT / "skills" / old_skill
-            for path in source.rglob("*"):
-                if path.is_file():
-                    destination = legacy / path.relative_to(source)
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    destination.write_bytes(path.read_bytes())
+            # This is an exact-copy fixture: preserve directory and file modes,
+            # including setgid inherited by a checkout on shared filesystems.
+            import shutil
+            shutil.copytree(source, legacy, dirs_exist_ok=True)
 
             plan = build_install_plan(home=home, source_root=ROOT, provider="codex")
             removals = [item for item in plan["operations"] if item["action"] == "remove-managed-skill-tree"]

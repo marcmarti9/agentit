@@ -1,0 +1,40 @@
+{
+  "artifacts": [],
+  "attempts_used": 1,
+  "contract_sha256": "3225b71dd94af4d5a8fe761591cdc3ced224f6d884069cd7b7efb64640c3d6bb",
+  "escalation_reason": null,
+  "evidence_requirement": "command",
+  "evidence_source": "command",
+  "execution": {
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "router",
+      "-p",
+      "test_jit_*.py",
+      "-v"
+    ],
+    "cwd": "/home/runner/work/agentit/agentit",
+    "duration_seconds": 1.6730816310000023,
+    "exit_code": 0,
+    "output_bytes": 5505,
+    "output_excerpt": "test_core_has_bounded_delivery_size (test_jit_adversarial.CatalogRegressionTests.test_core_has_bounded_delivery_size) ... ok\ntest_every_skill_has_valid_discoverable_metadata (test_jit_adversarial.CatalogRegressionTests.test_every_skill_has_valid_discoverable_metadata) ... ok\ntest_availability_never_becomes_selection (test_jit_adversarial.DeliveryRegressionTests.test_availability_never_becomes_selection) ... ok\ntest_intermediate_instructions_reach_worker (test_jit_adversarial.DeliveryRegressionTests.test_intermediate_instructions_reach_worker) ... ok\ntest_no_arbitrary_twelve_skill_cap (test_jit_adversarial.DeliveryRegressionTests.test_no_arbitrary_twelve_skill_cap) ... ok\ntest_separate_worker_does_not_inherit_previous_selection (test_jit_adversarial.DeliveryRegressionTests.test_separate_worker_does_not_inherit_previous_selection) ... ok\ntest_unread_references_do_not_pass_spawn (test_jit_adversarial.DeliveryRegressionTests.test_unread_references_do_not_pass_spawn) ... ok\ntest_worker_contains_selected_body_not_just_id (test_jit_adversarial.DeliveryRegressionTests.test_worker_contains_selected_body_not_just_id) ... ok\ntest_worker_rejects_missing_or_tampered_body (test_jit_adversarial.DeliveryRegressionTests.test_worker_rejects_missing_or_tampered_body) ... ok\ntest_cli_receipt_is_bound_to_explicit_task_and_stage (test_jit_adversarial.LoaderRegressionTests.test_cli_receipt_is_bound_to_explicit_task_and_stage) ... ok\ntest_dangling_skill_symlink_rejected (test_jit_adversarial.LoaderRegressionTests.test_dangling_skill_symlink_rejected) ... ok\ntest_resources_use_explicit_roots_and_reject_traversal (test_jit_adversarial.LoaderRegressionTests.test_resources_use_explicit_roots_and_reject_traversal) ... ok\ntest_symlink_root_rejected (test_jit_adversarial.LoaderRegressionTests.test_symlink_root_rejected) ... ok\ntest_unmanaged_cache_does_not_override_harness (test_jit_adversarial.LoaderRegressionTests.test_unmanaged_cache_does_not_override_harness) ... ok\ntest_command_contract_rejects_self_report (test_jit_adversarial.VerificationRegressionTests.test_command_contract_rejects_self_report) ... ok\ntest_real_command_pass_failure_and_timeout (test_jit_adversarial.VerificationRegressionTests.test_real_command_pass_failure_and_timeout) ... ok\ntest_reported_evidence_is_honestly_labelled (test_jit_adversarial.VerificationRegressionTests.test_reported_evidence_is_honestly_labelled) ... ok\ntest_all_profile_resolves_every_registered_skill (test_jit_hygiene.JitHygieneTests.test_all_profile_resolves_every_registered_skill) ... ok\ntest_core_skill_contains_cold_start_and_minimum_docs_contract (test_jit_hygiene.JitHygieneTests.test_core_skill_contains_cold_start_and_minimum_docs_contract) ... ok\ntest_documentation_contract_requires_component_level_understanding (test_jit_hygiene.JitHygieneTests.test_documentation_contract_requires_component_level_understanding) ... ok\ntest_global_core_stays_exactly_three_navigation_skills (test_jit_hygiene.JitHygieneTests.test_global_core_stays_exactly_three_navigation_skills) ... ok\ntest_mcp_catalog_never_auto_activates (test_jit_hygiene.JitHygieneTests.test_mcp_catalog_never_auto_activates) ... ok\ntest_profiles_packs_and_selected_context_remain_distinct (test_jit_hygiene.JitHygieneTests.test_profiles_packs_and_selected_context_remain_distinct) ... ok\ntest_graph_requires_observed_command_when_its_contract_says_so (test_jit_integration.JitIntegrationTests.test_graph_requires_observed_command_when_its_contract_says_so) ... ok\ntest_real_profile_cache_is_readable_and_tampering_is_rejected (test_jit_integration.JitIntegrationTests.test_real_profile_cache_is_readable_and_tampering_is_rejected) ... ok\ntest_separate_processes_deliver_only_their_selected_skill (test_jit_integration.JitIntegrationTests.test_separate_processes_deliver_only_their_selected_skill) ... ok\ntest_source_drift_in_cache_is_rejected (test_jit_integration.JitIntegrationTests.test_source_drift_in_cache_is_rejected) ... ok\ntest_stale_source_cannot_reuse_command_receipt (test_jit_integration.JitIntegrationTests.test_stale_source_cannot_reuse_command_receipt) ... ok\ntest_state_symlink_is_rejected_without_overwriting_target (test_jit_integration.JitIntegrationTests.test_state_symlink_is_rejected_without_overwriting_target) ... ok\ntest_verifier_mutating_its_subject_does_not_pass (test_jit_integration.JitIntegrationTests.test_verifier_mutating_its_subject_does_not_pass) ... ok\ntest_worker_contains_reference_data_not_just_a_locator (test_jit_integration.JitIntegrationTests.test_worker_contains_reference_data_not_just_a_locator) ... ok\ntest_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_destructive_cleanup_writes_rollback_receipt_before_final_bootstrap_receipt) ... ok\ntest_host_cleanup_revalidates_exact_planned_tree_before_deletion (test_jit_safety_regressions.HostSkillHygieneSafetyTests.test_host_cleanup_revalidates_exact_planned_tree_before_deletion) ... ok\ntest_private_cleanup_revalidates_hash_immediately_before_removal (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_private_cleanup_revalidates_hash_immediately_before_removal) ... ok\ntest_profile_refresh_removes_reference_deleted_from_source_and_manifest (test_jit_safety_regressions.PrivateProfileCacheSafetyTests.test_profile_refresh_removes_reference_deleted_from_source_and_manifest) ... ok\n\n----------------------------------------------------------------------\nRan 35 tests in 1.527s\n\nOK\n",
+    "output_sha256": "47ad34a534df8ec8764c3f50416d779f84ab66ad88d001bd198a43ffdddbf5cb",
+    "sandbox_enforced": false,
+    "started_at": "2026-09-18T19:41:45.001690+00:00",
+    "subject_after": "6c6b811cb0e63ca976b7c1897f89b92bc66f8b5bcb49ba0f34aa87fe9c8b1980",
+    "subject_before": "6c6b811cb0e63ca976b7c1897f89b92bc66f8b5bcb49ba0f34aa87fe9c8b1980",
+    "timed_out": false
+  },
+  "kind": "agentit.loop.receipt",
+  "last_evidence_sha256": "b45bc820806814a3d12fb3a4cf6584cd5a4e6970e8e655d11dd27703928cf2c9",
+  "max_attempts": 2,
+  "receipt_sha256": "b564eff827367bc6ae43d79d452c323b503d3e893aecefa9e926efeb13dee0b6",
+  "schema_version": 1,
+  "status": "passed",
+  "stop_condition": "Exit zero and selected source remains unchanged",
+  "verifier": "Execute JIT regression modules"
+}

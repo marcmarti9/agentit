@@ -1,0 +1,17 @@
+a2dcfea5f7fb6ebd55aecea9bc5f519205c433c99747348520a667c351ee239f  ./README.md
+e2980780cdcefe446314bda0c3cfccd72409942bbb3eca7f082dbf6af2103fe1  ./baseline/commit.txt
+829c033b173e52e0f0023b2881d30ce496818dcdcf467b59b25df8e50c165809  ./baseline/router-tests.txt
+9442b7f23d817f25d357a03d4dd0bdaf9166df5bedadc0e868e7f08806c348af  ./baseline/script-tests.txt
+c80a6075fa18391b0ddd809b8b7aa4ef5427577cace75b3087644610a25a0140  ./baseline/source-archive.sha256
+08a3909e78b9f58ac89e745a16d2797137732d1b6e37890bbd6113637d8df5bc  ./baseline/test-status.json
+a70256da369764383aa965f2abcff2ca7904369cbf9727f25c76223b7f9f5658  ./final-ci/commit.txt
+db61bbadd353803f4b3c6d7ab63c332276e7d77501586d56b6f1cb2e6dcdd9f8  ./final-ci/router-tests.txt
+b7263fa1b8b9263bb28d249597696663b283bbaecd85d0172dfcb5bae63be202  ./final-ci/script-tests.txt
+831681a61103518e182f02b265d7805615cf1acc23969c830314011d8f13921c  ./final-ci/source-archive.sha256
+5ccd658b4b228db5c3b7e678dc6aa27a3527aea2bc639067286fab59d50ad8ee  ./final-ci/test-status.json
+0b5cf957e26bca468974030fb0878bfc1388ea2adf53fea0e4f8719a1059dea5  ./local/command-receipt.json
+f21ad86ab4a3eaf885099bd63e1f932ba1363b5662f9786b8bfd3a0598e8dc29  ./local/jit-red-status.json
+a4b991a21b3d7cd1d78fe095d5ced89db8a9a384fda477fdca91e0d50a1acfe7  ./local/jit-red-tests.log
+606cd5d9046a9a0f43ad24ad50b174b743b0a4f1177507a1df4b4b097ff57eb7  ./local/post-probes.json
+e50af4bc22dc0ffdf91db4cfb1f54239ac9829751da4fcc9c2e031ebc67fa2d4  ./local/post-skills-inventory.json
+4ffea26f3c279cfb74f77e547de78939e8df3c3a9bf1ebc89e7df59d88bff3a9  ./verification-remote.json

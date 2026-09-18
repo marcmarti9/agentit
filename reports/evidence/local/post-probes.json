@@ -1,0 +1,14 @@
+{
+  "worker_selected_body_present": true,
+  "worker_claims_active_by_name_only": false,
+  "intermediate_instructions_preserved": true,
+  "loader_rejects_symlink_project": true,
+  "untracked_private_cache_overrides_harness": false,
+  "cache_rejection": "unmanaged private skill cache: debugging-and-error-recovery; refresh the profile",
+  "manifest_auto_projects": [],
+  "self_report_without_command_accepted_as_pass": true,
+  "receipt_has_provenance": true,
+  "skill_count": 74,
+  "total_skill_bytes": 871522,
+  "core_body_bytes": 15284
+}

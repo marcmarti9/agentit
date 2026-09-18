@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-09-18",
+  "base": "bf880fd7e04cb541eff48527ad9b54bf4bf0270c",
+  "code_commit": "2682d29c4e3030fc4d81a1ab4cfbc582cb637ae9",
+  "original_pr_heads": {
+    "43": "c2a741c68119d4506f488c94c9ea2beb0f6bb825",
+    "44": "f50fb8a8e86f1969d9da7cce1e03ea4b49bdf558",
+    "45": "e9566092e5885b9e99ebcb093a75b15455d72f15",
+    "47": "a535a49f77480c72744c905670f0759b104990b7",
+    "51": "b456286ef0468736599e642e7e86939a07531fae",
+    "52": "6bea892e863e90ac526f3f2032c40892c160744a",
+    "54": "e08c06d3b5a4e1406f191133e358ef533e47b17a"
+  },
+  "all_heads_are_ancestors": true,
+  "red_baseline_code": "ac4f74e5c5f25e722e3a560535f2ad4302cd4dae",
+  "red_tests": 13,
+  "red_failures": 10,
+  "red_errors": 2,
+  "red_passes": 1,
+  "green_targeted_tests": 16,
+  "green_exit": 0,
+  "core_bytes": 15982,
+  "catalog_skills": 75,
+  "canonical_packages": 41,
+  "canonical_files": 579,
+  "canonical_repositories": 15,
+  "snapshot_run": 35388173347,
+  "canonical_run": 35388808271,
+  "scope_limitations": [
+    "No additional independent LLM reviewer",
+    "No native-host/model obedience evaluation",
+    "No global install or production deployment",
+    "Impeccable engine binary not executed",
+    "Windows-native bootstrap not certified"
+  ],
+  "remote_final_ci": "Must be observed on the published head; see PR verification receipt."
+}

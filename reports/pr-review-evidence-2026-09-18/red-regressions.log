@@ -1,0 +1,173 @@
+test_deleted_canonical_reference_cannot_survive_as_private_cache (router.test_pr_integration_regressions.PrIntegrationRegressions.test_deleted_canonical_reference_cannot_survive_as_private_cache) ... FAIL
+test_native_crlf_bytes_are_delivered_without_newline_translation (router.test_pr_integration_regressions.PrIntegrationRegressions.test_native_crlf_bytes_are_delivered_without_newline_translation) ... FAIL
+test_passed_source_evidence_expires_on_empty_directory_change (router.test_pr_integration_regressions.PrIntegrationRegressions.test_passed_source_evidence_expires_on_empty_directory_change) ... FAIL
+test_passed_source_evidence_expires_on_executable_mode_change (router.test_pr_integration_regressions.PrIntegrationRegressions.test_passed_source_evidence_expires_on_executable_mode_change) ... FAIL
+test_rendered_prompt_preserves_the_entire_selected_body (router.test_pr_integration_regressions.PrIntegrationRegressions.test_rendered_prompt_preserves_the_entire_selected_body) ... FAIL
+test_retired_canonical_skill_cannot_survive_as_private_cache (router.test_pr_integration_regressions.PrIntegrationRegressions.test_retired_canonical_skill_cannot_survive_as_private_cache) ... FAIL
+test_selected_broken_cache_manifest_still_fails_closed (router.test_pr_integration_regressions.PrIntegrationRegressions.test_selected_broken_cache_manifest_still_fails_closed) ... ok
+test_special_source_file_is_rejected_not_silently_ignored (router.test_pr_integration_regressions.PrIntegrationRegressions.test_special_source_file_is_rejected_not_silently_ignored) ... FAIL
+test_unselected_broken_manifest_cannot_block_native_worker (router.test_pr_integration_regressions.PrIntegrationRegressions.test_unselected_broken_manifest_cannot_block_native_worker) ... ERROR
+test_valid_crlf_cache_is_not_rejected_as_corrupt (router.test_pr_integration_regressions.PrIntegrationRegressions.test_valid_crlf_cache_is_not_rejected_as_corrupt) ... ERROR
+test_worker_rejects_a_removed_authority_envelope (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_a_removed_authority_envelope) ... FAIL
+test_worker_rejects_dropped_project_instruction (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_dropped_project_instruction) ... FAIL
+test_worker_rejects_mutated_project_instruction (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_mutated_project_instruction) ... FAIL
+
+======================================================================
+ERROR: test_unselected_broken_manifest_cannot_block_native_worker (router.test_pr_integration_regressions.PrIntegrationRegressions.test_unselected_broken_manifest_cannot_block_native_worker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/worker_context.py", line 203, in load_manifest_skill_ids
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+  File "/usr/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 114, in test_unselected_broken_manifest_cannot_block_native_worker
+    self.assertEqual(self.worker()['worker_context']['skills_projected'], ['example'])
+                     ~~~~~~~~~~~^^
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 55, in worker
+    return worker_context.build_and_validate(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        worker_context.WorkerTaskSpec(objective='Review the explicit procedure', skills=['example']),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        project_root=self.project,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/mnt/data/agentit-review/router/worker_context.py", line 734, in build_and_validate
+    payload = build_worker_context(
+        spec,
+    ...<3 lines>...
+        skip_project_instructions=skip_project_instructions,
+    )
+  File "/mnt/data/agentit-review/router/worker_context.py", line 385, in build_worker_context
+    manifest_skills = load_manifest_skill_ids(root)
+  File "/mnt/data/agentit-review/router/worker_context.py", line 205, in load_manifest_skill_ids
+    raise WorkerContextError(f"invalid skills manifest: {exc}") from exc
+router.worker_context.WorkerContextError: invalid skills manifest: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+======================================================================
+ERROR: test_valid_crlf_cache_is_not_rejected_as_corrupt (router.test_pr_integration_regressions.PrIntegrationRegressions.test_valid_crlf_cache_is_not_rejected_as_corrupt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/skill_loader.py", line 84, in _cache_file
+    raise ValueError('installed hash mismatch')
+ValueError: installed hash mismatch
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 107, in test_valid_crlf_cache_is_not_rejected_as_corrupt
+    body = skill_loader.load_skill_bodies(['example'], project_root=self.project)[0]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/agentit-review/router/skill_loader.py", line 112, in load_skill_bodies
+    _cache_file(project, skill_id, 'SKILL.md', content)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/agentit-review/router/skill_loader.py", line 89, in _cache_file
+    raise SkillLoadError(f'invalid/stale private skill cache {skill_id}/{relative}: {exc}; refresh the profile') from exc
+router.skill_loader.SkillLoadError: invalid/stale private skill cache example/SKILL.md: installed hash mismatch; refresh the profile
+
+======================================================================
+FAIL: test_deleted_canonical_reference_cannot_survive_as_private_cache (router.test_pr_integration_regressions.PrIntegrationRegressions.test_deleted_canonical_reference_cannot_survive_as_private_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 82, in test_deleted_canonical_reference_cannot_survive_as_private_cache
+    with self.assertRaises(skill_loader.SkillLoadError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_native_crlf_bytes_are_delivered_without_newline_translation (router.test_pr_integration_regressions.PrIntegrationRegressions.test_native_crlf_bytes_are_delivered_without_newline_translation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 88, in test_native_crlf_bytes_are_delivered_without_newline_translation
+    self.assertEqual(body['content'].encode('utf-8'), path.read_bytes())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'First line\nSecond line\n' != b'First line\r\nSecond line\r\n'
+
+======================================================================
+FAIL: test_passed_source_evidence_expires_on_empty_directory_change (router.test_pr_integration_regressions.PrIntegrationRegressions.test_passed_source_evidence_expires_on_empty_directory_change)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 155, in test_passed_source_evidence_expires_on_empty_directory_change
+    with self.assertRaises(loop_runtime.LoopRuntimeError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: LoopRuntimeError not raised
+
+======================================================================
+FAIL: test_passed_source_evidence_expires_on_executable_mode_change (router.test_pr_integration_regressions.PrIntegrationRegressions.test_passed_source_evidence_expires_on_executable_mode_change)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 147, in test_passed_source_evidence_expires_on_executable_mode_change
+    with self.assertRaises(loop_runtime.LoopRuntimeError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: LoopRuntimeError not raised
+
+======================================================================
+FAIL: test_rendered_prompt_preserves_the_entire_selected_body (router.test_pr_integration_regressions.PrIntegrationRegressions.test_rendered_prompt_preserves_the_entire_selected_body)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 95, in test_rendered_prompt_preserves_the_entire_selected_body
+    self.assertIn(bodies[0]['content'], skill_loader.render_prompt(bodies))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Procedure with terminal whitespace\n\n  ' not found in '# Delivered Agentit Skill Bodies\nSkill IDs alone do not count as activation. These exact bodies are delivered, not proof they were followed.\nHost safety and explicit task/project constraints govern. Upstream workflow suggestions do not auto-select other skills,\ngrant tools, mandate unrelated stages, or override the task scope. Report unavailable review/isolation honestly.\n\n## Skill: example\nSource: project:.agents/skills/example/SKILL.md\nResource root: /dev/shm/tmpeputv3uc/project\nSkill root: /dev/shm/tmpeputv3uc/project/.agents/skills/example\nSHA256: 41d68985f38420d4ebb13a7ddbf8965a628d00050b46ca3cab8fb1a1973a0d75\n\nProcedure with terminal whitespace\n\n# Skill Load Receipt\n- example 41d68985f38420d4ebb13a7ddbf8965a628d00050b46ca3cab8fb1a1973a0d75 (38 bytes)\n'
+
+======================================================================
+FAIL: test_retired_canonical_skill_cannot_survive_as_private_cache (router.test_pr_integration_regressions.PrIntegrationRegressions.test_retired_canonical_skill_cannot_survive_as_private_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 69, in test_retired_canonical_skill_cannot_survive_as_private_cache
+    with self.assertRaises(skill_loader.SkillLoadError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SkillLoadError not raised
+
+======================================================================
+FAIL: test_special_source_file_is_rejected_not_silently_ignored (router.test_pr_integration_regressions.PrIntegrationRegressions.test_special_source_file_is_rejected_not_silently_ignored)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 162, in test_special_source_file_is_rejected_not_silently_ignored
+    with self.assertRaises(loop_runtime.LoopRuntimeError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: LoopRuntimeError not raised
+
+======================================================================
+FAIL: test_worker_rejects_a_removed_authority_envelope (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_a_removed_authority_envelope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 101, in test_worker_rejects_a_removed_authority_envelope
+    with self.assertRaises(worker_context.WorkerContextError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: WorkerContextError not raised
+
+======================================================================
+FAIL: test_worker_rejects_dropped_project_instruction (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_dropped_project_instruction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 136, in test_worker_rejects_dropped_project_instruction
+    with self.assertRaises(worker_context.WorkerContextError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: WorkerContextError not raised
+
+======================================================================
+FAIL: test_worker_rejects_mutated_project_instruction (router.test_pr_integration_regressions.PrIntegrationRegressions.test_worker_rejects_mutated_project_instruction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/agentit-review/router/test_pr_integration_regressions.py", line 128, in test_worker_rejects_mutated_project_instruction
+    with self.assertRaises(worker_context.WorkerContextError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: WorkerContextError not raised
+
+----------------------------------------------------------------------
+Ran 13 tests in 6.335s
+
+FAILED (failures=10, errors=2)

@@ -114,7 +114,8 @@ jobs:
           plan = json.loads(Path(os.environ['RUNNER_TEMP'], 'repeat-plan.json').read_text())
           assert all(op['action'] == 'keep' for op in plan['operations'])
           adapter = home / '.agents/skills/using-agent-skills/SKILL.md'
-          assert "Agentit's own adapter" in adapter.read_text()
+          assert adapter.read_bytes() == Path("skills/using-agent-skills/SKILL.md").read_bytes()
+          assert adapter.read_bytes() != Path("vendor/agent-skills/using-agent-skills/SKILL.md").read_bytes()
           assert (home / '.agentit/runtime/vendor/licenses').is_dir()
           PY
 

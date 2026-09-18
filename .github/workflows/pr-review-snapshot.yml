@@ -1,0 +1,38 @@
+name: PR review source snapshot
+
+on:
+  push:
+    branches: [audit/pr-integration-review-20260918]
+    paths: [.github/workflows/pr-review-snapshot.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Capture review inputs without executing PR code
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/review-snapshot"
+          refs=(refs/remotes/origin/main)
+          for pr in 43 44 45 47 51 52 54; do
+            git fetch --no-tags origin "refs/pull/$pr/head:refs/review/pr-$pr"
+            refs+=("refs/review/pr-$pr")
+          done
+          git show-ref > "$RUNNER_TEMP/review-snapshot/refs.txt"
+          git bundle create "$RUNNER_TEMP/review-snapshot/repository.bundle" "${refs[@]}"
+          git bundle verify "$RUNNER_TEMP/review-snapshot/repository.bundle"
+          sha256sum "$RUNNER_TEMP/review-snapshot/repository.bundle" > "$RUNNER_TEMP/review-snapshot/SHA256SUMS"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-review-source-${{ github.sha }}
+          path: ${{ runner.temp }}/review-snapshot/
+          retention-days: 7

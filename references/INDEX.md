@@ -57,6 +57,7 @@ Load only the playbook that matches the current task/stage:
 
 - `skills/marketing-and-growth/references/marketing-operating-system.md`
 - `skills/marketing-and-growth/references/seo-growth-loop.md`
+- `skills/marketing-and-growth/references/local-seo.md`
 - `skills/marketing-and-growth/references/launch-content-system.md`
 
 Creator/vendor performance figures remain claims unless independently verified.

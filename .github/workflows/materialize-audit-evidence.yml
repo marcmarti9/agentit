@@ -1,0 +1,192 @@
+name: Materialize durable audit evidence
+
+on:
+  push:
+    branches:
+      - audit/jit-adversarial-20260918
+    paths:
+      - .github/audit-evidence-materialize.trigger
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/jit-adversarial-20260918
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependency
+        run: python3 -m pip install PyYAML
+
+      - name: Download baseline and final evidence artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports/evidence/baseline reports/evidence/final-ci reports/evidence/local "$RUNNER_TEMP/artifacts"
+
+          curl -L --fail --retry 3 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10558103335/zip" \
+            -o "$RUNNER_TEMP/artifacts/baseline.zip"
+          unzip -q "$RUNNER_TEMP/artifacts/baseline.zip" -d "$RUNNER_TEMP/artifacts/baseline"
+          cp "$RUNNER_TEMP/artifacts/baseline/commit.txt" reports/evidence/baseline/
+          cp "$RUNNER_TEMP/artifacts/baseline/router-tests.txt" reports/evidence/baseline/
+          cp "$RUNNER_TEMP/artifacts/baseline/script-tests.txt" reports/evidence/baseline/
+          cp "$RUNNER_TEMP/artifacts/baseline/test-status.json" reports/evidence/baseline/
+          sha256sum "$RUNNER_TEMP/artifacts/baseline/source.tar.gz" > reports/evidence/baseline/source-archive.sha256
+
+          curl -L --fail --retry 3 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10560429753/zip" \
+            -o "$RUNNER_TEMP/artifacts/final.zip"
+          unzip -q "$RUNNER_TEMP/artifacts/final.zip" -d "$RUNNER_TEMP/artifacts/final"
+          cp "$RUNNER_TEMP/artifacts/final/commit.txt" reports/evidence/final-ci/
+          cp "$RUNNER_TEMP/artifacts/final/router-tests.txt" reports/evidence/final-ci/
+          cp "$RUNNER_TEMP/artifacts/final/script-tests.txt" reports/evidence/final-ci/
+          cp "$RUNNER_TEMP/artifacts/final/test-status.json" reports/evidence/final-ci/
+          sha256sum "$RUNNER_TEMP/artifacts/final/source.tar.gz" > reports/evidence/final-ci/source-archive.sha256
+
+      - name: Reproduce a red JIT regression run against the audited baseline
+        run: |
+          set -euo pipefail
+          BASE="$RUNNER_TEMP/baseline-red"
+          git worktree add --detach "$BASE" bf880fd7e04cb541eff48527ad9b54bf4bf0270c
+          cp router/test_jit_adversarial.py "$BASE/router/test_jit_adversarial.py"
+          cp router/test_jit_integration.py "$BASE/router/test_jit_integration.py"
+          set +e
+          (
+            cd "$BASE"
+            python3 -m unittest discover -s router -p 'test_jit_*.py' -v
+          ) > reports/evidence/local/jit-red-tests.log 2>&1
+          red_exit=$?
+          set -e
+          printf '{"exit_code":%s,"expected_nonzero":true,"baseline_commit":"bf880fd7e04cb541eff48527ad9b54bf4bf0270c"}\n' "$red_exit" > reports/evidence/local/jit-red-status.json
+          if [ "$red_exit" -eq 0 ]; then
+            echo "Expected the audit regressions to fail against the baseline." >&2
+            exit 1
+          fi
+          git worktree remove "$BASE" --force
+
+      - name: Generate current post-fix probes
+        run: |
+          set -euo pipefail
+          python3 reports/reproduce_jit_baseline.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --output "$RUNNER_TEMP/post-probes" >/dev/null
+          cp "$RUNNER_TEMP/post-probes/probes.json" reports/evidence/local/post-probes.json
+          cp "$RUNNER_TEMP/post-probes/skills-inventory.json" reports/evidence/local/post-skills-inventory.json
+
+      - name: Execute command-bound regression verification and preserve receipt
+        run: |
+          set -euo pipefail
+          STATE="$RUNNER_TEMP/jit-evidence-loop.json"
+          python3 agentit runtime loop-init \
+            --state "$STATE" \
+            --project "$GITHUB_WORKSPACE" \
+            --goal "JIT regression modules pass on the reviewed source" \
+            --verifier "Execute JIT regression modules" \
+            --stop "Exit zero and selected source remains unchanged" \
+            --verifier-argv '["python3","-m","unittest","discover","-s","router","-p","test_jit_*.py","-v"]' \
+            --subject router \
+            --subject reports >/dev/null
+
+          python3 agentit runtime loop-run --state "$STATE" --timeout 180 > "$RUNNER_TEMP/loop-run.json"
+          python3 agentit runtime loop-check --state "$STATE" --require-command >/dev/null
+          python3 - "$RUNNER_TEMP/loop-run.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          payload = json.loads(Path(sys.argv[1]).read_text())
+          receipt = payload["receipt"]
+          Path("reports/evidence/local/command-receipt.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Write durable provenance index
+        run: |
+          cat > reports/evidence/verification-remote.json <<EOF
+          {
+            "repository": "${GITHUB_REPOSITORY}",
+            "canonical_pr": 54,
+            "baseline_commit": "bf880fd7e04cb541eff48527ad9b54bf4bf0270c",
+            "seo_commit_absorbed_from_pr53": "3bee47f726baa8e77bf9e0229edd32b2e4a7f12c",
+            "previous_verified_commit": "ac4f74e5c5f25e722e3a560535f2ad4302cd4dae",
+            "baseline_run_id": 35371883907,
+            "baseline_artifact_id": 10558103335,
+            "final_ci_run_id": 35377988115,
+            "final_evidence_run_id": 35377988111,
+            "final_evidence_artifact_id": 10560429753,
+            "materialization_run_id": ${GITHUB_RUN_ID},
+            "native_model_evaluation": "not_run",
+            "independent_model_review": "not_run"
+          }
+          EOF
+
+          cat > reports/evidence/README.md <<'EOF'
+          # Durable evidence for the 2026-09-18 Agentit adversarial audit
+
+          This directory makes PR #54 self-contained. No substantive audit report, regression log, receipt or verification state is intended to exist only in the ChatGPT conversation or an expiring GitHub Actions artifact.
+
+          ## Canonical reports
+
+          - `reports/jit-adversarial-audit-2026-09-18.md`
+          - `reports/jit-implementation-2026-09-18.md`
+          - `reports/jit-skill-dispositions-2026-09-18.md`
+          - `reports/jit-skills-baseline.json`
+          - `reports/jit-baseline-probes.json`
+          - `reports/jit-verification-2026-09-18.json`
+          - `reports/reproduce_jit_baseline.py`
+          - `evals/jit-host-cases.json`
+          - `docs/JIT_SKILL_LOADING.md`
+          - `docs/RUNTIME_ENGINEERING.md`
+
+          ## Evidence preserved here
+
+          - `baseline/`: complete text logs/status from the original clean baseline run plus the source-archive checksum.
+          - `local/jit-red-tests.log`: audit regressions executed against the frozen baseline and required to fail.
+          - `local/post-probes.json` and `post-skills-inventory.json`: post-fix probes generated from the current PR source.
+          - `local/command-receipt.json`: command-bound JIT regression verification generated by the current runtime.
+          - `final-ci/`: complete text logs/status from the previously verified final remote evidence artifact plus the source-archive checksum.
+          - `verification-remote.json`: immutable run/artifact/commit identifiers used by the audit.
+
+          ## Why the old chat ZIPs are not committed
+
+          The ZIP/tar files previously attached in chat were derivative convenience packages containing repository source plus these reports/logs. They are not unique source-of-truth artifacts. The repository commit is the canonical source snapshot; this directory preserves the unique text evidence and source archive checksums. The intermediate SEO transport ZIP is also redundant now that PR #54 targets `main` and directly includes the former PR #53 changes.
+
+          ## Evidence boundary
+
+          These files demonstrate the runtime, installation and context-delivery behavior exercised by the tests. They do **not** demonstrate perfect semantic skill selection, model attention/compliance, context erasure, independent-model review or OS-level sandboxing. Those limits remain explicit in the canonical reports and `evals/jit-host-cases.json`.
+          EOF
+
+          (
+            cd reports/evidence
+            find . -type f ! -name MANIFEST.sha256 -print0 | sort -z | xargs -0 sha256sum > MANIFEST.sha256
+          )
+
+      - name: Commit evidence to the audit branch
+        env:
+          GIT_AUTHOR_NAME: Agentit audit evidence
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: Agentit audit evidence
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          set -euo pipefail
+          git add reports/evidence
+          git diff --cached --check
+          git commit -m "docs(audit): preserve durable JIT evidence in repository"
+          git push origin HEAD:audit/jit-adversarial-20260918

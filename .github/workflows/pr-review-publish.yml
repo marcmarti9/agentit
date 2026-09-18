@@ -80,8 +80,8 @@ jobs:
                   assert encoded.count('KLyAmFtmmSXs') == 1
                   encoded = encoded.replace('KLyAmFtmmSXs', 'KLyAmFtmmSzs')
               if index == 34:
-                  assert encoded.count('qKe/XHrqY') == 1
-                  encoded = encoded.replace('qKe/XHrqY', 'qKe/XHrY')
+                  assert encoded.count('qKe/XHrqY') == 1 and encoded.endswith('V00MDA')
+                  encoded = encoded.replace('qKe/XHrqY', 'qKe/XHrY') + 'w'
               data = base64.b64decode(encoded, validate=True)
               observed = hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
               assert observed == goal, (index, observed, goal)

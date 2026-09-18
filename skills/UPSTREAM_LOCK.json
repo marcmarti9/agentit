@@ -246,12 +246,6 @@
       "snapshot": "f3ac195224eac1eb0dfe1a3059c2a6add78ffbe3"
     },
     {
-      "skill": "using-agent-skills",
-      "repo": "addyosmani/agent-skills",
-      "path": "skills/using-agent-skills",
-      "snapshot": "1c760d643497e9da289300e5eb2f5aca861503f7"
-    },
-    {
       "skill": "verification-before-completion",
       "repo": "obra/superpowers",
       "path": "skills/verification-before-completion",

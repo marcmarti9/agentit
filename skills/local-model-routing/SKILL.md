@@ -1,75 +1,18 @@
 ---
 name: local-model-routing
-description: Route work to local or remote models by capability tier. Use when local LLMs are available or the user wants local-first execution without silent quality drop.
+description: Assess an explicitly available local or remote model endpoint for a bounded role. Guidance only; no automatic model-routing implementation or capability parity is implied.
 ---
 
-# Local model routing
+# Local model capability assessment
 
-Local models are first-class. They are not a novelty switch.
+Use when the user requests local-first execution or an actual local endpoint is available and relevant. Merely listing an endpoint in preferences does not activate it, test it, or grant permission to send code to another provider.
 
-Canonical catalog: `models/capabilities.yaml`.
+`models/capabilities.yaml` is a discovery reference in a repository checkout, not a live router result. Installed runtime packaging may not include it. `router/preferences.py` accepts local-model preferences; Agentit currently does **not** implement an automatic `models.parent|worker|critic` route response. Never claim it does.
 
-## Tiers
+The primary model chooses a role using current evidence: reasoning, coding, bounded extraction or independent critique. Verify needed tools, context capacity, transport, privacy boundary and a small representative task against the real endpoint before relying on it. Record provider/model, version, observed capabilities, failures and verification date. A model name or declared tier is not evidence of parity.
 
-| Tier | Roles |
-|---|---|
-| judgment | architect, hard tradeoffs |
-| coding | primary implementation |
-| fast | bounded workers, extraction, QA loops |
-| critic | independent review / adversary |
+Use the host's actual model/worker integration. An OpenAI-compatible endpoint is an interface claim, not proof that every tool or context feature works. No connection means this step is unavailable; do not fabricate execution. Do not install or contact a new provider, spend money or export private code without corresponding authorization.
 
-## Preferences
+For consequential review, preserve actual context isolation and disclose shared-model or unavailable-review limitations. Prefer genuinely complementary expertise when useful, but do not silently downgrade a high-risk critic or create a fixed hierarchy of provider brands.
 
-`~/.agentit/preferences.yaml`:
-
-```yaml
-local_models:
-  enabled: true
-  endpoints:
-    - id: local-coding
-      base_url: http://127.0.0.1:11434/v1
-      model: qwen2.5-coder
-      tier: coding
-      tools: true
-      context_tokens: 32768
-    - id: local-fast
-      base_url: http://127.0.0.1:11434/v1
-      model: llama3.2
-      tier: fast
-      tools: true
-      context_tokens: 16000
-```
-
-Router output includes `models.parent|worker|critic` with local endpoint matches when enabled.
-
-## Rules
-
-1. Match **tier**, not brand names.
-2. Role needs tools → endpoint must support tools/function calling.
-3. Context must fit Worker Context Contract + files.
-4. RISK_3/4 critic must not silently use a weak unproven local model — disclose or escalate.
-5. Prefer a **different** model family for critic vs writer when possible.
-6. If local fails capability check, fall back with explicit note; never fake parity.
-
-## Capability check (per machine)
-
-Before relying on a local endpoint for a role:
-
-- can it call tools the task needs?
-- does a small probe task succeed (list files / run a test command)?
-- is context large enough for projected skills + files?
-
-Record results in STATE or a checkpoint — do not assume yesterday’s model still works.
-
-## Anti-patterns
-
-- “local always” regardless of tier
-- sending architecture arbitration to a 3B toy model silently
-- assuming Ollama OpenAI compat equals full tool parity
-- different machines without re-checking endpoints
-
-## Verification
-
-- [ ] `models` block present in route when local_models.enabled
-- [ ] endpoint tiers cover needed roles or gaps disclosed
-- [ ] critic independence preserved
+On failure, use an authorized capable alternative or surface the blocked capability. Persist scoped evidence as data, not executable memory; retest after endpoint/version changes. Selection remains model-owned and task-scoped.

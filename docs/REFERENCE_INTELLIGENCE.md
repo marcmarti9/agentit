@@ -72,6 +72,7 @@ Use `references/INDEX.md` as a small discovery index. Deep recurring knowledge b
 - `skills/design-inspiration-research/references/premium-web-production.md`
 - `skills/marketing-and-growth/references/marketing-operating-system.md`
 - `skills/marketing-and-growth/references/seo-growth-loop.md`
+- `skills/marketing-and-growth/references/local-seo.md`
 - `skills/marketing-and-growth/references/launch-content-system.md`
 
 Progressive disclosure is:

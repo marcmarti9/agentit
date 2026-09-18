@@ -42,6 +42,18 @@ You + capable coding agent
  branch → PR → human merge
 ```
 
+## JIT assurance and limits
+
+The 2026-09-18 adversarial audit found and repaired gaps between skill discovery,
+body delivery, installation and verification. Worker schema 3 carries exact bodies,
+references and hashes; optional delivery receipts do not claim model obedience or
+context erasure. Command-bound Loop evidence is distinct from self-report.
+
+See [JIT loading and migration](docs/JIT_SKILL_LOADING.md),
+[runtime evidence](docs/RUNTIME_ENGINEERING.md), and the
+[audit](reports/jit-adversarial-audit-2026-09-18.md).
+Native host/model behavior still needs its own observed evaluation.
+
 ## Quick start
 
 Give this repository to a compatible coding agent and ask it:

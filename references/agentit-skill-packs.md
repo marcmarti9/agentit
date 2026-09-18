@@ -14,6 +14,10 @@ A pack with twenty listed skills can still lead to `selected_skills: []` or one 
 
 A new execution session starts semantically cold: installed profiles and skill files remain discovery surfaces, but only the three global core skills are assumed active until the new task selects more.
 
+## Overlapping approaches
+
+Choose one primary taste approach (`hallmark`, `design-taste-frontend`, or `impeccable`) for a design decision; their different taste constraints should not be concatenated indiscriminately. Data lookup (`ui-ux-pro-max`), research, 3D/motion implementation and performance may complement it. Use `humanizer` or `stop-slop` as alternative editorial passes, preserving evidence and uncertainty. Spec Kit is opt-in; executive roles are individual capabilities, not an always-on committee. Candidate wording is discovery guidance, never an automatic trigger.
+
 ## Worker projection contract
 
 A spawned worker should receive something conceptually equivalent to:
@@ -31,7 +35,7 @@ references:
 - <only relevant curated/live material>
 ```
 
-The pack names are discovery/provenance labels. **Only the selected skill bodies consume worker skill context.**
+Schema-3 worker context includes the selected bodies and hashes; unread reference locators block spawn. The pack names are discovery/provenance labels. **Only the selected skill bodies consume worker skill context.**
 
 Do not infer a skill count from pack size, task size, risk label, worker title, installed profile, or a previous session's selection.
 
@@ -42,6 +46,8 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 **Use for:** general implementation, bugs, refactors, repository changes, code quality, architecture, testing, debugging, security-sensitive code, performance work and engineering delivery.
 
 **Skills in this pack:**
+
+- `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
 
 - `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
 - `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
@@ -73,11 +79,13 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 **Skills in this pack:**
 
+- `app-security-gate` — test changed application trust boundaries before release.
+
 - `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
 - `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
 - `performance-optimization` — measure and improve frontend performance when evidence shows a bottleneck.
 - `code-simplification` — keep component/state architecture lean.
-- `hallmark` — lightweight guard against generic visual clichés and fabricated content.
+- `hallmark` — substantial visual alternative/guard against generic visual clichés and fabricated content.
 - `design-taste-frontend` — stronger visual judgment when implementation also needs art-direction sensitivity.
 - `design-md-workflow` — read/maintain a durable project visual-identity contract when `DESIGN.md` or equivalent persistent design memory materially applies.
 - `source-driven-development` — current framework/browser/API behavior matters.
@@ -130,6 +138,8 @@ The design pack intentionally has many possibilities. **Do not subdivide them in
 
 **Skills in this pack:**
 
+- `appllama-usage` — research-tool mechanics only when the actual Appllama integration is selected and authorized.
+
 - `appllama-app-design-skill` — study shipped mobile winners when useful, extract patterns rather than pixels, implement native-feeling Expo/React Native UI and verify whole flows in a simulator/emulator.
 - `hallmark` — prevent generic AI styling and fabricated visual proof without importing the whole web-design pack.
 - `source-driven-development` — use current Expo/React Native/platform documentation when API or platform behavior materially affects implementation.
@@ -145,6 +155,8 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 **Use for:** APIs, integrations, services, server-side architecture, runtime operations and backend trust boundaries.
 
 **Skills in this pack:**
+
+- `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
 
 - `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
 - `observability-and-instrumentation` — logs, metrics, traces and diagnostics.
@@ -188,6 +200,9 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 **Use for:** product discovery, ambiguous feature decisions, requirements, specifications, prioritization and product/technical trade-offs.
 
 **Skills in this pack:**
+
+- `adversarial-idea-review` — challenge business/product ideas before committing; not a substitute for code review.
+- `spec-kit-workflow` — opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.
 
 - `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
 - `idea-refine` — explore and refine an early concept before committing to one shape.
@@ -253,18 +268,20 @@ Executive skills decide at the business-function level. Pair them with engineeri
 
 ## seo
 
-**Use for:** technical SEO, search opportunity discovery, schema, search/content gaps, indexability and measurable organic-growth loops.
+**Use for:** technical SEO, local SEO/GBP, search opportunity discovery, schema, search/content gaps, indexability, generative-AI search visibility and measurable organic-growth loops.
 
 **Skills in this pack:**
 
-- `marketing-and-growth` — load its `references/seo-growth-loop.md` when that procedure is useful.
-- `source-driven-development` — current search engine, structured-data and platform documentation.
-- `context-engineering` — large GSC/site/query/competitor evidence sets.
+- `marketing-and-growth` — the single SEO operating skill. Load `references/seo-growth-loop.md` for general/technical/search-loop work and `references/local-seo.md` for local/GBP work; load both only when the task spans both.
+- `source-driven-development` — current search engine, structured-data, GBP and platform documentation.
+- `context-engineering` — large GSC/site/query/competitor/GBP evidence sets.
 - `reference-intelligence` — current competitor/search evidence, authority classification and provenance.
 - `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
 - `browser-testing-with-devtools` — rendered/indexability/runtime checks.
-- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO or large-scale changes.
-- `verification-before-completion` — evidence that technical changes actually landed and behave as expected.
+- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO, location expansion or large-scale changes.
+- `verification-before-completion` — evidence that technical/local changes actually landed and behave as expected.
+
+AEO/GEO is not a parallel permanent skill by default. Treat it as a search surface inside the same SEO operating loop and use current platform-specific evidence when the behavior diverges.
 
 ---
 
@@ -293,6 +310,8 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 **Skills in this pack:**
 
+- `stop-slop` — optional alternative editorial pass to humanizer; do not stack rigid style rules or remove factual qualifications.
+
 - `humanizer` — preserve meaning/voice while removing generic, repetitive, robotic or templated prose.
 - `documentation-and-adrs` — durable technical/project documentation and decision records.
 - `source-driven-development` — factual/current source-grounded writing.
@@ -308,6 +327,8 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 **Use for:** CI/CD, deployments, migrations, launches, operational readiness and rollback planning.
 
 **Skills in this pack:**
+
+- `app-security-gate` — explicit PASS/BLOCKED security release gate backed by adversarial retests.
 
 - `shipping-and-launch` — release readiness, launch checks and rollback thinking.
 - `ci-cd-and-automation` — pipeline automation and quality gates.
@@ -341,6 +362,20 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `verification-before-completion` — prove client-facing changes before claiming completion.
 - `design-md-workflow` — preserve a client's visual identity across repeated delivery when a durable design contract exists or is justified.
 - `diagram-design` — client-facing system/process visuals when they materially improve handoff or decision quality.
+
+---
+
+## agent-runtime
+
+**Use for:** explicit skill discovery, model/provider capability selection, resumable work and user-requested interaction adaptation. These are optional support procedures, not a mandatory task lifecycle.
+
+**Skills in this pack:**
+
+- `find-skills` — discover an absent durable capability only after checking existing project/library fit.
+- `local-model-routing` — assess an actually available local model endpoint; no automatic routing implementation is implied.
+- `long-horizon-recovery` — resumable multi-session work with fresh selection and bounded private checkpoints.
+- `i-have-adhd` — only on explicit user request; do not infer a diagnosis, impose persistence across new tasks, or override user/host output constraints.
+- `mcp-tooling-fit` — choose tools from observed capability and authorization, not their mere presence.
 
 ---
 

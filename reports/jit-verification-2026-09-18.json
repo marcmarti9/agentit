@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "bf880fd7e04cb541eff48527ad9b54bf4bf0270c",
+  "seo_dependency_commit": "3bee47f726baa8e77bf9e0229edd32b2e4a7f12c",
+  "local_suites": {
+    "router": {
+      "tests": 226,
+      "exit_code": 0
+    },
+    "scripts": {
+      "tests": 29,
+      "exit_code": 0
+    }
+  },
+  "observed_acceptance": {
+    "tests": 35,
+    "evidence_source": "command",
+    "exit_code": 0,
+    "started_at": "2026-09-18T17:39:19.999433+00:00",
+    "subject_sha256": "eca17f25368249196b05984e21dc14ceb8ada2258301c34ed287f52d38047b88",
+    "receipt_sha256": "9be94ffda8b5587449f6aedbd1ae98a18a4a778705898a63cbe5b55438b88b7a"
+  },
+  "baseline_skills": 75,
+  "current_skills": 74,
+  "core_bytes_before": 41481,
+  "core_bytes_after": 15284,
+  "native_model_evals": "not_run",
+  "independent_model_review": "not_run"
+}

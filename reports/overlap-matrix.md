@@ -40,3 +40,13 @@ La hipótesis es útil con dos correcciones:
 | critical | justificadas individualmente | seguridad, migración, producción; incluye revisión independiente |
 
 Los máximos son límites de coordinación, no objetivos de consumo.
+
+
+## SEO consolidation 2026-09-18
+
+The standalone `local-seo-playbook` duplicated routing and part of the operating loop already owned by `marketing-and-growth`. It was consolidated into the canonical marketing skill as a JIT reference:
+
+- general / technical / search loop: `skills/marketing-and-growth/references/seo-growth-loop.md`;
+- local / GBP / local AI visibility: `skills/marketing-and-growth/references/local-seo.md`.
+
+This keeps one executable SEO operating skill while preserving specialized context. Creator-derived numeric SEO heuristics are not canonical unless supported by current first-party guidance or project-specific evidence.

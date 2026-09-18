@@ -1,6 +1,6 @@
 ---
 name: marketing-and-growth
-description: Growth engineering, conversion rate optimization (CRO), technical SEO, landing page copywriting, analytics, campaign/launch strategy, email, customer research, positioning, and content systems. Use for marketing, growth, launch strategy, SEO, or funnel optimization.
+description: Growth engineering, conversion rate optimization (CRO), technical and local SEO, AI-search visibility, landing page copywriting, analytics, campaign/launch strategy, email, customer research, positioning, and content systems. Use for marketing, growth, launch strategy, SEO, local SEO, GEO/AEO, or funnel optimization.
 ---
 
 # Marketing and Growth Engineering
@@ -11,6 +11,7 @@ Use deep references **JIT**, not all at once:
 
 - broad/substantial marketing strategy, research, positioning, copy, email, content systems -> `references/marketing-operating-system.md`;
 - SEO/search/growth-loop work -> `references/seo-growth-loop.md`;
+- local SEO / Google Business Profile / local AI visibility -> `references/local-seo.md` (normally alongside the general SEO reference when technical/search work is also involved);
 - product/feature launches, launch research, video/content production, repurposing -> `references/launch-content-system.md`.
 
 The first reference distills the useful procedures behind the bookmarked “500 prompts / replace an agency” article into reusable capabilities and workflow chains instead of preserving hundreds of prompts verbatim. The other two distill the Grok SEO/Helena and Okara/Motion/faceless-video bookmark clusters respectively.
@@ -39,6 +40,7 @@ Load/use only the capabilities the task actually needs. Typical capabilities are
 - sales/landing copy;
 - repurposing/content atomization;
 - SEO opportunity + content briefs;
+- local SEO / GBP / local search and AI-search visibility;
 - email lifecycle;
 - campaign/launch architecture;
 - analytics/CRO/learning loops.
@@ -61,6 +63,8 @@ For implementation-level SEO, verify against the current stack/search-engine gui
 - locale/hreflang where the site actually needs it.
 
 Do not add every schema type or metadata field mechanically. Match the page and current official guidance.
+
+For local businesses, use `references/local-seo.md` rather than inventing a second SEO methodology. For generative/answer-engine visibility, treat GEO/AEO as an SEO/search surface unless current platform evidence requires a distinct tactic.
 
 ## Copy / value proposition
 

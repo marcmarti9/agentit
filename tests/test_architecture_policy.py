@@ -154,13 +154,18 @@ class ArchitecturePolicyTests(unittest.TestCase):
         using_agentit = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
 
-        for text, src in ((agents, "AGENTS.md"), (using_agentit, "using-agentit"), (task_router, "task-router")):
-            self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", text, f"missing mode declaration in {src}")
-            self.assertIn("FAST MODE — Default for iterative development", text, f"missing FAST MODE in {src}")
-            self.assertIn("iteration speed > exhaustive validation > documentation", text, f"missing priority in {src}")
-            self.assertIn("Do NOT launch subagents for normal implementation tasks", text, f"missing subagent constraint in {src}")
-            self.assertIn("Verification budget", text, f"missing verification budget in {src}")
-            self.assertIn("Treat the user's request literally", text, f"missing scope rule in {src}")
+        # Detailed modes have one canonical owner, rather than requiring three
+        # duplicate paragraphs that contradicted each other in the baseline.
+        for text in (agents, using_agentit):
+            self.assertIn("task-router", text)
+        self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", task_router)
+        self.assertIn("FAST MODE", task_router)
+        self.assertIn("NORMAL MODE", task_router)
+        self.assertIn("DEEP MODE", task_router)
+        self.assertIn("Verification budget", task_router)
+        self.assertIn("Do NOT launch subagents for normal implementation tasks", task_router)
+        self.assertNotIn("iteration speed > exhaustive validation > documentation", agents + using_agentit + task_router)
+
 
 
 if __name__ == "__main__":

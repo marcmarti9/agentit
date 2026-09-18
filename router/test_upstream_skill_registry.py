@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class UpstreamSkillRegistryTests(unittest.TestCase):
     def test_every_canonical_mapping_exists_as_complete_skill_package(self):
         lock = json.loads((ROOT / "skills" / "UPSTREAM_LOCK.json").read_text(encoding="utf-8"))
-        self.assertGreaterEqual(len(lock["mappings"]), 40)
+        self.assertEqual(39, len(lock["mappings"]))  # former meta-skill is now an owned adapter
+        self.assertNotIn("using-agent-skills", [item["skill"] for item in lock["mappings"]])
         for item in lock["mappings"]:
             skill = ROOT / "skills" / item["skill"]
             self.assertTrue((skill / "SKILL.md").is_file(), item["skill"])

@@ -1,0 +1,658 @@
+[
+  {
+    "id": "adversarial-idea-review",
+    "sha256": "d073b48631bca945e905f238d32f1ae9af0a433e31059799d3f2b73744184327",
+    "bytes": 18823,
+    "lines": 461,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "api-and-interface-design",
+    "sha256": "5dafd0c44a3aabf11cae5bcb34f6fcc24dfa5c01ba6e0d3176bce997f4d68bc8",
+    "bytes": 14884,
+    "lines": 367,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "app-security-gate",
+    "sha256": "23f2e091763079774087ed9e6902f560c5675dc9b7fa1864b7ecafc5f817bd9f",
+    "bytes": 16512,
+    "lines": 268,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "appllama-app-design-skill",
+    "sha256": "be47c957ad097be96916a088a803281c933513fd98a71aedca7cef25a967d7a5",
+    "bytes": 20220,
+    "lines": 343,
+    "issues": [
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "appllama-usage",
+    "sha256": "2d0c706a5c43aba26a6f5e0b833f3aa45f5c0fe05a519e04065a7c0a0b1f492d",
+    "bytes": 6486,
+    "lines": 101,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "architect-orchestrator",
+    "sha256": "a11ceec9d8590809b1a71b9c777ddb277cf5018a6401c685572bcd6377afc8c8",
+    "bytes": 7227,
+    "lines": 144,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "browser-testing-with-devtools",
+    "sha256": "4e3aacd6a380cd25bc6c2d67fdd1c926a9b22535b8a62109ecd33cefd909e3d9",
+    "bytes": 14539,
+    "lines": 317,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "ci-cd-and-automation",
+    "sha256": "a6ed8ed56456b01ff8314c44eefc69897d9905ae4e06bb2b7036286efb79b5f0",
+    "bytes": 11332,
+    "lines": 390,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "code-review-and-quality",
+    "sha256": "8f3cabca581bbf7cb5f0add3f7454e7a4523f9d4353a6a4a217e6fa515309612",
+    "bytes": 20555,
+    "lines": 396,
+    "issues": [
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "code-simplification",
+    "sha256": "f0c5ed754057eb0c1e027e2587f59de816651feb5e837242296c43ea21cf621d",
+    "bytes": 13545,
+    "lines": 331,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "context-engineering",
+    "sha256": "ff9d4e5706bdd2eb7de1bfed569f1f42d28e478979ce6fcc32e617e7861b491d",
+    "bytes": 11070,
+    "lines": 289,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "creative-tool-scout",
+    "sha256": "72b40054d8117cbc2c134d6c95fa2f6b639e91850aa1a5759a0185dbad2b7363",
+    "bytes": 2652,
+    "lines": 55,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "creative-web-experiences",
+    "sha256": "ced0d650f6830d45b232c41065da6c3145cc300eab7dfeae1f7a8639a4f4028d",
+    "bytes": 4504,
+    "lines": 79,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "debugging-and-error-recovery",
+    "sha256": "67ce2c9442da0c5a6e3515617fc9c4003cfe232ef7c7210da342f40f508f9958",
+    "bytes": 10837,
+    "lines": 300,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "delight-and-whimsy",
+    "sha256": "b02c1887e75139104b13d6c8be35df2754baf9290d1b022e7a7eca1459464b1b",
+    "bytes": 2003,
+    "lines": 67,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "deprecation-and-migration",
+    "sha256": "6a624f942e09c69863a4219b9bd5d56975026b67b0c70bc83385ffd2120b6142",
+    "bytes": 12642,
+    "lines": 247,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "design-inspiration-research",
+    "sha256": "f198ab1971e5841767e28530f1a9e92acbf900c3737fe4b8cf69722eeabf05f7",
+    "bytes": 9587,
+    "lines": 165,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "design-md-workflow",
+    "sha256": "002db03d72d14444fd5d420c27ec6f2a0a399fab2d051900e492c76663c193a3",
+    "bytes": 8156,
+    "lines": 213,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "design-taste-frontend",
+    "sha256": "aa194351b246b8b4799099d4ed7b033d29eab6e6e3d58d8d2172978be7b3ec89",
+    "bytes": 87253,
+    "lines": 1206,
+    "issues": [
+      "body-over-500-lines",
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "design-trend-researcher",
+    "sha256": "6d9a251c1f5c0c796bb35ddbf5ce388320b5bcbf0d1a44724250feebb77c157c",
+    "bytes": 2156,
+    "lines": 57,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "diagram-design",
+    "sha256": "6d6988acf7794344c54b26f22f4245e420e4a8e0a41b65547f8c1797339cda8d",
+    "bytes": 39996,
+    "lines": 584,
+    "issues": [
+      "body-over-500-lines",
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "documentation-and-adrs",
+    "sha256": "b867bb80fb681257c7625ae59a0dfd849b1fc0f0a2f0338e7923f38030df9793",
+    "bytes": 9782,
+    "lines": 288,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "doubt-driven-development",
+    "sha256": "0a058297aa6bdf90b0ff45c3537af4cb0005f4af6b0d202fc07b7b5984db50ea",
+    "bytes": 16499,
+    "lines": 243,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "emil-design-eng",
+    "sha256": "e71de849347050c2c573c1cf24d742d5a13459557ecffa6e562f08006f46b5b7",
+    "bytes": 27226,
+    "lines": 674,
+    "issues": [
+      "body-over-500-lines",
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-board",
+    "sha256": "6a70a3eca51f6221733de1907383a0821f3f689fc387d4bbffaccd5c6a3945d4",
+    "bytes": 4384,
+    "lines": 122,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-chief-of-staff",
+    "sha256": "96e80e08aa0bcd471833ac77cd24670644ea138b09867f9421e34fc7250c2074",
+    "bytes": 4641,
+    "lines": 126,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-finance",
+    "sha256": "261b10963115651d1868194746f2fbda3aaa43f024646653dbb74d7428afd34a",
+    "bytes": 5353,
+    "lines": 118,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-legal",
+    "sha256": "15ee4e20a662705d4a5c46049ccbaf308e19a8b8e589395025e420279d734571",
+    "bytes": 5283,
+    "lines": 130,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-marketing",
+    "sha256": "5ac19d9f98c9514170efcbd8234ec6a395c160f09cdf35b8be2bc5c7e77bfb82",
+    "bytes": 5198,
+    "lines": 136,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-operations",
+    "sha256": "7d1dfb52bd37935a38c34f25f86d527419dc8c0ca0b35da6562b31daca4f5feb",
+    "bytes": 4399,
+    "lines": 137,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-orchestration",
+    "sha256": "3a4394d748cd2df0f07daea7d18037db2b8f34317c70048ce9b36a4b7538dd13",
+    "bytes": 6888,
+    "lines": 128,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-people",
+    "sha256": "022dcd2121655b961f2e23a2019b37c38370e54542b2229284f5d27c43618e19",
+    "bytes": 4921,
+    "lines": 113,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-product",
+    "sha256": "0c8484d09c182765c5df85f7edcf17bf82464b6733e83d419cec0e00c2bfc3c2",
+    "bytes": 4785,
+    "lines": 125,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "executive-strategy",
+    "sha256": "87e35f1bcf50681eb9ac887d18282edc5886ac3302c7105dcf2c28492a3c16d6",
+    "bytes": 4185,
+    "lines": 97,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "figma-design-workflow",
+    "sha256": "be061621089b33283b9016313e6d5a2beadf1a3f8aab090667ee55ad6744a889",
+    "bytes": 4897,
+    "lines": 88,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "find-skills",
+    "sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f",
+    "bytes": 5472,
+    "lines": 141,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "frontend-ui-engineering",
+    "sha256": "2b74ac4862be3902ec918dceac9366a6fe83b9e003601c0deaf6be09c1766aca",
+    "bytes": 10711,
+    "lines": 328,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "git-workflow-and-versioning",
+    "sha256": "39665e84d944fbb394dde5e4e60fc6497cd056002b5c7de6762213f7018ff0a3",
+    "bytes": 14063,
+    "lines": 355,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "gsap-performance",
+    "sha256": "cb5408d6fba707aabcbfe3320317a14c1f8fca6070074e5261047930f50d441e",
+    "bytes": 4139,
+    "lines": 79,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "gsap-scrolltrigger",
+    "sha256": "9351b6666a4749c0740406ea363aaccb99a087ff45cc5e8b99a0f367facf3ef4",
+    "bytes": 18390,
+    "lines": 296,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "hallmark",
+    "sha256": "59469635bbbd21acddbc664d95e8d97147f454b2d8f4a0a89c7d2c5afbe67577",
+    "bytes": 67460,
+    "lines": 558,
+    "issues": [
+      "body-over-500-lines",
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": [
+      "../../site/css/tokens.css",
+      "../../docs/recipes.md",
+      "../../docs/study-examples.md"
+    ]
+  },
+  {
+    "id": "humanizer",
+    "sha256": "14fc8a965b6e0a8dc100ba4dffeab55cb94bbac112abbde7e014d5c15a35c202",
+    "bytes": 30409,
+    "lines": 456,
+    "issues": [
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "i-have-adhd",
+    "sha256": "3170b16ace00aecb0dd7feb54c0b5aa642e7502acda06ecd24fd89a11c7127e9",
+    "bytes": 7207,
+    "lines": 142,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "idea-refine",
+    "sha256": "7e141aeb01df7afd6f84dbaded416461c8e228fdbada24796a6ede133cbc0cd2",
+    "bytes": 11312,
+    "lines": 216,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "impeccable",
+    "sha256": "c2c0d8e5ea5dc3f36b879f099e72d83f506a6e626dcc075c1a7e14763f200d4d",
+    "bytes": 10773,
+    "lines": 81,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "incremental-implementation",
+    "sha256": "3a3581e7084a0dc85af420afcc91211a159d3dc46f3d81075a4d53c566b70b80",
+    "bytes": 9507,
+    "lines": 249,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "interview-me",
+    "sha256": "1d94741d10d2c826cd0c191aea3981ee94c8abb27ef2a166f6a372117d06448f",
+    "bytes": 14359,
+    "lines": 225,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "local-model-routing",
+    "sha256": "0dd298e3477f075d1754bbdce9d002575969602d8f5aa22a6e2b43030580d35a",
+    "bytes": 2219,
+    "lines": 75,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "local-seo-playbook",
+    "sha256": "be05269e1493a6829e9484d64eed04a97584c046d6e29c5dc88b57db9dc0521e",
+    "bytes": 6136,
+    "lines": 117,
+    "issues": [
+      "not-in-all-profile",
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "long-horizon-recovery",
+    "sha256": "882aa692d335b87be5acb94591629966fe7526c0cec0e83a4b58734339732945",
+    "bytes": 5479,
+    "lines": 115,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "marketing-and-growth",
+    "sha256": "77cbac52f472a74969f6d3014f7e6262b99ead205d6d5862f838cc89182e16e0",
+    "bytes": 6795,
+    "lines": 145,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "mcp-tooling-fit",
+    "sha256": "e86979a7345c6e44687a66360165aef8aecc59c1cbe7e9e61edb014e8ba05daa",
+    "bytes": 4117,
+    "lines": 103,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "observability-and-instrumentation",
+    "sha256": "bcec2ada212de6d07daa16886859cc0f2d954c845fc65fdbb7b23106df6aa8c0",
+    "bytes": 11053,
+    "lines": 203,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "performance-optimization",
+    "sha256": "00694d0c69bbde674d0e39de24052d90afea32d9fef9553eaee21a50a7e9b8cf",
+    "bytes": 21717,
+    "lines": 496,
+    "issues": [
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "planning-and-task-breakdown",
+    "sha256": "ed0f90cc5951ddd4bcab7f871f64efec93a49af9279ef93bc470da77ad8da3f7",
+    "bytes": 10564,
+    "lines": 257,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "reference-intelligence",
+    "sha256": "759aa02a2c26e49be5ffb55ac98e64a34b01a89bb926ed3c22a4df434ac7bcee",
+    "bytes": 8672,
+    "lines": 227,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "scrollytelling-web",
+    "sha256": "5b751982018dfc5c48814e5b8478604480a7409de2a1d832a04642fbcccd867a",
+    "bytes": 8777,
+    "lines": 161,
+    "issues": [
+      "invalid-yaml-frontmatter",
+      "frontmatter-name-mismatch:None",
+      "invalid-description"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "security-and-hardening",
+    "sha256": "e66bfe143df3fab03d5fe459329e15c193bc543ba8a6dc2e88ad1c3a8f04376a",
+    "bytes": 25429,
+    "lines": 513,
+    "issues": [
+      "body-over-500-lines",
+      "large-body-over-20k-bytes"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "shipping-and-launch",
+    "sha256": "daa57a85dcd96dee03343272a432fce2ebf144c9d8ece9541eb6e1464dae27ac",
+    "bytes": 10137,
+    "lines": 310,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "source-driven-development",
+    "sha256": "719d4e54083c90ded62112fb41df3dbc4619309118ee0e6aa4d846f92d8204af",
+    "bytes": 9949,
+    "lines": 216,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "spec-driven-development",
+    "sha256": "615ff006266af06f36195a46e7db864512fc9b272fcb653bb51d601214701d04",
+    "bytes": 12163,
+    "lines": 245,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "spec-kit-workflow",
+    "sha256": "9e7550d9c5087b01dee7f53deaa6f3342846a51b762a14ae927e7cbf5108d6b1",
+    "bytes": 8636,
+    "lines": 215,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "specialist-agent-routing",
+    "sha256": "f2610b47c499c3b9eb19d944da1cb819a93f2e11af73fb1adbad98b4b43d08cc",
+    "bytes": 2810,
+    "lines": 58,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "stop-slop",
+    "sha256": "7432a1d9ebdd42b27666da8458af252edf549f723fb14bcd4791425103930310",
+    "bytes": 2629,
+    "lines": 68,
+    "issues": [
+      "not-in-pack-discovery"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "supabase-postgres-best-practices",
+    "sha256": "ad65e776f45e761bafc609d3f506c77c1032225aa65e0c4c02f241b8071e5855",
+    "bytes": 3231,
+    "lines": 64,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "task-router",
+    "sha256": "9782a65d33159c638d52833ecde2784f977218e08296c2a585deca99920018a9",
+    "bytes": 13528,
+    "lines": 314,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "test-driven-development",
+    "sha256": "440fb3c9b76f4f1b0b564dfbaec19d370beab0167a3e2ab048ce59c5a865ecef",
+    "bytes": 16483,
+    "lines": 398,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "threejs-product-storytelling",
+    "sha256": "5b00c3f9058d91482944e3772bfbb7428c5026fc57af5df79a9ece95ae915ca8",
+    "bytes": 6189,
+    "lines": 150,
+    "issues": [
+      "invalid-yaml-frontmatter",
+      "frontmatter-name-mismatch:None",
+      "invalid-description"
+    ],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "threejs-spatial-experiences",
+    "sha256": "8210a7f70722c82ca4f1011ac9805ef9274f848b855da717ba93471bcea4e11a",
+    "bytes": 4449,
+    "lines": 103,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "ui-ux-pro-max",
+    "sha256": "ea087c341bfb5b23195c7302027268ede86da802554c18a5c4896a6017b439f9",
+    "bytes": 15969,
+    "lines": 214,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "using-agent-skills",
+    "sha256": "1fe7b0f241747e542f37d0fc69a38c5c3e3c770e17391f2f0f0c12187491da8d",
+    "bytes": 12283,
+    "lines": 218,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "using-agentit",
+    "sha256": "e306af991c2e26f5e80bff0bf0f43fd1f9cb299ecf10ef67b861337ab94a45be",
+    "bytes": 15670,
+    "lines": 294,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "verification-before-completion",
+    "sha256": "2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3",
+    "bytes": 3646,
+    "lines": 120,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "verification-gauntlet",
+    "sha256": "9ff2adb875ca4efc46df1eab1f5fe2c36d34e6b5b7e8f297a5aac3e8766a3c5f",
+    "bytes": 4316,
+    "lines": 113,
+    "issues": [],
+    "broken_markdown_links": []
+  },
+  {
+    "id": "visual-storytelling-director",
+    "sha256": "61732bc1209b359ef3d09d91bacf73e4751611ac790d294290ccb7c8a28421c8",
+    "bytes": 2701,
+    "lines": 86,
+    "issues": [],
+    "broken_markdown_links": []
+  }
+]

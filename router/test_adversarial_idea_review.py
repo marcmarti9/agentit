@@ -39,7 +39,7 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
             REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("Any serious non-trivial candidate? → adversarial-idea-review BEFORE convergence", meta_skill)
+        self.assertIn("serious candidates require `adversarial-idea-review` before convergence", meta_skill)
         self.assertIn("Exploration is not complete until the serious candidate has survived attack", meta_skill)
 
     def test_skill_has_evidence_and_kill_gate_contracts(self) -> None:

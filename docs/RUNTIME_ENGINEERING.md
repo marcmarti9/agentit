@@ -1,159 +1,74 @@
-# Runtime Engineering
+# Loop and Graph runtime: evidence rather than labels
 
-Agentit enforces execution quality with three complementary layers:
+The primary model chooses the goal, permissions, verifier and topology. `router/loop_runtime.py`, `router/graph_runtime.py` and the persistent `agentit runtime` CLI enforce that explicit contract. They do not select skills or interpret natural-language intent.
 
-- **Context Engineering**: what each agent receives (project instructions, scoped skills, capabilities, preferences).
-- **Loop Engineering**: how each execution unit proves convergence.
-- **Graph Engineering**: which units may run, in what dependency order, with what write ownership and handoff artifacts.
+## Evidence classes
 
-Runtime state lives under `.agentit/runtime/` and is intentionally ignored by git.
+**`reported`** means a caller supplied a result and evidence text. It remains useful for a human review, a visual observation or compatibility with an older integration, but is not proof this runtime executed a command. Legacy receipts without the new provenance field are treated as reported.
 
-## Loop Engineering
+**`command`** means `run_verifier` started the contract's exact argument vector with `shell=False` in its bound working directory and observed the process. It records exit status, timeout, start time, duration, output hash/size/excerpt and optional source hashes. A command-evidence contract cannot pass through `loop-attempt --result pass` alone.
 
-Every executable unit with a verifiable outcome has a persisted loop contract:
+Neither class is a cryptographic attestation. A producer that controls the process and rewrites all hashes can forge JSON. Host permissions, command trust and independent review remain separate boundaries. The command runner is **not a sandbox** and must only receive an authorized verifier. Exit zero does not establish that an inadequate test actually checked the user's goal.
 
-```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-init \
-  --state .agentit/runtime/loops/implementation.json \
-  --goal "Homepage renders according to DESIGN_DIRECTION" \
-  --verifier "browser QA + targeted tests" \
-  --stop "desktop/mobile pass and no blocking critique findings"
+## Executable loop
+
+For a real source test, bind the command and affected source paths before running it:
+
+```sh
+agentit runtime loop-init \
+  --state .agentit/runtime/loops/check.json \
+  --project /absolute/project \
+  --goal 'Selected regression is fixed' \
+  --verifier 'Run the approved test module' \
+  --stop 'Process exits zero with unchanged source' \
+  --verifier-argv '["python3","-m","unittest","tests.test_feature"]' \
+  --subject src --subject tests
+agentit runtime loop-run --state .agentit/runtime/loops/check.json --timeout 120
+agentit runtime loop-check --state .agentit/runtime/loops/check.json \
+  --require-command --receipt .agentit/runtime/receipts/check.json
 ```
 
-After each attempt, record actual evidence:
+Use exact argument vectors, not interpolated shell snippets. State initialization refuses an existing file; create a fresh loop for a materially new contract. State paths reject symlinks. Writes use temporary files and atomic replacement, but concurrent writers still require external single-writer ownership; there is no distributed lock or hostile-filesystem race guarantee.
 
-```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-attempt \
-  --state .agentit/runtime/loops/implementation.json \
-  --result fail \
-  --strategy "first implementation" \
-  --evidence "mobile viewport overflows at 390px"
+The default budget is two attempts, with a finite maximum. A failed attempt may retry with fresh evidence or a changed strategy. Exhaustion escalates rather than weakening the verifier. `loop-run` returns nonzero on failure. Timeouts kill the process group on POSIX; other hosts require their own descendant-process controls.
+
+Output is spooled to a temporary file, hashed fully and excerpted to 64 KiB in the receipt. This bounds receipt size, not disk output; the host must impose resource limits for untrusted commands. Secrets printed by a verifier can appear in private state, so choose commands and retention appropriately and never commit raw private state.
+
+## Source freshness
+
+`--subject` names explicit project-relative files/directories. Symlinked/missing subjects are rejected. Source fingerprints exclude `.git`, `.agentit` and `__pycache__`. A verifier changing its own selected subject cannot pass merely by returning zero. `loop-check` rejects a successful receipt whose selected source changed afterward; start a new loop.
+
+Without `--subject`, the receipt proves command observation only, not a source snapshot. Source hashes cover the selected files, not dependencies, remote services, model behavior or the entire machine. A directory scan does not prove immunity to an adversary changing files and restoring them during execution.
+
+## Reported evidence
+
+Manual or externally observed checks use an explicitly reported contract:
+
+```sh
+agentit runtime loop-init --state .agentit/runtime/loops/visual.json \
+  --goal 'Review approved layout' --verifier 'Human inspection' --stop 'Reviewer records result'
+agentit runtime loop-attempt --state .agentit/runtime/loops/visual.json \
+  --result pass --strategy 'Human review' --evidence 'Reviewer and inspected artifact reference'
 ```
 
-The default budget is two total attempts (one automatic retry). A retry must add fresh evidence or use a different strategy. A passing attempt requires non-empty verifier evidence and cannot report a non-zero verifier exit code.
+The resulting receipt says `evidence_source: reported`. It cannot satisfy `--require-command` or a graph node that requires command evidence. Do not present it as executed verification.
 
-A unit is accepted only when:
+## Graph integration
 
-```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-check \
-  --state .agentit/runtime/loops/implementation.json \
-  --receipt .agentit/runtime/receipts/implementation.json
+Each node declares dependencies, read/write ownership, expected artifacts and a loop contract. `graph-init --spec ... --state ...` can bind `loop_state` paths to their contract hashes and evidence requirements. A manually supplied node may explicitly request `evidence_requirement: command` or `reported`.
+
+Only `graph-ready` nodes may advance. `graph-complete --node ... --loop-receipt ...` requires a passing receipt from that node's exact contract, the correct evidence class and required handoff artifacts. `graph-check` accepts only a completed graph. Cycles, unknown dependencies, conflicting write ownership, receipt reuse and missing artifacts remain rejected.
+
+A graph checks submitted evidence structure and provenance class. It does not re-execute commands or rehash the source through a detached receipt. Run `loop-check` against the current subject immediately before handoff, and perform a final integration verifier after upstream artifacts change. Graph receipts must not be called universal freshness or sandbox guarantees.
+
+## Tests and migration
+
+Old name-only worker context is rebuilt at schema 3. Existing reported loop/graph records remain inspectable; explicitly opt into command contracts for new executable work. Never silently relabel old evidence as observed.
+
+```sh
+python3 -m unittest discover -s router -p 'test_loop_runtime.py' -v
+python3 -m unittest discover -s router -p 'test_graph_runtime.py' -v
+python3 -m unittest discover -s router -p 'test_jit_*.py' -v
 ```
 
-succeeds.
-
-## Graph Engineering
-
-Multi-node work is materialized as a DAG. Initialize each node loop first, then reference its state in the graph spec. `graph-init` resolves each loop's contract hash and binds the graph node to it.
-
-Example Studio website graph spec:
-
-```json
-{
-  "nodes": [
-    {
-      "id": "research-a",
-      "objective": "Research editorial references",
-      "loop_state": "loops/research-a.json"
-    },
-    {
-      "id": "research-b",
-      "objective": "Research cross-domain references",
-      "loop_state": "loops/research-b.json"
-    },
-    {
-      "id": "concept-1",
-      "deps": ["research-a", "research-b"],
-      "loop_state": "loops/concept-1.json"
-    },
-    {
-      "id": "concept-2",
-      "deps": ["research-a", "research-b"],
-      "loop_state": "loops/concept-2.json"
-    },
-    {
-      "id": "concept-3",
-      "deps": ["research-a", "research-b"],
-      "loop_state": "loops/concept-3.json"
-    },
-    {
-      "id": "direction",
-      "deps": ["concept-1", "concept-2", "concept-3"],
-      "expected_artifacts": ["DESIGN_DIRECTION.md"],
-      "loop_state": "loops/direction.json"
-    },
-    {
-      "id": "implementation",
-      "deps": ["direction"],
-      "write_paths": ["src"],
-      "loop_state": "loops/implementation.json"
-    },
-    {
-      "id": "critic",
-      "deps": ["implementation"],
-      "loop_state": "loops/critic.json"
-    },
-    {
-      "id": "qa",
-      "deps": ["critic"],
-      "loop_state": "loops/qa.json"
-    }
-  ]
-}
-```
-
-If the graph spec is stored at `.agentit/runtime/graph-spec.json`, relative `loop_state` paths are resolved from that directory.
-
-Initialize:
-
-```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-init \
-  --spec .agentit/runtime/graph-spec.json \
-  --state .agentit/runtime/graph.json
-```
-
-Spawn only nodes returned by:
-
-```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-ready \
-  --state .agentit/runtime/graph.json
-```
-
-When a node returns a passed Loop Receipt:
-
-```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-complete \
-  --state .agentit/runtime/graph.json \
-  --node research-a \
-  --loop-receipt .agentit/runtime/receipts/research-a.json
-```
-
-For required handoff artifacts, pass each with `--artifact`. If a node cannot proceed, record the block with `graph-block` instead of silently bypassing it.
-
-Final multi-node acceptance requires:
-
-```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-check \
-  --state .agentit/runtime/graph.json \
-  --receipt .agentit/runtime/graph-receipt.json
-```
-
-## Enforced invariants
-
-The runtime rejects:
-
-- missing goals/verifiers/stop conditions;
-- unbounded or exhausted retries;
-- pass claims without evidence;
-- repeated retry with neither new evidence nor a new strategy;
-- malformed/tampered Loop Receipts;
-- cycles, unknown/self dependencies and invalid DAG state;
-- overlapping write ownership (`src` vs `src/page.tsx` also conflicts);
-- unsafe write paths;
-- advancing a node before dependencies complete;
-- completing a node with another node's Loop Receipt;
-- reusing one Loop Receipt for multiple nodes;
-- missing expected handoff artifacts;
-- final graph success while any node remains pending/blocked.
-
-The runtime does not replace judgment. It makes the execution claims auditable and prevents the most common orchestration shortcuts from being silently accepted.
+The CLI is agent-facing. Users should not need to orchestrate loops by hand. A real independent model review and actual host permission enforcement must be separately observed and reported honestly.

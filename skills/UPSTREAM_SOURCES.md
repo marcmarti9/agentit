@@ -43,7 +43,6 @@ Canonical packages below are copied from their upstream repositories without com
 | `supabase-postgres-best-practices` | `supabase/agent-skills` | `skills/supabase-postgres-best-practices` | `8331f910845103c08d51f6ca1d86ebb7d1f745e3` |
 | `test-driven-development` | `addyosmani/agent-skills` | `skills/test-driven-development` | `1c760d643497e9da289300e5eb2f5aca861503f7` |
 | `ui-ux-pro-max` | `nextlevelbuilder/ui-ux-pro-max-skill` | `.claude/skills/ui-ux-pro-max` | `f3ac195224eac1eb0dfe1a3059c2a6add78ffbe3` |
-| `using-agent-skills` | `addyosmani/agent-skills` | `skills/using-agent-skills` | `1c760d643497e9da289300e5eb2f5aca861503f7` |
 | `verification-before-completion` | `obra/superpowers` | `skills/verification-before-completion` | `b36e0829c6d0140e93cfef2ca599b1b07d4a7797` |
 
 ## Agentit-owned skills
@@ -90,3 +89,5 @@ These have no single canonical upstream skill package to sync 1:1. They remain A
 ```
 
 The exact machine-readable mapping and snapshots live in `skills/UPSTREAM_LOCK.json`.
+
+`using-agent-skills` is now an Agentit-owned integration adapter. Its prior Addy-derived lifecycle remains in Git history at bf880fd7; specialized upstream procedures remain in their attributed packages. It is excluded from destructive upstream refresh.

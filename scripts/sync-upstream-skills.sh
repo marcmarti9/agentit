@@ -2,6 +2,13 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Refresh is a reviewed maintenance operation, never an implicit task dependency.
+# Refuse to erase local edits; cloned content is data and is never executed.
+if [ -n "$(git -C "$ROOT" status --porcelain)" ]; then
+  echo "upstream refresh requires a clean worktree; commit or preserve local edits first" >&2
+  exit 1
+fi
+python3 -c 'import yaml'  # required by the installed Agentit runtime as well
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -24,6 +31,7 @@ copy_package() {
 }
 
 # Canonical sources. Keep Agentit-specific routing/composition outside these packages.
+# using-agent-skills is an Agentit-owned integration adapter and is never overwritten.
 clone_repo addyosmani/agent-skills "$TMP/addy"
 clone_repo Leonxlnx/taste-skill "$TMP/taste"
 clone_repo pbakaus/impeccable "$TMP/impeccable"
@@ -63,8 +71,30 @@ ADDY_SKILLS=(
   source-driven-development
   spec-driven-development
   test-driven-development
-  using-agent-skills
 )
+
+# Validate destructive shared-reference targets before changing any package.
+python3 - "$ROOT" <<'CHECK'
+from pathlib import Path
+import sys
+root = Path(sys.argv[1]).resolve()
+refs = root / "references"
+manifest = refs / ".addy-agent-skills-files"
+if refs.is_symlink() or manifest.is_symlink():
+    raise SystemExit("symlinked shared reference root/manifest rejected")
+if manifest.exists():
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        if not line:
+            continue
+        rel = Path(line)
+        if rel.is_absolute() or ".." in rel.parts or "\\" in line:
+            raise SystemExit("unsafe shared reference manifest entry: " + line)
+        target = refs
+        for part in rel.parts:
+            target /= part
+            if target.is_symlink():
+                raise SystemExit("symlinked shared reference rejected: " + line)
+CHECK
 
 for skill in "${ADDY_SKILLS[@]}"; do
   copy_package "$TMP/addy/skills/$skill" "$ROOT/skills/$skill"
@@ -99,13 +129,7 @@ copy_package "$TMP/diagram/skills/diagram-design" "$ROOT/skills/diagram-design"
 copy_package "$TMP/vercel-skills/skills/find-skills" "$ROOT/skills/find-skills"
 copy_package "$TMP/superpowers/skills/verification-before-completion" "$ROOT/skills/verification-before-completion"
 
-# Retire local compact/adaptor IDs where a canonical package now replaces them.
-rm -rf \
-  "$ROOT/skills/hallmark" \
-  "$ROOT/skills/humanizer" \
-  "$ROOT/skills/ui-ux-pro-max" \
-  "$ROOT/skills/appllama-app-design-skill" \
-  "$ROOT/skills/diagram-design"
+# Canonical destination IDs must never be retired after being copied.
 
 # Addy's skills intentionally use ../../references/<file>.md for shared checklists.
 # Preserve those upstream files at Agentit's repository root without overwriting
@@ -138,6 +162,8 @@ fi
 python3 - "$ROOT" "$TMP" <<'PY'
 from __future__ import annotations
 import json
+import re
+import yaml
 import subprocess
 import sys
 from pathlib import Path
@@ -174,7 +200,7 @@ addy = [
     "idea-refine", "incremental-implementation", "interview-me",
     "observability-and-instrumentation", "performance-optimization", "planning-and-task-breakdown",
     "security-and-hardening", "shipping-and-launch", "source-driven-development",
-    "spec-driven-development", "test-driven-development", "using-agent-skills",
+    "spec-driven-development", "test-driven-development",
 ]
 
 mappings = [
@@ -200,6 +226,21 @@ mappings = [
 ]
 for item in mappings:
     item["snapshot"] = heads[item["repo"]]
+    # A renamed package requires a matching discoverable ID, but no body rewrite.
+    skill_file = root / "skills" / item["skill"] / "SKILL.md"
+    text = skill_file.read_text(encoding="utf-8")
+    parts = text.split("---", 2)
+    if len(parts) != 3 or parts[0].strip():
+        raise SystemExit("invalid upstream skill frontmatter: " + item["skill"])
+    meta = yaml.safe_load(parts[1])
+    if not isinstance(meta, dict) or not meta.get("description"):
+        raise SystemExit("missing upstream skill metadata: " + item["skill"])
+    if meta.get("name") != item["skill"]:
+        if item["skill"] != "design-taste-frontend" or meta.get("name") != "taste-skill":
+            raise SystemExit("undeclared upstream package rename: " + item["skill"])
+        parts[1] = re.sub(r"(?m)^name:.*$", "name: " + item["skill"], parts[1], count=1)
+        skill_file.write_text("---".join(parts), encoding="utf-8")
+        item["integration_transform"] = "frontmatter-name: taste-skill -> design-taste-frontend"
 
 lock = {
     "schema_version": 1,
@@ -226,7 +267,7 @@ owned = [skill for skill in repo_skill_ids if skill not in canonical_ids]
 lines = [
     "# Skill provenance registry",
     "",
-    "Canonical packages below are copied from their upstream repositories without compressing or rewriting `SKILL.md`. Agentit-specific routing, composition, policy, and runtime behavior live outside vendored packages.",
+    "Canonical packages below are copied from their upstream repositories without compressing skill bodies; a declared frontmatter ID alias may be normalized and recorded in the lock. Agentit-specific routing, composition, policy, and runtime behavior live outside vendored packages.",
     "",
     "## Canonical vendored skills",
     "",
@@ -238,6 +279,8 @@ for item in sorted(mappings, key=lambda x: x["skill"]):
 lines += [
     "",
     "## Agentit-owned skills",
+    "",
+    "`using-agent-skills` is an owned integration adapter, not an Addy refresh target. Its original provenance remains in Git history and third-party notices.",
     "",
     "These have no single canonical upstream skill package to sync 1:1. They remain Agentit-owned because they implement Agentit runtime/orchestration or compose multiple sources. Source-backed composites are documented in `THIRD_PARTY_NOTICES.md`.",
     "",

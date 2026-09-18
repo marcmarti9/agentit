@@ -95,6 +95,10 @@ def _normalize_nodes(nodes: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]
             "objective": str(raw.get("objective") or "").strip(),
             "loop_contract_sha256": loop_hash,
         })
+        if "evidence_requirement" in raw:
+            if raw["evidence_requirement"] not in {"reported", "command"}:
+                raise GraphRuntimeError("invalid node evidence requirement")
+            result[-1]["evidence_requirement"] = raw["evidence_requirement"]
     if not result:
         raise GraphRuntimeError("graph must contain at least one node")
     return result
@@ -197,7 +201,7 @@ def validate_graph(graph: Mapping[str, Any]) -> None:
             if not isinstance(receipt, Mapping):
                 raise GraphRuntimeError(f"completed node {node_id} is missing loop receipt")
             try:
-                validate_loop_receipt(receipt, require_passed=True)
+                validate_loop_receipt(receipt, require_passed=True, require_command=by_id[node_id].get("evidence_requirement") == "command")
             except LoopRuntimeError as exc:
                 raise GraphRuntimeError(f"node {node_id} has invalid loop receipt: {exc}") from exc
             if receipt.get("contract_sha256") != by_id[node_id]["loop_contract_sha256"]:
@@ -248,7 +252,7 @@ def complete_node(
     if node_id not in ready_nodes(graph):
         raise GraphRuntimeError(f"node is not ready: {node_id}")
     try:
-        validate_loop_receipt(loop_receipt, require_passed=True)
+        validate_loop_receipt(loop_receipt, require_passed=True, require_command=nodes[node_id].get("evidence_requirement") == "command")
     except LoopRuntimeError as exc:
         raise GraphRuntimeError(f"node cannot complete without passed loop receipt: {exc}") from exc
     if loop_receipt.get("contract_sha256") != nodes[node_id]["loop_contract_sha256"]:

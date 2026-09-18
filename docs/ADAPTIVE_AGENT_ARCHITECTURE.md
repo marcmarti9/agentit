@@ -65,21 +65,23 @@ The default runtime budget is two total attempts unless the semantic decision ex
 Example:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-init \
+agentit runtime loop-init \
   --state .agentit/runtime/loops/<node-id>.json \
   --goal "<observable goal>" \
   --verifier "<verifier>" \
+  --verifier-argv '["python3","-m","unittest","tests.test_feature"]' \
+  --project /absolute/project --subject src --subject tests \
   --stop "<stop condition>"
 ```
 
-After attempts are recorded, acceptance requires:
+Execute the bound verifier with `agentit runtime loop-run --state <state>`, then check the current subject. Acceptance requires:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py loop-check \
+agentit runtime loop-check \
   --state .agentit/runtime/loops/<node-id>.json
 ```
 
-Narrative worker success is not acceptance; a passed Loop Receipt is.
+A passed receipt is acceptable only for its declared evidence class. Command contracts require an observed process; reported visual/human evidence remains explicitly reported. Neither a digest nor a capability envelope proves model compliance or sandboxing. See [RUNTIME_ENGINEERING.md](RUNTIME_ENGINEERING.md).
 
 ## Graph Engineering
 
@@ -96,7 +98,7 @@ Each node defines:
 Graph initialization/validation:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-init \
+agentit runtime graph-init \
   --spec .agentit/runtime/graph-spec.json \
   --state .agentit/runtime/graph.json
 ```
@@ -104,7 +106,7 @@ python3 ~/code/agentit/router/runtime_cli.py graph-init \
 The runtime rejects cycles, unknown/self dependencies, unsafe paths, and overlapping write ownership before execution. Only nodes returned by `graph-ready` may start.
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-ready \
+agentit runtime graph-ready \
   --state .agentit/runtime/graph.json
 ```
 
@@ -113,7 +115,7 @@ A completed node must provide its accepted Loop Receipt and required artifacts. 
 Final multi-node acceptance requires:
 
 ```bash
-python3 ~/code/agentit/router/runtime_cli.py graph-check \
+agentit runtime graph-check \
   --state .agentit/runtime/graph.json
 ```
 
@@ -143,16 +145,16 @@ Independent workers can generate alternatives when fresh context helps. The prim
 
 ## Worker Context Contract
 
-Every delegated spawn must pass through the Worker Context Contract (`router/worker_context.py` / `agentit worker build|render`). Fresh context without project rules is not useful isolation.
+Every delegated spawn must pass through the Worker Context Contract (`router/worker_context.py` / `agentit worker build|render`). Fresh context without project rules is not useful isolation. All applicable ancestor instructions survive projection. Building JSON does not invoke a worker or erase previous host context; see [JIT_SKILL_LOADING.md](JIT_SKILL_LOADING.md).
 
 A worker context projects only what the worker needs:
 
 1. objective and explicit scope/completion criteria;
 2. relevant project instruction files such as `AGENTS.md`, `CLAUDE.md`, `CODEX.md`, or `GEMINI.md` when present;
-3. task-scoped skill **bodies**, not the whole catalog;
+3. task-scoped skill **bodies** with hashes and byte counts, not the whole catalog; schema 3 rejects absent or altered bodies;
 4. safe user preferences when applicable;
 5. risk/constraints supplied by the parent decision;
-6. allowed read/write paths and artifact references;
+6. requested read/write paths and actually read material references; the host enforces real permissions;
 7. expected output/evidence, verifier, stop condition, and loop identity;
 8. required/preferred capabilities resolved against the actual host inventory.
 

@@ -1,0 +1,16 @@
+{
+  "worker_selected_body_present": false,
+  "worker_claims_active_by_name_only": true,
+  "intermediate_instructions_preserved": false,
+  "loader_rejects_symlink_project": false,
+  "untracked_private_cache_overrides_harness": true,
+  "manifest_auto_projects": [
+    "unselected-a",
+    "unselected-b"
+  ],
+  "self_report_without_command_accepted_as_pass": true,
+  "receipt_has_provenance": false,
+  "skill_count": 75,
+  "total_skill_bytes": 902969,
+  "core_body_bytes": 41481
+}

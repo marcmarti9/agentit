@@ -1,0 +1,59 @@
+name: Deploy Somia Vins to Vercel
+
+on:
+  push:
+    branches:
+      - tmp-ignore
+    paths:
+      - "tmp/somia-vins-vercel-20260920/**"
+      - ".github/workflows/deploy-somia-vins-demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_SCOPE: digiteminfo-5789s-projects
+      VERCEL_PROJECT: somia-vins-demo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Vercel token
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN is not configured in this repository."
+            exit 2
+          fi
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Ensure project exists
+        run: |
+          vercel project add "$VERCEL_PROJECT" \
+            --scope "$VERCEL_SCOPE" \
+            --token "$VERCEL_TOKEN" || true
+
+      - name: Deploy production
+        working-directory: tmp/somia-vins-vercel-20260920
+        run: |
+          URL="$(vercel deploy \
+            --prod \
+            --yes \
+            --project "$VERCEL_PROJECT" \
+            --scope "$VERCEL_SCOPE" \
+            --token "$VERCEL_TOKEN")"
+          echo "DEPLOYMENT_URL=$URL" >> "$GITHUB_ENV"
+          echo "## Somia Vins deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "$URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify deployment
+        run: |
+          curl --fail --silent --show-error --location "$DEPLOYMENT_URL" >/tmp/somia.html
+          grep -q "Somia Vins" /tmp/somia.html
+          echo "Verified: $DEPLOYMENT_URL"

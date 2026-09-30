@@ -49,6 +49,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 - `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
 
+- `anti-overengineering` — keep implementation and verification proportional: targeted checks during BUILD, deeper validation at the real completion boundary.
 - `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
 - `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
 - `planning-and-task-breakdown` — decompose non-trivial work when an explicit execution plan would help.
@@ -363,6 +364,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 **Skills in this pack:**
 
 - `git-workflow-and-versioning` — reviewable repository handoff.
+- `anti-overengineering` — prevent client delivery from stalling in speculative architecture, test proliferation or repeated audit loops.
 - `incremental-implementation` — bounded client delivery and staged implementation.
 - `documentation-and-adrs` — durable client/project handoff context.
 - `shipping-and-launch` — deployment/launch readiness.

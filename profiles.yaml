@@ -23,6 +23,7 @@ profiles:
     - browser-testing-with-devtools
     - performance-optimization
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
     - app-security-gate
@@ -41,6 +42,7 @@ profiles:
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
     - app-security-gate
@@ -182,6 +184,7 @@ profiles:
     - growth
     skills:
     - incremental-implementation
+    - anti-overengineering
     - git-workflow-and-versioning
   all:
     description: Every repository skill; use only when explicitly requested for installation/discovery,
@@ -199,6 +202,7 @@ profiles:
     - ci-cd-and-automation
     - code-review-and-quality
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - context-engineering
     - creative-tool-scout

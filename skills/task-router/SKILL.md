@@ -23,6 +23,12 @@ Verification budget: implement, inspect the affected result, fix demonstrated fa
 
 Bounded functional work: relevant module tests, meaningful behavior checks and documentation only where contracts change. Delegate only when isolation or specialization earns its cost.
 
+### Development economy invariant
+
+For implementation work, do not confuse progress with ceremony. During BUILD, use the smallest relevant check that prevents obvious breakage and continue. At a coherent feature checkpoint, verify the feature contract with targeted regression evidence. Reserve whole-repository suites, broad audits and comprehensive review for the actual milestone/product/PR completion boundary unless security, data loss, migrations, payments, auth, concurrency or another high-risk surface requires earlier breadth.
+
+When `anti-overengineering` is selected, it owns this verification cadence and scopes generic per-slice verification guidance from overlapping skills accordingly.
+
 ### DEEP MODE
 
 Explicit deep audit/refactor, architectural commitments, migrations, production data, auth, payments, secrets or high-blast-radius effects require stronger adversarial review, scoped comprehensive tests, durable docs and rollback evidence. No mode grants extra permissions.

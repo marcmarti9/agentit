@@ -14,20 +14,44 @@ Agent-operated discovery:
 ```sh
 agentit skills packs --format json
 agentit skills candidates engineering --format json
-agentit skills show debugging-and-error-recovery --project /absolute/project
+agentit skills activate debugging-and-error-recovery --project /absolute/project
 ```
 
-The first two return metadata, not bodies. Choose domains semantically. `show` reads exactly the selected bodies, with source roots, byte counts and hashes. Do not claim activation from a candidate list. There is no automatic selected-skill fallback from installed profiles.
+The first two return metadata, not bodies. Choose domains semantically. `activate` reads the exact **complete `SKILL.md` body** for every explicitly selected skill, with source roots, byte counts and hashes. `show` remains a compatibility alias. Do not claim activation from a candidate list. There is no automatic selected-skill fallback from installed profiles.
 
 For substantive work, make delivery inspectable:
 
 ```sh
-agentit skills show debugging-and-error-recovery \
+agentit skills activate debugging-and-error-recovery \
   --project /absolute/project --task-id issue-123 --stage diagnosis \
   --context-origin same-session --receipt --format json
 ```
 
 Receipts are private immutable files in `.agentit/context/`. They record delivered resources, not comprehension, tool use, policy compliance or context erasure. Use a fresh task/stage decision; never treat an old receipt as current activation.
+
+## Activation contract
+
+Keep these states separate:
+
+```text
+installed / profile-visible
+        ≠
+candidate metadata returned
+        ≠
+selected skill ID
+        ≠
+activated complete body
+```
+
+Activation is valid only when all of these hold:
+
+- the semantic task decision explicitly selected the skill;
+- the exact full `SKILL.md` bytes were loaded, not a summary, excerpt, description or ID-only placeholder;
+- the delivered body hash/byte count validate;
+- the activated ID set exactly matches the selection; do not implicitly activate neighbors, pack peers, mentioned skills or dependencies;
+- missing, stale or tampered bodies fail closed.
+
+References, assets and scripts are part of a skill **package**, but they remain progressive disclosure. Load a referenced resource only when the activated body reaches the branch that needs it. A script being present is never permission to execute it.
 
 ## Read one supporting resource
 

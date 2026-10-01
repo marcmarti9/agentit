@@ -25,7 +25,7 @@ their original relationship to Agentit's shared reference directory.
 ## Actual loading boundary
 
 `router/skill_authority.py` defines one shared authority envelope. It is emitted
-with `agentit skills show` in both prompt and JSON formats, with the standalone
+with `agentit skills activate` in both prompt and JSON formats (`show` remains a compatibility alias), with the standalone
 skill loader, and in worker context payloads and rendered contracts.
 
 The envelope explains that source workflow imperatives do not override host or

@@ -1,28 +1,38 @@
 # Política anti-overengineering
 
-Aplica la intervención correcta más pequeña que satisfaga la petición y pueda verificarse.
+Agentit usa exactamente dos modos de desarrollo:
 
-- Respeta la arquitectura, dependencias y estilo ya presentes.
-- No introduzcas una abstracción usada una sola vez sin una razón concreta.
-- No añadas dependencias, servicios, colas, cachés, bases de datos o microservicios sin necesidad actual.
-- No conviertas constantes en configuración, ni diseñes extensibilidad hipotética.
-- No hagas refactors globales para resolver un problema local.
-- No escribas documentación ajena al cambio.
-- No ejecutes una auditoría completa cuando una comprobación dirigida sea suficiente.
-- No lances subagentes si coordinar y verificar cuesta más que hacerlo directamente.
-- No apliques TDD ceremonialmente a un cambio trivial; sí prueba lógica material, regresiones, contratos y fronteras de riesgo.
-- Distingue “podría ser útil” de “es necesario ahora”.
-- Conserva una ruta clara de rollback y deja las decisiones experimentales aisladas.
+```text
+DEVELOPMENT_MODE: BUILDER | REVIEW
+```
 
-## Cadencia de desarrollo
+## BUILDER
 
-La validación se escala por fase y riesgo, no por ansiedad:
+Objetivo: terminar todas las features solicitadas.
 
-- **BUILD:** implementación + comprobación dirigida mínima + continuar. No ejecutar por defecto toda la suite, build, lint, typecheck y E2E después de cada cambio pequeño.
-- **FEATURE CHECKPOINT:** comprobar el comportamiento end-to-end de la feature y el conjunto de regresión directamente relacionado.
-- **MILESTONE / PRODUCT COMPLETE:** ejecutar una vez la verificación amplia requerida por el repositorio, revisar integración, seguridad/release cuando aplique y simplificar el diff.
-- **Excepción:** auth, permisos, pagos, migraciones, pérdida de datos, concurrencia, secretos y otros límites de alto impacto requieren evidencias más fuertes antes de seguir.
+- Implementa de forma directa y respeta arquitectura/estilo existentes.
+- Tras cada cambio usa solo la comprobación dirigida mínima que aporte información útil.
+- No ejecutes por defecto toda la suite, build, lint, typecheck y E2E después de cada feature.
+- No añadas tests triviales, duplicados o de detalles de implementación.
+- No hagas refactors globales, documentación ceremonial, abstracciones hipotéticas ni subagentes que cuesten más de coordinar que resolver.
+- Continúa construyendo hasta que el conjunto funcional pedido esté implementado.
 
-Los tests compran confianza; no son un objetivo de volumen. No añadas tests triviales, duplicados o de detalles de implementación solo para aumentar cobertura.
+## REVIEW
 
-La skill `anti-overengineering` operacionaliza esta política y, cuando se combina con `incremental-implementation`, gobierna la cadencia de verificación.
+Objetivo: revisar profundamente el producto ya construido, sin añadir nuevas features.
+
+- Congela el scope funcional.
+- Ejecuta los gates amplios exigidos por el repositorio.
+- Revisa integración, E2E críticos, seguridad, migraciones/datos, dependencias, rendimiento, accesibilidad y documentación solo cuando apliquen.
+- Inspecciona el diff completo y elimina complejidad accidental demostrada.
+- Corrige findings en lotes con checks dirigidos; vuelve a ejecutar los checks globales al final del lote, no tras cada línea.
+
+## Regla de justificación
+
+Una abstracción, test, dependencia, documento, worker, review o comando adicional debe responder a un requisito actual, bug observado, contrato existente o riesgo real. "Podría servir", "future-proof" y "por si acaso" no bastan.
+
+## Excepción de riesgo
+
+Auth, permisos, pagos, secretos, migraciones destructivas, datos de producción, concurrencia y otros límites de alto impacto se verifican de forma dirigida tan pronto como sea necesario. Esto no convierte automáticamente todo BUILDER en REVIEW.
+
+La skill `anti-overengineering` operacionaliza esta política y gobierna la cadencia cuando se combina con otras skills de implementación/testing/review.

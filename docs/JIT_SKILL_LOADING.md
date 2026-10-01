@@ -25,10 +25,10 @@ These are bootstrap adapter paths, not proof of behavior in every future provide
 ```sh
 agentit skills packs --format json
 agentit skills candidates engineering backend --format json
-agentit skills show debugging-and-error-recovery --project /absolute/project
+agentit skills activate debugging-and-error-recovery --project /absolute/project
 ```
 
-The first two commands expose metadata only. `show` returns exactly the selected bodies. The caller, not a profile or stale manifest, determines selection.
+The first two commands expose metadata only. `activate` (`show` remains a compatibility alias) returns exactly the selected bodies. The caller, not a profile or stale manifest, determines selection.
 
 ## Source precedence and integrity
 
@@ -53,7 +53,7 @@ The resource loader reads UTF-8 data; it does not execute scripts, expand a libr
 ## Delivery receipts and stage transitions
 
 ```sh
-agentit skills show debugging-and-error-recovery \
+agentit skills activate debugging-and-error-recovery \
   --project /absolute/project --task-id issue-123 --stage diagnosis \
   --context-origin same-session --receipt --format json
 ```

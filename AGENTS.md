@@ -16,13 +16,15 @@ The primary model chooses intent, scope, relevant packs, exact skill bodies, ref
 
 Profiles are installation availability. Packs are metadata discovery maps. They do not activate themselves. Start each task with a fresh decision; do not reuse a previous task's selections or infer authority from configured MCPs.
 
-## Execution depth
+## Development mode
 
-`EXECUTION_MODE: FAST | NORMAL | DEEP`
+For repository implementation use exactly:
 
-Canonical definitions and security escalation rules live in `skills/task-router/SKILL.md`. FAST covers localized low-risk iteration, NORMAL bounded functional work, DEEP explicit audits/refactors and high-consequence boundaries. Avoid copying these rules into every skill and creating divergent policy.
+`DEVELOPMENT_MODE: BUILDER | REVIEW`
 
-Keep iteration fast without skipping necessary correctness/security checks. Do not ask repeated questions already answered by the project. Respect scope and preserve unrelated work.
+Canonical definitions, transition rules and risk overrides live in `skills/task-router/SKILL.md`. BUILDER finishes requested functionality with targeted checks. REVIEW freezes feature scope and deeply validates the completed implementation. Do not invent intermediate modes or copy the policy into every skill.
+
+Risk remains independent of mode: dangerous boundaries still require timely targeted evidence.
 
 ## Context delivery is observable; attention is not
 

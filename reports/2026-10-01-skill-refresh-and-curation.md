@@ -19,6 +19,7 @@ Inspected current public skill libraries included:
 - Anthropic `anthropics/skills` at `8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`.
 - Matt Pocock `mattpocock/skills` at `d81f3a183412e71a5b1e84ca21bc1a35eea03a60`.
 - Vercel Labs `vercel-labs/agent-skills` at `063bee94c3f4df8453406c830b0a7df0f2860278`.
+- Dietrich Gebert `DietrichGebert/ponytail` at `e3ba2aa6f1e6f0bc4d69eb09c9f0d0a93af56156`.
 - Remotion `remotion-dev/skills` at `a9b199e165505267eda1ed3e0ef3dd3567c43411`.
 - Additional broad catalogs were inspected for discovery value but not treated as automatic dependencies.
 
@@ -35,7 +36,12 @@ Inspected current public skill libraries included:
    - distinct from `mcp-tooling-fit`, which chooses/uses an existing MCP;
    - scoped to backend/engineering discovery.
 
-3. **`react-composition-patterns`**
+3. **`anti-overengineering` enhancement from Ponytail**
+   - Ponytail is intentionally **not** added as a parallel skill because its trigger overlaps almost completely with `anti-overengineering`;
+   - its useful minimum-solution ladder (skip/reuse/stdlib/native/already-installed/minimum code) is integrated into BUILDER instead;
+   - this strengthens the existing owner without creating activation ambiguity.
+
+4. **`react-composition-patterns`**
    - informed by Vercel's composition-pattern skill;
    - only triggers on demonstrated reusable-component API pressure;
    - explicitly does not apply to ordinary one-off React implementation;

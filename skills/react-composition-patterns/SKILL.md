@@ -1,6 +1,11 @@
 ---
 name: react-composition-patterns
-description: Applies scalable React component composition when an existing component API is becoming rigid: boolean-prop proliferation, reusable component libraries, compound components, shared provider contracts, explicit variants, or sibling consumers of shared state. Do not use for ordinary one-off React feature implementation where direct props/components are already simple.
+description: >-
+  Applies scalable React component composition when an existing component API is becoming
+  rigid: boolean-prop proliferation, reusable component libraries, compound components,
+  shared provider contracts, explicit variants, or sibling consumers of shared state.
+  Do not use for ordinary one-off React feature implementation where direct props/components
+  are already simple.
 ---
 
 # React Composition Patterns

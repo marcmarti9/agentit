@@ -125,13 +125,38 @@ Agentit vendors the canonical `verification-before-completion` package in full. 
 
 ## Agentit-owned adaptations and source-informed skills
 
+### Anthropic / skills
+
+Source: https://github.com/anthropics/skills
+
+License: Apache License 2.0 for the inspected `skill-creator` and `mcp-builder` packages.
+
+Agentit's `skill-authoring-and-evals` and `mcp-server-development` are Agentit-owned, provider-neutral adaptations informed by those public skills. Agentit does not vendor Anthropic's skill-creator eval viewer/scripts, MCP reference package, or Claude-specific workflow, and does not claim drop-in compatibility.
+
+### Vercel Labs / agent-skills
+
+Source: https://github.com/vercel-labs/agent-skills
+
+The inspected `vercel-composition-patterns` skill declares MIT licensing in its skill metadata.
+
+Agentit's `react-composition-patterns` is an Agentit-owned adaptation of the component-composition ideas, narrowed to demonstrated API pressure and Agentit's anti-overengineering contract. Agentit does not vendor Vercel's compiled AGENTS document or rule-file package.
+
+
+### Dietrich Gebert / Ponytail
+
+Source: https://github.com/DietrichGebert/ponytail
+
+License: MIT. Copyright (c) 2026 DietrichGebert.
+
+Agentit's `anti-overengineering` BUILDER minimum-solution ladder is materially informed by Ponytail's YAGNI/reuse/stdlib/native-platform/minimum-code ordering and its distinction between lazy implementation and careless understanding. Agentit does not vendor Ponytail's skill pack, intensity modes, commands or review workflow; Agentit's BUILDER/REVIEW and risk policy remain authoritative.
+
 ### Matt Pocock / skills
 
 Source: https://github.com/mattpocock/skills
 
 License: MIT. Copyright (c) 2026 Matt Pocock.
 
-Agentit has adapted or incorporated engineering ideas from the project into its own workflows, especially agent-document writing discipline, progressive disclosure, completion criteria, feedback-loop-first debugging, requirements interviewing, and related engineering-process guidance. Agentit does not claim drop-in compatibility with Matt Pocock's command/plugin system and does not vendor a canonical Matt Pocock skill package in the current registry.
+Agentit has adapted or incorporated engineering ideas from the project into its own workflows, especially agent-document writing discipline, progressive disclosure, completion criteria, feedback-loop-first debugging, requirements interviewing, and related engineering-process guidance. The Agentit-owned `skill-authoring-and-evals` skill is also materially informed by `writing-for-agents`. Agentit does not claim drop-in compatibility with Matt Pocock's command/plugin system and does not vendor a canonical Matt Pocock skill package in the current registry.
 
 ### Scott Sun / Three.js Awesome Graphics Agent Skills
 

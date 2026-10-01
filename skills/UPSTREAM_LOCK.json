@@ -1784,7 +1784,7 @@
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
-      "snapshot": "114ea1d3838fca73b253af45f873b9c4f5f213c8",
+      "snapshot": "c74755d920985f7a92cef691ca970ba95f90126e",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1792,7 +1792,7 @@
           "mode": 420
         },
         "agents/impeccable_asset_producer.toml": {
-          "sha256": "690a5e08a9b848ab3057014b75c101fe23a5c81f251b6e7a5844bb9cd4184d37",
+          "sha256": "d6a51f4df6d76f16b95ab81268a689f4c5936d505c5bb25c80ad7423f927bbc6",
           "mode": 420
         },
         "agents/impeccable_documenter.toml": {
@@ -1848,7 +1848,7 @@
           "mode": 420
         },
         "reference/component-review.md": {
-          "sha256": "37edf9fbedb2bc609341e009b14588f46022fd7aace9399b5cb8f1c8325f81fe",
+          "sha256": "514a27fc9830455828d337cfc2fa95fa86be8e5464501bbabb9aca09a66b40ad",
           "mode": 420
         },
         "reference/craft-floor.md": {
@@ -1864,7 +1864,7 @@
           "mode": 420
         },
         "reference/degraded/asset-producer.md": {
-          "sha256": "a690f011420ba486f268d790bb088e9a58c1be503d7ab17d68cd819ddf0f75bb",
+          "sha256": "b13ab14c1e2fee94a6c8b32361f400a0319a76537ee16fecbda79d5d1b26b681",
           "mode": 420
         },
         "reference/degraded/documenter.md": {
@@ -1932,7 +1932,7 @@
           "mode": 420
         },
         "reference/new-work.md": {
-          "sha256": "af95e45318c9235de676cf1075840518cdd3a924b8bde952b5161d72caf3b290",
+          "sha256": "0a7abd2c7baf2ae88fc8e1f3856fd1c856cf72f85834e78d12dc5a0f0e976277",
           "mode": 420
         },
         "reference/onboard.md": {
@@ -1960,7 +1960,7 @@
           "mode": 420
         },
         "reference/region-map.md": {
-          "sha256": "980fa8280907591eeb0b382c4edd2653405e548d66c5b670e5581ee521db8111",
+          "sha256": "778cedc9199b407d3e23fa1041e38d548b00b1101a33517aa2a2eb299f9d0edc",
           "mode": 420
         },
         "reference/routing.md": {
@@ -1976,11 +1976,11 @@
           "mode": 420
         },
         "reference/visualize.md": {
-          "sha256": "896da399bafcffb0623bdd81bb18709d6eab25c9d5917e739c8798f31ff0d076",
+          "sha256": "aff93ffc27b05952214dd860879256fb6e799165b967865a0dfa4dbd14d4289f",
           "mode": 420
         },
         "scripts/VERSION": {
-          "sha256": "1f2110568627307becae713f8b808f3d9d912d4b2a24ed6a78605f03f7437d3c",
+          "sha256": "e358d84552808a5c0bd6679d690c283b938ebe15c2bd843c898681d093213107",
           "mode": 420
         },
         "scripts/command-metadata.json": {

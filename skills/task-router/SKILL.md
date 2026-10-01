@@ -9,23 +9,35 @@ The primary model interprets the request using the conversation, project state a
 
 Before material execution, record a compact decision covering the desired outcome, known facts, material unknowns, scope, risk/reversibility, relevant packs, selected skills and why, reference mode, actual tools/permissions, ownership, verification and stop/rollback condition. Do not expose private reasoning. Revisit the decision when evidence changes.
 
-## Execution modes — canonical policy
+## Development modes — canonical policy
 
-`EXECUTION_MODE: FAST | NORMAL | DEEP`
+For repository implementation work, use exactly:
 
-### FAST MODE — Default for iterative development
+```text
+DEVELOPMENT_MODE: BUILDER | REVIEW
+```
 
-Localized presentational or clearly bounded low-risk iteration stays direct. Treat the user's request literally; preserve unrelated behavior. Do NOT launch subagents for normal implementation tasks, refactor adjacent systems, run blanket audits or create needless documentation/commit ceremony.
+### BUILDER — default while functionality is incomplete
 
-Verification budget: implement, inspect the affected result, fix demonstrated failures, stop. For visual changes check relevant desktop/mobile behavior. Prefer iteration speed over exhaustive unrelated validation or documentation, **never over necessary correctness or safety**. A small diff at an auth/payment boundary is not a cosmetic change.
+The objective is to complete the requested feature set. Use direct implementation, the smallest justified skill/tool set and targeted checks that prevent obvious breakage. Do not interrupt ordinary construction with blanket audits, full-suite repetition, unrelated refactors, documentation churn or review committees.
 
-### NORMAL MODE
+BUILDER verification budget: implement -> cheapest relevant check -> fix demonstrated failure -> continue.
 
-Bounded functional work: relevant module tests, meaningful behavior checks and documentation only where contracts change. Delegate only when isolation or specialization earns its cost.
+Do not claim whole-product readiness from BUILDER evidence.
 
-### DEEP MODE
+### REVIEW — deep validation after construction
 
-Explicit deep audit/refactor, architectural commitments, migrations, production data, auth, payments, secrets or high-blast-radius effects require stronger adversarial review, scoped comprehensive tests, durable docs and rollback evidence. No mode grants extra permissions.
+Use REVIEW when the requested implementation is functionally complete and is being prepared for handoff/PR/release, or when the user explicitly requests review/audit/hardening.
+
+Freeze feature scope. Review the complete change, run the repository-required broad gates, inspect relevant integration/E2E/security/data/dependency/performance/accessibility/documentation surfaces, fix concrete findings, then rerun the broad final gate after the material fix set.
+
+REVIEW is deep but bounded: evidence-backed findings only, no speculative feature expansion and no infinite audit/fix loop.
+
+### Development economy invariant
+
+Mode and risk are separate. Auth, payments, destructive writes/migrations, production data, secrets, concurrency and other high-impact boundaries may require immediate targeted verification during BUILDER. That risk override does not automatically trigger a repository-wide REVIEW.
+
+When `anti-overengineering` is selected, it owns development verification cadence and scopes generic per-slice testing/review guidance from overlapping skills.
 
 ## Development security invariant
 

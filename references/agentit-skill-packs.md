@@ -49,6 +49,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 - `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
 
+- `anti-overengineering` — enforce BUILDER throughput and REVIEW depth without speculative architecture or repeated full-suite churn.
 - `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
 - `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
 - `planning-and-task-breakdown` — decompose non-trivial work when an explicit execution plan would help.
@@ -84,6 +85,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `app-security-gate` — test changed application trust boundaries before release.
 
 - `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
+- `react-composition-patterns` — repair demonstrated reusable-component API pressure (boolean-prop proliferation, compound components, shared provider contracts) without abstracting ordinary one-off UI.
 - `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
 - `performance-optimization` — measure and improve frontend performance when evidence shows a bottleneck.
 - `code-simplification` — keep component/state architecture lean.
@@ -162,6 +164,7 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 - `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
 
 - `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
+- `mcp-server-development` — design and implement MCP server/tool surfaces; not for merely selecting or calling an existing MCP.
 - `observability-and-instrumentation` — logs, metrics, traces and diagnostics.
 - `test-driven-development` — service/API behavior proof when useful.
 - `code-simplification` — avoid accidental service/framework complexity.
@@ -324,6 +327,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `stop-slop` — catch structural AI-writing tells beyond buzzword deletion.
 - `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state, no tangents.
 - `documentation-and-adrs` — durable technical/project documentation and decision records.
+- `skill-authoring-and-evals` — create/edit agent-facing skills and instruction docs, tune triggers, progressive disclosure and selection/delivery evals.
 - `source-driven-development` — factual/current source-grounded writing.
 - `reference-intelligence` — multi-source reports, source roles and provenance.
 - `doubt-driven-development` — adversarial factual/argument review when stakes warrant it.
@@ -363,6 +367,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 **Skills in this pack:**
 
 - `git-workflow-and-versioning` — reviewable repository handoff.
+- `anti-overengineering` — prevent client delivery from stalling in speculative architecture, test proliferation or repeated audit loops.
 - `incremental-implementation` — bounded client delivery and staged implementation.
 - `documentation-and-adrs` — durable client/project handoff context.
 - `shipping-and-launch` — deployment/launch readiness.
@@ -387,6 +392,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `long-horizon-recovery` — resumable multi-session work with fresh selection and bounded private checkpoints.
 - `i-have-adhd` — only on explicit user request; do not infer a diagnosis, impose persistence across new tasks, or override user/host output constraints.
 - `mcp-tooling-fit` — choose tools from observed capability and authorization, not their mere presence.
+- `skill-authoring-and-evals` — author or evaluate Agentit/agent skills when the task itself is maintaining the instruction system.
 
 ---
 

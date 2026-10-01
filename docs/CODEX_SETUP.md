@@ -26,7 +26,7 @@ The coordinator discovers and loads non-core skills mechanically:
 ```text
 agentit skills packs
 agentit skills candidates engineering backend
-agentit skills show debugging-and-error-recovery security-and-hardening --project .
+agentit skills activate debugging-and-error-recovery security-and-hardening --project .
 ```
 
 See `docs/JIT_SKILL_LOADING.md` for the cross-provider contract.

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -40,6 +43,30 @@ class JitSkillsCliTests(unittest.TestCase):
             self.assertEqual(["security-and-hardening"], [item["id"] for item in bodies])
             self.assertIn("content", bodies[0])
             self.assertNotIn("debugging-and-error-recovery", bodies[0]["content"][:200])
+
+    def test_activate_delivers_exact_complete_body_and_no_neighbors(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "agentit"),
+                    "skills",
+                    "activate",
+                    "interview-me",
+                    "--project",
+                    temporary,
+                    "--format",
+                    "json",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        payload = json.loads(completed.stdout)
+        self.assertEqual(["interview-me"], [item["id"] for item in payload["skills"]])
+        expected = (ROOT / "skills" / "interview-me" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertEqual(expected, payload["skills"][0]["content"])
+        self.assertEqual(len(expected.encode("utf-8")), payload["skills"][0]["bytes"])
 
 
 if __name__ == "__main__":

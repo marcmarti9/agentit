@@ -120,14 +120,18 @@ def _parser() -> argparse.ArgumentParser:
     candidates.add_argument("pack_ids", nargs="+")
     candidates.add_argument("--format", choices=("text", "json"), default="text")
 
-    show = sub.add_parser("show", help="Load exact selected SKILL.md bodies after semantic selection.")
-    show.add_argument("skill_ids", nargs="+")
-    show.add_argument("--project", type=Path, default=Path.cwd())
-    show.add_argument("--format", choices=("prompt", "json"), default="prompt")
-    show.add_argument("--task-id", default="")
-    show.add_argument("--stage", default="")
-    show.add_argument("--context-origin", choices=("same-session", "new-host-session", "isolated-worker", "unspecified"), default="unspecified")
-    show.add_argument("--receipt", action="store_true", help="Write a private delivery record; does not prove model compliance.")
+    for command, help_text in (
+        ("activate", "Activate exact selected skills by loading each complete SKILL.md body."),
+        ("show", "Compatibility alias for activate: load exact selected complete SKILL.md bodies."),
+    ):
+        selected = sub.add_parser(command, help=help_text)
+        selected.add_argument("skill_ids", nargs="+")
+        selected.add_argument("--project", type=Path, default=Path.cwd())
+        selected.add_argument("--format", choices=("prompt", "json"), default="prompt")
+        selected.add_argument("--task-id", default="")
+        selected.add_argument("--stage", default="")
+        selected.add_argument("--context-origin", choices=("same-session", "new-host-session", "isolated-worker", "unspecified"), default="unspecified")
+        selected.add_argument("--receipt", action="store_true", help="Write a private delivery record; does not prove model compliance.")
     resource = sub.add_parser("resource", help="Read one explicitly selected repo:/project:/skill: resource.")
     resource.add_argument("locators", nargs="+")
     resource.add_argument("--project", type=Path, default=Path.cwd())

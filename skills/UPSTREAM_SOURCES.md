@@ -29,7 +29,7 @@ Canonical packages are copied byte-for-byte from pinned upstream commits. File h
 | `humanizer` | `skills/humanizer` | [blader/humanizer@225a6f39ac85](https://github.com/blader/humanizer/tree/225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8/.) |
 | `i-have-adhd` | `skills/i-have-adhd` | [ayghri/i-have-adhd@839872f9d1cd](https://github.com/ayghri/i-have-adhd/tree/839872f9d1cd634fed642b4589ce7226199cc15f/skills/i-have-adhd) |
 | `idea-refine` | `skills/idea-refine` | [addyosmani/agent-skills@2686b620fc1f](https://github.com/addyosmani/agent-skills/tree/2686b620fc1fed2e8f60c704839c766b8594c6b6/skills/idea-refine) |
-| `impeccable` | `skills/impeccable` | [pbakaus/impeccable@114ea1d3838f](https://github.com/pbakaus/impeccable/tree/114ea1d3838fca73b253af45f873b9c4f5f213c8/.agents/skills/impeccable) |
+| `impeccable` | `skills/impeccable` | [pbakaus/impeccable@c74755d92098](https://github.com/pbakaus/impeccable/tree/c74755d920985f7a92cef691ca970ba95f90126e/.agents/skills/impeccable) |
 | `incremental-implementation` | `skills/incremental-implementation` | [addyosmani/agent-skills@2686b620fc1f](https://github.com/addyosmani/agent-skills/tree/2686b620fc1fed2e8f60c704839c766b8594c6b6/skills/incremental-implementation) |
 | `interview-me` | `skills/interview-me` | [addyosmani/agent-skills@2686b620fc1f](https://github.com/addyosmani/agent-skills/tree/2686b620fc1fed2e8f60c704839c766b8594c6b6/skills/interview-me) |
 | `observability-and-instrumentation` | `skills/observability-and-instrumentation` | [addyosmani/agent-skills@2686b620fc1f](https://github.com/addyosmani/agent-skills/tree/2686b620fc1fed2e8f60c704839c766b8594c6b6/skills/observability-and-instrumentation) |

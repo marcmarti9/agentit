@@ -20,9 +20,11 @@ profiles:
     - core
     skills:
     - frontend-ui-engineering
+    - react-composition-patterns
     - browser-testing-with-devtools
     - performance-optimization
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
     - app-security-gate
@@ -38,9 +40,11 @@ profiles:
     - core
     skills:
     - api-and-interface-design
+    - mcp-server-development
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
     - app-security-gate
@@ -98,6 +102,7 @@ profiles:
     - core
     skills:
     - documentation-and-adrs
+    - skill-authoring-and-evals
     - humanizer
     - stop-slop
     - i-have-adhd
@@ -182,6 +187,7 @@ profiles:
     - growth
     skills:
     - incremental-implementation
+    - anti-overengineering
     - git-workflow-and-versioning
   all:
     description: Every repository skill; use only when explicitly requested for installation/discovery,
@@ -199,6 +205,7 @@ profiles:
     - ci-cd-and-automation
     - code-review-and-quality
     - code-simplification
+    - anti-overengineering
     - constraint-driven-development
     - context-engineering
     - creative-tool-scout
@@ -238,6 +245,9 @@ profiles:
     - local-model-routing
     - long-horizon-recovery
     - marketing-and-growth
+    - mcp-server-development
+    - react-composition-patterns
+    - skill-authoring-and-evals
     - appllama-app-design-skill
     - appllama-usage
     - observability-and-instrumentation

@@ -42,7 +42,7 @@ Challenge material issues such as:
 18. weak acceptance criteria, verification, backup, rollback or post-check;
 19. uncritical agreement with a materially worse user-proposed implementation;
 20. performative disagreement that does not matter to the requested outcome;
-21. mode violation or overengineering: proposing multi-agent topology, broad repository audits, full test suites, or documentation churn for a localized UI, styling, layout, copy, component, or behavior change that belongs in FAST MODE.
+21. mode violation or overengineering: proposing multi-agent topology, broad repository audits, repeated full test suites, or documentation churn while requested feature work is still in BUILDER; or expanding feature scope during REVIEW.
 
 ## Context-budget check
 

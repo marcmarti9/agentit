@@ -124,13 +124,14 @@ For material work it creates a compact `TASK_DECISION` covering the relevant out
 
 Mechanical software then enforces the reviewed plan through deterministic state and execution contracts.
 
-### Execution modes: FAST | NORMAL | DEEP
+### Development modes: BUILDER | REVIEW
 
-To eliminate overengineering and keep iterative development responsive, Agentit calibrates execution depth:
+Repository implementation uses two modes only:
 
-- **FAST (Default for iterative development)**: Localized UI, styling, layout, copy, component, or behavior changes. Smallest diff, targeted checks, no unrelated refactors, no documentation churn, no subagents, and strict verification budget (implement -> check affected -> fix obvious -> stop). **Priority: iteration speed > exhaustive validation > documentation.**
-- **NORMAL**: Medium functional changes, multi-component features, relevant targeted test suites, durable docs updated only for materially changed contracts.
-- **DEEP**: Audits, migrations, production releases, security, auth, payments, high-risk systems. Comprehensive testing, independent reviews, and complete documentation contracts.
+- **BUILDER (default while functionality is incomplete):** finish the requested features. Use the smallest diff and the cheapest relevant check after each meaningful change; avoid repeated full-suite runs, unrelated refactors, documentation churn, test proliferation and review committees.
+- **REVIEW:** once the requested implementation is functionally complete (or the user explicitly requests an audit), freeze feature scope and deeply validate the whole change: repository gates, integration/E2E, applicable security/data/dependency/performance/accessibility checks, docs drift and final simplification.
+
+Risk is separate from mode. A dangerous auth/payment/data/migration boundary still gets immediate targeted verification in BUILDER without forcing a repository-wide review.
 
 ### JIT skill packs
 
@@ -172,7 +173,7 @@ Security is not a global context tax, but it is part of the development bar when
 
 - `security-and-hardening` loads for untrusted input, auth, APIs, data, secrets, uploads, webhooks, or deployment/supply-chain surfaces.
 - `app-security-gate` is the evidence-driven release gate for substantial application/API work, production-readiness questions, and `RISK_3`/`RISK_4` security changes. It must end `PASS` or `BLOCKED`.
-- Purely presentational edits stay in FAST mode and do not pull in a security audit.
+- Purely presentational edits normally remain in BUILDER and do not pull in a security audit unless they change a real trust boundary.
 
 ### Adversarial idea review
 

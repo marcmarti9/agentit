@@ -14,9 +14,9 @@ Never commit private task plans, launch plans, raw chats, credentials, or chain-
 ## What durable documentation should cover
 
 > [!NOTE]
-> **FAST MODE exemption:** When operating in FAST MODE (localized UI, styling, layout, copy, component, or behavior changes), do NOT update documentation unless the change makes existing documentation explicitly incorrect. Durable documentation updates are reserved for NORMAL (materially changed contracts) and DEEP (substantial architecture) modes.
+> **BUILDER discipline:** while functionality is still being built, do not interrupt each slice for documentation ceremony. Update documentation immediately only when an existing contract would otherwise become misleading. In REVIEW, perform the documentation-drift check for the completed implementation and update materially affected durable docs.
 
-When materially affected (NORMAL / DEEP), document:
+When materially affected, document:
 
 1. system architecture and boundaries;
 2. important component responsibilities and data/control flow;

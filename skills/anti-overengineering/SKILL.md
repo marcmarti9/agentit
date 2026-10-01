@@ -1,192 +1,249 @@
 ---
 name: anti-overengineering
-description: Prevents implementation work from expanding into speculative architecture, unnecessary tests, repeated full-suite verification, unrelated refactors, documentation churn, or review loops. Use during feature development, refactors, implementation planning, and code review when delivery speed matters and correctness can be protected with phase-appropriate checks. Enforces build-first, verify-proportionally, review-deeply-at-the-end discipline while preserving stronger gates for security, data loss, migrations, payments, auth, concurrency, and other high-risk boundaries.
+description: Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
 ---
 
 # Anti-Overengineering
 
 ## Objective
 
-Ship the **smallest correct implementation of the current requirement** without turning development into an infinite sequence of tests, refactors, abstractions, reviews, and speculative safeguards.
+Finish useful software without turning implementation into an endless sequence of tests, abstractions, refactors, reviewers and audits.
 
-Simplicity is not permission to lower correctness or safety. It is a rule about **where complexity is allowed to exist and when verification is worth its cost**.
-
-## The hard rule
-
-Every new line of production code, test, abstraction, dependency, document, worker, review pass, or verification command must be justified by at least one of:
-
-1. a current explicit requirement;
-2. an observed bug or regression;
-3. an established project invariant or contract;
-4. a real risk boundary affected by the change.
-
-If none applies, do not add or run it.
-
-"Could be useful", "best practice", "future-proof", "more flexible", and "just to be safe" are not sufficient reasons.
-
-## Phase-aware development
-
-Do not apply release-grade validation to every edit.
-
-### BUILD
-
-Goal: finish the functionality without accumulating obvious breakage.
-
-Use the cheapest relevant signal only:
-- compile/typecheck the affected surface when needed;
-- run one focused test or existing related test group when behavior is non-trivial;
-- do a targeted browser/runtime smoke check for UI or integration behavior;
-- inspect the actual changed path.
-
-Then continue implementing.
-
-During BUILD, do **not** by default:
-- run the whole repository test suite after each slice;
-- run full lint + build + typecheck + E2E after every small edit;
-- create tests for trivial wrappers, static content, framework behavior, or already-covered behavior;
-- spawn reviewers/subagents for bounded changes;
-- rewrite adjacent code because it could be cleaner;
-- stop after every tiny slice for documentation or commit ceremony.
-
-A failed focused check is evidence: fix the demonstrated problem and rerun the relevant check. Do not widen the verification surface unless the failure suggests wider impact.
-
-### FEATURE CHECKPOINT
-
-When a coherent feature is actually usable end-to-end, verify the feature contract:
-- exercise the main user path;
-- run the smallest relevant regression set;
-- add a durable test only where the behavior is important enough to regress;
-- verify changed trust boundaries if any.
-
-If the feature works, continue to the next feature. Do not turn the checkpoint into a repository-wide audit unless the change is genuinely cross-cutting.
-
-### MILESTONE / PRODUCT COMPLETE
-
-This is where broad validation belongs.
-
-Before declaring the milestone/product ready for PR, review, release, or handoff:
-- run the repository's full required test suite once;
-- run required build/type/lint gates once;
-- perform integration/E2E checks that represent critical flows;
-- run the security/release gates justified by the affected surface;
-- inspect the complete diff for accidental complexity and unrelated churn;
-- simplify only demonstrated or obvious waste without redesigning working code.
-
-The principle is:
+This skill has exactly two development modes:
 
 ```text
-BUILD: implement -> spot-check -> continue
-FEATURE: targeted acceptance -> continue
-MILESTONE: full verification -> simplify -> handoff
+DEVELOPMENT_MODE: BUILDER | REVIEW
 ```
 
-## Verification budget
+Risk is separate from mode. BUILDER is not permission to ignore auth, payments, destructive data operations, secrets, migrations, concurrency or other high-impact boundaries.
 
-Verification should be proportional to **risk and blast radius**, not to the amount of ceremony available.
+## Hard justification rule
 
-| Situation | During BUILD | At final gate |
-|---|---|---|
-| Copy/style/static UI | visual/affected smoke check | normal project gate if required |
-| Bounded feature logic | focused related tests | full required suite once |
-| Cross-module integration | targeted integration check | full suite + critical E2E |
-| Auth / payments / permissions | affected boundary tests immediately | full security/release verification |
-| Migration / destructive data change | prove rollback + targeted migration checks before continuing | full migration/release gate |
-| Concurrency / distributed state | focused race/failure-path checks early | broader reliability verification |
+Every new production abstraction, test, dependency, document, worker, review pass or verification command must be justified by at least one of:
 
-High-risk work is the exception to deferred breadth. A cheap local change at a dangerous boundary is still dangerous.
+1. a current explicit requirement;
+2. an observed bug/regression;
+3. an established project contract/invariant;
+4. a real risk boundary affected by the change.
 
-## Testing rules
+"Could be useful", "best practice", "future-proof", "more flexible" and "just to be safe" are not enough.
 
-Tests exist to buy confidence, not to maximize test count.
+# BUILDER MODE
 
-Add or strengthen a test when at least one is true:
-- the behavior contains meaningful logic;
-- the bug should never return;
-- the change modifies a public contract;
-- the path is business-critical;
-- the code is hard to verify manually;
-- the risk boundary demands durable evidence.
+## Goal
 
-Usually do not add a new test when:
-- behavior is trivial and already covered by a higher-level test;
-- the test would only assert implementation details;
-- it duplicates another test with no new failure mode;
-- it tests framework/library behavior rather than project behavior;
-- it exists only to increase coverage percentage;
-- it requires a large mock/fixture system for a tiny change.
+**Complete the requested feature set.**
 
-Never weaken, delete, skip, or rewrite a valid failing test merely to get green.
+Builder optimizes for implementation throughput while keeping the changed path sane. Do not repeatedly stop development to perform release-grade validation.
 
-When a test fails, first assume the failure is useful evidence. Change the test only when the requirement or contract proves the test is wrong.
+Default loop:
 
-## Architecture rules
+```text
+implement feature
+→ run the cheapest relevant check
+→ fix demonstrated breakage
+→ continue to the next feature
+```
+
+## Builder verification budget
+
+Use the smallest signal that can catch an obvious mistake in the code just changed:
+
+- compile/typecheck the affected surface when relevant;
+- run one focused test or directly related test group for meaningful logic;
+- use a targeted browser/runtime smoke check for UI/integration work;
+- inspect the actual changed path;
+- verify an affected high-risk boundary immediately.
+
+Then continue.
+
+### Do not do this by default in BUILDER
+
+- full repository test suite after every feature or edit;
+- full lint + typecheck + build + E2E repeatedly;
+- broad security/performance/accessibility audits unrelated to the current risk;
+- new tests for trivial wrappers, static copy, framework behavior or behavior already covered;
+- reviewer/subagent committees for bounded implementation;
+- unrelated refactors, formatting sweeps or "while I'm here" cleanup;
+- architecture redesign because the current code is not aesthetically ideal;
+- documentation churn after each slice;
+- commit/review ceremony after every tiny change;
+- rerunning the same successful command without intervening relevant changes.
+
+A failed targeted check is evidence. Fix the demonstrated issue and rerun the relevant check. Do not widen the verification surface unless the failure shows a wider blast radius.
+
+## Builder testing rule
+
+Add or strengthen a test when it buys durable confidence:
+
+- meaningful business logic;
+- a bug that must not return;
+- a changed public contract;
+- a business-critical path;
+- behavior difficult to verify manually;
+- a risk boundary that needs persistent evidence.
+
+Usually do not add a test when it would only:
+
+- duplicate an existing failure mode;
+- assert implementation details;
+- test framework/library behavior;
+- increase coverage percentage without new confidence;
+- require a large mock/fixture system for a tiny behavior.
+
+Never weaken/delete/skip a valid failing test merely to obtain green.
+
+## Builder architecture rule
 
 Prefer direct code over speculative structure.
 
 Do not add by default:
+
 - interfaces with one real implementation;
-- factories/registries/plugin systems with one current consumer;
+- factories/registries/plugin systems for one consumer;
 - generic event buses for one interaction;
-- new service layers that only forward calls;
-- config flags for fixed behavior;
-- compatibility shims for unreleased behavior;
-- new dependencies for a small local problem;
-- caches, queues, services, databases, or background workers without a current need;
-- helpers extracted solely because two lines look similar.
+- service layers that only forward calls;
+- configuration for behavior that is currently fixed;
+- compatibility layers for unreleased behavior;
+- dependencies for a small local problem;
+- caches, queues, services, databases or workers without a present need;
+- helpers extracted only because a few lines look similar.
 
-Use the rule of three as a bias, not a law: duplication can remain until repetition and the correct abstraction are both evident.
+Duplication is allowed until repetition **and the correct abstraction** are both evident.
 
-A feature flag is justified when incomplete work must be merged/shared safely, staged rollout is required, or production control is a real requirement. Do not add one merely because the feature was implemented in slices on an isolated branch.
+## Builder stop condition
 
-## Scope rules
+Builder stops when:
 
-- Touch the fewest files that correctly solve the requirement.
-- Reuse current architecture and conventions before inventing a new seam.
-- Do not clean unrelated code "while here".
-- Do not add documentation unrelated to a changed public contract, durable decision, or operational requirement.
-- Do not plan for hypothetical scale without measured pressure.
-- Do not broaden the task because a reviewer found a non-blocking improvement nearby; record it separately if useful.
+- every requested feature is functionally implemented;
+- the main paths have enough targeted evidence to continue safely;
+- no known blocker prevents REVIEW.
 
-## Agent rules
+Builder does **not** claim production readiness.
 
-- Default to one accountable implementer for bounded work.
-- Do not create a review committee for a small feature.
-- Do not rerun the same successful command without intervening code changes.
-- Do not re-plan after every small edit.
-- Do not audit the whole repository to validate a local change.
-- Do not ask the user to decide reversible implementation trivia when project conventions already answer it.
-- Stop when the current phase's evidence exists.
+# REVIEW MODE
 
-## Interaction with other Agentit skills
+## Goal
 
-When selected with `incremental-implementation`, this skill owns **verification cadence**. Interpret "test/verify each slice" as the smallest relevant check needed to keep the slice sane, not as permission to run the full repository suite/build/lint after every increment.
+**Deeply validate and simplify the completed implementation without expanding feature scope.**
 
-When selected with `test-driven-development`, use strict red/green where it materially improves correctness: bug regressions, non-trivial logic, contracts, and high-risk behavior. Do not apply ceremonial TDD to trivial glue, static content, or purely presentational changes.
+Entering REVIEW freezes requested functionality. Review may fix defects, regressions, security issues, performance problems, integration gaps and unnecessary complexity discovered during review. It does not invent new product features.
 
-When selected with `verification-before-completion`, "fresh verification" means evidence appropriate to the claim. A feature-level claim needs feature-level evidence; a whole-product "ready" claim needs the full final gate.
+Default loop:
 
-When selected with `constraint-driven-development`, preserve the project's declared constraints, but place expensive checks at the lifecycle stage where they provide value instead of running everything everywhere.
+```text
+inspect complete diff/system
+→ run broad required gates
+→ identify concrete findings
+→ fix findings in batches
+→ targeted recheck while fixing
+→ rerun broad final gate
+→ report evidence
+```
 
-## Anti-patterns
+## Review surfaces
 
-Stop and simplify if the implementation starts doing any of these:
+Review the surfaces justified by the project and change:
 
-- one feature generates a framework;
-- one endpoint generates a new architecture layer;
+- acceptance criteria for the whole requested feature set;
+- full repository-required test suite;
+- build/type/lint gates;
+- integration and critical E2E flows;
+- runtime/browser behavior;
+- security and trust boundaries;
+- migrations/data integrity/rollback where relevant;
+- dependency/supply-chain changes;
+- performance where the change could materially affect it;
+- accessibility for affected user-facing flows;
+- docs/configuration drift;
+- complete diff for dead code, accidental complexity and unrelated churn.
+
+Use specialist skills only for surfaces that actually apply.
+
+## Review discipline
+
+A deep review is not an excuse for infinite review loops.
+
+- Findings need concrete evidence or a clear violated contract.
+- Batch related fixes before rerunning expensive global checks.
+- During fixes, use targeted checks.
+- Run the comprehensive gate again after the material fix set, not after every line.
+- Do not chase speculative edge cases whose preconditions cannot occur.
+- Non-blocking nice-to-haves become separate follow-up work instead of extending review indefinitely.
+
+## Review completion
+
+REVIEW is complete when:
+
+- requested features satisfy their acceptance contract;
+- required broad checks have fresh evidence;
+- applicable high-risk boundaries have been verified;
+- concrete review findings are fixed or explicitly recorded as blockers/follow-ups;
+- the final diff contains no unjustified architecture or unrelated churn;
+- the work can be truthfully handed off with its limitations.
+
+# Mode transitions
+
+## Enter BUILDER when
+
+- implementing a new feature/product;
+- continuing an incomplete implementation;
+- fixing issues found during construction;
+- the user says build, implement, finish, create or continue.
+
+BUILDER is the default for active implementation.
+
+## Enter REVIEW when
+
+- the requested feature set is functionally complete and is being prepared for handoff/PR/release;
+- the user explicitly asks for review, audit, hardening, production readiness or comprehensive validation;
+- an existing implementation is being assessed rather than extended.
+
+Do not oscillate modes after every feature. Finish the planned build first unless a genuine blocking risk requires intervention.
+
+# Risk override
+
+Regardless of mode, verify dangerous boundaries early enough to avoid compounding damage:
+
+- auth/session/authorization;
+- payments/financial effects;
+- destructive migrations or irreversible writes;
+- secrets/credentials;
+- production data;
+- concurrency/distributed state;
+- externally visible irreversible actions.
+
+The override should be **targeted to the risk**. It does not automatically turn BUILDER into a whole-repository REVIEW.
+
+# Interaction with other Agentit skills
+
+When this skill is selected, it owns **development verification cadence**.
+
+- `incremental-implementation`: slices remain useful for implementation/rollback, but "test each slice" means the minimum relevant check in BUILDER, not the full suite.
+- `test-driven-development`: strict red/green is appropriate for bugs, non-trivial logic, contracts and high-risk behavior; do not apply ceremonial TDD to trivial glue/static/presentational work.
+- `verification-before-completion`: the evidence must match the claim. BUILDER can claim a feature path was smoke-checked; only REVIEW can claim the completed implementation passed its comprehensive gate.
+- `constraint-driven-development`: never weaken project constraints, but place expensive checks in REVIEW unless the constraint explicitly requires them earlier.
+- `code-review-and-quality`: normally REVIEW mode, not a mandatory interruption after every BUILDER slice.
+
+# Anti-patterns
+
+Stop and simplify if:
+
+- one feature creates a framework;
 - every edit triggers the full suite;
-- every helper gets its own test regardless of behavior;
-- tests outnumber meaningful behaviors because every branch was mechanically covered;
-- a reviewer keeps finding "nice to have" work and extending the loop;
-- the agent adds defensive branches for states the real callers cannot produce;
-- the diff expands into unrelated renames, formatting, docs, or refactors;
-- more time is spent proving the process than finishing the product.
+- every helper gets a test regardless of behavior;
+- reviewers keep extending scope with nice-to-haves;
+- the agent adds defensive branches for impossible states;
+- the diff expands into unrelated cleanup;
+- more time is spent proving process compliance than finishing the requested product.
 
-## Completion criteria
+# Completion criteria
 
-This skill has been followed when:
-- current requested functionality is implemented directly;
-- no speculative subsystem or abstraction was added without present evidence;
-- build-time verification stayed targeted unless risk required more;
-- meaningful behavior and affected risk boundaries received appropriate tests/checks;
-- the comprehensive repository/release gate ran at the actual final completion boundary, not repeatedly during every small slice;
-- the final diff contains no unrelated cleanup or ceremony.
+The skill is followed when:
+
+- BUILDER completes requested functionality with proportional targeted checks;
+- REVIEW performs the deep validation once the implementation is ready;
+- high-risk boundaries receive timely targeted evidence;
+- tests and abstractions exist because they buy current value;
+- comprehensive checks are not repeated after every small change;
+- feature scope does not grow during REVIEW.

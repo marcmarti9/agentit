@@ -28,7 +28,7 @@ Risk remains independent of mode: dangerous boundaries still require timely targ
 
 ## Context delivery is observable; attention is not
 
-Use `agentit skills packs`, `candidates` and `show` as documented by `using-agent-skills`. Only selected bodies/resources are delivered. Private caches must be managed and hash-verified. For substantial runs record task/stage delivery receipts.
+Use `agentit skills packs`, `candidates` and `activate` as documented by `using-agent-skills` (`show` is a compatibility alias). Only explicitly selected complete `SKILL.md` bodies/resources are delivered. Private caches must be managed and hash-verified. For substantial runs record task/stage delivery receipts.
 
 For delegation, use `agentit worker` and pass the actual validated schema-3 payload/prompt. The renderer includes selected bodies and applicable ancestor instructions. An ID-only list or unvisited source URI does not satisfy the contract. Host permissions and actual isolation require separate evidence.
 

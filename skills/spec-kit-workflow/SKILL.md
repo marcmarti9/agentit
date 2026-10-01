@@ -80,7 +80,7 @@ constitution
 -> converge
 ```
 
-Human review sits on every gate that commits structure, stack, data model or scope. FAST MODE may compress clarify+specify into one pass. It may not skip specify and jump to code on a vague feature.
+Human review sits on gates that commit consequential structure, stack, data model or scope. BUILDER may compress clarify+specify when the requirement is already concrete; it may not jump to code when material ambiguity would change the implementation.
 
 ### 1. Constitution
 
@@ -151,7 +151,7 @@ Do not treat a generated checklist as proof. It is a review aid.
 
 Execute one task at a time. Update the spec when reality disproves it, then continue. Do not leave the spec behind the code.
 
-Pair with `incremental-implementation`, `test-driven-development` and `verification-before-completion` as justified. FAST MODE still requires the current task's verify step.
+Pair with `incremental-implementation`, `test-driven-development` and `verification-before-completion` as justified. In BUILDER, keep verification targeted; use REVIEW for the broad final gate.
 
 ### 8. Converge
 

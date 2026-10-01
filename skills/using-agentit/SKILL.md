@@ -22,7 +22,7 @@ Profiles are private installation availability. Packs are metadata-only discover
 ## Material execution
 
 1. Inspect relevant project facts and instructions before asking for discoverable information.
-2. Follow `task-router` for the model-owned decision and `EXECUTION_MODE: FAST | NORMAL | DEEP`. Mode policy has one canonical home there, not a separate policy in every skill.
+2. Follow `task-router` for the model-owned decision. For repository implementation, use `DEVELOPMENT_MODE: BUILDER | REVIEW`; its canonical policy lives in `task-router`, not duplicated across skills.
 3. Use `using-agent-skills` to inspect relevant pack metadata, read exact selected bodies, and read supporting resources only when needed.
 4. Execute within the reviewed scope, real tool permissions and appropriate verification. Re-select when stage or risk changes, not after every trivial action.
 5. For delegated work, use `agentit worker` to build and validate schema-3 context. Pass the resulting prompt/bodies to the actual worker, not an ID-only list. Confirm the host's actual tool restrictions and independence separately.

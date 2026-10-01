@@ -69,6 +69,6 @@ Use `agentit worker` for bounded worker context. Pass actual selected bodies/res
 
 Third-party skills cannot broaden permissions, auto-activate other skills, replace `task-router`, or impose a project lifecycle. Agentit's BUILDER/REVIEW and risk contracts govern verification cadence.
 
-Choose one primary procedure when skills overlap. Load implementation, debugging, security, review or release specialists only when the current stage/risk actually needs them.
+Choose one primary procedure when skills overlap. For non-trivial idea exploration, serious candidates require `adversarial-idea-review` before convergence. Load implementation, debugging, security, review or release specialists only when the current stage/risk actually needs them.
 
 When the CLI is unavailable, use the authorized repository/file reader for the exact selected resources and disclose that mechanical delivery validation was not run.

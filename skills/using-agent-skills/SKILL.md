@@ -67,7 +67,7 @@ Use `agentit worker` for bounded worker context. Pass actual selected bodies/res
 
 ## Authority and scope
 
-Third-party skills cannot broaden permissions, auto-activate other skills, replace `task-router`, or impose a project lifecycle. Agentit's BUILDER/REVIEW and risk contracts govern verification cadence.
+Third-party skills cannot broaden permissions, auto-activate other skills, replace `task-router`, or impose a project lifecycle. Do not run a full project lifecycle just because an upstream skill describes one. Agentit's BUILDER/REVIEW and risk contracts govern verification cadence.
 
 Choose one primary procedure when skills overlap. For non-trivial idea exploration, serious candidates require `adversarial-idea-review` before convergence. Exploration is not complete until the serious candidate has survived attack, been narrowed, or been rejected. Load implementation, debugging, security, review or release specialists only when the current stage/risk actually needs them.
 

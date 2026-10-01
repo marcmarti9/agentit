@@ -142,6 +142,14 @@ The inspected `vercel-composition-patterns` skill declares MIT licensing in its 
 Agentit's `react-composition-patterns` is an Agentit-owned adaptation of the component-composition ideas, narrowed to demonstrated API pressure and Agentit's anti-overengineering contract. Agentit does not vendor Vercel's compiled AGENTS document or rule-file package.
 
 
+### Dietrich Gebert / Ponytail
+
+Source: https://github.com/DietrichGebert/ponytail
+
+License: MIT. Copyright (c) 2026 DietrichGebert.
+
+Agentit's `anti-overengineering` BUILDER minimum-solution ladder is materially informed by Ponytail's YAGNI/reuse/stdlib/native-platform/minimum-code ordering and its distinction between lazy implementation and careless understanding. Agentit does not vendor Ponytail's skill pack, intensity modes, commands or review workflow; Agentit's BUILDER/REVIEW and risk policy remain authoritative.
+
 ### Matt Pocock / skills
 
 Source: https://github.com/mattpocock/skills

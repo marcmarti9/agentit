@@ -45,6 +45,22 @@ implement feature
 → continue to the next feature
 ```
 
+## Builder minimum-solution ladder
+
+After understanding the real flow and requirement, stop at the first option that correctly solves it:
+
+1. **Do we need new behavior at all?** Skip speculative requirements.
+2. **Does this codebase already solve it?** Reuse the existing helper/type/pattern.
+3. **Does the standard library solve it?** Prefer that.
+4. **Does the platform/framework already provide it natively?** Prefer the native primitive.
+5. **Does an already-installed dependency solve it cleanly?** Reuse it before adding another.
+6. **Can a small direct implementation solve it?** Write that.
+7. **Only then:** introduce the minimum new structure required.
+
+This is a decision reflex, not a research project. Read the affected flow first; a tiny fix at the wrong layer is still a bad fix.
+
+For bugs, prefer the smallest **root-cause** fix at the shared seam over duplicating guards across callers.
+
 ## Builder verification budget
 
 Use the smallest signal that can catch an obvious mistake in the code just changed:

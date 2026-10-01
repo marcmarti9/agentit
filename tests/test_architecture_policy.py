@@ -145,22 +145,24 @@ class ArchitecturePolicyTests(unittest.TestCase):
         with self.assertRaises(McpCatalogError):
             recommend_for_task("design a frontend and inspect the browser")
 
-    def test_execution_modes_fast_normal_deep_policy(self):
+    def test_builder_review_development_policy(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         using_agentit = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
+        anti = (ROOT / "skills" / "anti-overengineering" / "SKILL.md").read_text(encoding="utf-8")
 
-        # Detailed modes have one canonical owner, rather than requiring three
-        # duplicate paragraphs that contradicted each other in the baseline.
         for text in (agents, using_agentit):
             self.assertIn("task-router", text)
-        self.assertIn("EXECUTION_MODE: FAST | NORMAL | DEEP", task_router)
-        self.assertIn("FAST MODE", task_router)
-        self.assertIn("NORMAL MODE", task_router)
-        self.assertIn("DEEP MODE", task_router)
-        self.assertIn("Verification budget", task_router)
-        self.assertIn("Do NOT launch subagents for normal implementation tasks", task_router)
-        self.assertNotIn("iteration speed > exhaustive validation > documentation", agents + using_agentit + task_router)
+            self.assertIn("BUILDER", text)
+            self.assertIn("REVIEW", text)
+
+        self.assertIn("DEVELOPMENT_MODE: BUILDER | REVIEW", task_router)
+        self.assertIn("### BUILDER", task_router)
+        self.assertIn("### REVIEW", task_router)
+        self.assertIn("full-suite", task_router)
+        self.assertIn("feature scope", task_router)
+        self.assertIn("DEVELOPMENT_MODE: BUILDER | REVIEW", anti)
+        self.assertNotIn("EXECUTION_MODE: FAST | NORMAL | DEEP", agents + using_agentit + task_router)
 
 
 

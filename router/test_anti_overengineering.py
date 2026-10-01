@@ -23,9 +23,10 @@ class AntiOverengineeringProfileTests(unittest.TestCase):
         skill = ROOT / "skills" / "anti-overengineering" / "SKILL.md"
         self.assertTrue(skill.is_file())
         body = skill.read_text(encoding="utf-8")
-        self.assertIn("## Phase-aware development", body)
-        self.assertIn("MILESTONE / PRODUCT COMPLETE", body)
-        self.assertIn("verification cadence", body)
+        self.assertIn("DEVELOPMENT_MODE: BUILDER | REVIEW", body)
+        self.assertIn("# BUILDER MODE", body)
+        self.assertIn("# REVIEW MODE", body)
+        self.assertIn("development verification cadence", body)
 
 
 if __name__ == "__main__":

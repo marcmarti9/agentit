@@ -33,6 +33,28 @@ class ProfileCatalogTests(unittest.TestCase):
         self.assertIn("incremental-implementation", agency)
         self.assertIn("git-workflow-and-versioning", agency)
 
+    def test_curated_specialists_are_opt_in_and_profile_scoped(self):
+        from router.profiles import load_catalog, resolve_profile
+
+        catalog = load_catalog(REPOSITORY / "profiles.yaml")
+        core = resolve_profile("core", catalog, repo_root=REPOSITORY)
+        frontend = resolve_profile("frontend", catalog, repo_root=REPOSITORY)
+        backend = resolve_profile("backend", catalog, repo_root=REPOSITORY)
+        writing = resolve_profile("writing", catalog, repo_root=REPOSITORY)
+
+        for skill_id in (
+            "react-composition-patterns",
+            "mcp-server-development",
+            "skill-authoring-and-evals",
+        ):
+            self.assertNotIn(skill_id, core)
+
+        self.assertIn("react-composition-patterns", frontend)
+        self.assertNotIn("mcp-server-development", frontend)
+        self.assertIn("mcp-server-development", backend)
+        self.assertNotIn("react-composition-patterns", backend)
+        self.assertIn("skill-authoring-and-evals", writing)
+
     def test_core_profile_is_minimal_and_all_repository_skills_remain_catalogued(self):
         completed = subprocess.run(
             [

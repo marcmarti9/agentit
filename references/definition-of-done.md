@@ -1,14 +1,12 @@
 # Definition of Done
 
-A standing, project-wide bar that work must clear before it is actually declared done. Unlike acceptance criteria, which vary per task and answer "did we build the right thing?", the Definition of Done answers "is this finished to our standard?". Use it as the final completion gate in `planning-and-task-breakdown`, `incremental-implementation`, and `shipping-and-launch`.
-
-Do **not** interpret this checklist as an instruction to rerun every repository-wide gate after every edit. In BUILDER use targeted checks; apply the full Definition of Done in REVIEW when the requested implementation is genuinely being closed, or earlier only for the affected high-risk boundary. See `anti-overengineering`.
+A standing, project-wide bar that every change must clear before it counts as done. Unlike acceptance criteria, which vary per task and answer "did we build the right thing?", the Definition of Done is the same every time and answers "is this finished to our standard?". Use it as the final gate in `planning-and-task-breakdown`, `incremental-implementation`, and `shipping-and-launch`.
 
 ## Definition of Done vs. Acceptance Criteria
 
 | | Acceptance Criteria | Definition of Done |
 |---|---|---|
-| Scope | Specific to one task or spec | Applies at the real completion gate |
+| Scope | Specific to one task or spec | Applies to every increment |
 | Changes | Different for each item | Fixed and reused |
 | Answers | "Did we build *this thing*?" | "Is it *ready*?" |
 | Owner | Defined when planning the task | Defined once for the project |
@@ -54,9 +52,9 @@ The depth behind these items lives in `code-review-and-quality` (the five-axis r
 
 ## How to Apply
 
-- **BUILDER**: do not run this whole checklist after every edit. Use the cheapest targeted evidence that keeps the touched path sane and continue until the requested feature set is implemented.
-- **REVIEW**: apply the full Correctness, Quality, Integration and Documentation bar to the completed implementation before claiming it is done.
-- **Per release**: the full checklist is the floor; `shipping-and-launch` adds deploy-specific gates on top.
+- **Per task**: confirm the Correctness and Quality sections before checking the task off.
+- **Per feature**: confirm Integration and Documentation before considering the feature complete.
+- **Per release**: the full checklist is the floor; `shipping-and-launch` adds the deploy-specific gates on top.
 
 Tailor the list to the project once, then reuse it unchanged. A Definition of Done that is renegotiated every sprint is not a Definition of Done.
 

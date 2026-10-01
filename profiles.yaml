@@ -20,6 +20,7 @@ profiles:
     - core
     skills:
     - frontend-ui-engineering
+    - react-composition-patterns
     - browser-testing-with-devtools
     - performance-optimization
     - code-simplification
@@ -39,6 +40,7 @@ profiles:
     - core
     skills:
     - api-and-interface-design
+    - mcp-server-development
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
@@ -100,6 +102,7 @@ profiles:
     - core
     skills:
     - documentation-and-adrs
+    - skill-authoring-and-evals
     - humanizer
     - stop-slop
     - i-have-adhd
@@ -242,6 +245,9 @@ profiles:
     - local-model-routing
     - long-horizon-recovery
     - marketing-and-growth
+    - mcp-server-development
+    - react-composition-patterns
+    - skill-authoring-and-evals
     - appllama-app-design-skill
     - appllama-usage
     - observability-and-instrumentation

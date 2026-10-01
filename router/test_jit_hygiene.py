@@ -77,7 +77,7 @@ class JitHygieneTests(unittest.TestCase):
         self.assertIn("installed project profiles", core_text)
         self.assertIn("name: using-agent-skills", upstream_meta)
         self.assertIn("Agentit-owned", upstream_meta)
-        self.assertIn("skills show", upstream_meta)
+        self.assertIn("skills activate", upstream_meta)
 
     def test_documentation_contract_requires_component_level_understanding(self) -> None:
         text = (REPOSITORY / "docs" / "DOCUMENTATION_CONTRACT.md").read_text(

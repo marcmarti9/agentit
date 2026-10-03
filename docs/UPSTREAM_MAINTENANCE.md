@@ -110,9 +110,9 @@ authorization and agent behavior remain separate claims.
 
 ## September 18 PR reconciliation
 
-The integrated registry contains 41 pinned canonical packages (including the raw
+The September 18 reconciliation recorded 41 pinned canonical packages (including the raw
 archived meta-workflow), 579 managed package/shared/license files and 15 source
-repositories. The current installable catalog has 75 skills; the three global
+repositories. That historical catalog was documented as 75 skills; the three global
 navigation bodies remain Agentit-owned. `constraint-driven-development` and
 `i-have-adhd` are covered by refresh; aliases retired by #47 never become deletion
 targets for their canonical replacements.
@@ -125,3 +125,7 @@ archived meta-workflow, original licenses and idempotence without running upstre
 code. Integrity does not certify an upstream launcher binary: no Impeccable binary
 was executed by this review. Windows-native bootstrap remains outside the supported
 Linux/macOS verification matrix.
+
+## October 3, 2026 review
+
+The observed baseline catalog contained 79 skills and 14 profiles, despite the older count above. This audit produces 84 skills and 17 profiles, with the three global bodies unchanged. Six canonical source revisions were accepted; diagram-design remains pinned because its new verification instructions depend on repo-level scripts absent from the distributed package. The offline lock contains 41 packages, 599 managed files and 15 sources. See the [dated comparison and evidence](../reports/2026-10-03-skill-quality-audit.md). New owned adaptations use a separate [source manifest](../skills/ADAPTATION_SOURCES.json), not the canonical lock.

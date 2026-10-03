@@ -1,6 +1,6 @@
 # Third-party notices
 
-Agentit includes, vendors, adapts, or is materially informed by the projects below. Agentit's original code and material remain Apache-2.0. Canonical skill snapshots, upstream paths and per-file integrity are recorded in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`. Exact upstream LICENSE/NOTICE files are retained under `vendor/licenses`; they govern the corresponding third-party material.
+Agentit includes, vendors, adapts, or is materially informed by the projects below. Agentit's original code and material remain Apache-2.0 except explicitly marked share-alike adaptations. Canonical skill snapshots, upstream paths and per-file integrity are recorded in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`. Exact upstream LICENSE/NOTICE files are retained under `vendor/licenses`; they govern the corresponding third-party material. Source-informed additions from the October 3 audit are separately recorded in `skills/ADAPTATION_SOURCES.json` and `vendor/adaptation-licenses`.
 
 ## Canonical vendored skill sources
 
@@ -201,3 +201,79 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## October 3, 2026 source-informed adaptations
+
+These are modified, provider-neutral Agentit procedures, not verbatim packages or claims of upstream runtime compatibility. The immutable revisions, target files and exact retained license/NOTICE hashes are recorded in [`skills/ADAPTATION_SOURCES.json`](skills/ADAPTATION_SOURCES.json). Canonical refresh records remain in their separate upstream lock.
+
+### expo/skills
+
+Source: [expo/skills at `13ad8e05874195633b5c185f6947bb6400e228fc`](https://github.com/expo/skills/tree/13ad8e05874195633b5c185f6947bb6400e228fc). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/expo--skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/mobile-runtime-engineering/SKILL.md`, `skills/mobile-runtime-engineering/references/state-and-navigation.md`.
+
+### callstackincubator/agent-skills
+
+Source: [callstackincubator/agent-skills at `61e6e7dfdf3a8ee862254c200d751fcb1fb863dc`](https://github.com/callstackincubator/agent-skills/tree/61e6e7dfdf3a8ee862254c200d751fcb1fb863dc). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/callstackincubator--agent-skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/mobile-runtime-engineering/SKILL.md`, `skills/mobile-runtime-engineering/references/performance-evidence.md`.
+
+### openai/skills
+
+Source: [openai/skills at `49f948faa9258a0c61caceaf225e179651397431`](https://github.com/openai/skills/tree/49f948faa9258a0c61caceaf225e179651397431). Inspected October 3, 2026.
+
+Upstream scope/license: `skills/.curated/pdf/LICENSE.txt` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/openai--skills/LICENSE.txt). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/artifact-production/SKILL.md`, `skills/artifact-production/references/format-verification.md`.
+
+### SenteLabsAI/OpenExecutive
+
+Source: [SenteLabsAI/OpenExecutive at `bba990f20dab7559967010e65b65630f1a35c684`](https://github.com/SenteLabsAI/OpenExecutive/tree/bba990f20dab7559967010e65b65630f1a35c684). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it. [Unaltered upstream NOTICE](vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/NOTICE) is distributed alongside the license.
+
+Changed scope: `skills/executive-orchestration/references/quality-playbook.md`, `skills/reference-intelligence/references/research-quality.md`.
+
+### coreyhaines31/marketingskills
+
+Source: [coreyhaines31/marketingskills at `dda3841f0b294e01e93b1541486beefbfab0915e`](https://github.com/coreyhaines31/marketingskills/tree/dda3841f0b294e01e93b1541486beefbfab0915e). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/coreyhaines31--marketingskills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/marketing-and-growth/references/quality-playbook.md`, `skills/reference-intelligence/references/research-quality.md`.
+
+### anthropics/skills
+
+Source: [anthropics/skills at `8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`](https://github.com/anthropics/skills/tree/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4). Inspected October 3, 2026.
+
+Upstream scope/license: `skills/skill-creator/LICENSE.txt` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/anthropics--skills/LICENSE.txt). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/skill-authoring-and-evals/references/paired-evaluations.md`.
+
+### trailofbits/skills
+
+Source: [trailofbits/skills at `82fe8226252622fa807643bdca1710901198553a`](https://github.com/trailofbits/skills/tree/82fe8226252622fa807643bdca1710901198553a). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — CC-BY-SA-4.0; [unaltered license text](vendor/adaptation-licenses/trailofbits--skills/LICENSE). Attribution: Trail of Bits. The property-testing and security-analysis bodies and their references are substantial modified adaptations licensed **CC-BY-SA-4.0**, including the share-alike terms; these files are exceptions to Agentit’s Apache-2.0 license.
+
+Changed scope: `skills/property-based-testing/SKILL.md`, `skills/property-based-testing/references/design-and-review.md`, `skills/security-analysis/SKILL.md`, `skills/security-analysis/references/finding-triage.md`.
+
+### trailofbits/testing-handbook
+
+Source: [trailofbits/testing-handbook at `190294f0ed563baddf4941cd2388be5bd4d5c5ba`](https://github.com/trailofbits/testing-handbook/tree/190294f0ed563baddf4941cd2388be5bd4d5c5ba). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — CC-BY-4.0; [unaltered license text](vendor/adaptation-licenses/trailofbits--testing-handbook/LICENSE). Attribution: Trail of Bits. Security-analysis procedures adapt configuration/coverage and finding-interpretation guidance; the resulting files are CC-BY-SA-4.0.
+
+Changed scope: `skills/security-analysis/SKILL.md`, `skills/security-analysis/references/finding-triage.md`.
+
+### ajrcre/data-analysis-skills
+
+Source: [ajrcre/data-analysis-skills at `cbc906e4912a980423aecd1e318061eb98f3e0b2`](https://github.com/ajrcre/data-analysis-skills/tree/cbc906e4912a980423aecd1e318061eb98f3e0b2). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/ajrcre--data-analysis-skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/data-analysis-quality/SKILL.md`, `skills/data-analysis-quality/references/claim-checks.md`.

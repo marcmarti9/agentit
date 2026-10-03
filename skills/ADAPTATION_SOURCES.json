@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "scope": "Source-informed additions and branch references from the 2026-10-03 audit; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "sources": [
+    {
+      "repo": "expo/skills",
+      "revision": "13ad8e05874195633b5c185f6947bb6400e228fc",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/expo--skills/LICENSE",
+      "license_sha256": "49c5f9c7097c9a940ff663a54c27a4c60e379df6cc2b3052df0d37a09a85df93",
+      "targets": [
+        "skills/mobile-runtime-engineering/SKILL.md",
+        "skills/mobile-runtime-engineering/references/state-and-navigation.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "callstackincubator/agent-skills",
+      "revision": "61e6e7dfdf3a8ee862254c200d751fcb1fb863dc",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/callstackincubator--agent-skills/LICENSE",
+      "license_sha256": "6b4d67d192cedc90cabeac71e2fc1e24f158638192b8bf93d639b28bc42b62f1",
+      "targets": [
+        "skills/mobile-runtime-engineering/SKILL.md",
+        "skills/mobile-runtime-engineering/references/performance-evidence.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "openai/skills",
+      "revision": "49f948faa9258a0c61caceaf225e179651397431",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "skills/.curated/pdf/LICENSE.txt",
+      "license_path": "vendor/adaptation-licenses/openai--skills/LICENSE.txt",
+      "license_sha256": "4dd13869245e356246a5b770723247bbb80a8f07a181d1d3d873a1734297cdb9",
+      "targets": [
+        "skills/artifact-production/SKILL.md",
+        "skills/artifact-production/references/format-verification.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "SenteLabsAI/OpenExecutive",
+      "revision": "bba990f20dab7559967010e65b65630f1a35c684",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/LICENSE",
+      "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "targets": [
+        "skills/executive-orchestration/references/quality-playbook.md",
+        "skills/reference-intelligence/references/research-quality.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "notice_path": "vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/NOTICE",
+      "notice_sha256": "ea69ff38994633433451bfecc1d04cbb1c2b2ca11f4ca007e96cabb9842e3798"
+    },
+    {
+      "repo": "coreyhaines31/marketingskills",
+      "revision": "dda3841f0b294e01e93b1541486beefbfab0915e",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/coreyhaines31--marketingskills/LICENSE",
+      "license_sha256": "b70d71e24e40fce5da8f4b6f9cd862096a048e433db7f3c8cac5e348e6d34591",
+      "targets": [
+        "skills/marketing-and-growth/references/quality-playbook.md",
+        "skills/reference-intelligence/references/research-quality.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "anthropics/skills",
+      "revision": "8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "skills/skill-creator/LICENSE.txt",
+      "license_path": "vendor/adaptation-licenses/anthropics--skills/LICENSE.txt",
+      "license_sha256": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
+      "targets": [
+        "skills/skill-authoring-and-evals/references/paired-evaluations.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "trailofbits/skills",
+      "revision": "82fe8226252622fa807643bdca1710901198553a",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "CC-BY-SA-4.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/trailofbits--skills/LICENSE",
+      "license_sha256": "7abe19ec9bb73b36141b999b861d24ad855e808bafe0f81e84cce28556f6c297",
+      "targets": [
+        "skills/property-based-testing/SKILL.md",
+        "skills/property-based-testing/references/design-and-review.md",
+        "skills/security-analysis/SKILL.md",
+        "skills/security-analysis/references/finding-triage.md"
+      ],
+      "adaptation_license": "CC-BY-SA-4.0"
+    },
+    {
+      "repo": "trailofbits/testing-handbook",
+      "revision": "190294f0ed563baddf4941cd2388be5bd4d5c5ba",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "CC-BY-4.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/trailofbits--testing-handbook/LICENSE",
+      "license_sha256": "97d24386ff776d7160b87031b259a942bd03c9939796cab6724ad5d17d2cf785",
+      "targets": [
+        "skills/security-analysis/SKILL.md",
+        "skills/security-analysis/references/finding-triage.md"
+      ],
+      "adaptation_license": "CC-BY-SA-4.0"
+    },
+    {
+      "repo": "ajrcre/data-analysis-skills",
+      "revision": "cbc906e4912a980423aecd1e318061eb98f3e0b2",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/ajrcre--data-analysis-skills/LICENSE",
+      "license_sha256": "fe80e84c999e740339b53890b2fc9fe77014ff9b36ec10abbb2dec1a9afac7d4",
+      "targets": [
+        "skills/data-analysis-quality/SKILL.md",
+        "skills/data-analysis-quality/references/claim-checks.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    }
+  ]
+}

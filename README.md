@@ -387,11 +387,18 @@ This keeps semantic interpretation with the model that has the richest context w
 | `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
 | `writing` | technical writing, documentation, humanizer, stop-slop and ADHD-shaped output |
 | `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
-| `mobile` | Expo/React Native product UI and simulator-verified native-feeling screens |
+| `mobile` | Expo/React Native UI, auth/navigation/offline state, and measured device performance |
 | `release` | CI/CD, migrations, launch, security gate and operational readiness |
 | `research` | source-driven research, adversarial idea review and verification |
 | `growth` / `agency` | marketing, growth and multi-domain delivery |
+| `data` | analytical claim quality, data contracts, property tests and editable reports |
+| `security` | source investigation, finding triage, hardening and release boundaries |
+| `artifacts` | reusable documents, spreadsheets, decks and PDF verification |
 | `all` | complete repository skill inventory |
+
+The [October 3 quality audit](reports/2026-10-03-skill-quality-audit.md) reviews every baseline profile and body, records accepted/rejected source comparisons, and adds five opt-in capabilities. Core remains exactly three skills. Bodies and branch references are delivered only after explicit selection; profiles and packs remain availability metadata.
+
+Maintenance checks: `python3 scripts/check_skill_curation.py` checks catalog/provenance structure, while `python3 scripts/sync_upstream_skills.py` checks canonical file integrity. Neither is a model-quality benchmark.
 
 ## Safety and reversibility
 
@@ -472,4 +479,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/SKILL_CURATION.md`](docs/SKI
 
 ## License
 
-Apache License 2.0. See [`LICENSE`](LICENSE) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Agentit original material is Apache-2.0. Canonical third-party packages retain their licenses; `property-based-testing` and `security-analysis` and their references are CC-BY-SA-4.0 adaptations. See [`LICENSE`](LICENSE), [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and the [adaptation manifest](skills/ADAPTATION_SOURCES.json).

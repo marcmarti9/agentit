@@ -70,6 +70,8 @@ Good examples:
 
 Keep one parent writer. Specialist outputs are evidence and judgment inputs, not final answers by themselves.
 
+For a consequential or cross-functional decision, read [quality-playbook.md](references/quality-playbook.md) to build the evidence packet, reconcile specialist disagreement and define a reversal signal.
+
 ## Synthesis contract
 
 The final executive answer should normally make these elements clear when material:

@@ -146,6 +146,8 @@ Default preference:
 
 > enrich an existing skill with a deep `references/*.md` file instead of creating another top-level system.
 
+When a source-heavy comparison affects a reusable or consequential decision, read [research-quality.md](references/research-quality.md) for immutable source/role records, comparison criteria and blocked social-source handling.
+
 ## 6. References must actually affect the work
 
 A reference is not “used” because its name appears in a plan.

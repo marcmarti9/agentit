@@ -164,3 +164,13 @@ Agentit should therefore cherry-pick **capabilities**, not duplicate the command
 - writing agent documents with strong context pointers, progressive disclosure, and completion criteria.
 
 The upstream MIT provenance is recorded in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+
+## Repeatable audit and evidence boundaries
+
+Use the [October 3 audit](../reports/2026-10-03-skill-quality-audit.md) as a worked example: freeze the baseline, inspect every profile/body, identify current owners, and record an accepted/retained/rejected/deferred decision by category. Social searches are discovery leads; inspect the primary package and its scoped license at an immutable revision. Do not infer a repository-wide license from another package. Preserve canonical packages verbatim or defer their update when required companion resources are missing.
+
+For new adaptations, update `skills/ADAPTATION_SOURCES.json`, exact license/NOTICE copies under `vendor/adaptation-licenses`, and `THIRD_PARTY_NOTICES.md`. Keep share-alike files explicitly licensed and document modifications. `python3 scripts/check_skill_curation.py` checks profile/pack coverage, fixed source revisions, reviewed license identifiers, license hashes, target paths and core invariants offline. It is maintenance validation, not a semantic router.
+
+The [selection cases](../evals/skill-curation-cases.json) separate positive triggers, near misses and observable quality criteria. A blind probe must receive the complete intended candidate metadata, without answer keys. Preserve failed/invalid exploratory runs and distinguish fixture defects from model misses. Do not lower expected criteria to manufacture a pass. Record observed selections separately from structural tests; response plans are not application/scanner/device/rendering execution.
+
+For claims of better results or lower cost, run paired baseline/treatment tasks with comparable model, tools, context, source state and budgets, include held-out cases and report variance and human review. One model’s selection/response sample cannot establish universal superiority. The selected `skill-authoring-and-evals` reference `references/paired-evaluations.md` provides the material-change procedure. Branch references remain explicit JIT reads and never load merely from profile membership.

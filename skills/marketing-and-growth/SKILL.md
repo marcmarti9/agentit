@@ -12,6 +12,7 @@ Use deep references **JIT**, not all at once:
 - broad/substantial marketing strategy, research, positioning, copy, email, content systems -> `references/marketing-operating-system.md`;
 - SEO/search/growth-loop work -> `references/seo-growth-loop.md`;
 - local SEO / Google Business Profile / local AI visibility -> `references/local-seo.md` (normally alongside the general SEO reference when technical/search work is also involved);
+- material customer-research, CRO or channel-investment decisions -> `references/quality-playbook.md` for source bias, hypothesis, measurement and stop conditions;
 - product/feature launches, launch research, video/content production, repurposing -> `references/launch-content-system.md`.
 
 The first reference distills the useful procedures behind the bookmarked “500 prompts / replace an agency” article into reusable capabilities and workflow chains instead of preserving hundreds of prompts verbatim. The other two distill the Grok SEO/Helena and Okara/Motion/faceless-video bookmark clusters respectively.

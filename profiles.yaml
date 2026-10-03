@@ -4,18 +4,18 @@ global_profiles:
 - core
 profiles:
   core:
-    description: 'Minimal global Agentit bootstrap: decide whether Agentit is warranted,
-      choose a domain pack, then load task skills JIT. Core also carries the minimum
-      durable-documentation and cold-session invariants.'
+    description: 'Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a
+      domain pack, then load task skills JIT. Core also carries the minimum durable-documentation
+      and cold-session invariants.'
     skills:
     - using-agentit
     - task-router
     - using-agent-skills
   frontend:
-    description: Core plus browser, performance, UI maintenance, and development-security
-      guidance. Installation/discovery only; runtime selection remains JIT, but security
-      implications are part of the standing development bar and app-security-gate becomes
-      mandatory when the change exposes or modifies a meaningful application attack surface.
+    description: Core plus browser, performance, UI maintenance, and development-security guidance.
+      Installation/discovery only; runtime selection remains JIT, but security implications are part
+      of the standing development bar and app-security-gate becomes mandatory when the change exposes
+      or modifies a meaningful application attack surface.
     extends:
     - core
     skills:
@@ -31,11 +31,13 @@ profiles:
     - hallmark
     - design-taste-frontend
     - specialist-agent-routing
+    - property-based-testing
+    - security-analysis
   backend:
-    description: Core plus API boundaries, observability, service maintenance, and
-      development-security guidance. Installation/discovery only; runtime selection remains
-      JIT, but security implications are part of the standing development bar and
-      app-security-gate becomes mandatory for material auth/API/data/admin/deploy surfaces.
+    description: Core plus API boundaries, observability, service maintenance, and development-security
+      guidance. Installation/discovery only; runtime selection remains JIT, but security implications
+      are part of the standing development bar and app-security-gate becomes mandatory for material
+      auth/API/data/admin/deploy surfaces.
     extends:
     - core
     skills:
@@ -48,6 +50,9 @@ profiles:
     - constraint-driven-development
     - security-and-hardening
     - app-security-gate
+    - property-based-testing
+    - security-analysis
+    - data-analysis-quality
   supabase:
     description: Backend profile plus PostgreSQL/Supabase-specific guidance.
     extends:
@@ -67,11 +72,13 @@ profiles:
     - spec-kit-workflow
     - marketing-and-growth
     - verification-before-completion
+    - reference-intelligence
+    - data-analysis-quality
   executive:
-    description: 'Deep company-level executive bench: strategy, finance, people, legal,
-      operations, marketing, product, board and chief-of-staff judgment. Deliberately
-      broad for installation/discovery; each task still selects only the exact executive
-      skill bodies, evidence and specialists it needs JIT.'
+    description: 'Deep company-level executive bench: strategy, finance, people, legal, operations,
+      marketing, product, board and chief-of-staff judgment. Deliberately broad for installation/discovery;
+      each task still selects only the exact executive skill bodies, evidence and specialists it needs
+      JIT.'
     extends:
     - core
     skills:
@@ -96,6 +103,8 @@ profiles:
     - verification-before-completion
     - interview-me
     - marketing-and-growth
+    - data-analysis-quality
+    - artifact-production
   writing:
     description: Technical writing, documentation, and anti-AI-slop editing.
     extends:
@@ -106,10 +115,11 @@ profiles:
     - humanizer
     - stop-slop
     - i-have-adhd
+    - artifact-production
+    - reference-intelligence
   design:
-    description: Craft-first design studio profile. Runtime workers still load only
-      the selected design pack skills JIT; this profile is an installation/discovery
-      bundle, not a context bundle.
+    description: Craft-first design studio profile. Runtime workers still load only the selected design
+      pack skills JIT; this profile is an installation/discovery bundle, not a context bundle.
     extends:
     - frontend
     skills:
@@ -135,9 +145,8 @@ profiles:
     - appllama-app-design-skill
     - appllama-usage
   mobile:
-    description: 'Expo/React Native product UI: study shipped mobile winners, then
-      implement native-feeling screens. Installation/discovery bundle only; workers
-      still load the selected skill JIT.'
+    description: 'Expo/React Native product UI: study shipped mobile winners, then implement native-feeling
+      screens. Installation/discovery bundle only; workers still load the selected skill JIT.'
     extends:
     - frontend
     skills:
@@ -145,6 +154,7 @@ profiles:
     - appllama-usage
     - hallmark
     - design-inspiration-research
+    - mobile-runtime-engineering
   release:
     description: Core plus CI, migration, launch, security gate, and operational readiness.
     extends:
@@ -158,8 +168,10 @@ profiles:
     - security-and-hardening
     - app-security-gate
     - constraint-driven-development
+    - security-analysis
   research:
-    description: Core plus context, specifications, authoritative source work, adversarial idea review, and verification.
+    description: Current source-led research and synthesis, metric/data quality and reusable reports.
+      Installation/discovery only; specs are selected only for an implementation contract.
     extends:
     - core
     skills:
@@ -171,24 +183,58 @@ profiles:
     - spec-kit-workflow
     - constraint-driven-development
     - verification-before-completion
+    - reference-intelligence
+    - data-analysis-quality
+    - artifact-production
   growth:
-    description: 'Digital growth delivery on demand: product discovery, CRO, copy,
-      SEO signals and launch discipline. Live marketing data still requires separately
-      reviewed connectors.'
+    description: 'Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and
+      launch discipline. Live marketing data still requires separately reviewed connectors.'
     extends:
     - product
     skills:
     - shipping-and-launch
   agency:
-    description: 'Agency operating profile: product and growth delivery plus incremental
-      implementation and disciplined Git handoffs. Pair with the relevant coding profile
-      for implementation.'
+    description: 'Agency operating profile: product and growth delivery plus incremental implementation
+      and disciplined Git handoffs. Pair with the relevant coding profile for implementation.'
     extends:
     - growth
     skills:
     - incremental-implementation
     - anti-overengineering
     - git-workflow-and-versioning
+    - artifact-production
+  data:
+    description: 'Analysis and persistence quality: metric grain, source reconciliation, database
+      boundaries and reproducible artifact delivery. Installation/discovery only; select the relevant
+      procedure JIT.'
+    extends:
+    - core
+    skills:
+    - data-analysis-quality
+    - supabase-postgres-best-practices
+    - property-based-testing
+    - reference-intelligence
+    - artifact-production
+    - deprecation-and-migration
+  security:
+    description: Bounded vulnerability investigation and hardening/release controls. Installation/discovery
+      only; scanner availability and scan/publication authorization are separate.
+    extends:
+    - core
+    skills:
+    - security-analysis
+    - security-and-hardening
+    - app-security-gate
+    - code-review-and-quality
+    - reference-intelligence
+    - verification-before-completion
+  artifacts:
+    description: Reusable editable documents, PDFs, spreadsheets and slide decks, including visual/semantic
+      delivery checks. Installation/discovery only; does not imply renderer or connector availability.
+    extends:
+    - writing
+    skills:
+    - data-analysis-quality
   all:
     description: Every repository skill; use only when explicitly requested for installation/discovery,
       never as a worker context bundle.
@@ -272,3 +318,8 @@ profiles:
     - verification-before-completion
     - verification-gauntlet
     - visual-storytelling-director
+    - property-based-testing
+    - data-analysis-quality
+    - security-analysis
+    - mobile-runtime-engineering
+    - artifact-production

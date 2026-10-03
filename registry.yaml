@@ -145,3 +145,15 @@ entries:
     paths:
       - "${REPO_ROOT}/CLAUDE.md"
     state: AVAILABLE_ON_DEMAND
+
+  - id: skill-curation-evidence
+    kind: reference-and-maintenance-check
+    category: provenance
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/skills/ADAPTATION_SOURCES.json"
+      - "${REPO_ROOT}/vendor/adaptation-licenses"
+      - "${REPO_ROOT}/scripts/check_skill_curation.py"
+      - "${REPO_ROOT}/evals/skill-curation-cases.json"
+      - "${REPO_ROOT}/reports/2026-10-03-skill-quality-audit.md"
+    state: AVAILABLE_ON_DEMAND

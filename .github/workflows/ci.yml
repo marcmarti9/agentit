@@ -37,6 +37,9 @@ jobs:
       - name: Verify canonical upstream package and license integrity
         run: python3 scripts/sync_upstream_skills.py
 
+      - name: Verify opt-in catalog and adaptation provenance
+        run: python3 scripts/check_skill_curation.py
+
       - name: Check legacy shell syntax
         run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
 

@@ -1,0 +1,147 @@
+{
+  "candidates": {
+    "property-based-testing": "Design, implement, or review property-based tests when behavior must hold across a generated input domain: codecs, parsers, normalizers, validators, ordering, numeric logic, state transitions, and invariants. Use after choosing a test target and before adding a generator-based test, or to investigate a minimized counterexample. Do not use for example-only unit tests, coverage-guided fuzzing, mutation testing, performance benchmarks, or browser flows.",
+    "security-analysis": "Triage static-analysis results or conduct a bounded source-code security investigation using concrete sources, sinks, trust boundaries, and exploitability evidence. Use when reviewing SARIF/CodeQL/Semgrep findings, investigating a suspected vulnerability, or searching for variants of a confirmed weakness. Do not use for a routine secure-coding change, dependency-only audit, generic security explanation, or full application pre-release gate.",
+    "app-security-gate": "Adversarial pre-deploy security gate for web apps and APIs, especially AI/vibe-coded builds. Use after substantial implementation, before production release, or when asked whether an app is safe to ship. Composes security-and-hardening with evidence-driven attack-path checks, safe remediation, and mandatory retesting. Not for pure security theory or a single isolated hardening question.",
+    "test-driven-development": "Drives development with tests using the red-green-refactor loop. Use when implementing any logic, fixing any bug, or changing any behavior. Use when you need to prove that code works, when a bug report arrives, or when you're about to modify existing functionality.",
+    "verification-before-completion": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+    "verification-gauntlet": "Surround agent work with hard, signal-gated verification probes and anti-greenwash rules. Use before done claims, after implementations, or when tests look too easy; not for pure explanation.",
+    "security-and-hardening": "Hardens code against vulnerabilities. Use when auditing an input handler for vulnerabilities, when handling user input, authentication, data storage, or external integrations, or when checking a login flow is safe against the OWASP Top Ten. Use when building any feature that accepts untrusted data, manages user sessions, or interacts with third-party services. Use when auditing dependencies for known vulnerabilities, triaging package-manager audit findings, or assessing supply-chain risk in a new package. Use when personal data or privacy compliance (GDPR, CCPA) is involved.",
+    "source-driven-development": "Grounds every implementation decision in official documentation. Use when you want to verify an approach against the official docs before implementing it, or when you want authoritative, source-cited code free from outdated patterns. Use when building with any framework or library where correctness matters.",
+    "react-composition-patterns": "Applies scalable React component composition when an existing component API is becoming rigid: boolean-prop proliferation, reusable component libraries, compound components, shared provider contracts, explicit variants, or sibling consumers of shared state. Do not use for ordinary one-off React feature implementation where direct props/components are already simple.",
+    "mobile-runtime-engineering": "Implement and verify Expo/React Native runtime behavior: cold-start hydration, deep links/back navigation, offline data and failed mutations, native lifecycle, large lists, or measured startup/frame/memory regressions. Not for visual inspiration, web-only React work, or Flutter/Swift/Kotlin implementation.",
+    "data-analysis-quality": "Validate whether a dataset, query result, metric calculation, or analytical claim is fit for a stated decision. Use before presenting counts, rates, trends, funnels, cohorts, dashboards, exports, or comparisons from structured data. Do not use to operate a database, design a dashboard, perform statistical modelling, or replace a domain-specific data contract.",
+    "artifact-production": "Produce or review a reusable PDF, editable document, spreadsheet or slide deck whose rendering, structure and data correctness matter. Own file delivery and visual/semantic verification. Not for ordinary chat prose, code documentation, image/video generation, or an analytical method without a file deliverable.",
+    "supabase-postgres-best-practices": "Postgres best practices maintained by Supabase, for Postgres running anywhere. Load this skill BEFORE writing or changing anything that lives in a Postgres database: creating or altering tables and columns (including choosing column types), schema design, migrations and declarative schema files, RLS policies and the tests that verify them, indexes, triggers, database functions, queues and scheduled jobs (pg_cron, pgmq), vector/semantic search (pgvector), and restoring dumps (pg_restore) or importing data. Also load it when diagnosing slow queries, high CPU, timeouts, EXPLAIN plans, connection exhaustion, locking, bloat, or rows visible to the wrong user or tenant. This is not just a performance guide \u2014 schema, migration, security, and SQL authoring tasks need these rules too, even for a one-column change or a single query.",
+    "spec-kit-workflow": "Run GitHub Spec Kit's gated spec-driven flow before coding \u2014 constitution, specify, clarify, plan, tasks, analyze, implement, converge. Use when starting a feature from a vague prompt, when the project already has .specify/ or specs/, or when the user asks for Spec Kit / speckit / specify. Do not use for one-line fixes.",
+    "spec-driven-development": "Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying.",
+    "reference-intelligence": "Decide whether a task materially benefits from external references, then use the smallest domain-appropriate curated/live set. Distinguish authority, actually read material sources, distill useful knowledge into existing skills, and record durable provenance without making the user re-paste references.",
+    "marketing-and-growth": "Growth engineering, conversion rate optimization (CRO), technical and local SEO, AI-search visibility, landing page copywriting, analytics, campaign/launch strategy, email, customer research, positioning, and content systems. Use for marketing, growth, launch strategy, SEO, local SEO, GEO/AEO, or funnel optimization.",
+    "stop-slop": "Remove AI writing patterns from prose. Use when drafting, editing, or reviewing text to eliminate predictable AI tells.",
+    "humanizer": "Rewrite AI-sounding text so it reads like the writer without changing what it says.\nUse when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line\nclosers, staged openers, forced triads, dashes everywhere, inflated claims, sales\nlanguage, stock AI words, bold labels, or filler. Based on Wikipedia's \"Signs of AI writing.\"\n",
+    "executive-orchestration": "Orchestrate company-level decisions through a single accountable executive voice, selecting only the specialist executive skills and evidence that materially improve the current decision.",
+    "design-inspiration-research": "Research current visual and interaction references before public greenfield or total-redesign art direction; extract design DNA, synthesize original directions, and keep provenance traceable."
+  },
+  "cases": [
+    {
+      "id": "pbt-codec",
+      "prompt": "Generate valid ASTs and check parse/print round trips for a lossy-capable codec."
+    },
+    {
+      "id": "pbt-sort",
+      "prompt": "Review property test sort(xs) == sort(xs) and produce a meaningful generated-domain replacement."
+    },
+    {
+      "id": "pbt-example-only",
+      "prompt": "Add two example unit tests for an existing add(a,b) function."
+    },
+    {
+      "id": "pbt-fuzz-nearmiss",
+      "prompt": "Run a coverage-guided fuzzer against a native parser. No algebraic contract is defined."
+    },
+    {
+      "id": "data-join",
+      "prompt": "Our customer rate joined 120 customers to 400 orders; the average rose. Audit whether this is a valid customer-level metric."
+    },
+    {
+      "id": "data-causal",
+      "prompt": "Conversion rose from 20/100 to 25/100 after new copy. Can we claim the copy caused a 25% lift?"
+    },
+    {
+      "id": "data-null",
+      "prompt": "The report fills missing revenue with zero and silently drops late-arriving transactions. Assess the result."
+    },
+    {
+      "id": "data-db-nearmiss",
+      "prompt": "Optimize a PostgreSQL query index for a slow list endpoint; no analytical claim is being made."
+    },
+    {
+      "id": "security-sarif",
+      "prompt": "A SARIF command exited zero and has no alerts, but extraction reports no Python files. Assess scan coverage."
+    },
+    {
+      "id": "security-authz",
+      "prompt": "Trace whether user A can update user B record despite parameterized SQL and login."
+    },
+    {
+      "id": "security-variant",
+      "prompt": "We confirmed one unscoped tenant lookup; find and triage structurally similar call paths."
+    },
+    {
+      "id": "security-hardening-nearmiss",
+      "prompt": "Implement schema validation in a new form handler; no suspected flaw or scanner report."
+    },
+    {
+      "id": "security-release-nearmiss",
+      "prompt": "Perform the final adversarial application release-security decision."
+    },
+    {
+      "id": "mobile-hydration",
+      "prompt": "Fix an Expo cold-start deep link that redirects to login before persisted auth hydration completes."
+    },
+    {
+      "id": "mobile-failed-save",
+      "prompt": "In RN a timed-out save clears the draft; retry can create duplicate records. Repair the behavior."
+    },
+    {
+      "id": "mobile-performance",
+      "prompt": "RN long feed janks on low-end Android; propose measured fixes using the current profiler."
+    },
+    {
+      "id": "mobile-flutter-nearmiss",
+      "prompt": "Fix hydration and back navigation in a Flutter application."
+    },
+    {
+      "id": "mobile-design-nearmiss",
+      "prompt": "Collect visual references for a native onboarding screen; no behavior change requested."
+    },
+    {
+      "id": "artifact-pdf",
+      "prompt": "Create a reusable PDF report with rendered pages and an editable source."
+    },
+    {
+      "id": "artifact-sheet",
+      "prompt": "Deliver an editable spreadsheet that recalculates revenue totals when source inputs change."
+    },
+    {
+      "id": "artifact-deck",
+      "prompt": "Review saved slide deck for overflow, font substitution and editable objects."
+    },
+    {
+      "id": "artifact-chat-nearmiss",
+      "prompt": "Rewrite this paragraph in chat, preserving facts and voice."
+    },
+    {
+      "id": "artifact-image-nearmiss",
+      "prompt": "Generate a raster image of a mountain lake."
+    },
+    {
+      "id": "ref-licensing",
+      "prompt": "Compare source roles and licensing before adapting a Reddit-linked skill pack."
+    },
+    {
+      "id": "source-api",
+      "prompt": "Check the exact React hook contract against installed React version and current official docs."
+    },
+    {
+      "id": "spec-kit-nearmiss",
+      "prompt": "Write a lightweight feature behavior specification in a repo with no Spec Kit installation."
+    },
+    {
+      "id": "verify-simple",
+      "prompt": "Confirm this single bug fix has fresh focused test evidence before claiming it fixed."
+    },
+    {
+      "id": "writing-editor",
+      "prompt": "Remove generic repetitive phrasing while preserving a technical caveat."
+    },
+    {
+      "id": "executive-decision",
+      "prompt": "Should our company fund a new product with limited runway and uncertain channel adoption?"
+    },
+    {
+      "id": "marketing-evidence",
+      "prompt": "Choose a customer segment from biased community posts and internal interviews before funding a channel."
+    }
+  ]
+}

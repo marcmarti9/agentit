@@ -47,6 +47,10 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 **Skills in this pack:**
 
+- `property-based-testing` — generated-domain invariants, independent properties, generators and shrinking; not ordinary example tests.
+- `security-analysis` — scanner/SARIF triage, source-to-sink proof and variants of confirmed flaws; not routine hardening.
+
+
 - `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
 
 - `anti-overengineering` — enforce BUILDER throughput and REVIEW depth without speculative architecture or repeated full-suite churn.
@@ -58,12 +62,11 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `code-simplification` — reduce unnecessary complexity while preserving proven behavior.
 - `constraint-driven-development` — write a project quality bar (`CONSTRAINTS.md`) and keep agents from quietly lowering it.
 - `verification-before-completion` — fresh evidence before done/fixed/passing claims.
-- `app-security-gate` — evidence-driven pre-deploy security gate when an application/API surface is being shipped or materially changed.
-- `verification-gauntlet` — broader verification discipline when multiple evidence surfaces matter.
+- `verification-gauntlet` — only for multiple material evidence surfaces; broader verification discipline when multiple evidence surfaces matter.
 - `doubt-driven-development` — adversarially challenge unfamiliar, risky or consequential engineering decisions.
 - `security-and-hardening` — threat modeling, trust boundaries, auth, secrets, input handling and hardening when security is materially involved.
 - `performance-optimization` — measure and optimize real bottlenecks rather than guessing.
-- `source-driven-development` — current official framework/library/protocol documentation materially affects correctness.
+- `source-driven-development` — version-specific technical contracts; current official framework/library/protocol documentation materially affects correctness.
 - `architect-orchestrator` — structural decomposition, architectural ownership or multi-stage coordination when one direct execution path is insufficient.
 - `specialist-agent-routing` — spawn bounded specialists only when specialization, independence or context isolation is useful.
 - `context-engineering` — control large or fragmented engineering context deliberately.
@@ -82,6 +85,10 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 **Skills in this pack:**
 
+- `property-based-testing` — parser/validator/state invariants when generated-domain testing is justified; not UI screenshot checks.
+- `security-analysis` — investigate concrete UI/API attack paths or scanner findings; not styling-only changes.
+
+
 - `app-security-gate` — test changed application trust boundaries before release.
 
 - `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
@@ -92,9 +99,8 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `hallmark` — substantial visual alternative/guard against generic visual clichés and fabricated content.
 - `design-taste-frontend` — stronger visual judgment when implementation also needs art-direction sensitivity.
 - `design-md-workflow` — read/maintain a durable project visual-identity contract when `DESIGN.md` or equivalent persistent design memory materially applies.
-- `source-driven-development` — current framework/browser/API behavior matters.
+- `source-driven-development` — version-specific technical contracts; current framework/browser/API behavior matters.
 - `security-and-hardening` — auth/session/input/trust-boundary work in frontend surfaces.
-- `app-security-gate` — adversarial application security gate when a frontend change exposes or modifies a meaningful attack surface.
 - `test-driven-development` — component/behavior tests when useful.
 - `verification-before-completion` — fresh runtime/build/test evidence before completion claims.
 
@@ -130,7 +136,7 @@ If visual direction is material, inspect the `design` pack too. That does not re
 - `frontend-ui-engineering` — bridge visual direction into production-quality accessible UI.
 - `browser-testing-with-devtools` — rendered desktop/mobile/browser evidence.
 - `performance-optimization` — visual/motion work where runtime cost needs measurement.
-- `reference-intelligence` — use only when external/current references materially affect the design decision or provenance.
+- `reference-intelligence` — source-role/provenance judgment; use only when external/current references materially affect the design decision or provenance.
 - `appllama-app-design-skill` — inspect only when the actual surface is native Expo/React Native product UI; it is not a default web-design dependency.
 
 The design pack intentionally has many possibilities. **Do not subdivide them into basic/advanced tiers and do not infer that ambitious design work must load more of them.**
@@ -143,11 +149,14 @@ The design pack intentionally has many possibilities. **Do not subdivide them in
 
 **Skills in this pack:**
 
+- `mobile-runtime-engineering` — Expo/React Native hydration, navigation, offline mutation states and measured device performance; not visual inspiration or Flutter implementation.
+
+
 - `appllama-usage` — research-tool mechanics only when the actual Appllama integration is selected and authorized.
 
 - `appllama-app-design-skill` — study shipped mobile winners when useful, extract patterns rather than pixels, implement native-feeling Expo/React Native UI and verify whole flows in a simulator/emulator.
 - `hallmark` — prevent generic AI styling and fabricated visual proof without importing the whole web-design pack.
-- `source-driven-development` — use current Expo/React Native/platform documentation when API or platform behavior materially affects implementation.
+- `source-driven-development` — version-specific technical contracts; use current Expo/React Native/platform documentation when API or platform behavior materially affects implementation.
 - `mcp-tooling-fit` — inspect/enable the situational `mobile_design` MCP stack only when Appllama research would materially help and the user has/wants access.
 - `verification-before-completion` — require fresh simulator/build/runtime evidence before claiming mobile UI behavior is complete.
 
@@ -161,6 +170,11 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 
 **Skills in this pack:**
 
+- `property-based-testing` — codecs, validators, numeric rules and state-transition invariants with generators.
+- `security-analysis` — trace a suspected source-code vulnerability to its control and impact.
+- `data-analysis-quality` — metric/query-output grain and reconciliation; not API implementation or database operation.
+
+
 - `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
 
 - `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
@@ -170,9 +184,8 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 - `code-simplification` — avoid accidental service/framework complexity.
 - `verification-before-completion` — fresh runtime/test evidence.
 - `security-and-hardening` — auth, secrets, PII, permissions and trust boundaries.
-- `app-security-gate` — evidence-driven security gate before shipping or materially changing an API/backend surface.
 - `performance-optimization` — measured server/data-path optimization.
-- `source-driven-development` — current protocols/framework/provider contracts.
+- `source-driven-development` — version-specific technical contracts; current protocols/framework/provider contracts.
 - `architect-orchestrator` — structural or multi-service work.
 - `debugging-and-error-recovery` — reproduce/localize backend failures.
 - `deprecation-and-migration` — interface/service migration and compatibility work.
@@ -186,8 +199,13 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 
 **Skills in this pack:**
 
+- `data-analysis-quality` — determine whether metric/query/data claims can support the stated decision, with grain, cut-off, join cardinality and reconciliation.
+- `property-based-testing` — generated-domain contracts for data transforms/codecs, not statistical modelling.
+- `artifact-production` — deliver editable spreadsheet/report files with rendering and calculation checks.
+
+
 - `supabase-postgres-best-practices` — PostgreSQL/Supabase-specific guidance **only when that stack is actually present**.
-- `source-driven-development` — current database/platform docs and contracts.
+- `source-driven-development` — version-specific technical contracts; current database/platform docs and contracts.
 - `test-driven-development` — prove query/migration/data behavior when appropriate.
 - `observability-and-instrumentation` — data-path/runtime diagnostics.
 - `security-and-hardening` — access controls, PII, row-level security and data trust boundaries.
@@ -208,18 +226,19 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 
 **Skills in this pack:**
 
+- `data-analysis-quality` — validate counts, rates and product evidence before a product decision.
+
+
 - `adversarial-idea-review` — challenge business/product ideas before committing; not a substitute for code review.
-- `spec-kit-workflow` — opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.
+- `spec-kit-workflow` — only when Spec Kit is present or explicitly requested; opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.
 
 - `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
 - `idea-refine` — explore and refine an early concept before committing to one shape.
-- `adversarial-idea-review` — try to kill serious candidate directions before a recommendation is allowed to stand.
 - `spec-driven-development` — explicit requirements, scope and acceptance criteria.
-- `spec-kit-workflow` — GitHub Spec Kit / spec-kit workflow when that artifact family is the project's spec process.
 - `planning-and-task-breakdown` — turn a decided outcome into executable units when useful.
 - `documentation-and-adrs` — preserve durable product/architecture decisions.
 - `doubt-driven-development` — challenge high-impact assumptions and alternatives.
-- `reference-intelligence` — market/product/comparable evidence materially affects the decision.
+- `reference-intelligence` — source-role/provenance judgment; market/product/comparable evidence materially affects the decision.
 - `architect-orchestrator` — broad product + technical decomposition or multi-stage ownership.
 - `marketing-and-growth` — product positioning/growth concerns are genuinely part of the decision.
 - `diagram-design` — journey/flow/story-map visuals when they materially clarify a product decision.
@@ -231,6 +250,10 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 **Use for:** company-level strategy, finance, people, legal, operations, marketing, product, board/governance and executive-priority decisions where specialist business judgment or cross-functional synthesis materially improves the result.
 
 **Skills in this pack:**
+
+- `data-analysis-quality` — audit business metric definitions and source reconciliation before consequential advice.
+- `artifact-production` — usable board/report/deck files when a reusable artifact is requested.
+
 
 - `executive-orchestration` — single accountable executive synthesis, model-owned specialist selection, bounded fan-out, conflict resolution, company context and authority boundaries.
 - `executive-strategy` — positioning, market choice, moat, strategic options, partnerships, build/buy/partner and explicit non-goals.
@@ -244,8 +267,8 @@ If no existing data skill fits the actual engine/domain, discover a better skill
 - `executive-chief-of-staff` — triage, decision queue, ownership, blockers, follow-ups and operating cadence.
 - `adversarial-idea-review` — kill/pivot/gate a company-level idea before commitment.
 - `specialist-agent-routing` — bounded executive specialists only when independent expertise/context isolation/parallelism earns its coordination cost.
-- `reference-intelligence` — current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
-- `source-driven-development` — current authoritative sources for changing domain rules/contracts/platform behavior.
+- `reference-intelligence` — source-role/provenance judgment; current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
+- `source-driven-development` — version-specific technical contracts; current authoritative sources for changing domain rules/contracts/platform behavior.
 - `context-engineering` — large company/financial/customer/market evidence sets without dumping all context into every specialist.
 - `doubt-driven-development` — adversarially challenge high-impact bets and fragile assumptions.
 - `planning-and-task-breakdown` — turn a decided executive action into owned, sequenced work when useful.
@@ -265,11 +288,14 @@ Executive skills decide at the business-function level. Pair them with engineeri
 
 **Skills in this pack:**
 
+- `data-analysis-quality` — validate campaign/funnel/cohort claims before drawing conclusions.
+
+
 - `marketing-and-growth` — main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.
 - `shipping-and-launch` — launch/distribution readiness and operational launch checks.
 - `humanizer` — preserve claims and brand voice while removing generic/robotic wording, structural AI tells and unsupported hype.
-- `reference-intelligence` — current competitor/market/launch evidence and source provenance.
-- `source-driven-development` — current platform/API/policy behavior when it affects execution.
+- `reference-intelligence` — source-role/provenance judgment; current competitor/market/launch evidence and source provenance.
+- `source-driven-development` — version-specific technical contracts; current platform/API/policy behavior when it affects execution.
 - `doubt-driven-development` — challenge high-impact strategy, claims or unsupported assumptions.
 - `context-engineering` — large customer/competitor/content evidence sets.
 - `documentation-and-adrs` — durable campaign/positioning decisions when worth preserving.
@@ -283,9 +309,9 @@ Executive skills decide at the business-function level. Pair them with engineeri
 **Skills in this pack:**
 
 - `marketing-and-growth` — the single SEO operating skill. Load `references/seo-growth-loop.md` for general/technical/search-loop work and `references/local-seo.md` for local/GBP work; load both only when the task spans both.
-- `source-driven-development` — current search engine, structured-data, GBP and platform documentation.
+- `source-driven-development` — version-specific technical contracts; current search engine, structured-data, GBP and platform documentation.
 - `context-engineering` — large GSC/site/query/competitor/GBP evidence sets.
-- `reference-intelligence` — current competitor/search evidence, authority classification and provenance.
+- `reference-intelligence` — source-role/provenance judgment; current competitor/search evidence, authority classification and provenance.
 - `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
 - `browser-testing-with-devtools` — rendered/indexability/runtime checks.
 - `doubt-driven-development` — risky canonicals, migrations, programmatic SEO, location expansion or large-scale changes.
@@ -301,9 +327,13 @@ AEO/GEO is not a parallel permanent skill by default. Treat it as a search surfa
 
 **Skills in this pack:**
 
-- `source-driven-development` — establish authoritative/canonical source hierarchy and verify current contracts.
+- `data-analysis-quality` — trace structured-data claims to grain, formula, population and source.
+- `artifact-production` — publishable local report/deck files when file structure/rendering matters.
+
+
+- `source-driven-development` — version-specific technical contracts; establish authoritative/canonical source hierarchy and verify current contracts.
 - `adversarial-idea-review` — attack a research/product direction before treating it as decided.
-- `reference-intelligence` — decide curated vs live sources, distinguish source roles and preserve provenance.
+- `reference-intelligence` — source-role/provenance judgment; decide curated vs live sources, distinguish source roles and preserve provenance.
 - `context-engineering` — manage large source/context sets without flooding the synthesis model.
 - `verification-before-completion` — evidence-backed final claims.
 - `doubt-driven-development` — adversarial source/assumption review.
@@ -321,15 +351,17 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 **Skills in this pack:**
 
+- `artifact-production` — reusable PDF/document/spreadsheet/deck production and verification; not ordinary chat prose.
+
+
 - `stop-slop` — optional alternative editorial pass to humanizer; do not stack rigid style rules or remove factual qualifications.
 
-- `humanizer` — preserve meaning/voice while removing generic, repetitive, robotic or templated prose.
-- `stop-slop` — catch structural AI-writing tells beyond buzzword deletion.
+- `humanizer` — primary editorial rewrite preserving meaning/voice; choose it or stop-slop, not both by default.
 - `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state, no tangents.
 - `documentation-and-adrs` — durable technical/project documentation and decision records.
 - `skill-authoring-and-evals` — create/edit agent-facing skills and instruction docs, tune triggers, progressive disclosure and selection/delivery evals.
-- `source-driven-development` — factual/current source-grounded writing.
-- `reference-intelligence` — multi-source reports, source roles and provenance.
+- `source-driven-development` — version-specific technical contracts; factual/current source-grounded writing.
+- `reference-intelligence` — source-role/provenance judgment; multi-source reports, source roles and provenance.
 - `doubt-driven-development` — adversarial factual/argument review when stakes warrant it.
 - `context-engineering` — large source sets or long documents.
 - `verification-before-completion` — evidence before factual completion claims.
@@ -342,16 +374,18 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 **Skills in this pack:**
 
+- `security-analysis` — triage confirmed/suspected source-code security findings; the app security gate still owns release disposition.
+
+
 - `app-security-gate` — explicit PASS/BLOCKED security release gate backed by adversarial retests.
 
 - `shipping-and-launch` — release readiness, launch checks and rollback thinking.
 - `ci-cd-and-automation` — pipeline automation and quality gates.
 - `verification-before-completion` — fresh release evidence.
-- `verification-gauntlet` — multiple release verification surfaces when useful.
+- `verification-gauntlet` — only for multiple material evidence surfaces; multiple release verification surfaces when useful.
 - `observability-and-instrumentation` — know whether a release is healthy after change.
 - `deprecation-and-migration` — compatibility, retirement and migration plans.
 - `security-and-hardening` — production/security boundaries.
-- `app-security-gate` — release-blocking application security review with adversarial retest.
 - `doubt-driven-development` — high-risk rollout review.
 - `architect-orchestrator` — multi-stage releases/migrations and dependency coordination.
 - `git-workflow-and-versioning` — clean release/merge history and handoff.
@@ -366,6 +400,9 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 
 **Skills in this pack:**
 
+- `artifact-production` — client-editable deliverables with honest visual/semantic verification.
+
+
 - `git-workflow-and-versioning` — reviewable repository handoff.
 - `anti-overengineering` — prevent client delivery from stalling in speculative architecture, test proliferation or repeated audit loops.
 - `incremental-implementation` — bounded client delivery and staged implementation.
@@ -373,7 +410,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 - `shipping-and-launch` — deployment/launch readiness.
 - `architect-orchestrator` — multi-domain client programs when orchestration is useful.
 - `specialist-agent-routing` — cleanly separated workers when specialization/parallelism pays off.
-- `reference-intelligence` — competitor, market, design or source-heavy client work.
+- `reference-intelligence` — source-role/provenance judgment; competitor, market, design or source-heavy client work.
 - `marketing-and-growth` — marketing/growth delivery.
 - `verification-before-completion` — prove client-facing changes before claiming completion.
 - `design-md-workflow` — preserve a client's visual identity across repeated delivery when a durable design contract exists or is justified.

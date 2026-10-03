@@ -43,6 +43,22 @@ def check_sources(root: Path, manifest: dict) -> int:
         if (repo, revision) in seen:
             raise ValueError(f"duplicate source record: {repo}")
         seen.add((repo, revision))
+        # New records explicitly declare path provenance mandatory. Older
+        # records predate that contract; do not invent retroactive source paths.
+        if item.get("source_paths_required") or "source_paths" in item:
+            paths = item.get("source_paths")
+            if not isinstance(paths, list) or not paths:
+                raise ValueError(f"missing inspected source paths: {repo}")
+            for relative in paths:
+                if not isinstance(relative, str):
+                    raise ValueError(f"invalid inspected source path: {repo}")
+                path = PurePosixPath(relative)
+                if (not relative or relative == "." or path.is_absolute()
+                        or ".." in path.parts or "\\" in relative
+                        or path.as_posix() != relative):
+                    raise ValueError(f"unsafe inspected source path: {repo}: {relative}")
+            if len(paths) != len(set(paths)):
+                raise ValueError(f"duplicate inspected source path: {repo}")
         if not item.get("source_license") or not item.get("adaptation_license") or not item.get("targets"):
             raise ValueError(f"incomplete source license/targets: {repo}")
         for field in ("source_license", "adaptation_license"):

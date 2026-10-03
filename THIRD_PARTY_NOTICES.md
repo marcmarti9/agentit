@@ -277,3 +277,75 @@ Source: [ajrcre/data-analysis-skills at `cbc906e4912a980423aecd1e318061eb98f3e0b
 Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/ajrcre--data-analysis-skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
 
 Changed scope: `skills/data-analysis-quality/SKILL.md`, `skills/data-analysis-quality/references/claim-checks.md`.
+
+### rampstackco/claude-skills — design expansion
+
+Source: [rampstackco/claude-skills at `3d4510a94a76ead80122c691b5c480f92f3fbe40`](https://github.com/rampstackco/claude-skills/tree/3d4510a94a76ead80122c691b5c480f92f3fbe40). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/rampstackco--claude-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/brand-identity-design/SKILL.md`, `skills/design-system-engineering/SKILL.md`, `skills/editorial-design/SKILL.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### peterbamuhigire/design-system-skills — design expansion
+
+Source: [peterbamuhigire/design-system-skills at `c9b334d770c449db7401730db29c9b70953e62f1`](https://github.com/peterbamuhigire/design-system-skills/tree/c9b334d770c449db7401730db29c9b70953e62f1). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/peterbamuhigire--design-system-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/typography-and-layout/SKILL.md`, `skills/data-visualization-design/SKILL.md`, `skills/editorial-design/SKILL.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### OneWave-AI/claude-skills — design expansion
+
+Source: [OneWave-AI/claude-skills at `fc5b7851a6c7ba367e05797df46ad3679df355dd`](https://github.com/OneWave-AI/claude-skills/tree/fc5b7851a6c7ba367e05797df46ad3679df355dd). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/OneWave-AI--claude-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/design-critique/SKILL.md`, `skills/design-critique/references/report-contract.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### vmarafetti/crit — design expansion
+
+Source: [vmarafetti/crit at `87a6c56a8b718be061723f44300eee4a859adcb9`](https://github.com/vmarafetti/crit/tree/87a6c56a8b718be061723f44300eee4a859adcb9). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/vmarafetti--crit/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/design-critique/SKILL.md`, `skills/design-critique/references/report-contract.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### Owl-Listener/designer-skills — design expansion
+
+Source: [Owl-Listener/designer-skills at `9a6930cf84a822eb458624bd11c61aac5bbdf224`](https://github.com/Owl-Listener/designer-skills/tree/9a6930cf84a822eb458624bd11c61aac5bbdf224). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Owl-Listener--designer-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/ux-heuristic-review/SKILL.md`, `skills/ux-heuristic-review/references/design-debt.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### kylezantos/design-motion-principles — design expansion
+
+Source: [kylezantos/design-motion-principles at `4a9ca879f24a361f4dca4174fe2da0f67b5ddee3`](https://github.com/kylezantos/design-motion-principles/tree/4a9ca879f24a361f4dca4174fe2da0f67b5ddee3). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/kylezantos--design-motion-principles/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/motion-design-review/SKILL.md`, `skills/motion-design-review/references/coverage.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### smukh/a11y-agent-skills — design expansion
+
+Source: [smukh/a11y-agent-skills at `8bc24f049734c607e23bd3955700fd4858649614`](https://github.com/smukh/a11y-agent-skills/tree/8bc24f049734c607e23bd3955700fd4858649614). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/smukh--a11y-agent-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/SKILL.md`, `skills/accessibility-design-review/references/cognitive-comprehension.md`, `skills/accessibility-design-review/references/standards-boundary.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### Owl-Listener/inclusive-design-skills — design expansion
+
+Source: [Owl-Listener/inclusive-design-skills at `6e0740f04b2130af60bc57abe3401b91e460e70d`](https://github.com/Owl-Listener/inclusive-design-skills/tree/6e0740f04b2130af60bc57abe3401b91e460e70d). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Owl-Listener--inclusive-design-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/references/cognitive-comprehension.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### ibelick/ui-skills — design expansion
+
+Source: [ibelick/ui-skills at `ebf5f26cd275b1412be8a2c8784c4f8da628e7c2`](https://github.com/ibelick/ui-skills/tree/ebf5f26cd275b1412be8a2c8784c4f8da628e7c2). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/ibelick--ui-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/SKILL.md`, `skills/accessibility-design-review/references/cognitive-comprehension.md`, `skills/accessibility-design-review/references/standards-boundary.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.

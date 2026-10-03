@@ -16,6 +16,8 @@ A new execution session starts semantically cold: installed profiles and skill f
 
 ## Overlapping approaches
 
+For an actionable visual/copy second opinion choose `design-critique` or the Impeccable critique procedure as the primary method. Their overlapping generic judgment is an explicit alternative, not a reason to load both. Task-flow, accessibility and motion critics have distinct evidence scopes; choose only the lenses that change this review. Creation, system engineering, chart encoding and editorial composition have separate deliverables.
+
 Choose one primary taste approach (`hallmark`, `design-taste-frontend`, or `impeccable`) for a design decision; their different taste constraints should not be concatenated indiscriminately. Data lookup (`ui-ux-pro-max`), research, 3D/motion implementation and performance may complement it. Use `humanizer` or `stop-slop` as alternative editorial passes, preserving evidence and uncertainty. Spec Kit is opt-in; executive roles are individual capabilities, not an always-on committee. Candidate wording is discovery guidance, never an automatic trigger.
 
 ## Worker projection contract
@@ -114,6 +116,16 @@ If visual direction is material, inspect the `design` pack too. That does not re
 
 **Skills in this pack:**
 
+- `typography-and-layout` — choose and prove type roles, hierarchy, measure, spacing and fallback with real content; not a universal font ban or mandatory pairing.
+- `brand-identity-design` — build a context-tested cross-media identity: marks, palette, type, imagery and application rules; not one-page CSS or brand strategy research.
+- `design-system-engineering` — inventory and evolve actual tokens/components with consumers, drift, migration and ownership; not merely recording DESIGN.md.
+- `data-visualization-design` — choose truthful chart encoding, scales, annotation, uncertainty and responsive alternatives; analytical claim validity remains a separate owner.
+- `editorial-design` — compose sustained reading, decks and document layout, with optional printer-contract branch; file opening/editability belongs to artifact-production.
+- `design-critique` — read-only brief-calibrated visual/copy second opinion with located evidence, concrete repairs and retests; primary alternative to Impeccable critique.
+- `ux-heuristic-review` — walk actual tasks/states for understanding, control, prevention and recovery; expert findings are not participant research.
+- `accessibility-design-review` — review names, keyboard/focus, forms, reflow and evidence limits; cognitive comprehension is an explicit JIT branch, not a conformance score.
+- `motion-design-review` — critique animation purpose/frequency, interruption, reduced motion and measured vs suspected runtime cost; not an animation builder.
+
 - `design-taste-frontend` — visual direction, hierarchy, composition and anti-generic frontend design judgment.
 - `hallmark` — detect cliché AI aesthetics, fabricated proof and generic structural repetition.
 - `design-inspiration-research` — research references, extract design DNA, synthesize rather than clone, and preserve provenance. Its references include the distilled premium/high-craft website production playbook.
@@ -142,6 +154,23 @@ If visual direction is material, inspect the `design` pack too. That does not re
 The design pack intentionally has many possibilities. **Do not subdivide them into basic/advanced tiers and do not infer that ambitious design work must load more of them.**
 
 ---
+
+---
+
+## design-review
+
+**Use for:** read-only design criticism, comparing supplied alternatives and reviewing task flows, accessibility or motion. Reviews do not authorize remediation; expert observations are not participant tests or conformance proof.
+
+**Skills in this pack:**
+
+- `design-critique` — read-only brief-calibrated visual/copy second opinion with located evidence, concrete repairs and retests; primary alternative to Impeccable critique.
+- `ux-heuristic-review` — walk actual tasks/states for understanding, control, prevention and recovery; expert findings are not participant research.
+- `accessibility-design-review` — review names, keyboard/focus, forms, reflow and evidence limits; cognitive comprehension is an explicit JIT branch, not a conformance score.
+- `motion-design-review` — critique animation purpose/frequency, interruption, reduced motion and measured vs suspected runtime cost; not an animation builder.
+- `impeccable` — optional upstream critique/audit/polish workflow; choose a primary method rather than concatenating generic critics.
+- `browser-testing-with-devtools` — obtain actual rendered/runtime evidence when available and permitted.
+- `reference-intelligence` — establish applicable standards/reference authority when it matters.
+- `verification-before-completion` — fresh evidence before declaring corrections verified.
 
 ## mobile
 

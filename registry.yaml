@@ -155,5 +155,7 @@ entries:
       - "${REPO_ROOT}/vendor/adaptation-licenses"
       - "${REPO_ROOT}/scripts/check_skill_curation.py"
       - "${REPO_ROOT}/evals/skill-curation-cases.json"
+      - "${REPO_ROOT}/evals/design-skill-cases.json"
+      - "${REPO_ROOT}/reports/2026-10-04-design-skills-audit.md"
       - "${REPO_ROOT}/reports/2026-10-03-skill-quality-audit.md"
     state: AVAILABLE_ON_DEMAND

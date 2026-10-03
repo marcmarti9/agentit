@@ -74,6 +74,9 @@ profiles:
     - verification-before-completion
     - reference-intelligence
     - data-analysis-quality
+    - ux-heuristic-review
+    - design-critique
+    - accessibility-design-review
   executive:
     description: 'Deep company-level executive bench: strategy, finance, people, legal, operations,
       marketing, product, board and chief-of-staff judgment. Deliberately broad for installation/discovery;
@@ -144,6 +147,15 @@ profiles:
     - threejs-product-storytelling
     - appllama-app-design-skill
     - appllama-usage
+    - typography-and-layout
+    - brand-identity-design
+    - design-system-engineering
+    - data-visualization-design
+    - editorial-design
+    - design-critique
+    - ux-heuristic-review
+    - accessibility-design-review
+    - motion-design-review
   mobile:
     description: 'Expo/React Native product UI: study shipped mobile winners, then implement native-feeling
       screens. Installation/discovery bundle only; workers still load the selected skill JIT.'
@@ -216,6 +228,7 @@ profiles:
     - reference-intelligence
     - artifact-production
     - deprecation-and-migration
+    - data-visualization-design
   security:
     description: Bounded vulnerability investigation and hardening/release controls. Installation/discovery
       only; scanner availability and scan/publication authorization are separate.
@@ -235,6 +248,10 @@ profiles:
     - writing
     skills:
     - data-analysis-quality
+    - typography-and-layout
+    - editorial-design
+    - data-visualization-design
+    - brand-identity-design
   all:
     description: Every repository skill; use only when explicitly requested for installation/discovery,
       never as a worker context bundle.
@@ -323,3 +340,27 @@ profiles:
     - security-analysis
     - mobile-runtime-engineering
     - artifact-production
+    - typography-and-layout
+    - brand-identity-design
+    - design-system-engineering
+    - data-visualization-design
+    - editorial-design
+    - design-critique
+    - ux-heuristic-review
+    - accessibility-design-review
+    - motion-design-review
+  design-review:
+    description: 'Read-only design review bench: visual/copy critique, task-flow heuristics, accessibility
+      and motion diagnostics. Availability only; choose the needed lens and evidence JIT, not
+      an always-on committee. Impeccable is an optional alternative review/polish workflow.'
+    extends:
+    - core
+    skills:
+    - design-critique
+    - ux-heuristic-review
+    - accessibility-design-review
+    - motion-design-review
+    - impeccable
+    - browser-testing-with-devtools
+    - reference-intelligence
+    - verification-before-completion

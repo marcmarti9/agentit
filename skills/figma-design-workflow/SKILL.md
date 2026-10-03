@@ -65,11 +65,11 @@ Do not claim write support when the current seat/tool surface is read-only.
 
 ## Figma + Agentit design stack
 
-For serious frontend design work, Figma context should normally be paired with:
+Select a companion only for a concrete need; this is availability guidance, not a bundle:
 
 - `design-taste-frontend` for art direction;
-- `impeccable` for craft and critique;
-- `emil-design-eng` for interaction polish;
+- `design-critique` or the `impeccable` critique procedure as one primary visual review method;
+- `emil-design-eng` for creating interaction craft, or `motion-design-review` for diagnosing existing motion;
 - `browser-testing-with-devtools` / Playwright for implementation verification;
 - `scrollytelling-web` when the target includes scroll choreography.
 

@@ -11,8 +11,11 @@ from router.skill_loader import load_reference_bodies, load_skill_bodies, valida
 from router.skills_cli import pack_candidates
 
 ROOT = Path(__file__).resolve().parents[1]
+DESIGN_NEW = {"typography-and-layout", "brand-identity-design", "design-system-engineering",
+              "data-visualization-design", "editorial-design", "design-critique",
+              "ux-heuristic-review", "accessibility-design-review", "motion-design-review"}
 NEW = {"property-based-testing", "data-analysis-quality", "security-analysis",
-       "mobile-runtime-engineering", "artifact-production"}
+       "mobile-runtime-engineering", "artifact-production"} | DESIGN_NEW
 
 
 class SkillCurationTests(unittest.TestCase):
@@ -21,7 +24,7 @@ class SkillCurationTests(unittest.TestCase):
         self.assertEqual(result["status"], "verified")
 
     def test_new_skills_discover_without_delivering_bodies(self):
-        candidates = pack_candidates(["engineering", "backend", "data", "mobile", "writing"])
+        candidates = pack_candidates(["engineering", "backend", "data", "mobile", "writing", "design", "design-review"])
         self.assertTrue(NEW <= {c["id"] for c in candidates})
         self.assertTrue(all(set(c) == {"pack", "id", "description"} for c in candidates))
 
@@ -64,8 +67,26 @@ class SkillCurationTests(unittest.TestCase):
                 with self.subTest(path=path), self.assertRaises(ValueError):
                     checked_file(root, path)
 
+    def test_inspected_source_paths_cannot_disappear_or_escape_repository(self):
+        manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())
+        index = next(i for i, s in enumerate(manifest["sources"])
+                     if s.get("source_paths_required"))
+        for value in (None, [], "SKILL.md", [3], ["../SKILL.md"],
+                      ["/SKILL.md"], ["skills\\SKILL.md"], ["."],
+                      ["skills//SKILL.md"], ["SKILL.md", "SKILL.md"]):
+            with self.subTest(value=value):
+                bad = copy.deepcopy(manifest)
+                if value is None:
+                    bad["sources"][index].pop("source_paths")
+                else:
+                    bad["sources"][index]["source_paths"] = value
+                with self.assertRaises(ValueError):
+                    check_sources(ROOT, bad)
+
     def test_coverage_fixtures_have_negative_boundaries_and_valid_explicit_choices(self):
-        data = json.loads((ROOT / "evals/skill-curation-cases.json").read_text())
+        data = {"cases": []}
+        for filename in ("skill-curation-cases.json", "design-skill-cases.json"):
+            data["cases"].extend(json.loads((ROOT / "evals" / filename).read_text())["cases"])
         ids = [c["id"] for c in data["cases"]]
         self.assertEqual(len(ids), len(set(ids)))
         known = {p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")}

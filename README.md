@@ -138,7 +138,7 @@ Risk is separate from mode. A dangerous auth/payment/data/migration boundary sti
 Agentit organizes expertise into flat semantic discovery maps such as:
 
 ```text
-engineering  frontend  design  mobile  backend  data  product
+engineering  frontend  design  design-review  mobile  backend  data  product
 executive    marketing seo     research writing release agency
 ```
 
@@ -181,7 +181,7 @@ Non-trivial ideation cannot jump from `idea-refine` to a recommended direction. 
 
 ### Design studio
 
-Design work stays JIT. The `design` and `mobile` profiles are installation/discovery bundles, not context dumps. Typical capabilities include visual taste (`design-taste-frontend`, `hallmark`, `impeccable`, `emil-design-eng`), durable design memory (`design-md-workflow`), diagrams (`diagram-design`), motion (`gsap-*`, `scrollytelling-web`), native app UI (`appllama-*`), and optional Figma/3D/storytelling specialists.
+Design work stays JIT. The `design` and `mobile` profiles are installation/discovery bundles, not context dumps. Craft specialties cover typography, cross-media identity, implemented design systems, chart encoding and editorial composition. The `design-review` profile offers visual/copy, task-flow, accessibility (with optional cognitive branch) and motion critics. Choose the relevant lens JIT. Other capabilities include visual taste (`design-taste-frontend`, `hallmark`, `impeccable`, `emil-design-eng`), durable design memory (`design-md-workflow`), diagrams (`diagram-design`), motion (`gsap-*`, `scrollytelling-web`), native app UI (`appllama-*`), and optional Figma/3D/storytelling specialists.
 
 ### Writing and anti-slop
 
@@ -386,7 +386,8 @@ This keeps semantic interpretation with the model that has the richest context w
 | `product` | discovery, adversarial ideation, requirements and product decisions |
 | `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
 | `writing` | technical writing, documentation, humanizer, stop-slop and ADHD-shaped output |
-| `design` | UI/UX, design memory, diagrams, visual direction, motion and spatial craft |
+| `design` | UI/UX, typography, brand, design systems, chart/editorial design, critique, motion and spatial craft |
+| `design-review` | read-only visual/copy, task-flow, accessibility and motion criticism; select the relevant lens JIT |
 | `mobile` | Expo/React Native UI, auth/navigation/offline state, and measured device performance |
 | `release` | CI/CD, migrations, launch, security gate and operational readiness |
 | `research` | source-driven research, adversarial idea review and verification |
@@ -396,7 +397,7 @@ This keeps semantic interpretation with the model that has the richest context w
 | `artifacts` | reusable documents, spreadsheets, decks and PDF verification |
 | `all` | complete repository skill inventory |
 
-The [October 3 quality audit](reports/2026-10-03-skill-quality-audit.md) reviews every baseline profile and body, records accepted/rejected source comparisons, and adds five opt-in capabilities. Core remains exactly three skills. Bodies and branch references are delivered only after explicit selection; profiles and packs remain availability metadata.
+The [October 3 quality audit](reports/2026-10-03-skill-quality-audit.md) reviews every baseline profile and body, records accepted/rejected source comparisons, and adds five opt-in capabilities. The [design and critics expansion](reports/2026-10-04-design-skills-audit.md) adds nine selectively loaded craft/review capabilities and a dedicated review profile, with pinned MIT sources. Core remains exactly three skills. Bodies and branch references are delivered only after explicit selection; profiles and packs remain availability metadata.
 
 Maintenance checks: `python3 scripts/check_skill_curation.py` checks catalog/provenance structure, while `python3 scripts/sync_upstream_skills.py` checks canonical file integrity. Neither is a model-quality benchmark.
 

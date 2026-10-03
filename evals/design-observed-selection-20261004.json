@@ -1,0 +1,114 @@
+{
+  "cases": [
+    {
+      "id": "type-proof",
+      "selected": ["typography-and-layout"],
+      "reason": "Defines and proves type roles, measure, fallback behavior, and narrow-width content handling."
+    },
+    {
+      "id": "identity-system",
+      "selected": ["brand-identity-design"],
+      "reason": "Extends an approved direction into a cross-media mark, palette, and imagery system."
+    },
+    {
+      "id": "system-drift",
+      "selected": ["design-system-engineering"],
+      "reason": "Requires consumer inventory, token/component drift remediation, compatibility, and ownership."
+    },
+    {
+      "id": "chart-encoding",
+      "selected": ["data-visualization-design"],
+      "reason": "Selects truthful chart encodings, scales, missing-group treatment, and uncertainty presentation."
+    },
+    {
+      "id": "editorial-reading",
+      "selected": ["editorial-design"],
+      "reason": "Covers sustained report and presentation reading order, captions, page rhythm, and legibility."
+    },
+    {
+      "id": "visual-critique",
+      "selected": ["design-critique"],
+      "reason": "Calls for a brief-calibrated, read-only visual and copy critique with small repairs."
+    },
+    {
+      "id": "flow-heuristics",
+      "selected": ["ux-heuristic-review"],
+      "reason": "Examines checkout task states, cancellation, failure, and recovery for unfamiliar and returning users."
+    },
+    {
+      "id": "access-review",
+      "selected": ["accessibility-design-review", "browser-testing-with-devtools"],
+      "reason": "Reviews accessible form behavior and distinguishes manual from automated coverage using rendered evidence."
+    },
+    {
+      "id": "motion-critique",
+      "selected": ["motion-design-review"],
+      "reason": "Evaluates existing transitions, interruption, state continuity, and reduced-motion behavior without a performance trace."
+    },
+    {
+      "id": "fixed-font-export",
+      "selected": [],
+      "reason": "This is a fixed approved-asset export with no design decision to make."
+    },
+    {
+      "id": "copy-only",
+      "selected": [],
+      "reason": "A typo correction preserving existing styling needs no design responsibility."
+    },
+    {
+      "id": "single-button",
+      "selected": ["frontend-ui-engineering"],
+      "reason": "Implements an existing UI-library control in a production screen without system changes."
+    },
+    {
+      "id": "math-only",
+      "selected": ["data-analysis-quality"],
+      "reason": "Revenue joins and missing transactions require data-grain and reconciliation analysis, not visual design."
+    },
+    {
+      "id": "pdf-reopen",
+      "selected": ["artifact-production"],
+      "reason": "Checks an existing PDF's pages and file validity while the editorial design remains approved."
+    },
+    {
+      "id": "local-rename",
+      "selected": [],
+      "reason": "A bounded private helper rename requires no specialized design capability."
+    },
+    {
+      "id": "static-brand",
+      "selected": ["brand-identity-design"],
+      "reason": "Comparing wordmark shapes while retaining the brand mood is an identity-design judgment."
+    },
+    {
+      "id": "scanner-execution",
+      "selected": [],
+      "reason": "Running a configured scanner and returning raw output requests execution only, not design interpretation."
+    },
+    {
+      "id": "motion-creation",
+      "selected": ["gsap-scrolltrigger"],
+      "reason": "Implements approved GSAP scroll choreography using ScrollTrigger and timeline mechanics."
+    },
+    {
+      "id": "cognitive-burden",
+      "selected": ["accessibility-design-review"],
+      "reason": "The explicit concern is cognitive comprehension and decision load in a legally constrained form."
+    },
+    {
+      "id": "print-no-spec",
+      "selected": ["editorial-design"],
+      "reason": "Art direction for a brochure, including the printer-contract limitation, belongs to editorial design."
+    },
+    {
+      "id": "no-capture",
+      "selected": ["design-critique"],
+      "reason": "A read-only visual and copy hierarchy critique can assess the supplied HTML without claiming rendered evidence."
+    },
+    {
+      "id": "multi-design",
+      "selected": ["design-critique", "ux-heuristic-review"],
+      "reason": "Separately reviews shipped hierarchy and copy, then evaluates payment-decline recovery as a customer task flow."
+    }
+  ]
+}

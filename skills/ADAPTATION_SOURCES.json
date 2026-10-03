@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Source-informed additions and branch references from the 2026-10-03 audit; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "scope": "Source-informed additions and branch references from the October 3\u20134, 2026 audits; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
   "sources": [
     {
       "repo": "expo/skills",
@@ -139,6 +139,191 @@
         "skills/data-analysis-quality/references/claim-checks.md"
       ],
       "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "rampstackco/claude-skills",
+      "revision": "3d4510a94a76ead80122c691b5c480f92f3fbe40",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/rampstackco--claude-skills/LICENSE",
+      "license_sha256": "7957f4b291988f21be7cb75637d2efb6edd0369a95d3814cac7ef931f7f10b7c",
+      "source_paths": [
+        "skills/brand-identity/SKILL.md",
+        "skills/design-system/SKILL.md",
+        "skills/creative-direction/SKILL.md",
+        "skills/art-direction/SKILL.md"
+      ],
+      "targets": [
+        "skills/brand-identity-design/SKILL.md",
+        "skills/design-system-engineering/SKILL.md",
+        "skills/editorial-design/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "peterbamuhigire/design-system-skills",
+      "revision": "c9b334d770c449db7401730db29c9b70953e62f1",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/peterbamuhigire--design-system-skills/LICENSE",
+      "license_sha256": "56a215a530713da325bc6b740c7d6e26406d6988e4ee88c3139ad6f15d6c07e4",
+      "source_paths": [
+        "skills/01-typography-and-fonts/font-selection-and-pairing/SKILL.md",
+        "skills/01-typography-and-fonts/fine-typesetting-and-typesetting-qa/SKILL.md",
+        "skills/01-typography-and-fonts/font-embedding-and-licensing/SKILL.md",
+        "skills/03-layout-grid-and-composition/editorial-and-long-form-layout/SKILL.md",
+        "skills/12-data-viz-and-dashboards/chart-selection-and-encoding/SKILL.md",
+        "skills/12-data-viz-and-dashboards/data-visualization/SKILL.md",
+        "skills/13-presentations-and-documents/deck-system/SKILL.md",
+        "skills/13-presentations-and-documents/print-production-and-finishing/SKILL.md"
+      ],
+      "targets": [
+        "skills/typography-and-layout/SKILL.md",
+        "skills/data-visualization-design/SKILL.md",
+        "skills/editorial-design/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "OneWave-AI/claude-skills",
+      "revision": "fc5b7851a6c7ba367e05797df46ad3679df355dd",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/OneWave-AI--claude-skills/LICENSE",
+      "license_sha256": "197dce10493396d12cd5e7e6d424d01a794bebe20135bdc0bbc10c0feab1d460",
+      "source_paths": [
+        "claude-design-critic/SKILL.md"
+      ],
+      "targets": [
+        "skills/design-critique/SKILL.md",
+        "skills/design-critique/references/report-contract.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "vmarafetti/crit",
+      "revision": "87a6c56a8b718be061723f44300eee4a859adcb9",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/vmarafetti--crit/LICENSE",
+      "license_sha256": "f93965715c6e3c495d55d140f8744c2b25f167ea79886ea2d3e3745d7bb1201b",
+      "source_paths": [
+        "templates/audit-template.md"
+      ],
+      "targets": [
+        "skills/design-critique/SKILL.md",
+        "skills/design-critique/references/report-contract.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "Owl-Listener/designer-skills",
+      "revision": "9a6930cf84a822eb458624bd11c61aac5bbdf224",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Owl-Listener--designer-skills/LICENSE",
+      "license_sha256": "1400d572fb60897f7970a763fb73d1aa7804b71bad41bf6e45061de7b7a09ac1",
+      "source_paths": [
+        "prototyping-testing/skills/heuristic-evaluation/SKILL.md",
+        "design-ops/skills/design-debt-audit/SKILL.md"
+      ],
+      "targets": [
+        "skills/ux-heuristic-review/SKILL.md",
+        "skills/ux-heuristic-review/references/design-debt.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "kylezantos/design-motion-principles",
+      "revision": "4a9ca879f24a361f4dca4174fe2da0f67b5ddee3",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/kylezantos--design-motion-principles/LICENSE",
+      "license_sha256": "5945ed68f9c1f6c2cfecc674ce66226221f6a40ec4bf2e0b1a1f0084cf108bdb",
+      "source_paths": [
+        "skills/design-motion-principles/SKILL.md"
+      ],
+      "targets": [
+        "skills/motion-design-review/SKILL.md",
+        "skills/motion-design-review/references/coverage.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "smukh/a11y-agent-skills",
+      "revision": "8bc24f049734c607e23bd3955700fd4858649614",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/smukh--a11y-agent-skills/LICENSE",
+      "license_sha256": "65646b2111d1a488ea529fa032473c6d49937033429aae061a0929267a0419c8",
+      "source_paths": [
+        "skills/accessibility-audit/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/SKILL.md",
+        "skills/accessibility-design-review/references/cognitive-comprehension.md",
+        "skills/accessibility-design-review/references/standards-boundary.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "Owl-Listener/inclusive-design-skills",
+      "revision": "6e0740f04b2130af60bc57abe3401b91e460e70d",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Owl-Listener--inclusive-design-skills/LICENSE",
+      "license_sha256": "1400d572fb60897f7970a763fb73d1aa7804b71bad41bf6e45061de7b7a09ac1",
+      "source_paths": [
+        "cognitive-accessibility/skills/cognitive-load-assessment/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/references/cognitive-comprehension.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "ibelick/ui-skills",
+      "revision": "ebf5f26cd275b1412be8a2c8784c4f8da628e7c2",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/ibelick--ui-skills/LICENSE",
+      "license_sha256": "c615621c4cc1676ccde194e7a01b6469ba477780251bd71e007fc473a49c2c2b",
+      "source_paths": [
+        "skills/fixing-accessibility/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/SKILL.md",
+        "skills/accessibility-design-review/references/cognitive-comprehension.md",
+        "skills/accessibility-design-review/references/standards-boundary.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
     }
   ]
 }

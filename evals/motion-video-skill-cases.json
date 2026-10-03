@@ -211,6 +211,63 @@
         "Production and technical scopes both justified",
         "Exact local clock and final decode"
       ]
+    },
+    {
+      "id": "mv-remotion-create-render",
+      "prompt": "Create a new Remotion project for this already-approved storyboard, register the compositions, make the content editable, preview it in Studio and render a verified final file. Remotion is explicitly required.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Current creation path and installed-version APIs",
+        "Preview plus decoded final output"
+      ]
+    },
+    {
+      "id": "mv-remotion-map-captions",
+      "prompt": "In our existing Remotion project, implement the approved route animation and supplied timed captions. Preserve the current map provider, do not expose API keys, and verify caption boundaries in the rendered output.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Existing provider and secret boundary preserved",
+        "Map and caption timing checked in final render"
+      ]
+    },
+    {
+      "id": "mv-remotion-platform-upgrade",
+      "prompt": "Upgrade the Remotion layer in our existing video SaaS, including compatible Remotion packages and the media metadata path. Preserve the application architecture and verify the installed APIs, Studio preview and a bounded production-style render.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production",
+        "motion-graphics-production"
+      ],
+      "quality_assertions": [
+        "Version-compatible package family and current migration guidance",
+        "Product architecture stays outside the video adapter"
+      ]
+    },
+    {
+      "id": "mv-mapbox-web-near",
+      "prompt": "Fix the markers on this ordinary interactive Mapbox web map. There is no video composition and Remotion is not installed.",
+      "required": [],
+      "forbidden": [
+        "remotion-video-engineering",
+        "motion-graphics-production",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Geospatial UI does not imply Remotion",
+        "No video workflow introduced"
+      ]
     }
   ]
 }

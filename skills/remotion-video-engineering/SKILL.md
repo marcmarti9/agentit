@@ -1,33 +1,57 @@
 ---
 name: remotion-video-engineering
-description: Engineer and verify a selected Remotion project when the task already requires Remotion/React frame rendering. Use for composition structure, deterministic frame timing, assets, fonts, editable props, preview probes, and final encoding. Do not use to choose a video concept, write ad strategy, review UI motion, or install Remotion.
+description: Engineer, create, upgrade, preview, render, and verify an explicitly selected Remotion workflow or project. Use for composition structure, deterministic frame timing, assets, fonts, editable props, Studio/render workflows, maps, captions, multimedia, Remotion-backed product architecture, and version-safe upgrades. Do not use merely because a task mentions video, animation, React, or motion.
 license: Apache-2.0
 ---
 
 # Remotion Video Engineering
 
-This is a technical adapter for an existing or explicitly selected Remotion
-project. It makes the render deterministic and editable; `motion-graphics-
-production` owns the authored sequence and delivery intent.
+This is the technical adapter for work where Remotion is explicitly selected
+or already present in the project. It covers implementation and operational
+Remotion workflows; `motion-graphics-production` owns authored sequence and
+delivery intent, while `advertising-video-production` owns ad creative.
 
 ## Trigger and boundary
 
-Use when the requested implementation or repair is inside a Remotion project,
-or a selected project has confirmed Remotion as its renderer. Do not invoke it
-because a task merely mentions a video, animation, captions, React, or a brand
-promo. Loading this adapter does not initiate package installation, project
-scaffolding or browser acquisition. Setup is a separate planned action within
-the user's authorized task scope; preserve any authority already established.
+Use when the requested implementation, creation, repair, upgrade, preview,
+render, or product integration explicitly selects Remotion, or the repository
+already contains a Remotion project. Do not invoke it because a task merely
+mentions a video, animation, captions, React, or a brand promo.
+
+Loading this adapter never authorizes dependency installation, browser
+acquisition, cloud rendering, paid media/API calls, or licensing purchases by
+itself. When the user's task explicitly includes creating or upgrading a
+Remotion project, setup and dependency changes are within that task's normal
+implementation scope, but still inspect the selected package manager, lockfile,
+runtime and current official guidance before mutating them.
 
 Before changing source, identify the project entry point, registered
 compositions, package-manager lockfile, actual installed Remotion version, and
 the package declarations/types available to that version. Read the matching
 official [Remotion documentation](https://www.remotion.dev/docs/) for APIs used.
-Do not infer API names, props, component
-availability, or command flags from an older skill, online snippet, or a newer
-release. If the package is absent or its local contract cannot be inspected,
-record the limitation and stop short of API-specific edits until authorized
-setup establishes a verifiable project contract.
+Read [capability-map.md](references/capability-map.md) when the task touches
+project creation, Studio, rendering, maps, captions, SaaS/product integration,
+interactivity, docs lookup, upgrades, multimedia, or licensing. Do not infer
+API names, props, component availability, or command flags from an older skill,
+online snippet, or a newer release. If an existing project declares Remotion
+but its local contract cannot be inspected, record the limitation and stop
+short of API-specific edits until a verifiable contract is available.
+
+## Create and upgrade safely
+
+For a new explicitly requested Remotion project, use the current official
+creation path that matches the user's package manager and target runtime rather
+than preserving a historical scaffold command. Establish the composition
+contract, project scripts and a bounded preview before adding production
+complexity. Do not add unrelated starter features.
+
+For an upgrade, inventory every `remotion` and `@remotion/*` dependency plus
+compatible media packages before changing versions. Follow current official
+upgrade/migration guidance, keep the Remotion package family version-compatible,
+run the smallest relevant type/static checks, preview representative frames,
+and perform a real bounded render before claiming the upgrade is complete.
+Separate code migration failures from browser, codec, font, asset and runtime
+failures.
 
 ## Model the composition
 

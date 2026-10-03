@@ -180,3 +180,21 @@ For claims of better results or lower cost, run paired baseline/treatment tasks 
 The [design expansion](../reports/2026-10-04-design-skills-audit.md) separates identity, typography, implemented systems, chart encoding and editorial reading from visual/copy critique, task-flow heuristics, access barriers and motion diagnosis. `design-review` is an opt-in availability profile, not a review committee. Choose `design-critique` or Impeccable critique as the primary generic review method; specialized lenses have separate evidence scopes and are not automatic companions. Keep existing canonical taste/Impeccable/Emil packages verbatim.
 
 The [design cases](../evals/design-skill-cases.json) include creation/review near misses, approved-brand preservation, cognitive comprehension and absent render/printer evidence. Exact selected bodies and optional cognitive, coverage, debt and broad-report references are mechanically verified. Source-only critic exercises do not establish rendered usability, conformance or better commercial outcomes.
+
+## Motion/video and advertising ownership
+
+The [motion/video audit](../reports/2026-10-04-motion-video-skills-audit.md) adds
+a renderer-neutral authored-video owner, a selected-Remotion technical adapter
+and an ad-specific production owner. Choose ad production for an ad deliverable;
+do not automatically stack it with general motion production or marketing
+strategy. Existing UI/scroll creation, web narrative and motion-review scopes
+remain distinct. `video` is optional availability, not three loaded bodies.
+
+Generated/creator media, caption/audio finishing and alternative pipeline
+selection remain branch references. Runtime availability, asset rights, paid
+authority, local rendering and publication are separate decisions. The
+Remotion adapter is original guidance with current API links, not a copy of the
+official skills whose reusable license was not established. Preserve actual
+clock semantics: a sequence-local frame must not have its offset subtracted
+a second time. Final-file decoding and reported review coverage are not proof
+of every frame, commercial lift or universal production quality.

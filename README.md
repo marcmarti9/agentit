@@ -138,7 +138,7 @@ Risk is separate from mode. A dangerous auth/payment/data/migration boundary sti
 Agentit organizes expertise into flat semantic discovery maps such as:
 
 ```text
-engineering  frontend  design  design-review  mobile  backend  data  product
+engineering  frontend  design  design-review  video   mobile  backend  data  product
 executive    marketing seo     research writing release agency
 ```
 
@@ -387,6 +387,7 @@ This keeps semantic interpretation with the model that has the richest context w
 | `executive` | deep JIT business leadership: strategy, finance, people, legal, operations, marketing, product, board and chief-of-staff |
 | `writing` | technical writing, documentation, humanizer, stop-slop and ADHD-shaped output |
 | `design` | UI/UX, typography, brand, design systems, chart/editorial design, critique, motion and spatial craft |
+| `video` | authored motion graphics, selected Remotion engineering, video ads and conditional alternative production routes |
 | `design-review` | read-only visual/copy, task-flow, accessibility and motion criticism; select the relevant lens JIT |
 | `mobile` | Expo/React Native UI, auth/navigation/offline state, and measured device performance |
 | `release` | CI/CD, migrations, launch, security gate and operational readiness |
@@ -397,7 +398,7 @@ This keeps semantic interpretation with the model that has the richest context w
 | `artifacts` | reusable documents, spreadsheets, decks and PDF verification |
 | `all` | complete repository skill inventory |
 
-The [October 3 quality audit](reports/2026-10-03-skill-quality-audit.md) reviews every baseline profile and body, records accepted/rejected source comparisons, and adds five opt-in capabilities. The [design and critics expansion](reports/2026-10-04-design-skills-audit.md) adds nine selectively loaded craft/review capabilities and a dedicated review profile, with pinned MIT sources. Core remains exactly three skills. Bodies and branch references are delivered only after explicit selection; profiles and packs remain availability metadata.
+The [October 3 quality audit](reports/2026-10-03-skill-quality-audit.md) reviews every baseline profile and body, records accepted/rejected source comparisons, and adds five opt-in capabilities. The [design and critics expansion](reports/2026-10-04-design-skills-audit.md) adds nine selectively loaded craft/review capabilities and a dedicated review profile, with pinned MIT sources. The [motion and video-ad expansion](reports/2026-10-04-motion-video-skills-audit.md) adds three production/engineering capabilities, a `video` profile and conditional finishing/alternative-route references. Core remains exactly three skills. Bodies and branch references are delivered only after explicit selection; profiles and packs remain availability metadata.
 
 Maintenance checks: `python3 scripts/check_skill_curation.py` checks catalog/provenance structure, while `python3 scripts/sync_upstream_skills.py` checks canonical file integrity. Neither is a model-quality benchmark.
 

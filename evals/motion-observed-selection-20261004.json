@@ -1,0 +1,107 @@
+{
+  "cases": [
+    {
+      "id": "mv-logo-film",
+      "selected": [
+        "motion-graphics-production"
+      ],
+      "reason": "This is authored rendered-film motion craft from approved logo assets, including key poses and export review."
+    },
+    {
+      "id": "mv-type-film",
+      "selected": [
+        "motion-graphics-production",
+        "typography-and-layout"
+      ],
+      "reason": "It requires rendered kinetic motion plus an independent type and composition decision across portrait and landscape formats."
+    },
+    {
+      "id": "mv-remotion-repair",
+      "selected": [
+        "remotion-video-engineering"
+      ],
+      "reason": "The defect is a Remotion nested-sequence frame-clock error in an existing composition."
+    },
+    {
+      "id": "mv-render-variant",
+      "selected": [
+        "remotion-video-engineering"
+      ],
+      "reason": "Editable props, composition layout, timing preservation, font readiness, and decoded output are Remotion project engineering."
+    },
+    {
+      "id": "mv-product-ad",
+      "selected": [
+        "advertising-video-production"
+      ],
+      "reason": "It requests the ad-specific hook, storyboard, truthful copy, captions, and meaningful creative variants."
+    },
+    {
+      "id": "mv-hybrid-ad",
+      "selected": [
+        "advertising-video-production"
+      ],
+      "reason": "This is a bounded ad creative deliverable with source footage, factual overlays, continuity review, and planned variants/media."
+    },
+    {
+      "id": "mv-captioned-ad",
+      "selected": [
+        "advertising-video-production"
+      ],
+      "reason": "The requested caption timing, product labels, audio ducking, and ad-format outputs are ad-production responsibilities."
+    },
+    {
+      "id": "mv-cta-ui-near",
+      "selected": [
+        "frontend-ui-engineering"
+      ],
+      "reason": "Hover and press feedback for an interactive website control is production frontend UI work, not rendered video."
+    },
+    {
+      "id": "mv-review-near",
+      "selected": [
+        "motion-design-review",
+        "accessibility-design-review"
+      ],
+      "reason": "The read-only audit covers motion interruption and reduced motion, plus keyboard focus behavior."
+    },
+    {
+      "id": "mv-strategy-near",
+      "selected": [
+        "marketing-and-growth"
+      ],
+      "reason": "Audience positioning, channel allocation, and measurement are marketing operating decisions without an asset-production task."
+    },
+    {
+      "id": "mv-react-near",
+      "selected": [
+        "debugging-and-error-recovery"
+      ],
+      "reason": "The bounded request is to reproduce, localize, and repair a React validation defect."
+    },
+    {
+      "id": "mv-route-near",
+      "selected": [
+        "creative-tool-scout"
+      ],
+      "reason": "It explicitly compares production routes and asks only for a toolchain choice."
+    },
+    {
+      "id": "mv-unavailable-near",
+      "selected": [
+        "creative-tool-scout"
+      ],
+      "reason": "With no renderer installed or chosen, the task is to assess workflow capabilities without adopting a tool."
+    },
+    {
+      "id": "mv-authored-remotion",
+      "selected": [
+        "motion-graphics-production",
+        "remotion-video-engineering"
+      ],
+      "reason": "It combines authored scene and key-pose craft with existing-Remotion deterministic timeline, assets, and output engineering."
+    }
+  ],
+  "schema_version": 1,
+  "evidence_boundary": "One independent metadata-only selection sample; no answer keys or new skill bodies supplied. Not a paired quality or rendering benchmark."
+}

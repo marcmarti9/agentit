@@ -156,6 +156,9 @@ profiles:
     - ux-heuristic-review
     - accessibility-design-review
     - motion-design-review
+    - motion-graphics-production
+    - remotion-video-engineering
+    - advertising-video-production
   mobile:
     description: 'Expo/React Native product UI: study shipped mobile winners, then implement native-feeling
       screens. Installation/discovery bundle only; workers still load the selected skill JIT.'
@@ -205,6 +208,7 @@ profiles:
     - product
     skills:
     - shipping-and-launch
+    - advertising-video-production
   agency:
     description: 'Agency operating profile: product and growth delivery plus incremental implementation
       and disciplined Git handoffs. Pair with the relevant coding profile for implementation.'
@@ -349,6 +353,9 @@ profiles:
     - ux-heuristic-review
     - accessibility-design-review
     - motion-design-review
+    - motion-graphics-production
+    - remotion-video-engineering
+    - advertising-video-production
   design-review:
     description: 'Read-only design review bench: visual/copy critique, task-flow heuristics, accessibility
       and motion diagnostics. Availability only; choose the needed lens and evidence JIT, not
@@ -362,5 +369,21 @@ profiles:
     - motion-design-review
     - impeccable
     - browser-testing-with-devtools
+    - reference-intelligence
+    - verification-before-completion
+  video:
+    description: Authored motion graphics, selected Remotion engineering and video-ad production.
+      Installation/discovery only; select the production owner, technical adapter and conditional
+      references JIT. No runtime or media provider is installed or authorized.
+    extends:
+    - core
+    skills:
+    - motion-graphics-production
+    - remotion-video-engineering
+    - advertising-video-production
+    - creative-tool-scout
+    - brand-identity-design
+    - typography-and-layout
+    - marketing-and-growth
     - reference-intelligence
     - verification-before-completion

@@ -129,3 +129,14 @@ Linux/macOS verification matrix.
 ## October 3, 2026 review
 
 The observed baseline catalog contained 79 skills and 14 profiles, despite the older count above. This audit produces 84 skills and 17 profiles, with the three global bodies unchanged. Six canonical source revisions were accepted; diagram-design remains pinned because its new verification instructions depend on repo-level scripts absent from the distributed package. The offline lock contains 41 packages, 599 managed files and 15 sources. See the [dated comparison and evidence](../reports/2026-10-03-skill-quality-audit.md). New owned adaptations use a separate [source manifest](../skills/ADAPTATION_SOURCES.json), not the canonical lock.
+
+## October 4, 2026 extensions
+
+The [design expansion](../reports/2026-10-04-design-skills-audit.md) reaches
+93 skills/18 profiles; the [motion/video extension](../reports/2026-10-04-motion-video-skills-audit.md)
+reaches 96 skills/19 profiles and 23 adaptation source records. These additions
+do not change the 41-package canonical lock or three-body global core. Official
+Remotion skills were inspected but not copied: no reusable scoped license was
+established, and a sibling plugin license must not be applied to that package.
+The owned adapter instead uses original guidance and matching current/local
+API contracts. Referenced renderers are not installed by curation or discovery.

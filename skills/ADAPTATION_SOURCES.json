@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Source-informed additions and branch references from the October 3\u20134, 2026 audits; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "scope": "Source-informed additions and branch references from the October 3–4, 2026 audits; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
   "sources": [
     {
       "repo": "expo/skills",
@@ -67,7 +67,7 @@
     {
       "repo": "coreyhaines31/marketingskills",
       "revision": "dda3841f0b294e01e93b1541486beefbfab0915e",
-      "inspected_on": "2026-10-03",
+      "inspected_on": "2026-10-04",
       "relationship": "source-informed-adaptation",
       "source_license": "MIT",
       "license_source_path": "LICENSE",
@@ -75,9 +75,18 @@
       "license_sha256": "b70d71e24e40fce5da8f4b6f9cd862096a048e433db7f3c8cac5e348e6d34591",
       "targets": [
         "skills/marketing-and-growth/references/quality-playbook.md",
-        "skills/reference-intelligence/references/research-quality.md"
+        "skills/reference-intelligence/references/research-quality.md",
+        "skills/advertising-video-production/SKILL.md",
+        "skills/advertising-video-production/references/creative-variants.md"
       ],
-      "adaptation_license": "Apache-2.0"
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/ad-creative/SKILL.md",
+        "skills/ad-creative/references/hook-system.md",
+        "skills/ad-creative/references/motion-video-ads.md",
+        "skills/ads/SKILL.md"
+      ]
     },
     {
       "repo": "anthropics/skills",
@@ -324,6 +333,110 @@
       ],
       "adaptation_license": "Apache-2.0",
       "source_paths_required": true
+    },
+    {
+      "repo": "Boriwatopal/agent-skill-remotion-motion-graphics",
+      "revision": "682f725e0ec98eaff2de512f53972cb37e28c447",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Boriwatopal--agent-skill-remotion-motion-graphics/LICENSE",
+      "license_sha256": "e4154ddb027c4db87c426071ef2fad498267440299fbe8eb0bccd7ccebaca7d3",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/remotion-motion-graphics/SKILL.md",
+        "skills/remotion-motion-graphics/references/scene-patterns.md",
+        "skills/remotion-motion-graphics/references/verification-and-gotchas.md"
+      ],
+      "targets": [
+        "skills/motion-graphics-production/SKILL.md",
+        "skills/motion-graphics-production/references/production-verification.md",
+        "skills/remotion-video-engineering/SKILL.md",
+        "skills/remotion-video-engineering/references/delivery-checks.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "soilmass/motion-design-agent",
+      "revision": "132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/soilmass--motion-design-agent/LICENSE",
+      "license_sha256": "fa597c0632ab0a4418f809bbcff98f35b337a33b6da6486fdb71f58d4ca732d7",
+      "source_paths_required": true,
+      "source_paths": [
+        "SKILL.md",
+        "skills/orchestrator/SKILL.md",
+        "skills/storyboarding/SKILL.md"
+      ],
+      "targets": [
+        "skills/motion-graphics-production/SKILL.md",
+        "skills/motion-graphics-production/references/production-verification.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "leosssvip-dot/remotion-ad-video-skill",
+      "revision": "e734c0299474132366e8270e9cffaf9a26f2c5ed",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/leosssvip-dot--remotion-ad-video-skill/LICENSE",
+      "license_sha256": "bb4ea3bf16d53b7bf3bc84f10625532c4ff672ae42099f5a6b070c70c3254d59",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/remotion-ad-video/SKILL.md"
+      ],
+      "targets": [
+        "skills/advertising-video-production/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "xsourabhsharma/remotion-marketing-video-skill",
+      "revision": "a7f01a8ffdab4c02f54a8a1649f1f40d32efd529",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/xsourabhsharma--remotion-marketing-video-skill/LICENSE",
+      "license_sha256": "6ea9bc6676b04c0926c9fb0a5add59790ef60fbb400ae15cd97b0f2b543e42d2",
+      "source_paths_required": true,
+      "source_paths": [
+        "SKILL.md",
+        "references/production_workflow.md",
+        "references/audio.md",
+        "references/scenes.md",
+        "references/preview_approval_loop.md"
+      ],
+      "targets": [
+        "skills/advertising-video-production/SKILL.md",
+        "skills/advertising-video-production/references/audio-and-captions.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "Engine-Room-Games/after-effects-mcp",
+      "revision": "97ec53c6e7749bf878914742b8c2c8972c133283",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Engine-Room-Games--after-effects-mcp/LICENSE",
+      "license_sha256": "d145a5576e59a0f8d91ed2bdbf556846f6fdbc423e3640526062bfab9b78a4c2",
+      "source_paths_required": true,
+      "source_paths": [
+        "plugin/skills/after-effects/SKILL.md",
+        "plugin/skills/after-effects/references/assembly.md"
+      ],
+      "targets": [
+        "skills/creative-tool-scout/references/video-production-routes.md"
+      ],
+      "adaptation_license": "Apache-2.0"
     }
   ]
 }

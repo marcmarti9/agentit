@@ -116,6 +116,9 @@ If visual direction is material, inspect the `design` pack too. That does not re
 
 **Skills in this pack:**
 
+- `motion-graphics-production` — authored rendered-video craft and production; not interactive web motion or a motion audit.
+- `remotion-video-engineering` — selected Remotion project technical adapter; no automatic runtime setup.
+- `advertising-video-production` — timed video-ad creative deliverables with source-backed proof and variants; not generic marketing strategy.
 - `typography-and-layout` — choose and prove type roles, hierarchy, measure, spacing and fallback with real content; not a universal font ban or mandatory pairing.
 - `brand-identity-design` — build a context-tested cross-media identity: marks, palette, type, imagery and application rules; not one-page CSS or brand strategy research.
 - `design-system-engineering` — inventory and evolve actual tokens/components with consumers, drift, migration and ownership; not merely recording DESIGN.md.
@@ -311,11 +314,33 @@ Executive skills decide at the business-function level. Pair them with engineeri
 
 ---
 
+## video
+
+**Use for:** rendered motion graphics, logo/type/product films, video advertisements, footage assembly and selected rendering pipelines. Interactive UI motion remains in design; a strategy-only campaign remains in marketing.
+
+**Skills in this pack:**
+
+- `motion-graphics-production` — authored sequence from brief, key poses and scene craft through preview and final encode evidence.
+- `advertising-video-production` — ad-specific hook, proof, storyboard, caption/audio, controlled variants and creative-test handoff; select as the ad production owner rather than stacking generic production by default.
+- `remotion-video-engineering` — actual selected Remotion version, deterministic scene clocks, assets/props and render engineering; not a general video trigger.
+- `creative-tool-scout` — unresolved route selection; its video branch compares HTML, native editors, offline 3D, interactive vectors and generated/hybrid media.
+- `brand-identity-design` — identity development when required, not routine use of an approved logo.
+- `typography-and-layout` — sustained type hierarchy/layout work when it needs its own design decision.
+- `marketing-and-growth` — positioning, channel and learning decisions when genuinely in scope.
+- `reference-intelligence` — current source/rights/provenance investigation when material.
+- `verification-before-completion` — evidence for actual media/project delivery.
+
+Profiles and packs deliver metadata only. References are conditional reads; selecting a route does not install tools, grant accounts, authorize billed generation or prove an encode.
+
+---
+
 ## marketing
 
 **Use for:** ICP/customer research, positioning, copy, campaigns, content strategy, email, CRO, launch planning and marketing operations.
 
 **Skills in this pack:**
+
+- `advertising-video-production` — actual timed video-ad production, proof and creative variants; no ads-account operations.
 
 - `data-analysis-quality` — validate campaign/funnel/cohort claims before drawing conclusions.
 

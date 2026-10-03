@@ -11,11 +11,12 @@ from router.skill_loader import load_reference_bodies, load_skill_bodies, valida
 from router.skills_cli import pack_candidates
 
 ROOT = Path(__file__).resolve().parents[1]
+MOTION_NEW = {"motion-graphics-production", "remotion-video-engineering", "advertising-video-production"}
 DESIGN_NEW = {"typography-and-layout", "brand-identity-design", "design-system-engineering",
               "data-visualization-design", "editorial-design", "design-critique",
               "ux-heuristic-review", "accessibility-design-review", "motion-design-review"}
 NEW = {"property-based-testing", "data-analysis-quality", "security-analysis",
-       "mobile-runtime-engineering", "artifact-production"} | DESIGN_NEW
+       "mobile-runtime-engineering", "artifact-production"} | DESIGN_NEW | MOTION_NEW
 
 
 class SkillCurationTests(unittest.TestCase):
@@ -24,14 +25,14 @@ class SkillCurationTests(unittest.TestCase):
         self.assertEqual(result["status"], "verified")
 
     def test_new_skills_discover_without_delivering_bodies(self):
-        candidates = pack_candidates(["engineering", "backend", "data", "mobile", "writing", "design", "design-review"])
+        candidates = pack_candidates(["engineering", "backend", "data", "mobile", "writing", "design", "design-review", "video"])
         self.assertTrue(NEW <= {c["id"] for c in candidates})
         self.assertTrue(all(set(c) == {"pack", "id", "description"} for c in candidates))
 
     def test_single_selected_body_is_exact_and_branch_references_remain_explicit(self):
         with tempfile.TemporaryDirectory() as temporary:
             project = Path(temporary)
-            for skill in sorted(NEW):
+            for skill in sorted(NEW | {"creative-tool-scout"}):
                 bodies = load_skill_bodies([skill], project_root=project)
                 validate_bodies([skill], bodies)
                 self.assertEqual([skill], [b["id"] for b in bodies])
@@ -85,7 +86,7 @@ class SkillCurationTests(unittest.TestCase):
 
     def test_coverage_fixtures_have_negative_boundaries_and_valid_explicit_choices(self):
         data = {"cases": []}
-        for filename in ("skill-curation-cases.json", "design-skill-cases.json"):
+        for filename in ("skill-curation-cases.json", "design-skill-cases.json", "motion-video-skill-cases.json"):
             data["cases"].extend(json.loads((ROOT / "evals" / filename).read_text())["cases"])
         ids = [c["id"] for c in data["cases"]]
         self.assertEqual(len(ids), len(set(ids)))

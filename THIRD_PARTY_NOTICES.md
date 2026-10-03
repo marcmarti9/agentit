@@ -349,3 +349,49 @@ Source: [ibelick/ui-skills at `ebf5f26cd275b1412be8a2c8784c4f8da628e7c2`](https:
 Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/ibelick--ui-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
 
 Changed scope: `skills/accessibility-design-review/SKILL.md`, `skills/accessibility-design-review/references/cognitive-comprehension.md`, `skills/accessibility-design-review/references/standards-boundary.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+## Motion/video production adaptations — October 4, 2026
+
+### Boriwatopal/agent-skill-remotion-motion-graphics — motion/video expansion
+
+Source: [Boriwatopal/agent-skill-remotion-motion-graphics at `682f725e0ec98eaff2de512f53972cb37e28c447`](https://github.com/Boriwatopal/agent-skill-remotion-motion-graphics/tree/682f725e0ec98eaff2de512f53972cb37e28c447). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Boriwatopal--agent-skill-remotion-motion-graphics/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/motion-graphics-production/SKILL.md`, `skills/motion-graphics-production/references/production-verification.md`, `skills/remotion-video-engineering/SKILL.md`, `skills/remotion-video-engineering/references/delivery-checks.md`.
+
+### soilmass/motion-design-agent — motion/video expansion
+
+Source: [soilmass/motion-design-agent at `132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d`](https://github.com/soilmass/motion-design-agent/tree/132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/soilmass--motion-design-agent/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/motion-graphics-production/SKILL.md`, `skills/motion-graphics-production/references/production-verification.md`.
+
+### leosssvip-dot/remotion-ad-video-skill — motion/video expansion
+
+Source: [leosssvip-dot/remotion-ad-video-skill at `e734c0299474132366e8270e9cffaf9a26f2c5ed`](https://github.com/leosssvip-dot/remotion-ad-video-skill/tree/e734c0299474132366e8270e9cffaf9a26f2c5ed). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/leosssvip-dot--remotion-ad-video-skill/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/advertising-video-production/SKILL.md`.
+
+### xsourabhsharma/remotion-marketing-video-skill — motion/video expansion
+
+Source: [xsourabhsharma/remotion-marketing-video-skill at `a7f01a8ffdab4c02f54a8a1649f1f40d32efd529`](https://github.com/xsourabhsharma/remotion-marketing-video-skill/tree/a7f01a8ffdab4c02f54a8a1649f1f40d32efd529). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/xsourabhsharma--remotion-marketing-video-skill/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/advertising-video-production/SKILL.md`, `skills/advertising-video-production/references/audio-and-captions.md`.
+
+### Engine-Room-Games/after-effects-mcp — motion/video expansion
+
+Source: [Engine-Room-Games/after-effects-mcp at `97ec53c6e7749bf878914742b8c2c8972c133283`](https://github.com/Engine-Room-Games/after-effects-mcp/tree/97ec53c6e7749bf878914742b8c2c8972c133283). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Engine-Room-Games--after-effects-mcp/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/creative-tool-scout/references/video-production-routes.md`.
+
+Corey Haines' already retained MIT source/notice also informs `advertising-video-production` and its `creative-variants.md` reference at the same fixed revision. Source paths/targets are extended in the manifest. No platform statistics, mandatory partner skills or account-operation playbooks are imported.
+
+The independently authored Remotion adapter includes no official Remotion skill prose/code. `remotion-dev/skills` had no license file in the inspected tree; the monorepo root has a custom runtime license, and the sibling agent-plugin MIT license is not attributed to the skills package. Reference-only Hyperframes, Rive and Lottie are not vendored or relicensed.

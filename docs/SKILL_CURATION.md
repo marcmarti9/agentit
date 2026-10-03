@@ -164,3 +164,37 @@ Agentit should therefore cherry-pick **capabilities**, not duplicate the command
 - writing agent documents with strong context pointers, progressive disclosure, and completion criteria.
 
 The upstream MIT provenance is recorded in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+
+## Repeatable audit and evidence boundaries
+
+Use the [October 3 audit](../reports/2026-10-03-skill-quality-audit.md) as a worked example: freeze the baseline, inspect every profile/body, identify current owners, and record an accepted/retained/rejected/deferred decision by category. Social searches are discovery leads; inspect the primary package and its scoped license at an immutable revision. Do not infer a repository-wide license from another package. Preserve canonical packages verbatim or defer their update when required companion resources are missing.
+
+For new adaptations, update `skills/ADAPTATION_SOURCES.json`, exact license/NOTICE copies under `vendor/adaptation-licenses`, and `THIRD_PARTY_NOTICES.md`. Keep share-alike files explicitly licensed and document modifications. `python3 scripts/check_skill_curation.py` checks profile/pack coverage, fixed source revisions, reviewed license identifiers, license hashes, target paths and core invariants offline. It is maintenance validation, not a semantic router.
+
+The [selection cases](../evals/skill-curation-cases.json) separate positive triggers, near misses and observable quality criteria. A blind probe must receive the complete intended candidate metadata, without answer keys. Preserve failed/invalid exploratory runs and distinguish fixture defects from model misses. Do not lower expected criteria to manufacture a pass. Record observed selections separately from structural tests; response plans are not application/scanner/device/rendering execution.
+
+For claims of better results or lower cost, run paired baseline/treatment tasks with comparable model, tools, context, source state and budgets, include held-out cases and report variance and human review. One model’s selection/response sample cannot establish universal superiority. The selected `skill-authoring-and-evals` reference `references/paired-evaluations.md` provides the material-change procedure. Branch references remain explicit JIT reads and never load merely from profile membership.
+
+## Design craft and review ownership
+
+The [design expansion](../reports/2026-10-04-design-skills-audit.md) separates identity, typography, implemented systems, chart encoding and editorial reading from visual/copy critique, task-flow heuristics, access barriers and motion diagnosis. `design-review` is an opt-in availability profile, not a review committee. Choose `design-critique` or Impeccable critique as the primary generic review method; specialized lenses have separate evidence scopes and are not automatic companions. Keep existing canonical taste/Impeccable/Emil packages verbatim.
+
+The [design cases](../evals/design-skill-cases.json) include creation/review near misses, approved-brand preservation, cognitive comprehension and absent render/printer evidence. Exact selected bodies and optional cognitive, coverage, debt and broad-report references are mechanically verified. Source-only critic exercises do not establish rendered usability, conformance or better commercial outcomes.
+
+## Motion/video and advertising ownership
+
+The [motion/video audit](../reports/2026-10-04-motion-video-skills-audit.md) adds
+a renderer-neutral authored-video owner, a selected-Remotion technical adapter
+and an ad-specific production owner. Choose ad production for an ad deliverable;
+do not automatically stack it with general motion production or marketing
+strategy. Existing UI/scroll creation, web narrative and motion-review scopes
+remain distinct. `video` is optional availability, not three loaded bodies.
+
+Generated/creator media, caption/audio finishing and alternative pipeline
+selection remain branch references. Runtime availability, asset rights, paid
+authority, local rendering and publication are separate decisions. The
+Remotion adapter is original guidance with current API links, not a copy of the
+official skills whose reusable license was not established. Preserve actual
+clock semantics: a sequence-local frame must not have its offset subtracted
+a second time. Final-file decoding and reported review coverage are not proof
+of every frame, commercial lift or universal production quality.

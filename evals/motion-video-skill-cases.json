@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "evidence_boundary": "Authored criteria, not execution or quality proof. Blind metadata-only selection observations are recorded separately.",
+  "cases": [
+    {
+      "id": "mv-logo-film",
+      "prompt": "Create an eight-second animated logo treatment from our approved SVG for a rendered brand film. Plan key poses, settle, ending and actual export review; renderer is already selected outside this task.",
+      "required": [
+        "motion-graphics-production"
+      ],
+      "forbidden": [
+        "advertising-video-production",
+        "remotion-video-engineering",
+        "motion-design-review"
+      ],
+      "quality_assertions": [
+        "Respect supplied mark geometry",
+        "Scene-local timing and final encode evidence"
+      ]
+    },
+    {
+      "id": "mv-type-film",
+      "prompt": "Create a kinetic typography explainer from supplied approved copy and fonts, with a deliberate portrait and landscape composition. This is a rendered non-ad video; technical implementation is handled separately.",
+      "required": [
+        "motion-graphics-production"
+      ],
+      "forbidden": [
+        "advertising-video-production",
+        "remotion-video-engineering"
+      ],
+      "quality_assertions": [
+        "Reading time and distinct ratio layout",
+        "No compulsory grain or shakes"
+      ]
+    },
+    {
+      "id": "mv-remotion-repair",
+      "prompt": "Fix the frame-offset bug in this existing Remotion composition. Its nested timed sequence receives a local frame; at the second scene it subtracts the master offset again. Preserve the approved creative.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "motion-graphics-production",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Never double-subtract local frame offset",
+        "Inspect installed contract then boundary frames"
+      ]
+    },
+    {
+      "id": "mv-render-variant",
+      "prompt": "The approved storyboard is implemented in our installed Remotion project. Add validated editable props and a landscape render layout, preserving scene timing; verify font readiness and decoded final output.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Installed-version APIs",
+        "Final file and each ratio checked"
+      ]
+    },
+    {
+      "id": "mv-product-ad",
+      "prompt": "Produce a short video ad from our approved product demo, truthful offer and existing renderer. Deliver hook/storyboard, evidence-backed copy, safe captions and meaningful creative variants; no marketing strategy work.",
+      "required": [
+        "advertising-video-production"
+      ],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering"
+      ],
+      "quality_assertions": [
+        "Faithful speech captions distinct from headline",
+        "Product proof and final CTA"
+      ]
+    },
+    {
+      "id": "mv-hybrid-ad",
+      "prompt": "Make a product ad mixing supplied screen footage with a synthetic atmospheric shot. Plan exact factual overlays, one-shot continuity review and a bounded approved generation budget; no provider calls in this planning stage.",
+      "required": [
+        "advertising-video-production"
+      ],
+      "forbidden": [
+        "remotion-video-engineering"
+      ],
+      "quality_assertions": [
+        "Generated footage is not product proof",
+        "No paid calls from skill selection"
+      ]
+    },
+    {
+      "id": "mv-captioned-ad",
+      "prompt": "Edit this ad with the supplied approved voiceover: caption timing, product labels, soundtrack ducking and portrait/square output. Runtime editing is covered separately.",
+      "required": [
+        "advertising-video-production"
+      ],
+      "forbidden": [
+        "remotion-video-engineering"
+      ],
+      "quality_assertions": [
+        "Explicit caption time units and actual FPS",
+        "Final audio/export sync evidence"
+      ]
+    },
+    {
+      "id": "mv-cta-ui-near",
+      "prompt": "Add hover and press feedback to the website CTA using our existing CSS/Motion stack. It is an interactive button, not a video.",
+      "required": [],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Existing UI owner",
+        "No film pipeline"
+      ]
+    },
+    {
+      "id": "mv-review-near",
+      "prompt": "Read-only audit of the checkout animations: interruption, keyboard focus and reduced motion. Do not create a video or change source.",
+      "required": [
+        "motion-design-review"
+      ],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Evidence labels",
+        "No remediation or video production"
+      ]
+    },
+    {
+      "id": "mv-strategy-near",
+      "prompt": "Choose audience positioning, channel allocation and measurement for a paid launch. We are not making creative assets yet.",
+      "required": [
+        "marketing-and-growth"
+      ],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Business evidence and measurement",
+        "No forced storyboard"
+      ]
+    },
+    {
+      "id": "mv-react-near",
+      "prompt": "Repair the React form validation bug. There is no video renderer or motion deliverable in this app.",
+      "required": [],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "React does not imply Remotion",
+        "Localized code work"
+      ]
+    },
+    {
+      "id": "mv-route-near",
+      "prompt": "Compare ways to build a rendered product promo: a code composition, HTML timeline, an existing AE project or supplied footage. Only choose the production route; do not author or install anything.",
+      "required": [
+        "creative-tool-scout"
+      ],
+      "forbidden": [
+        "motion-graphics-production",
+        "remotion-video-engineering",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Capabilities and actual stack",
+        "Runtime licensing and editing availability"
+      ]
+    },
+    {
+      "id": "mv-unavailable-near",
+      "prompt": "There is no installed Remotion package and no chosen renderer. Assess what capabilities we need for a video workflow; do not introduce Remotion APIs or install tools.",
+      "required": [
+        "creative-tool-scout"
+      ],
+      "forbidden": [
+        "remotion-video-engineering",
+        "advertising-video-production",
+        "motion-graphics-production"
+      ],
+      "quality_assertions": [
+        "Do not pretend unavailable runtime exists",
+        "Compare appropriate alternatives"
+      ]
+    },
+    {
+      "id": "mv-authored-remotion",
+      "prompt": "Create our approved non-ad product explainer in the existing Remotion project, including scene craft, key poses, deterministic timeline, editable assets and final output review.",
+      "required": [
+        "motion-graphics-production",
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Production and technical scopes both justified",
+        "Exact local clock and final decode"
+      ]
+    },
+    {
+      "id": "mv-remotion-create-render",
+      "prompt": "Create a new Remotion project for this already-approved storyboard, register the compositions, make the content editable, preview it in Studio and render a verified final file. Remotion is explicitly required.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Current creation path and installed-version APIs",
+        "Preview plus decoded final output"
+      ]
+    },
+    {
+      "id": "mv-remotion-map-captions",
+      "prompt": "In our existing Remotion project, implement the approved route animation and supplied timed captions. Preserve the current map provider, do not expose API keys, and verify caption boundaries in the rendered output.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Existing provider and secret boundary preserved",
+        "Map and caption timing checked in final render"
+      ]
+    },
+    {
+      "id": "mv-remotion-platform-upgrade",
+      "prompt": "Upgrade the Remotion layer in our existing video SaaS, including compatible Remotion packages and the media metadata path. Preserve the application architecture and verify the installed APIs, Studio preview and a bounded production-style render.",
+      "required": [
+        "remotion-video-engineering"
+      ],
+      "forbidden": [
+        "advertising-video-production",
+        "motion-graphics-production"
+      ],
+      "quality_assertions": [
+        "Version-compatible package family and current migration guidance",
+        "Product architecture stays outside the video adapter"
+      ]
+    },
+    {
+      "id": "mv-mapbox-web-near",
+      "prompt": "Fix the markers on this ordinary interactive Mapbox web map. There is no video composition and Remotion is not installed.",
+      "required": [],
+      "forbidden": [
+        "remotion-video-engineering",
+        "motion-graphics-production",
+        "advertising-video-production"
+      ],
+      "quality_assertions": [
+        "Geospatial UI does not imply Remotion",
+        "No video workflow introduced"
+      ]
+    }
+  ]
+}

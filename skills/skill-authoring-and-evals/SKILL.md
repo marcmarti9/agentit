@@ -96,6 +96,8 @@ Do not optimize only for trigger recall. A skill that activates everywhere is br
 
 For subjective skills, human comparative review can be more useful than invented numeric metrics. For mechanically verifiable skills, prefer reproducible assertions.
 
+For a material behavior or activation change, read [paired-evaluations.md](references/paired-evaluations.md) before defining the evaluation. Compare selection, delivery, behavior and cost separately; a fixture manifest alone is not a model benchmark.
+
 ## Description tuning
 
 If selection has false negatives, sharpen the missing branch in the description.

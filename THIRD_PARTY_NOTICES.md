@@ -1,6 +1,6 @@
 # Third-party notices
 
-Agentit includes, vendors, adapts, or is materially informed by the projects below. Agentit's original code and material remain Apache-2.0. Canonical skill snapshots, upstream paths and per-file integrity are recorded in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`. Exact upstream LICENSE/NOTICE files are retained under `vendor/licenses`; they govern the corresponding third-party material.
+Agentit includes, vendors, adapts, or is materially informed by the projects below. Agentit's original code and material remain Apache-2.0 except explicitly marked share-alike adaptations. Canonical skill snapshots, upstream paths and per-file integrity are recorded in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`. Exact upstream LICENSE/NOTICE files are retained under `vendor/licenses`; they govern the corresponding third-party material. Source-informed additions from the October 3 audit are separately recorded in `skills/ADAPTATION_SOURCES.json` and `vendor/adaptation-licenses`.
 
 ## Canonical vendored skill sources
 
@@ -201,3 +201,197 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## October 3, 2026 source-informed adaptations
+
+These are modified, provider-neutral Agentit procedures, not verbatim packages or claims of upstream runtime compatibility. The immutable revisions, target files and exact retained license/NOTICE hashes are recorded in [`skills/ADAPTATION_SOURCES.json`](skills/ADAPTATION_SOURCES.json). Canonical refresh records remain in their separate upstream lock.
+
+### expo/skills
+
+Source: [expo/skills at `13ad8e05874195633b5c185f6947bb6400e228fc`](https://github.com/expo/skills/tree/13ad8e05874195633b5c185f6947bb6400e228fc). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/expo--skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/mobile-runtime-engineering/SKILL.md`, `skills/mobile-runtime-engineering/references/state-and-navigation.md`.
+
+### callstackincubator/agent-skills
+
+Source: [callstackincubator/agent-skills at `61e6e7dfdf3a8ee862254c200d751fcb1fb863dc`](https://github.com/callstackincubator/agent-skills/tree/61e6e7dfdf3a8ee862254c200d751fcb1fb863dc). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/callstackincubator--agent-skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/mobile-runtime-engineering/SKILL.md`, `skills/mobile-runtime-engineering/references/performance-evidence.md`.
+
+### openai/skills
+
+Source: [openai/skills at `49f948faa9258a0c61caceaf225e179651397431`](https://github.com/openai/skills/tree/49f948faa9258a0c61caceaf225e179651397431). Inspected October 3, 2026.
+
+Upstream scope/license: `skills/.curated/pdf/LICENSE.txt` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/openai--skills/LICENSE.txt). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/artifact-production/SKILL.md`, `skills/artifact-production/references/format-verification.md`.
+
+### SenteLabsAI/OpenExecutive
+
+Source: [SenteLabsAI/OpenExecutive at `bba990f20dab7559967010e65b65630f1a35c684`](https://github.com/SenteLabsAI/OpenExecutive/tree/bba990f20dab7559967010e65b65630f1a35c684). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it. [Unaltered upstream NOTICE](vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/NOTICE) is distributed alongside the license.
+
+Changed scope: `skills/executive-orchestration/references/quality-playbook.md`, `skills/reference-intelligence/references/research-quality.md`.
+
+### coreyhaines31/marketingskills
+
+Source: [coreyhaines31/marketingskills at `dda3841f0b294e01e93b1541486beefbfab0915e`](https://github.com/coreyhaines31/marketingskills/tree/dda3841f0b294e01e93b1541486beefbfab0915e). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/coreyhaines31--marketingskills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/marketing-and-growth/references/quality-playbook.md`, `skills/reference-intelligence/references/research-quality.md`.
+
+### anthropics/skills
+
+Source: [anthropics/skills at `8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`](https://github.com/anthropics/skills/tree/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4). Inspected October 3, 2026.
+
+Upstream scope/license: `skills/skill-creator/LICENSE.txt` — Apache-2.0; [unaltered license text](vendor/adaptation-licenses/anthropics--skills/LICENSE.txt). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/skill-authoring-and-evals/references/paired-evaluations.md`.
+
+### trailofbits/skills
+
+Source: [trailofbits/skills at `82fe8226252622fa807643bdca1710901198553a`](https://github.com/trailofbits/skills/tree/82fe8226252622fa807643bdca1710901198553a). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — CC-BY-SA-4.0; [unaltered license text](vendor/adaptation-licenses/trailofbits--skills/LICENSE). Attribution: Trail of Bits. The property-testing and security-analysis bodies and their references are substantial modified adaptations licensed **CC-BY-SA-4.0**, including the share-alike terms; these files are exceptions to Agentit’s Apache-2.0 license.
+
+Changed scope: `skills/property-based-testing/SKILL.md`, `skills/property-based-testing/references/design-and-review.md`, `skills/security-analysis/SKILL.md`, `skills/security-analysis/references/finding-triage.md`.
+
+### trailofbits/testing-handbook
+
+Source: [trailofbits/testing-handbook at `190294f0ed563baddf4941cd2388be5bd4d5c5ba`](https://github.com/trailofbits/testing-handbook/tree/190294f0ed563baddf4941cd2388be5bd4d5c5ba). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — CC-BY-4.0; [unaltered license text](vendor/adaptation-licenses/trailofbits--testing-handbook/LICENSE). Attribution: Trail of Bits. Security-analysis procedures adapt configuration/coverage and finding-interpretation guidance; the resulting files are CC-BY-SA-4.0.
+
+Changed scope: `skills/security-analysis/SKILL.md`, `skills/security-analysis/references/finding-triage.md`.
+
+### ajrcre/data-analysis-skills
+
+Source: [ajrcre/data-analysis-skills at `cbc906e4912a980423aecd1e318061eb98f3e0b2`](https://github.com/ajrcre/data-analysis-skills/tree/cbc906e4912a980423aecd1e318061eb98f3e0b2). Inspected October 3, 2026.
+
+Upstream scope/license: `LICENSE` — MIT; [unaltered license text](vendor/adaptation-licenses/ajrcre--data-analysis-skills/LICENSE). The modified Agentit target material is Apache-2.0; retain the upstream copyright/permission text distributed with it.
+
+Changed scope: `skills/data-analysis-quality/SKILL.md`, `skills/data-analysis-quality/references/claim-checks.md`.
+
+### rampstackco/claude-skills — design expansion
+
+Source: [rampstackco/claude-skills at `3d4510a94a76ead80122c691b5c480f92f3fbe40`](https://github.com/rampstackco/claude-skills/tree/3d4510a94a76ead80122c691b5c480f92f3fbe40). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/rampstackco--claude-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/brand-identity-design/SKILL.md`, `skills/design-system-engineering/SKILL.md`, `skills/editorial-design/SKILL.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### peterbamuhigire/design-system-skills — design expansion
+
+Source: [peterbamuhigire/design-system-skills at `c9b334d770c449db7401730db29c9b70953e62f1`](https://github.com/peterbamuhigire/design-system-skills/tree/c9b334d770c449db7401730db29c9b70953e62f1). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/peterbamuhigire--design-system-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/typography-and-layout/SKILL.md`, `skills/data-visualization-design/SKILL.md`, `skills/editorial-design/SKILL.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### OneWave-AI/claude-skills — design expansion
+
+Source: [OneWave-AI/claude-skills at `fc5b7851a6c7ba367e05797df46ad3679df355dd`](https://github.com/OneWave-AI/claude-skills/tree/fc5b7851a6c7ba367e05797df46ad3679df355dd). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/OneWave-AI--claude-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/design-critique/SKILL.md`, `skills/design-critique/references/report-contract.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### vmarafetti/crit — design expansion
+
+Source: [vmarafetti/crit at `87a6c56a8b718be061723f44300eee4a859adcb9`](https://github.com/vmarafetti/crit/tree/87a6c56a8b718be061723f44300eee4a859adcb9). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/vmarafetti--crit/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/design-critique/SKILL.md`, `skills/design-critique/references/report-contract.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### Owl-Listener/designer-skills — design expansion
+
+Source: [Owl-Listener/designer-skills at `9a6930cf84a822eb458624bd11c61aac5bbdf224`](https://github.com/Owl-Listener/designer-skills/tree/9a6930cf84a822eb458624bd11c61aac5bbdf224). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Owl-Listener--designer-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/ux-heuristic-review/SKILL.md`, `skills/ux-heuristic-review/references/design-debt.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### kylezantos/design-motion-principles — design expansion
+
+Source: [kylezantos/design-motion-principles at `4a9ca879f24a361f4dca4174fe2da0f67b5ddee3`](https://github.com/kylezantos/design-motion-principles/tree/4a9ca879f24a361f4dca4174fe2da0f67b5ddee3). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/kylezantos--design-motion-principles/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/motion-design-review/SKILL.md`, `skills/motion-design-review/references/coverage.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### smukh/a11y-agent-skills — design expansion
+
+Source: [smukh/a11y-agent-skills at `8bc24f049734c607e23bd3955700fd4858649614`](https://github.com/smukh/a11y-agent-skills/tree/8bc24f049734c607e23bd3955700fd4858649614). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/smukh--a11y-agent-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/SKILL.md`, `skills/accessibility-design-review/references/cognitive-comprehension.md`, `skills/accessibility-design-review/references/standards-boundary.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### Owl-Listener/inclusive-design-skills — design expansion
+
+Source: [Owl-Listener/inclusive-design-skills at `6e0740f04b2130af60bc57abe3401b91e460e70d`](https://github.com/Owl-Listener/inclusive-design-skills/tree/6e0740f04b2130af60bc57abe3401b91e460e70d). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Owl-Listener--inclusive-design-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/references/cognitive-comprehension.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+### ibelick/ui-skills — design expansion
+
+Source: [ibelick/ui-skills at `ebf5f26cd275b1412be8a2c8784c4f8da628e7c2`](https://github.com/ibelick/ui-skills/tree/ebf5f26cd275b1412be8a2c8784c4f8da628e7c2). Inspected October 3–4, 2026.
+
+Upstream MIT license and copyright/permission notice: [unaltered text](vendor/adaptation-licenses/ibelick--ui-skills/LICENSE). Modified Agentit adaptations are Apache-2.0; retain the supplied upstream notice. No upstream executable runtime, installer or whole pack is included.
+
+Changed scope: `skills/accessibility-design-review/SKILL.md`, `skills/accessibility-design-review/references/cognitive-comprehension.md`, `skills/accessibility-design-review/references/standards-boundary.md`. Source paths and modifications are recorded in `skills/ADAPTATION_SOURCES.json` and the design audit report.
+
+## Motion/video production adaptations — October 4, 2026
+
+### Boriwatopal/agent-skill-remotion-motion-graphics — motion/video expansion
+
+Source: [Boriwatopal/agent-skill-remotion-motion-graphics at `682f725e0ec98eaff2de512f53972cb37e28c447`](https://github.com/Boriwatopal/agent-skill-remotion-motion-graphics/tree/682f725e0ec98eaff2de512f53972cb37e28c447). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Boriwatopal--agent-skill-remotion-motion-graphics/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/motion-graphics-production/SKILL.md`, `skills/motion-graphics-production/references/production-verification.md`, `skills/remotion-video-engineering/SKILL.md`, `skills/remotion-video-engineering/references/delivery-checks.md`.
+
+### soilmass/motion-design-agent — motion/video expansion
+
+Source: [soilmass/motion-design-agent at `132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d`](https://github.com/soilmass/motion-design-agent/tree/132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/soilmass--motion-design-agent/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/motion-graphics-production/SKILL.md`, `skills/motion-graphics-production/references/production-verification.md`.
+
+### leosssvip-dot/remotion-ad-video-skill — motion/video expansion
+
+Source: [leosssvip-dot/remotion-ad-video-skill at `e734c0299474132366e8270e9cffaf9a26f2c5ed`](https://github.com/leosssvip-dot/remotion-ad-video-skill/tree/e734c0299474132366e8270e9cffaf9a26f2c5ed). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/leosssvip-dot--remotion-ad-video-skill/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/advertising-video-production/SKILL.md`.
+
+### xsourabhsharma/remotion-marketing-video-skill — motion/video expansion
+
+Source: [xsourabhsharma/remotion-marketing-video-skill at `a7f01a8ffdab4c02f54a8a1649f1f40d32efd529`](https://github.com/xsourabhsharma/remotion-marketing-video-skill/tree/a7f01a8ffdab4c02f54a8a1649f1f40d32efd529). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/xsourabhsharma--remotion-marketing-video-skill/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/advertising-video-production/SKILL.md`, `skills/advertising-video-production/references/audio-and-captions.md`.
+
+### Engine-Room-Games/after-effects-mcp — motion/video expansion
+
+Source: [Engine-Room-Games/after-effects-mcp at `97ec53c6e7749bf878914742b8c2c8972c133283`](https://github.com/Engine-Room-Games/after-effects-mcp/tree/97ec53c6e7749bf878914742b8c2c8972c133283). Inspected October 4, 2026.
+
+Upstream MIT copyright/permission notice: [unaltered text](vendor/adaptation-licenses/Engine-Room-Games--after-effects-mcp/LICENSE). Agentit-authored source-informed adaptations are Apache-2.0; retain the upstream notice. Changed procedures and inspected paths are recorded in `skills/ADAPTATION_SOURCES.json` and the motion/video audit. No upstream scripts, template assets, tool protocol or bundled official Remotion rules are included.
+
+Changed scope: `skills/creative-tool-scout/references/video-production-routes.md`.
+
+Corey Haines' already retained MIT source/notice also informs `advertising-video-production` and its `creative-variants.md` reference at the same fixed revision. Source paths/targets are extended in the manifest. No platform statistics, mandatory partner skills or account-operation playbooks are imported.
+
+The independently authored Remotion adapter includes no official Remotion skill prose/code. `remotion-dev/skills` had no license file in the inspected tree; the monorepo root has a custom runtime license, and the sibling agent-plugin MIT license is not attributed to the skills package. Reference-only Hyperframes, Rive and Lottie are not vendored or relicensed.

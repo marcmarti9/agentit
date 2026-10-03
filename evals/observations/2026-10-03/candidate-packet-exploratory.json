@@ -1,0 +1,146 @@
+{
+  "candidates": {
+    "property-based-testing": "generated-domain contracts for data transforms/codecs, not statistical modelling.",
+    "security-analysis": "investigate concrete UI/API attack paths or scanner findings; not styling-only changes.",
+    "app-security-gate": "test changed application trust boundaries before release.",
+    "test-driven-development": "prove query/migration/data behavior when appropriate.",
+    "verification-before-completion": "verify factual/action completion claims rather than accepting executive-sounding prose.",
+    "verification-gauntlet": "only for multiple material evidence surfaces; broader verification discipline when multiple evidence surfaces matter.",
+    "security-and-hardening": "access controls, PII, row-level security and data trust boundaries.",
+    "source-driven-development": "version-specific technical contracts; current platform/API/policy behavior when it affects execution.",
+    "react-composition-patterns": "repair demonstrated reusable-component API pressure (boolean-prop proliferation, compound components, shared provider contracts) without abstracting ordinary one-off UI.",
+    "mobile-runtime-engineering": "Expo/React Native hydration, navigation, offline mutation states and measured device performance; not visual inspiration or Flutter implementation.",
+    "data-analysis-quality": "validate campaign/funnel/cohort claims before drawing conclusions.",
+    "artifact-production": "usable board/report/deck files when a reusable artifact is requested.",
+    "supabase-postgres-best-practices": "PostgreSQL/Supabase-specific guidance **only when that stack is actually present**.",
+    "spec-kit-workflow": "only when Spec Kit is present or explicitly requested; opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.",
+    "spec-driven-development": "explicit requirements, scope and acceptance criteria.",
+    "reference-intelligence": "source-role/provenance judgment; current competitor/market/launch evidence and source provenance.",
+    "marketing-and-growth": "main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.",
+    "stop-slop": "optional alternative editorial pass to humanizer; do not stack rigid style rules or remove factual qualifications.",
+    "humanizer": "preserve claims and brand voice while removing generic/robotic wording, structural AI tells and unsupported hype.",
+    "executive-orchestration": "single accountable executive synthesis, model-owned specialist selection, bounded fan-out, conflict resolution, company context and authority boundaries."
+  },
+  "cases": [
+    {
+      "id": "pbt-codec",
+      "prompt": "Generate valid ASTs and check parse/print round trips for a lossy-capable codec."
+    },
+    {
+      "id": "pbt-sort",
+      "prompt": "Review property test sort(xs) == sort(xs) and produce a meaningful generated-domain replacement."
+    },
+    {
+      "id": "pbt-example-only",
+      "prompt": "Add two example unit tests for an existing add(a,b) function."
+    },
+    {
+      "id": "pbt-fuzz-nearmiss",
+      "prompt": "Run a coverage-guided fuzzer against a native parser. No algebraic contract is defined."
+    },
+    {
+      "id": "data-join",
+      "prompt": "Our customer rate joined 120 customers to 400 orders; the average rose. Audit whether this is a valid customer-level metric."
+    },
+    {
+      "id": "data-causal",
+      "prompt": "Conversion rose from 20/100 to 25/100 after new copy. Can we claim the copy caused a 25% lift?"
+    },
+    {
+      "id": "data-null",
+      "prompt": "The report fills missing revenue with zero and silently drops late-arriving transactions. Assess the result."
+    },
+    {
+      "id": "data-db-nearmiss",
+      "prompt": "Optimize a PostgreSQL query index for a slow list endpoint; no analytical claim is being made."
+    },
+    {
+      "id": "security-sarif",
+      "prompt": "A SARIF command exited zero and has no alerts, but extraction reports no Python files. Assess scan coverage."
+    },
+    {
+      "id": "security-authz",
+      "prompt": "Trace whether user A can update user B record despite parameterized SQL and login."
+    },
+    {
+      "id": "security-variant",
+      "prompt": "We confirmed one unscoped tenant lookup; find and triage structurally similar call paths."
+    },
+    {
+      "id": "security-hardening-nearmiss",
+      "prompt": "Implement schema validation in a new form handler; no suspected flaw or scanner report."
+    },
+    {
+      "id": "security-release-nearmiss",
+      "prompt": "Perform the final adversarial application release-security decision."
+    },
+    {
+      "id": "mobile-hydration",
+      "prompt": "Fix an Expo cold-start deep link that redirects to login before persisted auth hydration completes."
+    },
+    {
+      "id": "mobile-failed-save",
+      "prompt": "In RN a timed-out save clears the draft; retry can create duplicate records. Repair the behavior."
+    },
+    {
+      "id": "mobile-performance",
+      "prompt": "RN long feed janks on low-end Android; propose measured fixes using the current profiler."
+    },
+    {
+      "id": "mobile-flutter-nearmiss",
+      "prompt": "Fix hydration and back navigation in a Flutter application."
+    },
+    {
+      "id": "mobile-design-nearmiss",
+      "prompt": "Collect visual references for a native onboarding screen; no behavior change requested."
+    },
+    {
+      "id": "artifact-pdf",
+      "prompt": "Create a reusable PDF report with rendered pages and an editable source."
+    },
+    {
+      "id": "artifact-sheet",
+      "prompt": "Deliver an editable spreadsheet that recalculates revenue totals when source inputs change."
+    },
+    {
+      "id": "artifact-deck",
+      "prompt": "Review saved slide deck for overflow, font substitution and editable objects."
+    },
+    {
+      "id": "artifact-chat-nearmiss",
+      "prompt": "Rewrite this paragraph in chat, preserving facts and voice."
+    },
+    {
+      "id": "artifact-image-nearmiss",
+      "prompt": "Generate a raster image of a mountain lake."
+    },
+    {
+      "id": "ref-licensing",
+      "prompt": "Compare source roles and licensing before adapting a Reddit-linked skill pack."
+    },
+    {
+      "id": "source-api",
+      "prompt": "Check the exact React hook contract against installed React version and current official docs."
+    },
+    {
+      "id": "spec-kit-nearmiss",
+      "prompt": "Write a lightweight feature behavior specification in a repo with no Spec Kit installation."
+    },
+    {
+      "id": "verify-simple",
+      "prompt": "Confirm this single bug fix has fresh focused test evidence before claiming it fixed."
+    },
+    {
+      "id": "writing-editor",
+      "prompt": "Remove generic repetitive phrasing while preserving a technical caveat."
+    },
+    {
+      "id": "executive-decision",
+      "prompt": "Should our company fund a new product with limited runway and uncertain channel adoption?"
+    },
+    {
+      "id": "marketing-evidence",
+      "prompt": "Choose a customer segment from biased community posts and internal interviews before funding a channel."
+    }
+  ]
+}

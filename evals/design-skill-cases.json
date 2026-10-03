@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "evidence_boundary": "Authored positive/near-miss criteria, not model execution. Independent observed outputs are recorded in the design audit report.",
+  "cases": [
+    {
+      "id": "type-proof",
+      "prompt": "Choose a readable role scale and line measure for a bilingual article; prove long headings, fallback fonts and narrow widths against representative content.",
+      "required": [
+        "typography-and-layout"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Do not ban an approved font",
+        "Render/glyph/right limitations explicit"
+      ]
+    },
+    {
+      "id": "identity-system",
+      "prompt": "Develop an approved brand direction into a mark, palette and imagery system that survives a small avatar, monochrome invoice and packaging.",
+      "required": [
+        "brand-identity-design"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Real application stress tests",
+        "Screen color is not press color"
+      ]
+    },
+    {
+      "id": "system-drift",
+      "prompt": "Our shipped product has three divergent button libraries and inconsistent semantic tokens. Inventory consumers and propose a maintainable migration with compatibility and ownership.",
+      "required": [
+        "design-system-engineering"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Design/code/runtime evidence separate",
+        "Consumer migration/rollback"
+      ]
+    },
+    {
+      "id": "chart-encoding",
+      "prompt": "The query and denominators are validated. Choose an honest chart encoding and scales for comparing hospital readmission rates, and show missing groups and uncertainty.",
+      "required": [
+        "data-visualization-design"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Missing is not zero",
+        "No invented intervals or inflated axes"
+      ]
+    },
+    {
+      "id": "editorial-reading",
+      "prompt": "Art-direct an approved 30-page report and its live presentation: reading order, captions, page rhythm and audience-distance legibility. File generation is handled elsewhere.",
+      "required": [
+        "editorial-design"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Reading architecture and medium variant",
+        "No final file verification claim"
+      ]
+    },
+    {
+      "id": "visual-critique",
+      "prompt": "Give a read-only second opinion on supplied homepage captures against the approved purple identity. Locate visual and copy problems, what to keep and the smallest repairs; do not install an upstream launcher.",
+      "required": [
+        "design-critique"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Brand beats reviewer taste",
+        "Evidence-labelled findings and limits"
+      ]
+    },
+    {
+      "id": "flow-heuristics",
+      "prompt": "Walk this checkout prototype as an unfamiliar and returning customer. Inspect cancellation, pending, failure and recovery routes before implementation.",
+      "required": [
+        "ux-heuristic-review"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "State gaps labelled proposed",
+        "Not participant research"
+      ]
+    },
+    {
+      "id": "access-review",
+      "prompt": "Review the rendered booking form for accessible names, keyboard/focus behavior, validation announcements and zoom reflow. Separate automated and manual coverage.",
+      "required": [
+        "accessibility-design-review"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Reproducible states",
+        "Clean scan is not conformance"
+      ]
+    },
+    {
+      "id": "motion-critique",
+      "prompt": "Critique existing transitions in a frequently used editor: interruptions, state continuity and reduced motion. We have source and video but no performance trace.",
+      "required": [
+        "motion-design-review"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "No invented FPS",
+        "Frequency is contextual, not universal duration"
+      ]
+    },
+    {
+      "id": "fixed-font-export",
+      "prompt": "Export the approved logo PNG at two existing sizes without changing identity or typography.",
+      "required": [],
+      "forbidden": [
+        "brand-identity-design"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "copy-only",
+      "prompt": "Correct a typo in a paragraph; preserve every existing style.",
+      "required": [],
+      "forbidden": [
+        "typography-and-layout"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "single-button",
+      "prompt": "Implement one existing library button in a local screen; no reuse or token changes.",
+      "required": [],
+      "forbidden": [
+        "design-system-engineering"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "math-only",
+      "prompt": "Reconcile revenue joins and missing transactions. No chart or visual design is requested.",
+      "required": [],
+      "forbidden": [
+        "data-visualization-design"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "pdf-reopen",
+      "prompt": "Reopen an existing PDF to check pages and file validity; the editorial design is approved.",
+      "required": [],
+      "forbidden": [
+        "editorial-design"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "local-rename",
+      "prompt": "Rename a private backend helper and its existing call sites.",
+      "required": [],
+      "forbidden": [
+        "design-critique"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "static-brand",
+      "prompt": "Compare two static wordmark shapes and keep the brand mood; no task flow exists.",
+      "required": [],
+      "forbidden": [
+        "ux-heuristic-review"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "scanner-execution",
+      "prompt": "Run the existing configured accessibility scanner and return its raw output; no interpretation or design review requested.",
+      "required": [],
+      "forbidden": [
+        "accessibility-design-review"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "motion-creation",
+      "prompt": "Implement a new GSAP scroll sequence according to approved choreography; no critique of existing motion requested.",
+      "required": [],
+      "forbidden": [
+        "motion-design-review"
+      ],
+      "quality_assertions": [
+        "Do not activate the neighboring responsibility without a concrete need"
+      ]
+    },
+    {
+      "id": "cognitive-burden",
+      "prompt": "Our multi-step permit form forces applicants to remember previous choices. Review comprehension and decision load without removing legally necessary steps.",
+      "required": [
+        "accessibility-design-review"
+      ],
+      "forbidden": [
+        "motion-design-review"
+      ],
+      "quality_assertions": [
+        "Select cognitive-comprehension branch explicitly",
+        "Counts are not conformance or user research"
+      ]
+    },
+    {
+      "id": "print-no-spec",
+      "prompt": "Art-direct a brochure using approved content. We have no printer specifications; the client also asks if the concept is print-ready.",
+      "required": [
+        "editorial-design"
+      ],
+      "forbidden": [
+        "data-visualization-design"
+      ],
+      "quality_assertions": [
+        "Concept is provisional",
+        "Printer written spec before readiness claim"
+      ]
+    },
+    {
+      "id": "no-capture",
+      "prompt": "Critique visual and copy hierarchy of this supplied HTML. No render or screenshots are available. Keep the binding system font.",
+      "required": [
+        "design-critique"
+      ],
+      "forbidden": [
+        "motion-design-review"
+      ],
+      "quality_assertions": [
+        "Source-only review; visuals pending",
+        "No screenshot contrast ratios or live keyboard claims"
+      ]
+    },
+    {
+      "id": "multi-design",
+      "prompt": "Review the shipped checkout hierarchy and copy, and independently walk how customers recover after a payment decline. Leave source unchanged.",
+      "required": [
+        "design-critique",
+        "ux-heuristic-review"
+      ],
+      "forbidden": [
+        "brand-identity-design"
+      ],
+      "quality_assertions": [
+        "Distinct visual and task scopes",
+        "Deduplicate root causes and no remediation without request"
+      ]
+    }
+  ]
+}

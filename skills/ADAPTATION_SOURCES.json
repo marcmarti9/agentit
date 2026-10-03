@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "scope": "Source-informed additions and branch references from the October 3–4, 2026 audits; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "sources": [
+    {
+      "repo": "expo/skills",
+      "revision": "13ad8e05874195633b5c185f6947bb6400e228fc",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/expo--skills/LICENSE",
+      "license_sha256": "49c5f9c7097c9a940ff663a54c27a4c60e379df6cc2b3052df0d37a09a85df93",
+      "targets": [
+        "skills/mobile-runtime-engineering/SKILL.md",
+        "skills/mobile-runtime-engineering/references/state-and-navigation.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "callstackincubator/agent-skills",
+      "revision": "61e6e7dfdf3a8ee862254c200d751fcb1fb863dc",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/callstackincubator--agent-skills/LICENSE",
+      "license_sha256": "6b4d67d192cedc90cabeac71e2fc1e24f158638192b8bf93d639b28bc42b62f1",
+      "targets": [
+        "skills/mobile-runtime-engineering/SKILL.md",
+        "skills/mobile-runtime-engineering/references/performance-evidence.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "openai/skills",
+      "revision": "49f948faa9258a0c61caceaf225e179651397431",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "skills/.curated/pdf/LICENSE.txt",
+      "license_path": "vendor/adaptation-licenses/openai--skills/LICENSE.txt",
+      "license_sha256": "4dd13869245e356246a5b770723247bbb80a8f07a181d1d3d873a1734297cdb9",
+      "targets": [
+        "skills/artifact-production/SKILL.md",
+        "skills/artifact-production/references/format-verification.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "SenteLabsAI/OpenExecutive",
+      "revision": "bba990f20dab7559967010e65b65630f1a35c684",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/LICENSE",
+      "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "targets": [
+        "skills/executive-orchestration/references/quality-playbook.md",
+        "skills/reference-intelligence/references/research-quality.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "notice_path": "vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/NOTICE",
+      "notice_sha256": "ea69ff38994633433451bfecc1d04cbb1c2b2ca11f4ca007e96cabb9842e3798"
+    },
+    {
+      "repo": "coreyhaines31/marketingskills",
+      "revision": "dda3841f0b294e01e93b1541486beefbfab0915e",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/coreyhaines31--marketingskills/LICENSE",
+      "license_sha256": "b70d71e24e40fce5da8f4b6f9cd862096a048e433db7f3c8cac5e348e6d34591",
+      "targets": [
+        "skills/marketing-and-growth/references/quality-playbook.md",
+        "skills/reference-intelligence/references/research-quality.md",
+        "skills/advertising-video-production/SKILL.md",
+        "skills/advertising-video-production/references/creative-variants.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/ad-creative/SKILL.md",
+        "skills/ad-creative/references/hook-system.md",
+        "skills/ad-creative/references/motion-video-ads.md",
+        "skills/ads/SKILL.md"
+      ]
+    },
+    {
+      "repo": "anthropics/skills",
+      "revision": "8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "Apache-2.0",
+      "license_source_path": "skills/skill-creator/LICENSE.txt",
+      "license_path": "vendor/adaptation-licenses/anthropics--skills/LICENSE.txt",
+      "license_sha256": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
+      "targets": [
+        "skills/skill-authoring-and-evals/references/paired-evaluations.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "trailofbits/skills",
+      "revision": "82fe8226252622fa807643bdca1710901198553a",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "CC-BY-SA-4.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/trailofbits--skills/LICENSE",
+      "license_sha256": "7abe19ec9bb73b36141b999b861d24ad855e808bafe0f81e84cce28556f6c297",
+      "targets": [
+        "skills/property-based-testing/SKILL.md",
+        "skills/property-based-testing/references/design-and-review.md",
+        "skills/security-analysis/SKILL.md",
+        "skills/security-analysis/references/finding-triage.md"
+      ],
+      "adaptation_license": "CC-BY-SA-4.0"
+    },
+    {
+      "repo": "trailofbits/testing-handbook",
+      "revision": "190294f0ed563baddf4941cd2388be5bd4d5c5ba",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "CC-BY-4.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/trailofbits--testing-handbook/LICENSE",
+      "license_sha256": "97d24386ff776d7160b87031b259a942bd03c9939796cab6724ad5d17d2cf785",
+      "targets": [
+        "skills/security-analysis/SKILL.md",
+        "skills/security-analysis/references/finding-triage.md"
+      ],
+      "adaptation_license": "CC-BY-SA-4.0"
+    },
+    {
+      "repo": "ajrcre/data-analysis-skills",
+      "revision": "cbc906e4912a980423aecd1e318061eb98f3e0b2",
+      "inspected_on": "2026-10-03",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/ajrcre--data-analysis-skills/LICENSE",
+      "license_sha256": "fe80e84c999e740339b53890b2fc9fe77014ff9b36ec10abbb2dec1a9afac7d4",
+      "targets": [
+        "skills/data-analysis-quality/SKILL.md",
+        "skills/data-analysis-quality/references/claim-checks.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "rampstackco/claude-skills",
+      "revision": "3d4510a94a76ead80122c691b5c480f92f3fbe40",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/rampstackco--claude-skills/LICENSE",
+      "license_sha256": "7957f4b291988f21be7cb75637d2efb6edd0369a95d3814cac7ef931f7f10b7c",
+      "source_paths": [
+        "skills/brand-identity/SKILL.md",
+        "skills/design-system/SKILL.md",
+        "skills/creative-direction/SKILL.md",
+        "skills/art-direction/SKILL.md"
+      ],
+      "targets": [
+        "skills/brand-identity-design/SKILL.md",
+        "skills/design-system-engineering/SKILL.md",
+        "skills/editorial-design/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "peterbamuhigire/design-system-skills",
+      "revision": "c9b334d770c449db7401730db29c9b70953e62f1",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/peterbamuhigire--design-system-skills/LICENSE",
+      "license_sha256": "56a215a530713da325bc6b740c7d6e26406d6988e4ee88c3139ad6f15d6c07e4",
+      "source_paths": [
+        "skills/01-typography-and-fonts/font-selection-and-pairing/SKILL.md",
+        "skills/01-typography-and-fonts/fine-typesetting-and-typesetting-qa/SKILL.md",
+        "skills/01-typography-and-fonts/font-embedding-and-licensing/SKILL.md",
+        "skills/03-layout-grid-and-composition/editorial-and-long-form-layout/SKILL.md",
+        "skills/12-data-viz-and-dashboards/chart-selection-and-encoding/SKILL.md",
+        "skills/12-data-viz-and-dashboards/data-visualization/SKILL.md",
+        "skills/13-presentations-and-documents/deck-system/SKILL.md",
+        "skills/13-presentations-and-documents/print-production-and-finishing/SKILL.md"
+      ],
+      "targets": [
+        "skills/typography-and-layout/SKILL.md",
+        "skills/data-visualization-design/SKILL.md",
+        "skills/editorial-design/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "OneWave-AI/claude-skills",
+      "revision": "fc5b7851a6c7ba367e05797df46ad3679df355dd",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/OneWave-AI--claude-skills/LICENSE",
+      "license_sha256": "197dce10493396d12cd5e7e6d424d01a794bebe20135bdc0bbc10c0feab1d460",
+      "source_paths": [
+        "claude-design-critic/SKILL.md"
+      ],
+      "targets": [
+        "skills/design-critique/SKILL.md",
+        "skills/design-critique/references/report-contract.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "vmarafetti/crit",
+      "revision": "87a6c56a8b718be061723f44300eee4a859adcb9",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/vmarafetti--crit/LICENSE",
+      "license_sha256": "f93965715c6e3c495d55d140f8744c2b25f167ea79886ea2d3e3745d7bb1201b",
+      "source_paths": [
+        "templates/audit-template.md"
+      ],
+      "targets": [
+        "skills/design-critique/SKILL.md",
+        "skills/design-critique/references/report-contract.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "Owl-Listener/designer-skills",
+      "revision": "9a6930cf84a822eb458624bd11c61aac5bbdf224",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Owl-Listener--designer-skills/LICENSE",
+      "license_sha256": "1400d572fb60897f7970a763fb73d1aa7804b71bad41bf6e45061de7b7a09ac1",
+      "source_paths": [
+        "prototyping-testing/skills/heuristic-evaluation/SKILL.md",
+        "design-ops/skills/design-debt-audit/SKILL.md"
+      ],
+      "targets": [
+        "skills/ux-heuristic-review/SKILL.md",
+        "skills/ux-heuristic-review/references/design-debt.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "kylezantos/design-motion-principles",
+      "revision": "4a9ca879f24a361f4dca4174fe2da0f67b5ddee3",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/kylezantos--design-motion-principles/LICENSE",
+      "license_sha256": "5945ed68f9c1f6c2cfecc674ce66226221f6a40ec4bf2e0b1a1f0084cf108bdb",
+      "source_paths": [
+        "skills/design-motion-principles/SKILL.md"
+      ],
+      "targets": [
+        "skills/motion-design-review/SKILL.md",
+        "skills/motion-design-review/references/coverage.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "smukh/a11y-agent-skills",
+      "revision": "8bc24f049734c607e23bd3955700fd4858649614",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/smukh--a11y-agent-skills/LICENSE",
+      "license_sha256": "65646b2111d1a488ea529fa032473c6d49937033429aae061a0929267a0419c8",
+      "source_paths": [
+        "skills/accessibility-audit/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/SKILL.md",
+        "skills/accessibility-design-review/references/cognitive-comprehension.md",
+        "skills/accessibility-design-review/references/standards-boundary.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "Owl-Listener/inclusive-design-skills",
+      "revision": "6e0740f04b2130af60bc57abe3401b91e460e70d",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Owl-Listener--inclusive-design-skills/LICENSE",
+      "license_sha256": "1400d572fb60897f7970a763fb73d1aa7804b71bad41bf6e45061de7b7a09ac1",
+      "source_paths": [
+        "cognitive-accessibility/skills/cognitive-load-assessment/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/references/cognitive-comprehension.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "ibelick/ui-skills",
+      "revision": "ebf5f26cd275b1412be8a2c8784c4f8da628e7c2",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/ibelick--ui-skills/LICENSE",
+      "license_sha256": "c615621c4cc1676ccde194e7a01b6469ba477780251bd71e007fc473a49c2c2b",
+      "source_paths": [
+        "skills/fixing-accessibility/SKILL.md"
+      ],
+      "targets": [
+        "skills/accessibility-design-review/SKILL.md",
+        "skills/accessibility-design-review/references/cognitive-comprehension.md",
+        "skills/accessibility-design-review/references/standards-boundary.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "source_paths_required": true
+    },
+    {
+      "repo": "Boriwatopal/agent-skill-remotion-motion-graphics",
+      "revision": "682f725e0ec98eaff2de512f53972cb37e28c447",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Boriwatopal--agent-skill-remotion-motion-graphics/LICENSE",
+      "license_sha256": "e4154ddb027c4db87c426071ef2fad498267440299fbe8eb0bccd7ccebaca7d3",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/remotion-motion-graphics/SKILL.md",
+        "skills/remotion-motion-graphics/references/scene-patterns.md",
+        "skills/remotion-motion-graphics/references/verification-and-gotchas.md"
+      ],
+      "targets": [
+        "skills/motion-graphics-production/SKILL.md",
+        "skills/motion-graphics-production/references/production-verification.md",
+        "skills/remotion-video-engineering/SKILL.md",
+        "skills/remotion-video-engineering/references/delivery-checks.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "soilmass/motion-design-agent",
+      "revision": "132c9d59231cf0fd91964ee433ba9e7e0b3bbf6d",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/soilmass--motion-design-agent/LICENSE",
+      "license_sha256": "fa597c0632ab0a4418f809bbcff98f35b337a33b6da6486fdb71f58d4ca732d7",
+      "source_paths_required": true,
+      "source_paths": [
+        "SKILL.md",
+        "skills/orchestrator/SKILL.md",
+        "skills/storyboarding/SKILL.md"
+      ],
+      "targets": [
+        "skills/motion-graphics-production/SKILL.md",
+        "skills/motion-graphics-production/references/production-verification.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "leosssvip-dot/remotion-ad-video-skill",
+      "revision": "e734c0299474132366e8270e9cffaf9a26f2c5ed",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/leosssvip-dot--remotion-ad-video-skill/LICENSE",
+      "license_sha256": "bb4ea3bf16d53b7bf3bc84f10625532c4ff672ae42099f5a6b070c70c3254d59",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/remotion-ad-video/SKILL.md"
+      ],
+      "targets": [
+        "skills/advertising-video-production/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "xsourabhsharma/remotion-marketing-video-skill",
+      "revision": "a7f01a8ffdab4c02f54a8a1649f1f40d32efd529",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/xsourabhsharma--remotion-marketing-video-skill/LICENSE",
+      "license_sha256": "6ea9bc6676b04c0926c9fb0a5add59790ef60fbb400ae15cd97b0f2b543e42d2",
+      "source_paths_required": true,
+      "source_paths": [
+        "SKILL.md",
+        "references/production_workflow.md",
+        "references/audio.md",
+        "references/scenes.md",
+        "references/preview_approval_loop.md"
+      ],
+      "targets": [
+        "skills/advertising-video-production/SKILL.md",
+        "skills/advertising-video-production/references/audio-and-captions.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "Engine-Room-Games/after-effects-mcp",
+      "revision": "97ec53c6e7749bf878914742b8c2c8972c133283",
+      "inspected_on": "2026-10-04",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/Engine-Room-Games--after-effects-mcp/LICENSE",
+      "license_sha256": "d145a5576e59a0f8d91ed2bdbf556846f6fdbc423e3640526062bfab9b78a4c2",
+      "source_paths_required": true,
+      "source_paths": [
+        "plugin/skills/after-effects/SKILL.md",
+        "plugin/skills/after-effects/references/assembly.md"
+      ],
+      "targets": [
+        "skills/creative-tool-scout/references/video-production-routes.md"
+      ],
+      "adaptation_license": "Apache-2.0"
+    }
+  ]
+}

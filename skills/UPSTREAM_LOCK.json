@@ -6,11 +6,11 @@
       "skill": "api-and-interface-design",
       "repo": "addyosmani/agent-skills",
       "path": "skills/api-and-interface-design",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "5dafd0c44a3aabf11cae5bcb34f6fcc24dfa5c01ba6e0d3176bce997f4d68bc8",
+          "sha256": "e83d34f52ff12dd8a7c5134cd7e8140ea4541ec65e204f8a1e4cd366e30c4192",
           "mode": 420
         }
       }
@@ -81,7 +81,7 @@
       "skill": "browser-testing-with-devtools",
       "repo": "addyosmani/agent-skills",
       "path": "skills/browser-testing-with-devtools",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -94,7 +94,7 @@
       "skill": "ci-cd-and-automation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/ci-cd-and-automation",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -107,11 +107,11 @@
       "skill": "code-review-and-quality",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-review-and-quality",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "d4ec6843e78a8ab2049185d7c2742e2f1e343143c6c915eb5b4f9a3a00a44f94",
+          "sha256": "2db1e850379f255fd3091ef278cde24cd6c7d2ba23e360cc52ea522c40d4396e",
           "mode": 420
         }
       }
@@ -120,7 +120,7 @@
       "skill": "code-simplification",
       "repo": "addyosmani/agent-skills",
       "path": "skills/code-simplification",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -133,7 +133,7 @@
       "skill": "constraint-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/constraint-driven-development",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -141,7 +141,7 @@
           "mode": 420
         },
         "references/floor-guard.md": {
-          "sha256": "a512e64ecdfa0e367b2996051a043887f2aed4389a9c803a71480eb7d30b3926",
+          "sha256": "59715dc6c3c6c36ec9177f9ced65c379e80a4539b36115456666bfabc43a6a9c",
           "mode": 420
         }
       }
@@ -150,7 +150,7 @@
       "skill": "context-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/context-engineering",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -163,7 +163,7 @@
       "skill": "debugging-and-error-recovery",
       "repo": "addyosmani/agent-skills",
       "path": "skills/debugging-and-error-recovery",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -176,7 +176,7 @@
       "skill": "deprecation-and-migration",
       "repo": "addyosmani/agent-skills",
       "path": "skills/deprecation-and-migration",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1167,11 +1167,11 @@
       "skill": "documentation-and-adrs",
       "repo": "addyosmani/agent-skills",
       "path": "skills/documentation-and-adrs",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "87ae44a0c7bb3eefc2131a9d11caabcc14e4d8dcb27d66a3a675551ee2ce1671",
+          "sha256": "359b22460045583b0233ec3f80223459c4096b0fa513f5c29ade9c3985207d65",
           "mode": 420
         }
       }
@@ -1180,7 +1180,7 @@
       "skill": "doubt-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/doubt-driven-development",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1193,7 +1193,7 @@
       "skill": "emil-design-eng",
       "repo": "emilkowalski/skills",
       "path": "skills/emil-design-eng",
-      "snapshot": "d16ebe60d09a5ba2afcb7054ede9d0a10c9f6128",
+      "snapshot": "e8a175de22ae1e49370fc144c1f3bb9aeedf988d",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1206,7 +1206,7 @@
       "skill": "find-skills",
       "repo": "vercel-labs/skills",
       "path": "skills/find-skills",
-      "snapshot": "3694740352eeef5cdd689af694c485f1ff62eec3",
+      "snapshot": "18f96ea131dab3b0fcc9b27cf7c6f6cbb6174680",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1219,7 +1219,7 @@
       "skill": "frontend-ui-engineering",
       "repo": "addyosmani/agent-skills",
       "path": "skills/frontend-ui-engineering",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1232,7 +1232,7 @@
       "skill": "git-workflow-and-versioning",
       "repo": "addyosmani/agent-skills",
       "path": "skills/git-workflow-and-versioning",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1755,7 +1755,7 @@
       "skill": "idea-refine",
       "repo": "addyosmani/agent-skills",
       "path": "skills/idea-refine",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -1784,11 +1784,11 @@
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
-      "snapshot": "c74755d920985f7a92cef691ca970ba95f90126e",
+      "snapshot": "e103efe779e2dd01274dabae83531fef00bf2563",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "6eeec6ef2028388a17de9f17a56c9cb7dbc7c8e7e1a8c15b831b0ba3e42168ac",
+          "sha256": "37680abf9a8e446619fcd33862718f483d197bf2652f966adca8dc54d2909b9d",
           "mode": 420
         },
         "agents/impeccable_asset_producer.toml": {
@@ -1848,7 +1848,7 @@
           "mode": 420
         },
         "reference/component-review.md": {
-          "sha256": "514a27fc9830455828d337cfc2fa95fa86be8e5464501bbabb9aca09a66b40ad",
+          "sha256": "0ceea468b6e8cc3b0dbd8b2b6b22488337a396c34d8f716b34d54b52393b4733",
           "mode": 420
         },
         "reference/craft-floor.md": {
@@ -1864,7 +1864,7 @@
           "mode": 420
         },
         "reference/degraded/asset-producer.md": {
-          "sha256": "b13ab14c1e2fee94a6c8b32361f400a0319a76537ee16fecbda79d5d1b26b681",
+          "sha256": "754e9f0aa2101245a83cb17d8cc5bc49cf87997b29a83dedbfff283dbd0a8c4f",
           "mode": 420
         },
         "reference/degraded/documenter.md": {
@@ -1931,8 +1931,20 @@
           "sha256": "68c5636a7858dd0b5137a9229c15e25fdc2ee40a0f8a4e9d809f78e809256262",
           "mode": 420
         },
+        "reference/mode-operate.md": {
+          "sha256": "385a0efe833bd4afe4a257e7159590de0cf1b7fd8f7b213b732f1e537c62dab7",
+          "mode": 420
+        },
+        "reference/mode-persuade.md": {
+          "sha256": "21e78c8a77badb3f83290cd4577ed3b24bd4dd3b57136d7da75733d4f3ee9ac0",
+          "mode": 420
+        },
+        "reference/mode-read.md": {
+          "sha256": "a569989e6a3d6453b4c45e9474e162a15cc54e11732ac6baa7990a6e7cccc0b5",
+          "mode": 420
+        },
         "reference/new-work.md": {
-          "sha256": "0a7abd2c7baf2ae88fc8e1f3856fd1c856cf72f85834e78d12dc5a0f0e976277",
+          "sha256": "d5e4536f0dedd3b7ec2e6bb09307ba1e96d813821671eb9cede13dce854e1a85",
           "mode": 420
         },
         "reference/onboard.md": {
@@ -1976,11 +1988,11 @@
           "mode": 420
         },
         "reference/visualize.md": {
-          "sha256": "aff93ffc27b05952214dd860879256fb6e799165b967865a0dfa4dbd14d4289f",
+          "sha256": "88549c11ea55d5dfc9f551db9a9c270d7362a9d42aa83db7747c9a7f020e1255",
           "mode": 420
         },
         "scripts/VERSION": {
-          "sha256": "e358d84552808a5c0bd6679d690c283b938ebe15c2bd843c898681d093213107",
+          "sha256": "66d60356172ccafdd334fca9bf33243c8409216a733dcde0d66a24fd70ee8132",
           "mode": 420
         },
         "scripts/command-metadata.json": {
@@ -2000,7 +2012,7 @@
           "mode": 493
         },
         "scripts/impeccable.cmd": {
-          "sha256": "759bab1d8adc071fdde2efcf6e2157aa4026f3c2b4f3c342a8070bf328011616",
+          "sha256": "69cad1ae7355825ef320ac9638a1c9675ba9fda01c9a0fa12244cc4a1973e550",
           "mode": 420
         },
         "scripts/live-browser-dom.js": {
@@ -2012,7 +2024,7 @@
           "mode": 420
         },
         "scripts/live-browser-session.js": {
-          "sha256": "edddeb3fad88adec9a055b1bf9d5c75418cbe97a13b1a7f6765e73249e482563",
+          "sha256": "42831c3cd874346d8e7f120808d91e6ed3cda5c3eca6eefd76b126659536bc87",
           "mode": 420
         },
         "scripts/live-browser.js": {
@@ -2029,7 +2041,7 @@
       "skill": "incremental-implementation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/incremental-implementation",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2042,7 +2054,7 @@
       "skill": "interview-me",
       "repo": "addyosmani/agent-skills",
       "path": "skills/interview-me",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2055,7 +2067,7 @@
       "skill": "observability-and-instrumentation",
       "repo": "addyosmani/agent-skills",
       "path": "skills/observability-and-instrumentation",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2068,11 +2080,15 @@
       "skill": "performance-optimization",
       "repo": "addyosmani/agent-skills",
       "path": "skills/performance-optimization",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "00694d0c69bbde674d0e39de24052d90afea32d9fef9553eaee21a50a7e9b8cf",
+          "sha256": "665a83a7218d6aebd02ca329a7b2422cf28f7c55cb56f870c05e12047770245c",
+          "mode": 420
+        },
+        "references/optimization-patterns.md": {
+          "sha256": "fbf724076ffb8ac1a28e1a2773c0b550f5361090024b2dd32e5a682c69b7945f",
           "mode": 420
         }
       }
@@ -2081,7 +2097,7 @@
       "skill": "planning-and-task-breakdown",
       "repo": "addyosmani/agent-skills",
       "path": "skills/planning-and-task-breakdown",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2094,7 +2110,7 @@
       "skill": "security-and-hardening",
       "repo": "addyosmani/agent-skills",
       "path": "skills/security-and-hardening",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2111,11 +2127,11 @@
       "skill": "shipping-and-launch",
       "repo": "addyosmani/agent-skills",
       "path": "skills/shipping-and-launch",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "af610cf4892db7eab2e91c899e33feba90e1000bac4528b2f8dde930816ac125",
+          "sha256": "1055d25dfe6cfeb6ae31eba3e2328fd0e7c66b285f0e44c40f67c77a59813281",
           "mode": 420
         }
       }
@@ -2124,7 +2140,7 @@
       "skill": "source-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/source-driven-development",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2137,11 +2153,11 @@
       "skill": "spec-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/spec-driven-development",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "f7129bca8742bad73f60209bd237e8b10dab6f1fae8576dc552fb1923bc1e721",
+          "sha256": "c4b97ce3d7f24be0e67fd612c7595f65504872e3a9f8d338d098b2363fdb66ef",
           "mode": 420
         }
       }
@@ -2179,7 +2195,7 @@
       "skill": "supabase-postgres-best-practices",
       "repo": "supabase/agent-skills",
       "path": "skills/supabase-postgres-best-practices",
-      "snapshot": "544bfc56c89afe2b87b20017a59b2c6e9502a1fb",
+      "snapshot": "c9be0e931b7930f7d02126d04774d904c381e7d7",
       "kind": "canonical-vendored",
       "files": {
         "CHANGELOG.md": {
@@ -2332,7 +2348,7 @@
       "skill": "test-driven-development",
       "repo": "addyosmani/agent-skills",
       "path": "skills/test-driven-development",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2345,7 +2361,7 @@
       "skill": "ui-ux-pro-max",
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
       "path": ".claude/skills/ui-ux-pro-max",
-      "snapshot": "09170eec67eefd46a7ae85de61b40c194020f997",
+      "snapshot": "477bcb28c9812b385cb51a4605ddf30d7b2266e2",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2581,7 +2597,7 @@
           "mode": 420
         },
         "scripts/tests/fixtures/relevance-thresholds.json": {
-          "sha256": "8099be287b13a01ef499091b99220692e85a3a652efa308e8a33b6b9fcd57ea6",
+          "sha256": "1fbe8623fe3e49c8d828139bca9df69043746e488e8bf09d93dfb9cbc31f5cef",
           "mode": 420
         },
         "scripts/tests/test_catalog_refresh.py": {
@@ -2646,7 +2662,7 @@
       "skill": "using-agent-skills",
       "repo": "addyosmani/agent-skills",
       "path": "skills/using-agent-skills",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "kind": "canonical-vendored",
       "destination": "vendor/agent-skills/using-agent-skills",
       "files": {
@@ -2675,7 +2691,7 @@
       "repo": "addyosmani/agent-skills",
       "path": "references",
       "destination": "references",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "manifest": "references/.addy-agent-skills-files",
       "files": {
         "accessibility-checklist.md": {
@@ -2737,7 +2753,7 @@
     },
     {
       "repo": "addyosmani/agent-skills",
-      "snapshot": "2686b620fc1fed2e8f60c704839c766b8594c6b6",
+      "snapshot": "1401c8b8030e023baeebb31781a6653fe8e93026",
       "source": "LICENSE",
       "destination": "vendor/licenses/addyosmani--agent-skills/LICENSE",
       "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
@@ -2769,7 +2785,7 @@
     },
     {
       "repo": "emilkowalski/skills",
-      "snapshot": "d16ebe60d09a5ba2afcb7054ede9d0a10c9f6128",
+      "snapshot": "e8a175de22ae1e49370fc144c1f3bb9aeedf988d",
       "source": "LICENSE",
       "destination": "vendor/licenses/emilkowalski--skills/LICENSE",
       "sha256": "4ff5bdb7887ec1435c9cab0e8d1a7caee704d894d65c2a008ccc68b1cc2f260b",
@@ -2793,7 +2809,7 @@
     },
     {
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "snapshot": "09170eec67eefd46a7ae85de61b40c194020f997",
+      "snapshot": "477bcb28c9812b385cb51a4605ddf30d7b2266e2",
       "source": "LICENSE",
       "destination": "vendor/licenses/nextlevelbuilder--ui-ux-pro-max-skill/LICENSE",
       "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
@@ -2809,7 +2825,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "114ea1d3838fca73b253af45f873b9c4f5f213c8",
+      "snapshot": "e103efe779e2dd01274dabae83531fef00bf2563",
       "source": "LICENSE",
       "destination": "vendor/licenses/pbakaus--impeccable/LICENSE",
       "sha256": "02bb8c3b4e70190e3986c0404ad2fd8d639b4f534252d82379cc1b502b6d1812",
@@ -2817,7 +2833,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "114ea1d3838fca73b253af45f873b9c4f5f213c8",
+      "snapshot": "e103efe779e2dd01274dabae83531fef00bf2563",
       "source": "NOTICE.md",
       "destination": "vendor/licenses/pbakaus--impeccable/NOTICE.md",
       "sha256": "c60a093c2845fd9fb82f9c6f742ece31f379f8190b535309d32d66c45ccffdcb",
@@ -2825,7 +2841,7 @@
     },
     {
       "repo": "supabase/agent-skills",
-      "snapshot": "544bfc56c89afe2b87b20017a59b2c6e9502a1fb",
+      "snapshot": "c9be0e931b7930f7d02126d04774d904c381e7d7",
       "source": "LICENSE",
       "destination": "vendor/licenses/supabase--agent-skills/LICENSE",
       "sha256": "b65e575eb4f04a13c187d64e958321298e2ab84d67aa8428819f362056ba292c",
@@ -2833,7 +2849,7 @@
     },
     {
       "repo": "vercel-labs/skills",
-      "snapshot": "3694740352eeef5cdd689af694c485f1ff62eec3",
+      "snapshot": "18f96ea131dab3b0fcc9b27cf7c6f6cbb6174680",
       "source": "LICENSE",
       "destination": "vendor/licenses/vercel-labs--skills/LICENSE",
       "sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca",

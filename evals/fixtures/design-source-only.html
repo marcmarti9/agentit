@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- SYNTHETIC SOURCE-ONLY REVIEW FIXTURE; NEVER EXECUTED OR DEPLOYED.
+Approved identity: purple and system sans. Review only; preserve factual copy.
+The async callback's implementation is unavailable. Do not infer its internals. -->
+<style>
+body { font-family: system-ui, sans-serif; color: #6b21a8; }
+button { animation: enter 500ms ease-out; }
+@keyframes enter { from { transform: translateY(12px); opacity: 0; } }
+</style>
+<h1>Save time</h1>
+<form id="checkout">
+  <input type="email" placeholder="Email">
+  <button type="submit">Learn more</button>
+</form>
+<script>
+checkout.addEventListener('submit', async event => {
+  event.preventDefault();
+  await window.suppliedCheckoutCallback();
+});
+</script>

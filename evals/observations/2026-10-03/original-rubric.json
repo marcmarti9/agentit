@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "evidence_boundary": "Authored selection/behavior criteria. Structural fixture tests are not a live-model benchmark; independent observed selections are recorded separately.",
+  "cases": [
+    {
+      "id": "pbt-codec",
+      "prompt": "Generate valid ASTs and check parse/print round trips for a lossy-capable codec.",
+      "required": [
+        "property-based-testing"
+      ],
+      "forbidden": [
+        "artifact-production"
+      ],
+      "quality_assertions": [
+        "Define representable domain and equivalence; do not demand byte equality for intended loss",
+        "Independent oracle, valid generators, minimized counterexample"
+      ]
+    },
+    {
+      "id": "pbt-sort",
+      "prompt": "Review property test sort(xs) == sort(xs) and produce a meaningful generated-domain replacement.",
+      "required": [
+        "property-based-testing"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Reject tautology",
+        "Check sorted order and multiset preservation"
+      ]
+    },
+    {
+      "id": "pbt-example-only",
+      "prompt": "Add two example unit tests for an existing add(a,b) function.",
+      "required": [
+        "test-driven-development"
+      ],
+      "forbidden": [
+        "property-based-testing"
+      ],
+      "quality_assertions": [
+        "Keep example tests proportional; no new generator dependency"
+      ]
+    },
+    {
+      "id": "pbt-fuzz-nearmiss",
+      "prompt": "Run a coverage-guided fuzzer against a native parser. No algebraic contract is defined.",
+      "required": [],
+      "forbidden": [
+        "property-based-testing"
+      ],
+      "quality_assertions": [
+        "Do not conflate coverage-guided fuzzing with generated-domain property assertions"
+      ]
+    },
+    {
+      "id": "data-join",
+      "prompt": "Our customer rate joined 120 customers to 400 orders; the average rose. Audit whether this is a valid customer-level metric.",
+      "required": [
+        "data-analysis-quality"
+      ],
+      "forbidden": [
+        "artifact-production"
+      ],
+      "quality_assertions": [
+        "Declare grain and join multiplication",
+        "Reconcile entity counts and original denominator"
+      ]
+    },
+    {
+      "id": "data-causal",
+      "prompt": "Conversion rose from 20/100 to 25/100 after new copy. Can we claim the copy caused a 25% lift?",
+      "required": [
+        "data-analysis-quality"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Compute observed difference separately",
+        "Do not assert causal effect without design and uncertainty"
+      ]
+    },
+    {
+      "id": "data-null",
+      "prompt": "The report fills missing revenue with zero and silently drops late-arriving transactions. Assess the result.",
+      "required": [
+        "data-analysis-quality"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Expose missing vs zero",
+        "Report cut-off/lag, exclusions and their effect"
+      ]
+    },
+    {
+      "id": "data-db-nearmiss",
+      "prompt": "Optimize a PostgreSQL query index for a slow list endpoint; no analytical claim is being made.",
+      "required": [
+        "supabase-postgres-best-practices"
+      ],
+      "forbidden": [
+        "data-analysis-quality"
+      ],
+      "quality_assertions": [
+        "Database query performance belongs to database/performance owner"
+      ]
+    },
+    {
+      "id": "security-sarif",
+      "prompt": "A SARIF command exited zero and has no alerts, but extraction reports no Python files. Assess scan coverage.",
+      "required": [
+        "security-analysis"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Exit success is not valid coverage or a safe-app claim"
+      ]
+    },
+    {
+      "id": "security-authz",
+      "prompt": "Trace whether user A can update user B record despite parameterized SQL and login.",
+      "required": [
+        "security-analysis"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Authentication and parameterization do not establish object authorization",
+        "Safe reproduction or explicit missing preconditions"
+      ]
+    },
+    {
+      "id": "security-variant",
+      "prompt": "We confirmed one unscoped tenant lookup; find and triage structurally similar call paths.",
+      "required": [
+        "security-analysis"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Define source/sink/missing control before search",
+        "Triage each variant independently"
+      ]
+    },
+    {
+      "id": "security-hardening-nearmiss",
+      "prompt": "Implement schema validation in a new form handler; no suspected flaw or scanner report.",
+      "required": [
+        "security-and-hardening"
+      ],
+      "forbidden": [
+        "security-analysis"
+      ],
+      "quality_assertions": [
+        "Routine controls belong to hardening"
+      ]
+    },
+    {
+      "id": "security-release-nearmiss",
+      "prompt": "Perform the final adversarial application release-security decision.",
+      "required": [
+        "app-security-gate"
+      ],
+      "forbidden": [
+        "security-analysis"
+      ],
+      "quality_assertions": [
+        "Gate owns release decision; no blanket safe claim"
+      ]
+    },
+    {
+      "id": "mobile-hydration",
+      "prompt": "Fix an Expo cold-start deep link that redirects to login before persisted auth hydration completes.",
+      "required": [
+        "mobile-runtime-engineering"
+      ],
+      "forbidden": [
+        "react-composition-patterns"
+      ],
+      "quality_assertions": [
+        "Preserve deep-link intent until prerequisites resolve",
+        "Check cold start/account state and server authorization"
+      ]
+    },
+    {
+      "id": "mobile-failed-save",
+      "prompt": "In RN a timed-out save clears the draft; retry can create duplicate records. Repair the behavior.",
+      "required": [
+        "mobile-runtime-engineering"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Retain draft and disable repeat submission",
+        "Cancellation is not server rollback; reconcile uncertain write with idempotency"
+      ]
+    },
+    {
+      "id": "mobile-performance",
+      "prompt": "RN long feed janks on low-end Android; propose measured fixes using the current profiler.",
+      "required": [
+        "mobile-runtime-engineering"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Same build/device/data before-after",
+        "Do not add memoization or a new store without localization"
+      ]
+    },
+    {
+      "id": "mobile-flutter-nearmiss",
+      "prompt": "Fix hydration and back navigation in a Flutter application.",
+      "required": [],
+      "forbidden": [
+        "mobile-runtime-engineering"
+      ],
+      "quality_assertions": [
+        "Do not apply Expo/RN APIs to Flutter"
+      ]
+    },
+    {
+      "id": "mobile-design-nearmiss",
+      "prompt": "Collect visual references for a native onboarding screen; no behavior change requested.",
+      "required": [
+        "design-inspiration-research"
+      ],
+      "forbidden": [
+        "mobile-runtime-engineering"
+      ],
+      "quality_assertions": [
+        "Visual research is a separate owner; capability limits explicit"
+      ]
+    },
+    {
+      "id": "artifact-pdf",
+      "prompt": "Create a reusable PDF report with rendered pages and an editable source.",
+      "required": [
+        "artifact-production"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Render actual saved pages and inspect",
+        "Preserve promised source; text extraction alone not layout proof"
+      ]
+    },
+    {
+      "id": "artifact-sheet",
+      "prompt": "Deliver an editable spreadsheet that recalculates revenue totals when source inputs change.",
+      "required": [
+        "artifact-production"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Real formulas and independent control totals",
+        "Cache values alone not recalculation proof"
+      ]
+    },
+    {
+      "id": "artifact-deck",
+      "prompt": "Review saved slide deck for overflow, font substitution and editable objects.",
+      "required": [
+        "artifact-production"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Inspect actual deck render and structure",
+        "PDF images do not establish editability"
+      ]
+    },
+    {
+      "id": "artifact-chat-nearmiss",
+      "prompt": "Rewrite this paragraph in chat, preserving facts and voice.",
+      "required": [
+        "humanizer"
+      ],
+      "forbidden": [
+        "artifact-production"
+      ],
+      "quality_assertions": [
+        "No file/office infrastructure for ordinary prose"
+      ]
+    },
+    {
+      "id": "artifact-image-nearmiss",
+      "prompt": "Generate a raster image of a mountain lake.",
+      "required": [],
+      "forbidden": [
+        "artifact-production"
+      ],
+      "quality_assertions": [
+        "Image generation belongs to an available image capability"
+      ]
+    },
+    {
+      "id": "ref-licensing",
+      "prompt": "Compare source roles and licensing before adapting a Reddit-linked skill pack.",
+      "required": [
+        "reference-intelligence"
+      ],
+      "forbidden": [
+        "source-driven-development"
+      ],
+      "quality_assertions": [
+        "Read primary repo/license at immutable revision; social post is discovery"
+      ]
+    },
+    {
+      "id": "source-api",
+      "prompt": "Check the exact React hook contract against installed React version and current official docs.",
+      "required": [
+        "source-driven-development"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Source API/version correctness is distinct from broad source-role research"
+      ]
+    },
+    {
+      "id": "spec-kit-nearmiss",
+      "prompt": "Write a lightweight feature behavior specification in a repo with no Spec Kit installation.",
+      "required": [
+        "spec-driven-development"
+      ],
+      "forbidden": [
+        "spec-kit-workflow"
+      ],
+      "quality_assertions": [
+        "No Spec Kit lifecycle/tool introduction for generic specification"
+      ]
+    },
+    {
+      "id": "verify-simple",
+      "prompt": "Confirm this single bug fix has fresh focused test evidence before claiming it fixed.",
+      "required": [
+        "verification-before-completion"
+      ],
+      "forbidden": [
+        "verification-gauntlet"
+      ],
+      "quality_assertions": [
+        "No full gauntlet for one localized evidence surface"
+      ]
+    },
+    {
+      "id": "writing-editor",
+      "prompt": "Remove generic repetitive phrasing while preserving a technical caveat.",
+      "required": [
+        "humanizer"
+      ],
+      "forbidden": [
+        "stop-slop"
+      ],
+      "quality_assertions": [
+        "Choose one primary editorial procedure; preserve caveat"
+      ]
+    },
+    {
+      "id": "executive-decision",
+      "prompt": "Should our company fund a new product with limited runway and uncertain channel adoption?",
+      "required": [
+        "executive-orchestration"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Company-specific facts, critical assumption, exposure limit and reversal signal",
+        "No persistent committee or binding spending action"
+      ]
+    },
+    {
+      "id": "marketing-evidence",
+      "prompt": "Choose a customer segment from biased community posts and internal interviews before funding a channel.",
+      "required": [
+        "marketing-and-growth"
+      ],
+      "forbidden": [],
+      "quality_assertions": [
+        "Differentiate public discovery/primary research",
+        "Testable hypothesis, metric, guardrail and inconclusive outcome"
+      ]
+    }
+  ]
+}

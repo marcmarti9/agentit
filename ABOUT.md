@@ -109,7 +109,7 @@ See [`evals/evaluation-plan.md`](evals/evaluation-plan.md) and the tracked compa
 
 ## Open source
 
-Agentit is licensed under the [Apache License, Version 2.0](LICENSE).
+Agentit original material is licensed under the [Apache License, Version 2.0](LICENSE). Third-party packages retain their stated licenses. The October 3 property-testing and security-analysis adaptations and their references are CC-BY-SA-4.0; see [third-party notices](THIRD_PARTY_NOTICES.md).
 
 - [README](README.md)
 - [Contributing](CONTRIBUTING.md)

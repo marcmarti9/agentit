@@ -7,6 +7,10 @@ description: Research and select the best current creative-development tools, li
 
 Use after a concept exists and before committing to a technical implementation when the experience depends on non-trivial motion, 3D, shaders, audio, generative visuals, unusual layout, or interaction.
 
+For a rendered video, motion advertisement, offline 3D shot or native-editor
+pipeline decision, read [video-production-routes.md](references/video-production-routes.md).
+Interactive web motion alone does not need this branch.
+
 ## Goal
 
 Answer: **what is the best current way to build this idea?** Do not choose a tool merely because the model already knows it.

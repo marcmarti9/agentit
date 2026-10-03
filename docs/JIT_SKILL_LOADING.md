@@ -108,3 +108,9 @@ Workers also validate the ordered project-instruction inventory and content hash
 Legacy schema-3 payloads without the authority field must be rebuilt before spawn.
 These unsigned checks detect accidental omission/drift, not a producer that forges
 both content and matching metadata. No model-obedience claim follows from them.
+
+## Curation is separate from runtime activation
+
+The October 3 [quality audit](../reports/2026-10-03-skill-quality-audit.md) adds opt-in profiles and five bounded bodies without changing runtime selection or core delivery. Research manifests, license files, audit inventory and evaluation fixtures are maintenance data, not activated instructions. `check_skill_curation.py` checks explicit inventory/provenance structure only. New body activation and branch-resource delivery are tested byte-for-byte; references still require explicit resource selection.
+
+Large canonical upstream bodies remain intact. Lowering their size would require a reviewed owned adaptation rather than silently compressing source bytes. Use pack metadata to select a single appropriate owner; do not activate all profile members to compensate for overlap.

@@ -80,6 +80,9 @@ class ProfileCatalogTests(unittest.TestCase):
         all_skills = {
             path.parent.name for path in (REPOSITORY / "skills").glob("*/SKILL.md")
         }
+        # ECC packages live once under vendor, not duplicated in root skills/.
+        ecc_lock = json.loads((REPOSITORY / "vendor/ecc.lock.json").read_text())
+        all_skills.update(ecc_lock["skills"])
         all_result = subprocess.run(
             [
                 "python3",

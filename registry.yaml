@@ -161,3 +161,14 @@ entries:
       - "${REPO_ROOT}/reports/2026-10-04-design-skills-audit.md"
       - "${REPO_ROOT}/reports/2026-10-03-skill-quality-audit.md"
     state: AVAILABLE_ON_DEMAND
+
+  - id: ecc-unified-library
+    kind: runtime-and-skills
+    category: expertise
+    provenance: pinned-upstream
+    paths:
+      - "${REPO_ROOT}/vendor/ecc.lock.json"
+      - "${REPO_ROOT}/references/ecc-policy.json"
+      - "${REPO_ROOT}/router/ecc.py"
+      - "${REPO_ROOT}/docs/ECC_INTEGRATION.md"
+    state: AVAILABLE_ON_DEMAND

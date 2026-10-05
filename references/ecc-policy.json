@@ -1,0 +1,493 @@
+{
+  "schema_version": 1,
+  "repository": "affaan-m/ECC",
+  "revision": "ef648e01899ba3e8dc6371642deaaf64b4477775",
+  "integration": "Complete unchanged ECC source tree; one Agentit delivery, selection and lifecycle authority.",
+  "aliases": {
+    "tdd-workflow": {
+      "canonical": "test-driven-development",
+      "reason": "Keep Agentit behavioral TDD and BUILDER/REVIEW cadence; ECC demands blanket coverage and checkpoint commits per stage."
+    },
+    "verification-loop": {
+      "canonical": "verification-gauntlet",
+      "reason": "Keep the source-bound, risk-scoped verification procedure rather than duplicate a fixed six-phase checklist."
+    },
+    "security-review": {
+      "canonical": "security-and-hardening",
+      "reason": "Keep Agentit threat modelling, authorization, SSRF, destructive-path and supply-chain controls; ECC language security and AgentShield remain complementary."
+    },
+    "git-workflow": {
+      "canonical": "git-workflow-and-versioning",
+      "reason": "One branch/commit/PR owner; preserve Agentit authorization and existing Git handoff contract."
+    },
+    "remotion-video-creation": {
+      "canonical": "remotion-video-engineering",
+      "reason": "Keep the recently expanded Agentit Remotion adapter and full official rule resources instead of activating ECC's older 29-rule overview in parallel."
+    },
+    "autonomous-loops": {
+      "canonical": "continuous-agent-loop",
+      "reason": "ECC explicitly marks autonomous-loops as a legacy compatibility name and continuous-agent-loop as canonical."
+    },
+    "continuous-learning": {
+      "canonical": "continuous-learning-v2",
+      "reason": "ECC v2 provides project-scoped instincts; keep v1 code only for upstream compatibility, not as a second active learning procedure."
+    },
+    "agent-sort": {
+      "canonical": "using-agent-skills",
+      "reason": "Agentit already owns availability, explicit selection and full-body JIT. Do not introduce ECC DAILY always-loaded bundles."
+    },
+    "team-builder": {
+      "canonical": "specialist-agent-routing",
+      "reason": "Keep model-owned, justified specialist selection instead of a second manual team picker with a fixed five-agent cap."
+    }
+  },
+  "packs": {
+    "ecc-web": {
+      "description": "Frontend frameworks, web interaction, accessible implementation and browser testing.",
+      "skills": [
+        "accessibility",
+        "angular-developer",
+        "browser-qa",
+        "click-path-audit",
+        "design-system",
+        "e2e-testing",
+        "frontend-a11y",
+        "frontend-design-direction",
+        "frontend-patterns",
+        "inherit-legacy-style",
+        "make-interfaces-feel-better",
+        "motion-advanced",
+        "motion-foundations",
+        "motion-patterns",
+        "nextjs-turbopack",
+        "nuxt4-patterns",
+        "react-patterns",
+        "react-performance",
+        "react-testing",
+        "ui-to-vue",
+        "vite-patterns",
+        "vue-patterns"
+      ]
+    },
+    "ecc-languages": {
+      "description": "Language/framework engineering, architecture and ecosystem-specific verification.",
+      "skills": [
+        "android-clean-architecture",
+        "backend-patterns",
+        "bun-runtime",
+        "compose-multiplatform-patterns",
+        "cpp-coding-standards",
+        "cpp-testing",
+        "csharp-testing",
+        "dart-flutter-patterns",
+        "django-celery",
+        "django-patterns",
+        "django-security",
+        "django-tdd",
+        "django-verification",
+        "dotnet-patterns",
+        "fastapi-patterns",
+        "flutter-dart-code-review",
+        "foundation-models-on-device",
+        "fsharp-testing",
+        "golang-patterns",
+        "golang-testing",
+        "hexagonal-architecture",
+        "java-coding-standards",
+        "jpa-patterns",
+        "kotlin-coroutines-flows",
+        "kotlin-exposed-patterns",
+        "kotlin-ktor-patterns",
+        "kotlin-patterns",
+        "kotlin-testing",
+        "laravel-patterns",
+        "laravel-plugin-discovery",
+        "laravel-security",
+        "laravel-tdd",
+        "laravel-verification",
+        "liquid-glass-design",
+        "nestjs-patterns",
+        "perl-patterns",
+        "perl-security",
+        "perl-testing",
+        "python-patterns",
+        "python-testing",
+        "quarkus-patterns",
+        "quarkus-security",
+        "quarkus-tdd",
+        "quarkus-verification",
+        "rails-patterns",
+        "react-native-patterns",
+        "rust-patterns",
+        "rust-testing",
+        "springboot-patterns",
+        "springboot-security",
+        "springboot-tdd",
+        "springboot-verification",
+        "swift-actor-persistence",
+        "swift-concurrency-6-2",
+        "swift-protocol-di-testing",
+        "swiftui-patterns",
+        "tinystruct-patterns",
+        "windows-desktop-e2e"
+      ]
+    },
+    "ecc-development": {
+      "description": "Repo execution, API contracts, measured optimization, tests and delivery.",
+      "skills": [
+        "ai-first-engineering",
+        "ai-regression-testing",
+        "api-connector-builder",
+        "api-design",
+        "architecture-decision-records",
+        "benchmark",
+        "benchmark-optimization-loop",
+        "blueprint",
+        "code-tour",
+        "codebase-onboarding",
+        "codehealth-mcp",
+        "coding-standards",
+        "content-hash-cache-pattern",
+        "contract-first",
+        "cost-aware-llm-pipeline",
+        "delivery-gate",
+        "deployment-patterns",
+        "documentation-lookup",
+        "error-handling",
+        "eval-harness",
+        "generating-python-installer",
+        "github-ops",
+        "i18n-sync",
+        "intent-driven-development",
+        "living-docs-governance",
+        "loop-design-check",
+        "mcp-server-patterns",
+        "opensource-pipeline",
+        "plan-canvas",
+        "plankton-code-quality",
+        "product-capability",
+        "product-lens",
+        "production-audit",
+        "prompt-optimizer",
+        "regex-vs-llm-structured-text",
+        "repo-scan",
+        "search-first",
+        "terminal-opener",
+        "terminal-ops"
+      ]
+    },
+    "ecc-agent-systems": {
+      "description": "Agent tools, orchestration, memory, learning, context and host adapters; explicit selection only.",
+      "skills": [
+        "agent-architecture-audit",
+        "agent-eval",
+        "agent-harness-construction",
+        "agent-introspection-debugging",
+        "agent-self-evaluation",
+        "agentic-engineering",
+        "agentic-os",
+        "autonomous-agent-harness",
+        "claude-devfleet",
+        "config-gc",
+        "configure-ecc",
+        "connections-optimizer",
+        "context-budget",
+        "continuous-agent-loop",
+        "continuous-learning-v2",
+        "cost-tracking",
+        "council",
+        "council-multi-model",
+        "dev-team",
+        "dmux-workflows",
+        "dynamic-workflow-mode",
+        "ecc-guide",
+        "ecc-recipes",
+        "ecc-tools-cost-audit",
+        "enterprise-agent-ops",
+        "gan-style-harness",
+        "growth-log",
+        "hermes-imports",
+        "hookify-rules",
+        "iterative-retrieval",
+        "knowledge-ops",
+        "nanoclaw-repl",
+        "nasiko-control-plane",
+        "openclaw-persona-forge",
+        "operator-approval-loop",
+        "orch-add-feature",
+        "orch-build-mvp",
+        "orch-change-feature",
+        "orch-fix-defect",
+        "orch-pipeline",
+        "orch-refine-code",
+        "parallel-execution-optimizer",
+        "plan-orchestrate",
+        "ralphinho-rfc-pipeline",
+        "recursive-decision-ledger",
+        "rules-distill",
+        "santa-method",
+        "skill-comply",
+        "skill-scout",
+        "skill-stocktake",
+        "strategic-compact",
+        "team-agent-orchestration",
+        "token-budget-advisor",
+        "unified-memory",
+        "workspace-surface-audit"
+      ]
+    },
+    "ecc-data": {
+      "description": "Databases, data pipelines, machine learning, model operation and structured analysis.",
+      "skills": [
+        "clickhouse-io",
+        "dashboard-builder",
+        "data-scraper-agent",
+        "data-throughput-accelerator",
+        "database-migrations",
+        "ito-baskets",
+        "ito-compute",
+        "ito-inference",
+        "ito-training",
+        "latency-critical-systems",
+        "ml-adoption-playbook",
+        "mle-workflow",
+        "mysql-patterns",
+        "postgres-patterns",
+        "prisma-patterns",
+        "pytorch-patterns",
+        "recsys-pipeline-architect",
+        "redis-patterns",
+        "social-graph-ranker"
+      ]
+    },
+    "ecc-research-growth": {
+      "description": "Evidence-backed research, brand voice, publishing, growth and commercial analysis.",
+      "skills": [
+        "article-writing",
+        "benchmark-methodology",
+        "brand-discovery",
+        "brand-voice",
+        "competitive-platform-analysis",
+        "competitive-report-structure",
+        "content-engine",
+        "crosspost",
+        "deep-research",
+        "exa-search",
+        "investor-materials",
+        "investor-outreach",
+        "lead-intelligence",
+        "market-research",
+        "marketing-campaign",
+        "research-ops",
+        "scientific-db-pubmed-database",
+        "scientific-db-uspto-database",
+        "scientific-pkg-gget",
+        "scientific-thinking-literature-review",
+        "scientific-thinking-scholar-evaluation",
+        "seo",
+        "social-publisher",
+        "taste",
+        "taste-application",
+        "taste-distillation",
+        "x-api"
+      ]
+    },
+    "ecc-media": {
+      "description": "Video, motion, Blender, slides, media generation and document processing.",
+      "skills": [
+        "blender-motion-state-inspection",
+        "fal-ai-media",
+        "frontend-slides",
+        "ios-icon-gen",
+        "manim-video",
+        "nutrient-document-processing",
+        "tasteforge-video",
+        "ui-demo",
+        "video-editing",
+        "videodb",
+        "visa-doc-translate"
+      ]
+    },
+    "ecc-operations": {
+      "description": "Infrastructure, integrations, networking and evidence-first business operations.",
+      "skills": [
+        "automation-audit-ops",
+        "canary-watch",
+        "carrier-relationship-management",
+        "cisco-ios-patterns",
+        "ck",
+        "counterparty-channel-discipline",
+        "customer-billing-ops",
+        "customs-trade-compliance",
+        "docker-patterns",
+        "email-ops",
+        "energy-procurement",
+        "esign-field-placement",
+        "finance-billing-ops",
+        "flox-environments",
+        "google-workspace-ops",
+        "homelab-network-readiness",
+        "homelab-network-setup",
+        "homelab-pihole-dns",
+        "homelab-vlan-segmentation",
+        "homelab-wireguard-vpn",
+        "inventory-demand-planning",
+        "jira-integration",
+        "kubernetes-patterns",
+        "logistics-exception-management",
+        "mailtrap-email-integration",
+        "master-agreement-generator",
+        "messages-ops",
+        "netmiko-ssh-automation",
+        "network-bgp-diagnostics",
+        "network-config-validation",
+        "network-interface-health",
+        "production-scheduling",
+        "project-flow-ops",
+        "quality-nonconformance",
+        "returns-reverse-logistics",
+        "uncloud",
+        "unified-notifications-ops"
+      ]
+    },
+    "ecc-security-domains": {
+      "description": "Specialist security, healthcare and financial protocols; not authorization for external actions.",
+      "skills": [
+        "agent-payment-x402",
+        "defi-amm-security",
+        "evm-token-decimals",
+        "gateguard",
+        "healthcare-cdss-patterns",
+        "healthcare-emr-patterns",
+        "healthcare-eval-harness",
+        "healthcare-phi-compliance",
+        "hipaa-compliance",
+        "llm-trading-agent-security",
+        "nodejs-keccak256",
+        "prediction-market-oracle-research",
+        "prediction-market-risk-review",
+        "safety-guard",
+        "security-bounty-hunter",
+        "security-scan"
+      ]
+    }
+  },
+  "profile_additions": {
+    "frontend": [
+      "react-patterns",
+      "react-performance",
+      "react-testing",
+      "frontend-a11y",
+      "browser-qa",
+      "vue-patterns",
+      "vite-patterns",
+      "nextjs-turbopack"
+    ],
+    "backend": [
+      "api-design",
+      "api-connector-builder",
+      "backend-patterns",
+      "error-handling",
+      "database-migrations",
+      "postgres-patterns",
+      "redis-patterns",
+      "mcp-server-patterns"
+    ],
+    "supabase": [
+      "postgres-patterns",
+      "database-migrations"
+    ],
+    "product": [
+      "market-research",
+      "product-lens",
+      "competitive-platform-analysis",
+      "investor-materials"
+    ],
+    "executive": [
+      "investor-materials",
+      "investor-outreach",
+      "finance-billing-ops",
+      "competitive-report-structure"
+    ],
+    "writing": [
+      "article-writing",
+      "brand-voice",
+      "content-engine"
+    ],
+    "design": [
+      "frontend-design-direction",
+      "design-system",
+      "accessibility",
+      "make-interfaces-feel-better"
+    ],
+    "mobile": [
+      "react-native-patterns",
+      "dart-flutter-patterns",
+      "swiftui-patterns",
+      "android-clean-architecture",
+      "compose-multiplatform-patterns"
+    ],
+    "release": [
+      "deployment-patterns",
+      "delivery-gate",
+      "canary-watch",
+      "production-audit",
+      "github-ops"
+    ],
+    "research": [
+      "deep-research",
+      "market-research",
+      "research-ops",
+      "scientific-thinking-literature-review"
+    ],
+    "growth": [
+      "seo",
+      "marketing-campaign",
+      "lead-intelligence",
+      "content-engine",
+      "crosspost"
+    ],
+    "agency": [
+      "brand-discovery",
+      "marketing-campaign",
+      "browser-qa"
+    ],
+    "data": [
+      "dashboard-builder",
+      "postgres-patterns",
+      "clickhouse-io",
+      "data-throughput-accelerator",
+      "pytorch-patterns"
+    ],
+    "security": [
+      "security-scan",
+      "safety-guard",
+      "agent-architecture-audit"
+    ],
+    "artifacts": [
+      "frontend-slides",
+      "nutrient-document-processing",
+      "dashboard-builder"
+    ],
+    "design-review": [
+      "frontend-a11y",
+      "browser-qa",
+      "click-path-audit"
+    ],
+    "video": [
+      "video-editing",
+      "ui-demo",
+      "manim-video",
+      "blender-motion-state-inspection",
+      "tasteforge-video"
+    ]
+  },
+  "authority": {
+    "selection": "Agentit task-router and using-agent-skills; source discovery never activates a body.",
+    "development": "Agentit BUILDER/REVIEW and anti-overengineering; no blanket TDD/coverage/commit cadence.",
+    "memory": "Agentit .agentit state remains run continuity; ECC vault/instincts are opt-in durable knowledge, not a second automatic transcript sink.",
+    "native_runtime": "ECC retains original executable behavior. Native installs, hooks, MCPs, crons and external writes require explicit host setup and are not enabled by import.",
+    "agents": "ECC agents are templates discoverable on demand; their model/tools fields do not grant permissions or spawn workers.",
+    "remotion": "Agentit remotion-video-engineering plus its retained official resources is canonical; ECC native copy is provenance/compatibility only."
+  }
+}

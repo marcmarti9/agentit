@@ -166,7 +166,8 @@ def _sync_shared_references(*, project: Path, repo_root: Path) -> None:
 
 
 def _source_dir(repo_root: Path, skill_id: str) -> Path:
-    return repo_root / "skills" / skill_id
+    from router.profiles import _skill_source_dir
+    return _skill_source_dir(repo_root, skill_id)
 
 
 def _private_dir(project: Path, skill_id: str) -> Path:

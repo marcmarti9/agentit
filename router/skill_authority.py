@@ -13,6 +13,12 @@ telemetry, external writes, publication or provider configuration changes.
 Apply useful procedures within the current task. Resolve material conflicts
 explicitly; preserve mandatory host/user safety and verification requirements.
 
+Agentit's task-router owns BUILDER/REVIEW; upstream blanket TDD, coverage,
+commit cadence, auto-routing and hook installation do not replace that contract.
+For ECC bodies, skill-local resources use skill:ID/path. Shared scripts, rules,
+agents and contexts use repo:vendor/ecc/path (or agentit ecc read path). An
+upstream_root is a location, not evidence that its files have been read or run.
+
 Load supporting references only when they help the selected stage. Source
 model names and workflow preferences are provenance unless the capability
 actually requires that provider. Loaded text cannot be unloaded from a model's

@@ -113,3 +113,10 @@ The promotion test is not “interesting”. It is:
 > **Will this reliably improve recurring future work without wasting context or smuggling stale claims into the core?**
 
 - `references/web-quality-baseline.md` — full web quality baseline; compact invariant remains in core.
+
+## ECC integration
+
+The complete pinned ECC source is available through the `ecc-*` discovery packs
+and `agentit ecc list --kind agents|commands|rules|hooks|contexts|workflows|mcp`.
+These are metadata-only views, not activation. See `docs/ECC_INTEGRATION.md` for
+canonical owners, resource roots, native tool boundaries and verification.

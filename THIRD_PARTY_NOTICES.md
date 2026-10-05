@@ -395,3 +395,14 @@ Changed scope: `skills/creative-tool-scout/references/video-production-routes.md
 Corey Haines' already retained MIT source/notice also informs `advertising-video-production` and its `creative-variants.md` reference at the same fixed revision. Source paths/targets are extended in the manifest. No platform statistics, mandatory partner skills or account-operation playbooks are imported.
 
 The independently authored Remotion adapter includes no official Remotion skill prose/code. `remotion-dev/skills` had no license file in the inspected tree; the monorepo root has a custom runtime license, and the sibling agent-plugin MIT license is not attributed to the skills package. Reference-only Hyperframes, Rive and Lottie are not vendored or relicensed.
+
+## ECC (Everything Claude Code) complete pinned source
+
+- Source: https://github.com/affaan-m/ECC
+- Revision: `ef648e01899ba3e8dc6371642deaaf64b4477775` (2.2.3).
+- Retained source: `vendor/ecc/`; MIT license: `vendor/ecc/LICENSE`.
+- Copyright and third-party notices inside the original tree are retained unchanged.
+- File provenance and integrity: `vendor/ecc.lock.json`; integration decisions:
+  `references/ecc-policy.json` and `docs/ECC_INTEGRATION.md`.
+- The original source is unmodified. Agentit-owned adapters and catalog metadata
+  are separate; the root Apache-2.0 license does not relicense upstream material.

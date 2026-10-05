@@ -42,6 +42,19 @@ You + capable coding agent
  branch → PR → human merge
 ```
 
+## ECC + Agentit
+
+The complete pinned ECC 2.2.3 source is included: skills, agents, commands, hooks,
+rules, memory, native tools and host adapters. One JIT catalog exposes **380
+canonical skills** (96 Agentit + 284 ECC), with nine explicit redundant-name
+resolutions. Agentit's three-body core, BUILDER/REVIEW, Remotion expertise,
+worker contracts and verified runtime remain intact. No global ECC hook,
+transcript collector or provider configuration is enabled by importing it.
+
+See [ECC integration, native tools and deduplication](docs/ECC_INTEGRATION.md).
+`agentit ecc status` shows the actual inventory; `agentit ecc verify` checks the
+retained source. Native host setup remains a separate, explicitly scoped action.
+
 ## JIT assurance and limits
 
 The 2026-09-18 adversarial audit found and repaired gaps between skill discovery,

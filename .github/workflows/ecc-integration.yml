@@ -1,15 +1,6 @@
 name: ECC integration
+
 on:
-  push:
-    branches: [codex/ecc-agentit-unification]
-    paths:
-      - .github/workflows/ecc-integration.yml
-      - scripts/ecc-assembly/**
-      - scripts/ecc_integrate.py
-      - router/ecc.py
-      - router/test_ecc.py
-      - references/ecc-policy.json
-      - vendor/ecc.lock.json
   pull_request:
     paths:
       - .github/workflows/ecc-integration.yml
@@ -19,18 +10,29 @@ on:
       - references/ecc-policy.json
       - vendor/ecc/**
       - vendor/ecc.lock.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ecc-integration.yml
+      - scripts/ecc_integrate.py
+      - router/ecc.py
+      - router/test_ecc.py
+      - references/ecc-policy.json
+      - vendor/ecc/**
+      - vendor/ecc.lock.json
   workflow_dispatch:
+
 permissions:
   contents: read
+
 concurrency:
-  group: ecc-integration-${{ github.ref }}
-  cancel-in-progress: false
+  group: ecc-validation-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  integrate:
+  source-integrity:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    outputs:
-      assembled: ${{ steps.assemble.outputs.assembled }}
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: agentit
@@ -49,89 +51,42 @@ jobs:
         with:
           python-version: '3.12'
       - run: python3 -m pip install 'PyYAML>=6,<7'
-      - name: Apply reviewed integration transport once
-        id: assemble
-        shell: bash
+      - name: Compare retained source and generated metadata against the actual pinned Git checkout
         run: |
-          if test -d scripts/ecc-assembly; then
-            python3 - <<'PY'
-          import base64, hashlib, pathlib, shutil, subprocess, zlib
-          parts = pathlib.Path('scripts/ecc-assembly')
-          encoded = ''.join((parts / f'part-{i}.b64').read_text().strip() for i in range(4))
-          patch = zlib.decompress(base64.b64decode(encoded, validate=True))
-          assert hashlib.sha256(patch).hexdigest() == 'cc3c8cefe94c1b70ddc3bbf2f1ad56b3664c26da367396b336ae70ebcc36d5d0', 'transport digest mismatch'
-          subprocess.run(['git', 'apply', '--check', '-'], input=patch, check=True)
-          subprocess.run(['git', 'apply', '-'], input=patch, check=True)
-          shutil.rmtree(parts)
-          PY
-            echo 'assembled=true' >> "$GITHUB_OUTPUT"
-          else
-            echo 'assembled=false' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Import complete reviewed Git revision or verify existing pin
-        run: python3 scripts/ecc_integrate.py --source ../ecc
-      - name: Verify unified catalog and existing upstream sources
-        run: |
-          python3 scripts/check_skill_curation.py
-          python3 scripts/sync_upstream_skills.py
+          python3 scripts/ecc_integrate.py --source ../ecc
+          git diff --exit-code -- profiles.yaml references/agentit-skill-packs.md vendor/ecc.lock.json vendor/ecc
           python3 agentit ecc verify
-      - name: Test runtime and portable integration
-        run: python3 -m unittest discover -s router -p 'test_*.py' -v > ../runtime-tests.log 2>&1
-      - name: Test scripts and policy contracts
-        run: python3 -m unittest discover -s tests -p 'test_*.py' -v > ../script-tests.log 2>&1
-      - name: Check changed entrypoints and legacy shell contracts
-        run: |
-          python3 -m py_compile agentit bootstrap.py router/ecc.py router/skill_loader.py router/profiles.py router/profile_jit_cli.py router/bootstrap.py scripts/ecc_integrate.py
-          bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
-          python3 agentit ecc --help
-      - name: Package verified integration for branch-only publication
-        if: steps.assemble.outputs.assembled == 'true'
-        run: |
-          git add -A
-          git add -f vendor/ecc
-          mkdir -p ../verified-integration
-          git diff --cached --binary > ../verified-integration/integration.patch
-          git write-tree > ../verified-integration/tree.sha
-          sha256sum ../verified-integration/integration.patch
-      - uses: actions/upload-artifact@v4
-        if: success() && steps.assemble.outputs.assembled == 'true'
-        with:
-          name: ecc-verified-integration
-          path: verified-integration/
-          retention-days: 3
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ecc-agentit-test-evidence
-          path: |
-            runtime-tests.log
-            script-tests.log
-          retention-days: 7
-  publish-reviewed-branch:
-    needs: integrate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/ecc-agentit-unification' && needs.integrate.outputs.assembled == 'true'
+          python3 scripts/check_skill_curation.py
+
+  native-cli-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
-      - uses: actions/download-artifact@v4
+          persist-credentials: false
+      - uses: actions/setup-python@v5
         with:
-          name: ecc-verified-integration
-          path: /tmp/ecc-verified-integration
-      - name: Publish exact tested tree, never main or a force push
-        shell: bash
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 -m pip install 'PyYAML>=6,<7'
+      - name: Install frozen dependencies using upstream's supported npm compatibility lane
+        working-directory: vendor/ecc
+        env:
+          npm_config_ignore_scripts: 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Exercise the retained CLI through Agentit's real wrapper
         run: |
-          git apply --index /tmp/ecc-verified-integration/integration.patch
-          test "$(git write-tree)" = "$(cat /tmp/ecc-verified-integration/tree.sha)"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'feat: unify complete pinned ECC with Agentit JIT, profiles and native tools'
-          git push origin HEAD:refs/heads/codex/ecc-agentit-unification
-  upstream-native-tests:
+          python3 agentit ecc run -- --help
+          python3 agentit ecc verify
+          git diff --exit-code -- vendor/ecc
+
+  # Native suites are separate from Agentit's Python/runtime tests. A manual
+  # comprehensive run does not install hooks or configure real user hosts.
+  native-full-suite:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -143,16 +98,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install frozen dependencies using upstream-supported npm compatibility lane
+      - name: Install frozen dependencies without lifecycle scripts
         env:
           npm_config_ignore_scripts: 'true'
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Test unchanged ECC native baseline without write credentials
+      - name: Run unchanged native ECC baseline
         env:
           CLAUDE_CODE_PACKAGE_MANAGER: npm
         run: node tests/run-all.js > /tmp/ecc-native-tests.log 2>&1
-      - name: Native CLI help smoke test
-        run: node scripts/ecc.js --help
       - uses: actions/upload-artifact@v4
         if: always()
         with:

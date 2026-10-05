@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @unittest.skipIf(os.name == 'nt', 'POSIX executable-mode boundary')
 class ECCNativeInstallModesTests(unittest.TestCase):
-    def test_only_verified_declared_bin_can_gain_exec_after_install(self):
+    def test_declared_bin_modes_survive_dependency_pruning_without_permitting_other_edits(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for rel in ('references/ecc-policy.json', 'vendor/ecc.lock.json',
@@ -22,9 +22,12 @@ class ECCNativeInstallModesTests(unittest.TestCase):
             binary = root / 'vendor/ecc/scripts/memory-mcp.mjs'
             expected = binary.read_bytes()
             binary.chmod(binary.stat().st_mode | 0o111)
-            with self.assertRaisesRegex(ecc.ECCError, 'executable-mode mismatch'):
-                ecc.verified_bytes(root, 'scripts/memory-mcp.mjs')
+            self.assertEqual(ecc.verified_bytes(root, 'scripts/memory-mcp.mjs'), expected)
             (root / 'vendor/ecc/node_modules').mkdir()
+            self.assertEqual(ecc.verified_bytes(root, 'scripts/memory-mcp.mjs'), expected)
+            # Bootstrap intentionally prunes dependency trees; the valid bin
+            # mode must survive that copy without turning verification red.
+            (root / 'vendor/ecc/node_modules').rmdir()
             self.assertEqual(ecc.verified_bytes(root, 'scripts/memory-mcp.mjs'), expected)
             other = root / 'vendor/ecc/agents/architect.md'
             other.chmod(other.stat().st_mode | 0o111)

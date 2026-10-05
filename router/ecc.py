@@ -87,10 +87,9 @@ def verified_bytes(repo: Path, relative: str, lock: dict[str, Any] | None = None
     if sys.platform != 'win32' and bool(target.stat().st_mode & 0o111) != entry['executable']:
         # Yarn makes declared package executables runnable while linking bins.
         # Accept ONLY an added executable bit on a hash-verified, declared bin
-        # after dependencies exist. All bytes and other modes remain checked.
+        # independently of dependency-copy state. All other modes stay checked.
         bins = {}
-        if (not entry['executable'] and relative != 'package.json'
-                and (Path(repo) / SOURCE / 'node_modules').is_dir()):
+        if not entry['executable'] and relative != 'package.json':
             package = json.loads(verified_bytes(repo, 'package.json', lock))
             bins = package.get('bin', {})
         declared = {bins} if isinstance(bins, str) else set(bins.values())
@@ -192,8 +191,7 @@ def main(argv: list[str] | None = None) -> int:
         if lock is None:
             raise ECCError('ECC source absent; use the documented pinned import workflow')
         if args.command == 'status':
-            value = {k: lock[k] for k in ('repository', 'revision', 'version')
-}
+            value = {k: lock[k] for k in ('repository', 'revision', 'version')}
             value.update(files=len(lock['files']), skills=len(lock['skills']), aliases=len(lock['aliases']),
                          resources={k: len(v) for k, v in lock['resources'].items()},
                          native_host_setup='not performed by import', integrity='run agentit ecc verify')

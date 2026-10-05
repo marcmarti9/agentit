@@ -114,3 +114,11 @@ both content and matching metadata. No model-obedience claim follows from them.
 The October 3 [quality audit](../reports/2026-10-03-skill-quality-audit.md) adds opt-in profiles and five bounded bodies without changing runtime selection or core delivery. Research manifests, license files, audit inventory and evaluation fixtures are maintenance data, not activated instructions. `check_skill_curation.py` checks explicit inventory/provenance structure only. New body activation and branch-resource delivery are tested byte-for-byte; references still require explicit resource selection.
 
 Large canonical upstream bodies remain intact. Lowering their size would require a reviewed owned adaptation rather than silently compressing source bytes. Use pack metadata to select a single appropriate owner; do not activate all profile members to compensate for overlap.
+
+## Pinned ECC source seam
+
+The unified inventory also resolves approved ECC packages from `vendor/ecc`
+without duplicating them under root `skills/`. Project overrides and managed
+cache precedence are unchanged. The full source, per-file integrity manifest,
+nine explicit canonical aliases, native-tool boundary and maintenance procedure
+are documented in [ECC integration](ECC_INTEGRATION.md).

@@ -19,3 +19,7 @@ backups/local/
 .mcp.json
 *.agentit-bak-*
 ..mcp.json.agentit-bak-*
+
+# Native ECC dependencies are local, never vendored or bootstrapped.
+node_modules/
+vendor/ecc/.yarn/install-state.gz

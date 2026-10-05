@@ -69,6 +69,28 @@ def _safe_read(path: Path, *, trusted_root: Path) -> str | None:
     # Preserve exact UTF-8 bytes, including CRLF, for delivery and cache hashes.
     return path.read_bytes().decode('utf-8')
 
+def _harness_path(skill_id: str) -> Path:
+    try:
+        from router.ecc import ECCError, skill_dir
+    except ImportError:  # Direct script invocation.
+        from ecc import ECCError, skill_dir
+    try:
+        return skill_dir(HARNESS_ROOT, skill_id)
+    except ECCError as exc:
+        raise SkillLoadError(str(exc)) from exc
+
+
+def _verify_ecc_path(path: Path) -> None:
+    try:
+        from router.ecc import ECCError, verified_path
+    except ImportError:  # Direct script invocation.
+        from ecc import ECCError, verified_path
+    try:
+        verified_path(HARNESS_ROOT, path)
+    except ECCError as exc:
+        raise SkillLoadError(str(exc)) from exc
+
+
 def _cache_file(project: Path, skill_id: str, relative: str, content: str) -> None:
     text = _safe_read(project/'.agentit/skills-manifest.json', trusted_root=project)
     if text is None:
@@ -88,7 +110,9 @@ def _cache_file(project: Path, skill_id: str, relative: str, content: str) -> No
             raise ValueError('resource not managed')
         if entry.get('installed_sha256') != _digest(content):
             raise ValueError('installed hash mismatch')
-        canonical = _safe_read(HARNESS_ROOT/'skills'/skill_id/relative, trusted_root=HARNESS_ROOT)
+        canonical_path = _harness_path(skill_id)/relative
+        _verify_ecc_path(canonical_path)
+        canonical = _safe_read(canonical_path, trusted_root=HARNESS_ROOT)
         if canonical is None:
             raise ValueError('canonical source was removed; retired cache cannot be activated')
         if entry.get('source_sha256') != _digest(canonical):
@@ -107,18 +131,26 @@ def load_skill_bodies(skill_ids: Iterable[str], *, project_root: Path) -> list[d
     project = _project(project_root)
     loaded = []
     for skill_id in _dedupe(skill_ids):
-        candidates = (
-            ('project', project/'.agents/skills'/skill_id/'SKILL.md', project),
-            ('project-agentit-profile', project/'.agentit/profile-skills'/skill_id/'SKILL.md', project),
-            ('harness', HARNESS_ROOT/'skills'/skill_id/'SKILL.md', HARNESS_ROOT),
-        )
-        for source, path, root in candidates:
+        # Resolve canonical sources lazily so a project-native override remains
+        # independent of an unrelated missing/tampered vendor installation.
+        for source, prefix, root in (
+            ('project', project/'.agents/skills', project),
+            ('project-agentit-profile', project/'.agentit/profile-skills', project),
+            ('harness', None, HARNESS_ROOT),
+        ):
+            path = (prefix/skill_id if prefix is not None else _harness_path(skill_id))/'SKILL.md'
             content = _safe_read(path, trusted_root=root)
             if content is None:
                 continue
             if source == 'project-agentit-profile':
                 _cache_file(project, skill_id, 'SKILL.md', content)
-            loaded.append(_body(skill_id, source, path, root, content))
+            if source == 'harness':
+                _verify_ecc_path(path)
+            item = _body(skill_id, source, path, root, content)
+            if source != 'project' and 'vendor/ecc/skills/' in _harness_path(skill_id).as_posix()+'/':
+                item['upstream_root'] = str(HARNESS_ROOT/'vendor/ecc')
+                item['upstream_source'] = 'ECC; shared resources require explicit repo:vendor/ecc/... delivery'
+            loaded.append(item)
             break
         else:
             raise SkillLoadError(f'selected skill body unavailable: {skill_id}')
@@ -160,6 +192,8 @@ def load_reference_bodies(locators: Iterable[str], *, project_root: Path) -> lis
                 cache_skill = (skill_id, resource)
         else:
             raise SkillLoadError(f'unsupported resource root: {source}; use the host read tool')
+        if source == 'repo' or (source == 'skill' and root == HARNESS_ROOT):
+            _verify_ecc_path(path)
         content = _safe_read(path, trusted_root=root)
         if content is None:
             raise SkillLoadError(f'selected resource unavailable: {locator}')

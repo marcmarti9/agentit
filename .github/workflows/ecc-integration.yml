@@ -1,0 +1,118 @@
+name: ECC integration
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/ecc-integration.yml
+      - scripts/ecc_integrate.py
+      - router/ecc.py
+      - router/test_ecc*.py
+      - references/ecc-policy.json
+      - vendor/ecc/**
+      - vendor/ecc.lock.json
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ecc-integration.yml
+      - scripts/ecc_integrate.py
+      - router/ecc.py
+      - router/test_ecc*.py
+      - references/ecc-policy.json
+      - vendor/ecc/**
+      - vendor/ecc.lock.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecc-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: agentit
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: agentit
+      - uses: actions/checkout@v4
+        with:
+          repository: affaan-m/ECC
+          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          persist-credentials: false
+          path: ecc
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m pip install 'PyYAML>=6,<7'
+      - name: Compare retained source and generated metadata against the actual pinned Git checkout
+        run: |
+          python3 scripts/ecc_integrate.py --source ../ecc
+          git diff --exit-code -- profiles.yaml references/agentit-skill-packs.md vendor/ecc.lock.json vendor/ecc
+          python3 agentit ecc verify
+          python3 scripts/check_skill_curation.py
+
+  native-cli-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 -m pip install 'PyYAML>=6,<7'
+      - name: Install ECC's pinned Yarn manager and immutable lockfile without build scripts
+        working-directory: vendor/ecc
+        env:
+          COREPACK_DEFAULT_TO_LATEST: '0'
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: corepack yarn install --immutable --mode=skip-build
+      - name: Exercise the retained CLI through Agentit's real wrapper
+        run: |
+          python3 agentit ecc run -- --help
+          python3 agentit ecc verify
+          # ecc verify enforces modes, including the narrow declared-bin install
+          # exception. Git independently checks that source bytes stayed intact.
+          git -c core.fileMode=false diff --exit-code -- vendor/ecc
+
+  # Native suites are separate from Agentit's Python/runtime tests. A manual
+  # comprehensive run does not install hooks or configure real user hosts.
+  native-full-suite:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: affaan-m/ECC
+          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned immutable dependencies without build scripts
+        env:
+          COREPACK_DEFAULT_TO_LATEST: '0'
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: corepack yarn install --immutable --mode=skip-build
+      - name: Run unchanged native ECC baseline
+        env:
+          CLAUDE_CODE_PACKAGE_MANAGER: npm
+        run: node tests/run-all.js > /tmp/ecc-native-tests.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ecc-native-baseline-evidence
+          path: /tmp/ecc-native-tests.log
+          retention-days: 7

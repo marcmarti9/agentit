@@ -156,7 +156,7 @@ def _excluded(relative: Path, manifest: dict[str, Any]) -> bool:
     return any(relative.as_posix().startswith(prefix) for prefix in prefixes)
 
 
-def _tree_files(root: Path) -> Iterable[Path]:
+def _tree_files(root: Path, *, excluded_names: set[str] | None = None) -> Iterable[Path]:
     if root.is_symlink():
         raise BootstrapError(f"symlink source rejected: {root}")
     if root.is_file():
@@ -166,6 +166,10 @@ def _tree_files(root: Path) -> Iterable[Path]:
         raise BootstrapError(f"bootstrap source is not file/directory: {root}")
     for base, dirnames, filenames in os.walk(root, followlinks=False):
         base_path = Path(base)
+        # Prune dependency/cache roots BEFORE symlink inspection or traversal.
+        # They are never part of the managed runtime source inventory.
+        dirnames[:] = [name for name in dirnames if name not in (excluded_names or set())]
+        filenames = [name for name in filenames if name not in (excluded_names or set())]
         for name in dirnames:
             candidate = base_path / name
             if candidate.is_symlink():
@@ -186,7 +190,8 @@ def _append_tree_specs(
     manifest: dict[str, Any] | None = None,
     manifest_relative_base: Path | None = None,
 ) -> None:
-    for file_path in _tree_files(source_base):
+    excluded_names = set((manifest or {}).get("runtime_exclude_names") or [])
+    for file_path in _tree_files(source_base, excluded_names=excluded_names):
         rel = file_path.relative_to(source_base) if source_base.is_dir() else Path(file_path.name)
         if manifest is not None and manifest_relative_base is not None:
             full_rel = manifest_relative_base / rel if source_base.is_dir() else manifest_relative_base

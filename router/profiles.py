@@ -73,11 +73,18 @@ def load_catalog(catalog_path: Path | None = None) -> dict[str, Any]:
 
 def repository_skill_ids(repo_root: Path) -> set[str]:
     root = Path(repo_root) / "skills"
-    return {
-        path.parent.name
-        for path in root.glob("*/SKILL.md")
-        if path.is_file() and not path.is_symlink() and not path.parent.is_symlink()
-    }
+    try:
+        from router.ecc import ECCError, canonical_ids
+    except ImportError:  # Direct script invocation.
+        from ecc import ECCError, canonical_ids
+    try:
+        return {
+            path.parent.name
+            for path in root.glob("*/SKILL.md")
+            if path.is_file() and not path.is_symlink() and not path.parent.is_symlink()
+        } | canonical_ids(repo_root)
+    except ECCError as exc:
+        raise ProfileError(str(exc)) from exc
 
 
 def resolve_profile(
@@ -165,7 +172,16 @@ def _project_skill_path(project_root: Path, skill_id: str) -> Path:
 
 
 def _skill_source_dir(repo_root: Path, skill_id: str) -> Path:
-    return Path(repo_root) / "skills" / skill_id
+    try:
+        from router.ecc import ECCError, skill_dir, verify_package
+    except ImportError:  # Direct script invocation.
+        from ecc import ECCError, skill_dir, verify_package
+    try:
+        directory = skill_dir(Path(repo_root), skill_id)
+        verify_package(Path(repo_root), directory)
+        return directory
+    except ECCError as exc:
+        raise ProfileError(str(exc)) from exc
 
 
 def _list_skill_package_files(skill_dir: Path) -> list[str]:

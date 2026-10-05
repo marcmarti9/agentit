@@ -1,0 +1,43 @@
+name: ECC integration
+on:
+  push:
+    branches: [codex/ecc-agentit-unification]
+    paths:
+      - .github/workflows/ecc-integration.yml
+      - scripts/ecc_integrate.py
+      - policies/ecc-integration.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ecc-integration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: agentit
+      - uses: actions/checkout@v4
+        with:
+          repository: affaan-m/ECC
+          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          persist-credentials: false
+          path: ecc
+      - name: Inspect pinned source boundaries
+        run: |
+          git -C agentit rev-parse HEAD
+          git -C ecc rev-parse HEAD
+          find agentit/scripts -maxdepth 2 -type f | sort
+          find ecc -maxdepth 2 -type f -not -path '*/.git/*' | sort
+      - name: Package source for offline integration review
+        run: |
+          tar --exclude=.git -czf sources.tar.gz agentit ecc
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ecc-agentit-pinned-sources
+          path: sources.tar.gz
+          retention-days: 3

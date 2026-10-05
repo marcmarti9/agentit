@@ -72,11 +72,12 @@ jobs:
         with:
           node-version: '22'
       - run: python3 -m pip install 'PyYAML>=6,<7'
-      - name: Install frozen dependencies using upstream's supported npm compatibility lane
+      - name: Install ECC's pinned Yarn manager and immutable lockfile without build scripts
         working-directory: vendor/ecc
         env:
-          npm_config_ignore_scripts: 'true'
-        run: npm ci --ignore-scripts --no-audit --no-fund
+          COREPACK_DEFAULT_TO_LATEST: '0'
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: corepack yarn install --immutable --mode=skip-build
       - name: Exercise the retained CLI through Agentit's real wrapper
         run: |
           python3 agentit ecc run -- --help
@@ -98,10 +99,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install frozen dependencies without lifecycle scripts
+      - name: Install pinned immutable dependencies without build scripts
         env:
-          npm_config_ignore_scripts: 'true'
-        run: npm ci --ignore-scripts --no-audit --no-fund
+          COREPACK_DEFAULT_TO_LATEST: '0'
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: corepack yarn install --immutable --mode=skip-build
       - name: Run unchanged native ECC baseline
         env:
           CLAUDE_CODE_PACKAGE_MANAGER: npm

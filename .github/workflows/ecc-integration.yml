@@ -6,7 +6,7 @@ on:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
       - router/ecc.py
-      - router/test_ecc.py
+      - router/test_ecc*.py
       - references/ecc-policy.json
       - vendor/ecc/**
       - vendor/ecc.lock.json
@@ -16,7 +16,7 @@ on:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
       - router/ecc.py
-      - router/test_ecc.py
+      - router/test_ecc*.py
       - references/ecc-policy.json
       - vendor/ecc/**
       - vendor/ecc.lock.json
@@ -82,7 +82,9 @@ jobs:
         run: |
           python3 agentit ecc run -- --help
           python3 agentit ecc verify
-          git diff --exit-code -- vendor/ecc
+          # ecc verify enforces modes, including the narrow declared-bin install
+          # exception. Git independently checks that source bytes stayed intact.
+          git -c core.fileMode=false diff --exit-code -- vendor/ecc
 
   # Native suites are separate from Agentit's Python/runtime tests. A manual
   # comprehensive run does not install hooks or configure real user hosts.

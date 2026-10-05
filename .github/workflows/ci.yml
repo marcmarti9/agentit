@@ -40,6 +40,9 @@ jobs:
       - name: Verify opt-in catalog and adaptation provenance
         run: python3 scripts/check_skill_curation.py
 
+      - name: Verify complete pinned ECC source
+        run: python3 scripts/ecc_integrate.py
+
       - name: Check legacy shell syntax
         run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
 
@@ -133,6 +136,23 @@ jobs:
           core = json.loads(Path(os.environ['RUNNER_TEMP'], 'core.json').read_text())
           assert 'using-agentit' in core
           assert 'task-router' in core
+          PY
+
+      - name: Verify ECC source and original skill bytes through the installed runtime
+        run: |
+          CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"
+          PROJECT="$RUNNER_TEMP/ecc-project"
+          mkdir -p "$PROJECT"
+          "$CLI" ecc verify
+          "$CLI" skills activate api-design --project "$PROJECT" --format json > "$RUNNER_TEMP/ecc-body.json"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          payload = json.loads(Path(os.environ['RUNNER_TEMP'], 'ecc-body.json').read_text())
+          body = payload['skills'][0]
+          expected = Path('vendor/ecc/skills/api-design/SKILL.md').read_bytes()
+          assert body['content'].encode('utf-8') == expected
+          assert body['sha256'] == hashlib.sha256(expected).hexdigest()
           PY
 
       - name: Verify explicit signal path through installed runtime

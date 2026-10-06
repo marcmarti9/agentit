@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Source-informed additions and branch references from the October 3–4, 2026 audits; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "scope": "Source-informed additions and branch references from the October 3–7, 2026 audits/integrations; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
   "sources": [
     {
       "repo": "expo/skills",
@@ -437,6 +437,56 @@
         "skills/creative-tool-scout/references/video-production-routes.md"
       ],
       "adaptation_license": "Apache-2.0"
+    },
+    {
+      "repo": "oso95/scroll-world",
+      "revision": "71cc36d3bb150248ae36a2c552f9cbf88802a79c",
+      "inspected_on": "2026-10-07",
+      "relationship": "agentit-adaptation-with-vendored-upstream-references",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/oso95--scroll-world/LICENSE",
+      "license_sha256": "c4b96a7a050b85026eb68ac5b5fee2778384b14371aaeac50891dbadd848d309",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/scroll-world/SKILL.md",
+        "skills/scroll-world/references/prompts.md",
+        "skills/scroll-world/references/pipeline.md",
+        "skills/scroll-world/references/scrub-engine.js",
+        "skills/scroll-world/references/index-template.html",
+        "skills/scroll-world/references/knockout.py"
+      ],
+      "targets": [
+        "skills/scroll-world/SKILL.md",
+        "skills/scroll-world/references/upstream-workflow.md",
+        "skills/scroll-world/references/prompts.md",
+        "skills/scroll-world/references/pipeline.md",
+        "skills/scroll-world/references/scrub-engine.js",
+        "skills/scroll-world/references/index-template.html",
+        "skills/scroll-world/references/knockout.py"
+      ],
+      "adaptation_license": "MIT"
+    },
+    {
+      "repo": "yya007/SkillFinder",
+      "revision": "e4ae3366b6092fee386c7ef9b0bfd28a747b8b20",
+      "inspected_on": "2026-10-07",
+      "relationship": "agentit-semantic-scout-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/yya007--SkillFinder/LICENSE",
+      "license_sha256": "8fe6d944b71896735304085d55299f837cd9a025159b9ba3d9ef5e37e6aac913",
+      "source_paths_required": true,
+      "source_paths": [
+        "SKILL.md",
+        "README.md",
+        "package.json"
+      ],
+      "targets": [
+        "skills/skillfinder-external-scout/SKILL.md",
+        "skills/skillfinder-external-scout/references/upstream-skill.md"
+      ],
+      "adaptation_license": "MIT"
     }
   ]
 }

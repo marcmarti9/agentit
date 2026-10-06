@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "purpose": "Focused selection cases for the October 7, 2026 scroll-world and external SkillFinder integration. These are routing fixtures, not claims of model quality.",
+  "cases": [
+    {
+      "id": "scroll-world-positive-diorama",
+      "prompt": "Build a premium landing page where scrolling flies a camera through six connected clay-diorama scenes with no visible cuts.",
+      "expected_primary": "scroll-world",
+      "near_miss_not_primary": [
+        "scrollytelling-web",
+        "threejs-spatial-experiences"
+      ]
+    },
+    {
+      "id": "scroll-world-positive-rendered-chain",
+      "prompt": "I already have rendered scene clips; wire them so scroll scrubs one continuous cinematic journey and fix the seam pops.",
+      "expected_primary": "scroll-world"
+    },
+    {
+      "id": "scroll-world-negative-generic-scroll",
+      "prompt": "Add pinned sections and subtle ScrollTrigger reveals to this marketing page.",
+      "expected_primary": "scrollytelling-web",
+      "must_not_select": [
+        "scroll-world"
+      ]
+    },
+    {
+      "id": "scroll-world-negative-realtime-space",
+      "prompt": "Create a realtime Three.js showroom that users can navigate with mouse and keyboard.",
+      "expected_primary": "threejs-spatial-experiences",
+      "must_not_select": [
+        "scroll-world"
+      ]
+    },
+    {
+      "id": "skillfinder-positive-explicit",
+      "prompt": "Search the whole agent-skill ecosystem and find the best current skill for Kafka schema migrations.",
+      "expected_primary": "skillfinder-external-scout"
+    },
+    {
+      "id": "skillfinder-positive-gap",
+      "prompt": "Agentit has no strong local skill for this unusual CAD CAM workflow; find a reusable external agent skill before we invent one.",
+      "expected_primary": "skillfinder-external-scout"
+    },
+    {
+      "id": "skillfinder-negative-local-owner",
+      "prompt": "Fix the accessibility and responsive layout of this React form.",
+      "expected_primary": "frontend-ui-engineering",
+      "must_not_select": [
+        "skillfinder-external-scout"
+      ]
+    },
+    {
+      "id": "skillfinder-negative-installed-selection",
+      "prompt": "Which of the Agentit skills already installed should own this debugging task?",
+      "expected_primary": "task-router",
+      "must_not_select": [
+        "skillfinder-external-scout"
+      ]
+    }
+  ]
+}

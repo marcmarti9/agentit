@@ -144,6 +144,7 @@ If visual direction is material, inspect the `design` pack too. That does not re
 - `delight-and-whimsy` — deliberate moments of delight when they serve the experience rather than decorate everything.
 - `figma-design-workflow` — Figma as a real source, collaboration or handoff surface.
 - `scrollytelling-web` — narrative scroll experiences and section/state choreography.
+- `scroll-world` — pre-rendered continuous camera worlds whose video timeline is scrubbed by scroll; use for fly-through/diorama journeys, not ordinary scrollytelling or realtime 3D.
 - `gsap-scrolltrigger` — ScrollTrigger/timeline mechanics when GSAP is the right implementation tool.
 - `gsap-performance` — keep advanced GSAP motion performant.
 - `threejs-spatial-experiences` — interactive spatial/3D web experiences.
@@ -324,6 +325,7 @@ Executive skills decide at the business-function level. Pair them with engineeri
 - `advertising-video-production` — ad-specific hook, proof, storyboard, caption/audio, controlled variants and creative-test handoff; select as the ad production owner rather than stacking generic production by default.
 - `remotion-video-engineering` — actual selected Remotion version, deterministic scene clocks, assets/props and render engineering; not a general video trigger.
 - `creative-tool-scout` — unresolved route selection; its video branch compares HTML, native editors, offline 3D, interactive vectors and generated/hybrid media.
+- `scroll-world` — specialized AI-rendered scene-chain pipeline for seamless camera journeys, frame-locked seams, encode and scroll delivery; paid providers remain separately authorized.
 - `brand-identity-design` — identity development when required, not routine use of an approved logo.
 - `typography-and-layout` — sustained type hierarchy/layout work when it needs its own design decision.
 - `marketing-and-growth` — positioning, channel and learning decisions when genuinely in scope.
@@ -388,6 +390,7 @@ AEO/GEO is not a parallel permanent skill by default. Treat it as a search surfa
 - `source-driven-development` — version-specific technical contracts; establish authoritative/canonical source hierarchy and verify current contracts.
 - `adversarial-idea-review` — attack a research/product direction before treating it as decided.
 - `reference-intelligence` — source-role/provenance judgment; decide curated vs live sources, distinguish source roles and preserve provenance.
+- `skillfinder-external-scout` — semantic external skill discovery when Agentit has no strong local owner or the user explicitly asks for the best skill across registries; never auto-installs candidates.
 - `context-engineering` — manage large source/context sets without flooding the synthesis model.
 - `verification-before-completion` — evidence-backed final claims.
 - `doubt-driven-development` — adversarial source/assumption review.
@@ -479,6 +482,7 @@ For current legal, tax, regulatory, medical, financial or other domain-specific 
 **Skills in this pack:**
 
 - `find-skills` — discover an absent durable capability only after checking existing project/library fit.
+- `skillfinder-external-scout` — heavyweight semantic fallback across the external skill ecosystem; use only when local/catalog discovery is insufficient or explicitly requested.
 - `local-model-routing` — assess an actually available local model endpoint; no automatic routing implementation is implied.
 - `long-horizon-recovery` — resumable multi-session work with fresh selection and bounded private checkpoints.
 - `i-have-adhd` — only on explicit user request; do not infer a diagnosis, impose persistence across new tasks, or override user/host output constraints.

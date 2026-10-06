@@ -170,6 +170,7 @@ profiles:
     - delight-and-whimsy
     - figma-design-workflow
     - scrollytelling-web
+    - scroll-world
     - gsap-scrolltrigger
     - gsap-performance
     - threejs-spatial-experiences
@@ -242,6 +243,7 @@ profiles:
     - constraint-driven-development
     - verification-before-completion
     - reference-intelligence
+    - skillfinder-external-scout
     - data-analysis-quality
     - artifact-production
     - deep-research
@@ -367,6 +369,7 @@ profiles:
     - executive-strategy
     - figma-design-workflow
     - find-skills
+    - skillfinder-external-scout
     - frontend-ui-engineering
     - git-workflow-and-versioning
     - gsap-performance
@@ -388,6 +391,7 @@ profiles:
     - planning-and-task-breakdown
     - reference-intelligence
     - scrollytelling-web
+    - scroll-world
     - security-and-hardening
     - shipping-and-launch
     - source-driven-development
@@ -453,6 +457,7 @@ profiles:
     - remotion-video-engineering
     - advertising-video-production
     - creative-tool-scout
+    - scroll-world
     - brand-identity-design
     - typography-and-layout
     - marketing-and-growth

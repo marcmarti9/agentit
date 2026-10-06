@@ -51,7 +51,7 @@ For purely presentational edits with no changed trust boundary, do not load secu
 
 Packs are flat discovery maps. There is **no fixed minimum or maximum** skill count. Every selected body must earn its context cost. Prefer one accountable workflow for an overlapping concern; add complementary specialists only when required. Never load a whole pack by default.
 
-Installed/local Agentit coverage is the first search space. When a material specialized task has no credible local owner, or the user explicitly asks for the best available external skill, select `skillfinder-external-scout` as a bounded discovery procedure before inventing a bespoke workflow. Do not scan the external ecosystem for every routine task, and never install a third-party skill merely because a search ranked it highly.
+Check Agentit's local skills first. Select `skillfinder-external-scout` only when no credible local owner exists or the user explicitly asks for ecosystem-wide discovery; never auto-install its results.
 
 Reference mode is `none | curated | live | both`. Load `reference-intelligence` when provenance matters; absence of a curated pack is not permission to invent current facts. Read material sources and bind their relevant content into delegated context. Do not confuse a URI with a read receipt.
 

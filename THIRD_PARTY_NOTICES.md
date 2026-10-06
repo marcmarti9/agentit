@@ -192,6 +192,22 @@ Agentit's `executive` profile and `executive-*` skills are original provider-neu
 
 Agentit does not vendor OpenExecutive's Python/TypeScript runtime, prompts verbatim, UI, FastAPI/Next.js application, ChromaDB/SQLite persistence, scheduler/integration implementation, or provider/model configuration. It does not require Anthropic/Claude and does not claim drop-in compatibility with OpenExecutive.
 
+### cyw / scroll-world
+
+Source: https://github.com/oso95/scroll-world at `71cc36d3bb150248ae36a2c552f9cbf88802a79c`.
+
+License: MIT. Copyright (c) 2026 cyw.
+
+Agentit's `scroll-world` is a narrowed Agentit-owned adaptation of the upstream continuous camera-world workflow. The exact upstream skill body and its prompt, pipeline, scrub-engine, template and knockout references are retained under `skills/scroll-world/references` so the specialized seam/render knowledge is not lost. Agentit changes routing, provider selection, spend authorization, project integration and verification authority; it does not imply that Monid, Higgsfield or any paid runtime is installed or authorized. Exact retained license text and source/target paths are recorded in `skills/ADAPTATION_SOURCES.json`.
+
+### yya007 / SkillFinder
+
+Source: https://github.com/yya007/SkillFinder at `e4ae3366b6092fee386c7ef9b0bfd28a747b8b20`.
+
+License: MIT. Copyright (c) 2026 yya007.
+
+Agentit's `skillfinder-external-scout` adapts SkillFinder's semantic-search and reranking workflow as an optional external-skill scouting procedure. Agentit does not vendor the FAISS index, Python runtime, Ollama model, npm package or auto-install behavior. The exact upstream skill body is retained as a reference, while Agentit's local routing remains authoritative and third-party candidates are never installed automatically. Exact retained license text and provenance are recorded in `skills/ADAPTATION_SOURCES.json`.
+
 ## MIT license text
 
 The following notice applies to the MIT-licensed upstream material identified above; the individual copyright notices remain those listed in each source section.

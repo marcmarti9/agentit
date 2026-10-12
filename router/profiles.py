@@ -620,6 +620,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--profile")
     parser.add_argument("--format", choices=("ids", "json", "text"), default="ids")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--offline", action="store_true", help="Skip configured continuity remote for local-only work")
+    parser.add_argument("--resolve", choices=("local", "remote"), help="Explicit continuity conflict choice (requires --apply)")
     parser.add_argument("--session", default="default")
     parser.add_argument("--description", default="CLI context artifact")
     parser.add_argument("--lines", help="Line range N:M for artifact read")
@@ -803,6 +805,7 @@ def main(argv: list[str] | None = None) -> int:
                     resume_report,
                     write_checkpoint,
                 )
+                from router.continuity_sync import link_remote, sync_state, unlink_remote
             except ImportError:
                 from continuity import (
                     ContinuityError,
@@ -811,8 +814,36 @@ def main(argv: list[str] | None = None) -> int:
                     resume_report,
                     write_checkpoint,
                 )
+                from continuity_sync import link_remote, sync_state, unlink_remote
             try:
-                if sub == "init":
+                if sub == "link":
+                    if not args.target:
+                        parser.error("continuity link requires an explicitly chosen PRIVATE Git remote")
+                    if args.offline or args.resolve:
+                        parser.error("continuity link does not accept --offline/--resolve")
+                    if args.apply:
+                        payload = link_remote(project_root, args.target, project_key=args.extra_arg)
+                    else:
+                        payload = {
+                            "action": "link",
+                            "mode": "plan",
+                            "project_key": args.extra_arg or "derived from Git origin",
+                            "notice": "STATE.md will be uploaded to the provided Git remote. Verify it is PRIVATE and access-controlled before --apply.",
+                        }
+                elif sub == "unlink":
+                    if not args.apply:
+                        payload = {"action": "unlink", "mode": "plan", "notice": "Local and remote state will be preserved; only the local link is removed."}
+                    else:
+                        payload = unlink_remote(project_root)
+                elif sub == "sync":
+                    if args.offline:
+                        parser.error("continuity sync cannot run with --offline")
+                    if args.resolve and not args.apply:
+                        payload = {"action": "sync", "mode": "plan", "resolution": args.resolve, "notice": "Requires --apply; the discarded version will be backed up privately."}
+                    else:
+                        payload = sync_state(project_root, resolve=args.resolve)
+                elif sub == "init":
+                    before = {"status": "offline"} if args.offline else sync_state(project_root)
                     goal = " ".join(
                         p for p in (args.target, args.extra_arg) if p
                     ).strip()
@@ -821,10 +852,13 @@ def main(argv: list[str] | None = None) -> int:
                         goal=goal,
                         overwrite=bool(args.apply),
                     )
-                    payload = {"action": "init", "path": str(path)}
+                    after = {"status": "offline"} if args.offline else sync_state(project_root)
+                    payload = {"action": "init", "path": str(path), "sync_before": before, "sync": after}
                 elif sub == "status":
+                    synced = {"status": "offline"} if args.offline else sync_state(project_root)
                     payload = resume_report(project_root)
                     payload["checkpoints"] = list_checkpoints(project_root)
+                    payload["sync"] = synced
                 elif sub == "checkpoint":
                     label = args.target or "manual"
                     note = args.extra_arg or ""
@@ -833,9 +867,10 @@ def main(argv: list[str] | None = None) -> int:
                         label=label,
                         payload={"note": note, "project": str(project_root)},
                     )
-                    payload = {"action": "checkpoint", "path": str(path)}
+                    synced = {"status": "offline"} if args.offline else sync_state(project_root)
+                    payload = {"action": "checkpoint", "path": str(path), "sync": synced}
                 else:
-                    parser.error("continuity subcomando: init|status|checkpoint")
+                    parser.error("continuity subcomando: init|status|checkpoint|link|unlink|sync")
                     return 2
             except ContinuityError as exc:
                 raise ProfileError(str(exc)) from exc

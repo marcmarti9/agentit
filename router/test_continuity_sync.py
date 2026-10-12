@@ -1,6 +1,8 @@
 """Offline integration tests: two independent machines, one private bare Git remote."""
 
+import json
 import stat
+import sys
 import subprocess
 import tempfile
 import unittest
@@ -49,6 +51,34 @@ class CrossMachineContinuityTests(unittest.TestCase):
             self.assertIn("Completed on server", (a/".agentit/STATE.md").read_text())
             self.assertEqual(0o600, stat.S_IMODE((b/".agentit/continuity-sync.json").stat().st_mode))
             self.assertFalse((a/"projects").exists())
+
+    def test_cli_reconciles_on_checkpoint_and_cold_status(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            remote = self.setup_remote(root)
+            a = self.make_project(root, "first")
+            b = root / "second"
+            b.mkdir()
+            cli = Path(__file__).resolve().parents[1] / "agentit"
+
+            def run(project, *args):
+                call = subprocess.run(
+                    [sys.executable, str(cli), "continuity", *args, "--project", str(project)],
+                    capture_output=True, text=True, check=True,
+                )
+                return json.loads(call.stdout)
+
+            planned = run(a, "link", str(remote), "shared")
+            self.assertEqual("plan", planned["mode"])
+            self.assertFalse((a / ".agentit/continuity-sync.json").exists())
+            self.assertEqual("pushed", run(a, "link", str(remote), "shared", "--apply")["sync"]["status"])
+            self.assertEqual("pulled", run(b, "link", str(remote), "shared", "--apply")["sync"]["status"])
+            self.append(b, "Progress on new machine")
+            self.assertEqual("pushed", run(b, "checkpoint", "done")["sync"]["status"])
+            result = run(a, "status")
+            self.assertEqual("pulled", result["sync"]["status"])
+            self.assertIn("Progress on new machine", (a / ".agentit/STATE.md").read_text())
+            self.assertEqual("offline", run(a, "status", "--offline")["sync"]["status"])
 
     def test_conflicting_edits_stop_without_overwriting(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -108,9 +108,27 @@ def _save_config(project_root: Path, config: dict) -> None:
     _atomic_write_text(_config_path(project_root), json.dumps(config, indent=2, sort_keys=True) + "\n", private=True)
 
 
+def _require_untracked_state(root: Path) -> None:
+    """Never enable remote sync if normal project Git could publish local state."""
+    try:
+        inside = _git("-C", str(root), "rev-parse", "--is-inside-work-tree")
+    except ContinuityError:
+        return  # Non-Git projects can use a shared explicit project key.
+    if inside != "true":
+        return
+    for relative in (".agentit/STATE.md", ".agentit/continuity-sync.json", ".agentit/conflicts/backup.md"):
+        try:
+            _git("-C", str(root), "check-ignore", "--", relative)
+        except ContinuityError as exc:
+            raise ContinuityError(
+                "Private Agentit state is not ignored by project Git. Add .agentit/ to the project's .gitignore before linking or syncing."
+            ) from exc
+
+
 def link_remote(project_root: Path, remote: str, *, project_key: str | None = None) -> dict:
     """Explicit opt-in only. Caller must confirm remote is private before invoking."""
     root = Path(project_root).resolve()
+    _require_untracked_state(root)
     remote = _validate_remote(remote)
     key = project_key or _key_for_project(root)
     if not KEY_PATTERN.fullmatch(key):
@@ -194,6 +212,7 @@ def sync_state(project_root: Path, *, resolve: str | None = None) -> dict:
         raise ContinuityError("Conflict resolution must be local or remote")
     if _load_config(root) is None:
         return {"status": "disabled"}
+    _require_untracked_state(root)
     with _project_lock(root):
         return _sync_locked(root, resolve=resolve)
 

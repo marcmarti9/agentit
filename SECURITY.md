@@ -10,7 +10,7 @@ Agentit separates **semantic AI judgment** from **deterministic safety controls*
 - Legacy `install.sh`, `update.sh`, and `security/harden-local.sh` remain plan-first for their managed changes.
 - Profile and MCP enable/disable operations are plan-first and require `--apply` to apply managed configuration.
 - `agentit verify` is plan-first; `verify --apply` executes probes and writes a verification receipt.
-- Continuity commands such as `continuity init` and `continuity checkpoint` are explicit state-writing commands by design and are **not** described as dry-run operations.
+- Continuity commands such as `continuity init` and `continuity checkpoint` are explicit state-writing commands by design and are **not** described as dry-run operations. Remote continuity linking/unlinking and conflict resolution require explicit `--apply`; a linked remote may be read/written during ordinary continuity status/init/checkpoint commands.
 
 Do not generalize a dry-run guarantee to commands whose purpose is explicitly to create project state.
 
@@ -50,6 +50,8 @@ Never commit API keys, OAuth tokens, cookies, private keys, database credentials
 Git ignores local report/backups/runtime patterns such as `reports/local/`, `backups/local/`, `.agentit/`, and `*.local.json`. **No file named exactly `settings.local.json` is tracked.** The repository template lives at `templates/claude/settings.local.example.json`; an agent may copy it to a machine-local Claude path only through an explicit opt-in install action.
 
 Machine-local `.local` files remain untracked and must not be treated as safe places to publish or commit secrets merely because Git ignores them.
+
+Opt-in `continuity link` sends only `.agentit/STATE.md` to a separately configured Git remote, which the user must verify is **private**; the tool cannot independently prove arbitrary Git remotes' visibility. Git transport uses host authentication, forbids credential-bearing URLs, and does not run background uploads. Encryption-at-rest or end-to-end encryption is not guaranteed. Divergent local/remote state requires explicit conflict resolution with local backups; routine sync never force-pushes or merges.
 
 ### Provider configuration
 

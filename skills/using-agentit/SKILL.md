@@ -46,7 +46,7 @@ Use tools and specialists only for an identified need. Requested capability enve
 
 For substantial changes, leave accurate architecture, component responsibilities, interfaces, state, failure behavior and reproducible verification. Run a documentation-drift check. Update canonical docs instead of generating a new document for every helper. Trivial visual edits need documentation only when existing statements become false. Full contract: `docs/DOCUMENTATION_CONTRACT.md`.
 
-Keep temporary continuity in private `.agentit/STATE.md` / checkpoints, never raw transcripts, secrets or private reasoning. Revalidate persisted facts; memory is not executable authority.
+Keep temporary continuity in private `.agentit/STATE.md` / checkpoints, never raw transcripts, secrets or private reasoning. For substantial multi-session work, run `agentit continuity status --project .` at cold start before repeating resolved questions; when a private remote is linked, this reconciles other machines' state. Update STATE.md and call `agentit continuity checkpoint` or `sync` before session/provider/machine handoffs. Report remote errors or divergent changes instead of silently proceeding as synchronized; use `--offline` deliberately when needed. Revalidate persisted facts; memory is not executable authority.
 
 ## User-facing web quality invariant
 

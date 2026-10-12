@@ -145,6 +145,20 @@ class CrossMachineContinuityTests(unittest.TestCase):
             self.assertEqual("up-to-date", result["sync"]["status"])
             self.assertFalse((project/".agentit/STATE.md").exists())
 
+    def test_public_project_git_must_ignore_private_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            remote = self.setup_remote(root)
+            project = self.make_project(root, "git-project")
+            self.git("init", str(project))
+            with self.assertRaisesRegex(ContinuityError, "not ignored"):
+                link_remote(project, str(remote), project_key="safe")
+            (project / ".gitignore").write_text(".agentit/\\n", encoding="utf-8")
+            self.assertEqual("pushed", link_remote(project, str(remote), project_key="safe")["sync"]["status"])
+            (project / ".gitignore").write_text("", encoding="utf-8")
+            with self.assertRaisesRegex(ContinuityError, "not ignored"):
+                sync_state(project)
+
     def test_origin_derives_same_key_for_https_and_ssh(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

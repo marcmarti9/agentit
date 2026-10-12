@@ -153,7 +153,7 @@ class CrossMachineContinuityTests(unittest.TestCase):
             self.git("init", str(project))
             with self.assertRaisesRegex(ContinuityError, "not ignored"):
                 link_remote(project, str(remote), project_key="safe")
-            (project / ".gitignore").write_text(".agentit/\\n", encoding="utf-8")
+            (project / ".gitignore").write_text(".agentit/\n", encoding="utf-8")
             self.assertEqual("pushed", link_remote(project, str(remote), project_key="safe")["sync"]["status"])
             (project / ".gitignore").write_text("", encoding="utf-8")
             with self.assertRaisesRegex(ContinuityError, "not ignored"):

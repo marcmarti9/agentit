@@ -34,6 +34,10 @@ For delegation, use `agentit worker` and pass the actual validated schema-3 payl
 
 Logical cold start, profile disable and skill deselection do not erase a host's conversation. A fresh context means a real new session/worker or explicitly verified host operation. Same-context critique is not independent review.
 
+## Optional team work tracking
+
+For material work in a team that explicitly opted into tracking, read the private user-level `~/.agentit/team-tracking.json` and follow [docs/CLICKUP_TRACKING.md](docs/CLICKUP_TRACKING.md). ClickUp is for concise coordination; GitHub remains the source of code truth and `.agentit/STATE.md` remains private continuity. Establish the **real human operator** from explicit session context, not the logged-in shared service account. Find and update the existing ClickUp deliverable before creating one; sync meaningful milestones and link observed PRs/issues. Never auto-enable a third-party MCP for unrelated tasks, invent an assignee, publish private state, create duplicate tasks, or claim a successful sync without tool evidence. Unavailable/unauthorized ClickUp must not block engineering work.
+
 ## Client operability by default
 
 For client-facing websites, applications, automations and internal tools, design routine business operation so the client does not depend on the implementer for ordinary changes.

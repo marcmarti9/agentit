@@ -43,9 +43,14 @@ agentit continuity status --project .
 agentit continuity init "goal text" --project .
 agentit continuity init "goal text" --project . --apply
 agentit continuity checkpoint milestone-name --project .
+# Optional private remote, configured once on EACH machine after verifying it is private:
+agentit continuity link git@github.com:YOUR-USER/private-agentit-state.git --project . --apply
+agentit continuity sync --project .
 ```
 
 These commands are agent-facing mechanical helpers; users should not need to operate them manually.
+
+When a private remote is linked, `status`/`init` reconcile it on entry and `checkpoint` syncs it on exit. At every session/machine handoff, update and sync STATE.md; never claim synchronization if Git failed. `status --offline` is available when remote access is down, but offline work is not propagated. On conflicting edits, stop and require an explicit choice: `sync --resolve local|remote --apply` preserves a private backup of the discarded version. Never point this at a public repository. See `docs/PROJECT_CONTINUITY.md`.
 
 ## When to checkpoint
 

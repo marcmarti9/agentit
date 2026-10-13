@@ -287,7 +287,7 @@ Substantial work can maintain compact **private operational continuity** in:
 .agentit/checkpoints/*.json
 ```
 
-A fresh session can recover resumable operational state when needed without committing raw task history. This state is distinct from normal tracked project documentation and stays local/private by default.
+A fresh session can recover resumable operational state when needed without committing raw task history. This state is distinct from normal tracked project documentation and stays local/private by default. Optional cross-machine transport syncs only `STATE.md` to a separately configured **private Git remote** (`agentit continuity link REMOTE --project . --apply`). `status`, `init` and `checkpoint` then reconcile it; conflicts stop without overwriting either copy. See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md).
 
 ### Provider-neutral capabilities
 

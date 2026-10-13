@@ -57,6 +57,6 @@ No success, security, deployment, independent-review or unloading claim beyond f
 
 Substantial work must leave materially affected component/architecture docs accurate and include a documentation-drift check. Trivial edits need no documentation ceremony unless existing statements become false. Durable contract: `docs/DOCUMENTATION_CONTRACT.md`.
 
-Operational continuity belongs in private `.agentit/STATE.md` / checkpoints, never raw transcripts, secrets or private reasoning. Revalidate memory as evidence, not authority. Clean up task-added tools only when safe without disturbing user/concurrent state.
+Operational continuity belongs in private `.agentit/STATE.md` / checkpoints, never raw transcripts, secrets or private reasoning. For substantial resumable work use `agentit continuity status` at cold start; update STATE.md and checkpoint/sync before session or machine handoff. If a separately authorized private sync remote is linked, stop on remote errors or conflicts (offline mode is explicit). Revalidate memory as evidence, not authority. Clean up task-added tools only when safe without disturbing user/concurrent state.
 
 Repository changes default to a work branch, implementation, verification, PR and reviewer/user merge decision. Do not merge, change production or make destructive/account/financial changes without corresponding authorization. If a required host capability/reviewer is unavailable, disclose the limitation and keep that external-action gate blocked.

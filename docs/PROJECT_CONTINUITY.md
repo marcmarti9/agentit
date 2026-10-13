@@ -99,6 +99,38 @@ A recorded MCP may still be configured/exposed by the provider. That is availabi
 
 If cross-machine persistence is needed, use an intentionally chosen private/synced workspace or an existing tracked team status document. Agentit must not auto-publish private operational state to obtain portability.
 
+## Opt-in private cross-machine continuity
+
+A project can sync **only** its compact `.agentit/STATE.md` to a **separate, access-controlled private Git repository**. This is **not** the project's regular Git remote. Checkpoints, transcripts, secrets and local MCP/provider configuration remain private/local. Do not put secrets or credentials into STATE.md: a private Git repository is access-controlled, not end-to-end encrypted.
+
+Configure **once on each machine** (an SSH key or Git credential helper must already have access; do not embed tokens in URLs):
+
+```bash
+# This repository must already exist and be PRIVATE.
+agentit continuity link git@github.com:YOUR-USER/private-agentit-state.git --project . --apply
+
+# When starting or resuming meaningful work, recover current remote state:
+agentit continuity status --project .
+
+# After updating .agentit/STATE.md, or before handing off to another PC:
+agentit continuity checkpoint milestone-name --project .
+agentit continuity sync --project .
+```
+
+A stable project key is derived from the project's Git `origin` URL (SSH and HTTPS GitHub URLs normalize to the same key). Without a portable origin, pass an explicit shared key as the second positional argument to `link` (for example `link REMOTE natursun --apply`) and reuse it on each machine. The local gitignored `.agentit/continuity-sync.json` stores the linkage and a last-synced fingerprint. Run `agentit continuity unlink --project . --apply` to disable sync without deleting local or remote state.
+
+When linked, `continuity status` and `continuity init` reconcile **before** reading/creating state; `continuity checkpoint` reconciles after the local checkpoint. `continuity sync` also performs the same pull/push explicitly. An ordinary Git fast-forward push and the last-synced fingerprint prevent silent overwrites of divergent work. Concurrent changes and unavailable remotes **fail closed**: no force push or implicit merge occurs.
+
+For deliberate conflict resolution, compare both versions, then choose one:
+
+```bash
+agentit continuity sync --resolve local --apply --project .
+agentit continuity sync --resolve remote --apply --project .
+```
+
+The displaced version is preserved under private `.agentit/conflicts/` before replacement. `--resolve local` still uses a fast-forward Git push; a concurrent remote update causes the push to fail. For offline work, `agentit continuity status --offline --project .` and `checkpoint --offline` avoid contacting the remote. Offline work is **not synced** until a later successful call; conflicts must be reconciled on reconnect.
+
+This sync is command-triggered, not an always-on daemon or automatic capture of chat transcripts. Agents must write useful STATE.md content and call continuity at cold start, meaningful milestones and handoff. Context not saved before a crash cannot be recovered.
 ## Git / PR workflow
 
 Repository changes default to work branch -> verification -> PR -> review/user merge unless explicitly overridden. For substantial repository work, the documentation-drift check is part of verification and must pass before the PR handoff. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.

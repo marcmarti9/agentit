@@ -165,3 +165,7 @@ Neither a profile nor a stack auto-activates its members merely by existing.
 - Prefer official packages; pin when you can.
 - Do not use cleanup as an excuse to mutate unrelated/global MCP configuration.
 - Track task-added enablement so the task can clean up only what it owns.
+
+## Optional ClickUp team tracking
+
+ClickUp is available as the opt-in `clickup` server (named stack: `team_tracking`), not a global always-on tool. Its official remote MCP endpoint is `https://mcp.clickup.com/mcp` and authentication is performed by the client's OAuth flow, not by committing a token. For the human-identity, task-deduplication, privacy, status, and error-handling rules, see [ClickUp tracking](CLICKUP_TRACKING.md). On Codex, one supported setup path is `codex mcp add clickup --url https://mcp.clickup.com/mcp`, then `codex mcp login clickup` and a session reload when necessary. The alternative `agentit mcp enable clickup --providers codex --apply` writes the same remote server configuration (plan first if uncertain), but does not complete OAuth.

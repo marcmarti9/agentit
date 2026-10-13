@@ -39,6 +39,9 @@ stacks:
   product_ops:
     description: "Tickets, docs, and team context for product/engineering coordination."
     servers: [linear, notion, slack, github]
+  team_tracking:
+    description: "Optional team delivery tracking in ClickUp; enable only for an opted-in team/workspace."
+    servers: [clickup]
   research:
     description: "Live web + docs research without write access to production systems."
     servers: [context7, brave-search, exa, firecrawl]
@@ -337,6 +340,35 @@ servers:
       - "Treat returned screens as references: extract patterns, never clone competitor pixels or ship Appllama watermarks."
       - "Do not harvest or bulk-export the catalog; research only what the current task needs."
       - "Authentication/account access is handled by the remote service/client; never commit vendor credentials."
+
+  - id: clickup
+    name: ClickUp MCP (official remote)
+    tier: situational
+    category: product
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Opt-in team task tracking: search, create/update tasks, link GitHub deliverables and report verified status."
+    homepage: https://developer.clickup.com/docs/connect-an-ai-assistant-to-clickups-mcp-server
+    package: null
+    remote_url: https://mcp.clickup.com/mcp
+    requires_secret: false
+    write_capable: true
+    evidence:
+      - "Official ClickUp MCP developer documentation, consulted 2026-10-13"
+      - "Official ClickUp MCP OAuth and supported tools documentation"
+    claude_add: "claude mcp add --transport http clickup https://mcp.clickup.com/mcp"
+    mcp_json_remote:
+      url: https://mcp.clickup.com/mcp
+    codex_toml: |
+      # codex mcp add clickup --url https://mcp.clickup.com/mcp
+      # codex mcp login clickup  # interactive OAuth, once per host/account
+      [mcp_servers.clickup]
+      url = "https://mcp.clickup.com/mcp"
+    safety_notes:
+      - "Official OAuth only. Never store ClickUp tokens in repositories or Agentit tracking files."
+      - "Only sync explicitly opted-in team projects; do not upload private .agentit state."
+      - "Verify human identity and deduplicate tasks before writing; actual ClickUp memberships control native assignees."
+      - "Do not interpret configured or accessible MCP as automatically selected for every task."
 
   - id: linear
     name: Linear MCP

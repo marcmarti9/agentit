@@ -6,7 +6,7 @@ Agentit can coordinate human work through **ClickUp's official remote MCP**, wit
 
 - **ClickUp**: agreed deliverables, the real human owner, current work status, concise progress, blockers and next action.
 - **GitHub**: code, issues, PRs, CI/review and final merge evidence. Link these from ClickUp; don't copy raw diffs.
-- **Private `.agentit/STATE.md`**: local resumable context, including the ClickUp task ID/URL when known. Never upload this file, secrets, full transcripts or private reasoning.
+- **Private `.agentit/STATE.md`**: resumable context, including the ClickUp task ID/URL when known. Never send it, secrets, transcripts or private reasoning to ClickUp. A separately authorized private Git continuity sync is independent of ClickUp (see `docs/PROJECT_CONTINUITY.md`).
 - **Agentit**: selects tools at task time and performs best-effort MCP synchronization at meaningful milestones. A configured MCP is not automatically authorized for an unrelated task.
 
 No tracker is enabled in a fresh installation. The opt-in is user-level and applies across authorized team projects, not to every personal repository.

@@ -28,6 +28,10 @@ Profiles are private installation availability. Packs are metadata-only discover
 5. For delegated work, use `agentit worker` to build and validate schema-3 context. Pass the resulting prompt/bodies to the actual worker, not an ID-only list. Confirm the host's actual tool restrictions and independence separately.
 6. Update materially affected durable docs, check drift and publish repository work on a review branch. Never merge or perform irreversible external actions merely because a skill suggests it.
 
+## Opt-in team tracking
+
+For material work in an explicitly enabled team, inspect `~/.agentit/team-tracking.json` before task execution. If configured for this project, select ClickUp only when justified by the current task and load `docs/CLICKUP_TRACKING.md` on demand. Identify the human operator from the user's explicit statement, not Git identity or a shared ClickUp login. Reuse a matching deliverable task and sync key milestones and verifiable outcomes without duplicating tasks or leaking private state. Missing MCP/OAuth/permissions mean **report pending sync**, not a claim of completion or a reason to block the underlying work. The three global skills and fresh per-task MCP selection remain unchanged.
+
 ## Loop/Graph runtime
 
 For an executable outcome define a goal, observable verifier, stop condition, bounded retries and escalation. Use `agentit runtime`; require fresh evidence before success. Do not weaken a verifier to manufacture a green receipt.

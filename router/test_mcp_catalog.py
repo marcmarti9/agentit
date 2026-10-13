@@ -56,6 +56,22 @@ class McpCatalogTestCase(unittest.TestCase):
         )
         self.assertFalse(snip["auto_activate"])
 
+    def test_clickup_team_tracking_is_explicit_and_oauth_remote(self) -> None:
+        rec = recommend_stack("team_tracking")
+        self.assertEqual([server["id"] for server in rec["servers"]], ["clickup"])
+        clickup = get_server("clickup")
+        self.assertEqual(clickup["risk"], "RISK_2")
+        self.assertTrue(clickup["write_capable"])
+        self.assertFalse(clickup["requires_secret"])  # OAuth managed by client; no token in config
+        self.assertEqual(
+            snippet_for_server("clickup", provider="json")["mcpServers"]["clickup"]["url"],
+            "https://mcp.clickup.com/mcp",
+        )
+        self.assertIn(
+            'url = "https://mcp.clickup.com/mcp"',
+            snippet_for_server("clickup", provider="codex")["snippet"],
+        )
+
     def test_free_text_task_recommendation_is_rejected(self) -> None:
         with self.assertRaises(McpCatalogError):
             recommend_for_task("implement figma design in react")

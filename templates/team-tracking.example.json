@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "team": "Example team",
+  "provider": "clickup",
+  "workspace_id": "YOUR_WORKSPACE_ID",
+  "list_id": "YOUR_LIST_ID",
+  "repository_prefixes": ["your-organization/"],
+  "additional_repositories": [],
+  "members": {
+    "Member A": null,
+    "Member B": null
+  }
+}

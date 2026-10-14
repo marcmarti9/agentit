@@ -62,7 +62,9 @@ jobs:
           python3 scripts/ecc_integrate.py
           python3 -m unittest discover -s router -p 'test_*.py'
           python3 -m unittest discover -s tests -p 'test_*.py'
-          git diff --check
+          # Upstream packages are canonical byte-for-byte. Their original whitespace
+          # is verified by SHA-256, not by a formatter that would alter provenance.
+          git diff --check -- router .github
           git diff --exit-code -- AGENTS.md skills/using-agentit skills/task-router skills/using-agent-skills
 
       - name: Commit validated refresh to this review branch only
@@ -74,7 +76,8 @@ jobs:
             echo "No changed managed packages"
             exit 0
           fi
-          git diff --cached --check
+          # Canonical third-party assets can contain upstream trailing whitespace.
+          # The integrity check above already verified every managed byte and mode.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(skills): refresh pinned upstream skills"

@@ -16,7 +16,8 @@ class WorkerSkillLoaderTests(unittest.TestCase):
         skill = skills[0]
         self.assertEqual("harness", skill["source"])
         self.assertEqual(64, len(skill["sha256"]))
-        self.assertIn("# tasteskill: Anti-Slop Frontend Skill", skill["content"])
+        self.assertIn("name: design-taste-frontend", skill["content"])
+        self.assertIn("# tasteskill", skill["content"].lower())
         rendered = render_prompt(skills)
         self.assertIn("Skill IDs alone do not count as activation", rendered)
         self.assertIn(skill["sha256"], rendered)

@@ -45,7 +45,7 @@ def restore_manifest(repo: Path, original: bytes) -> dict:
         raise ECCError('native installer changed manifest semantics; source retained for inspection')
     for relative in lock['files']:
         if relative != 'package.json':
-            verified_bytes(repo, relative, lock)
+            verified_bytes(repo, relative, lock, package_manifest=original)
     restored = observed != original
     if restored:
         mode = path.stat().st_mode & 0o777

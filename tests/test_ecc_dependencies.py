@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from router.ecc import ECCError
+from router.ecc import ECCError, verified_bytes
 from scripts.install_ecc_dependencies import restore_manifest
 
 
@@ -16,7 +16,7 @@ class NativeDependencySourceTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.manifest = self.root / 'vendor/ecc/package.json'
         self.manifest.parent.mkdir(parents=True)
-        self.original = b'{"scripts":{"welcome":"echo It\\u00f4"},"enabled":true}\n'
+        self.original = b'{"scripts":{"welcome":"echo It\\u00f4"},"enabled":true,"bin":{"native":"tool.js"}}\n'
         self.manifest.write_bytes(self.original)
         other = self.root / 'vendor/ecc/tool.js'
         other.write_bytes(b'original tool\n')
@@ -43,8 +43,11 @@ class NativeDependencySourceTests(unittest.TestCase):
         self.assertFalse(restore_manifest(self.root, self.original)['format_only_restoration'])
 
     def test_semantic_type_or_command_changes_are_preserved_and_rejected(self):
-        for changed in (b'{"scripts":{"welcome":"execute something else"},"enabled":true}',
-                        b'{"scripts":{"welcome":"echo It\\u00f4"},"enabled":1}'):
+        command = json.loads(self.original)
+        command['scripts']['welcome'] = 'execute something else'
+        scalar = json.loads(self.original)
+        scalar['enabled'] = 1
+        for changed in (json.dumps(command).encode(), json.dumps(scalar).encode()):
             with self.subTest(changed=changed):
                 self.manifest.write_bytes(changed)
                 with self.assertRaisesRegex(ECCError, 'semantics'):
@@ -63,6 +66,18 @@ class NativeDependencySourceTests(unittest.TestCase):
         with self.assertRaisesRegex(ECCError, 'integrity'):
             restore_manifest(self.root, self.original)
         self.assertEqual(observed, self.manifest.read_bytes())
+
+    def test_declared_bin_mode_uses_authenticated_original_manifest(self):
+        self.manifest.write_text(json.dumps(json.loads(self.original), ensure_ascii=False))
+        (self.root / 'vendor/ecc/tool.js').chmod(0o755)
+        result = restore_manifest(self.root, self.original)
+        self.assertEqual(['tool.js'], result['source']['installed_declared_bin_modes'])
+        self.assertEqual(self.original, self.manifest.read_bytes())
+
+    def test_unpinned_manifest_cannot_authorize_executable_mode(self):
+        (self.root / 'vendor/ecc/tool.js').chmod(0o755)
+        with self.assertRaisesRegex(ECCError, 'manifest integrity'):
+            verified_bytes(self.root, 'tool.js', package_manifest=b'{"bin":{"native":"tool.js"}}')
 
 
 if __name__ == '__main__':

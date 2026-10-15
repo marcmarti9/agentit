@@ -59,7 +59,7 @@ def changed_paths(base: str, head: str) -> list[str]:
             check=True, capture_output=True, timeout=60,
         )
     completed = subprocess.run(
-        ["git", "diff", "--name-only", "-z", base, head],
+        ["git", "diff", "--no-renames", "--name-only", "-z", base, head],
         check=True, capture_output=True, timeout=60,
     )
     return sorted(set(os.fsdecode(path) for path in completed.stdout.split(b"\0") if path))

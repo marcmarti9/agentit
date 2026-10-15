@@ -4,6 +4,12 @@ Read this only when an executive decision crosses functions, has a material budg
 
 ## Produce a decision packet before convening specialists
 
+Answer factual and ordinary single-domain questions directly. Use the packet
+when the task actually decides between consequential options; do not invent
+an owner, next step or delegation merely to fill its fields. Consult a
+specialist only when a concrete judgment could change the decision and the
+host permits that delegation.
+
 Write the decision as a falsifiable packet. This prevents a cross-functional review from becoming a collection of generic opinions.
 
 ```text

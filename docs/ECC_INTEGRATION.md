@@ -3,15 +3,15 @@
 ## Scope and ownership
 
 Agentit retains the complete `affaan-m/ECC` 2.2.3 source at commit
-`ef648e01899ba3e8dc6371642deaaf64b4477775` in `vendor/ecc`: all 4,212
-source files, including 293 skills, 68 agent definitions, 94 legacy command
+`b92f181b3b748d1abbc2afd94af6aa7d8c8fca29` in `vendor/ecc`: all 4,615
+source files, including 311 skills, 71 agent definitions, 97 legacy command
 shims, rules, hooks, memory, continuous learning, native CLIs, host adapters,
 tests, assets and original licenses. Nothing is fetched at skill-activation time.
 
-The unified catalog exposes **380 canonical skills: 96 existing Agentit skills
-and 284 ECC skills**. Nine overlapping/deprecated ECC skill names resolve to one
+The unified catalog exposes **398 canonical skills: 98 existing Agentit skills
+and 300 ECC skills**. Eleven overlapping/deprecated ECC skill names resolve to one
 canonical procedure. Source retention is not duplicate activation: the original
-nine remain inside the pinned tree so upstream commands, links, tests and
+eleven remain inside the pinned tree so upstream commands, links, tests and
 attribution keep working, but they are not installed/discovered as extra
 Agentit procedures. The explicit decisions and reasons live in
 `references/ecc-policy.json`; `agentit ecc resolve NAME` displays the winner.

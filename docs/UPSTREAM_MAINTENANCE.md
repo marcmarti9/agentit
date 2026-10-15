@@ -1,5 +1,36 @@
 # Upstream packages, provenance and authority
 
+## Current maintenance snapshot — October 15, 2026
+
+The canonical refresh retains 41 packages, 674 managed files and 15 upstream
+repositories. TasteSkill v2 is pinned at `Leonxlnx/taste-skill@f624f37`.
+The separate ECC source is pinned at `affaan-m/ECC@b92f181`, with 4,615 original
+files, 311 original skills and 11 explicit aliases. The unified catalog has
+398 canonical skills (98 Agentit and 300 ECC); core remains exactly three.
+
+Eight newer adaptation sources were reviewed individually. The relevant Expo,
+Callstack, Anthropic, Trail of Bits, Rampstack and ibelick source files are
+byte-identical to their original pins, so their adaptations are preserved.
+OpenExecutive informs direct factual answers and bounded consequential
+decisions. Marketingskills informs falsifiable ad hypotheses, exact product
+names, untrusted research handling and margin/cohort-based acquisition payback.
+Promotional integrations and universal spending rules were not adopted.
+
+`skills/ADAPTATION_SOURCES.json` keeps each adaptation's original `revision`;
+an optional `review` records the newly inspected full commit, date, disposition,
+exact source paths and Git blob OIDs, and the resulting decision. This avoids
+relabeling old prose as a byte-for-byte current upstream copy. The offline
+curation check validates the record's shape and pins; it does not fetch sources
+or establish model quality. Current source licenses/NOTICE were reread and
+match the retained originals. The design-system source was renamed to
+`peterbamuhigire/chwezi-design-engine` without changing its pinned commit.
+
+ECC's additional documentation router and commit-message procedure resolve to
+the existing Agentit owners; the other 16 new skills remain opt-in JIT
+capabilities. The unchanged upstream tree includes per-file licenses such as
+the OSINT skill's CC-BY-SA-4.0 notice. Importing it does not install native
+dependencies, enable hooks, collect logs or authorize external actions.
+
 Agentit owns its runtime, routing, core adapter and source-informed compositions.
 Canonical third-party packages retain their upstream bytes and license. The
 machine-readable boundary is `skills/UPSTREAM_LOCK.json`:

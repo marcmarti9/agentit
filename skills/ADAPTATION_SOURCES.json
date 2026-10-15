@@ -15,7 +15,23 @@
         "skills/mobile-runtime-engineering/SKILL.md",
         "skills/mobile-runtime-engineering/references/state-and-navigation.md"
       ],
-      "adaptation_license": "Apache-2.0"
+      "adaptation_license": "Apache-2.0",
+      "review": {
+        "revision": "d4f484024fec15196bfd3c272e953e3f983972cf",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "plugins/expo/skills/expo-data-fetching/SKILL.md",
+            "blob": "f677911a7edf2cb6f4e2a0bc373842b5760092dd"
+          },
+          {
+            "path": "plugins/expo/skills/expo-router/SKILL.md",
+            "blob": "21c5c245db867c9b842f4d65fd8f1a2e9114a58e"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "callstackincubator/agent-skills",
@@ -30,7 +46,27 @@
         "skills/mobile-runtime-engineering/SKILL.md",
         "skills/mobile-runtime-engineering/references/performance-evidence.md"
       ],
-      "adaptation_license": "Apache-2.0"
+      "adaptation_license": "Apache-2.0",
+      "review": {
+        "revision": "59e9d17446a248b21d86f078fcd0bd2d36db1ca4",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "skills/react-native-best-practices/SKILL.md",
+            "blob": "86ec5ab5a4cadf454db8013293679891098efce1"
+          },
+          {
+            "path": "skills/react-native-best-practices/references/js-profile-react.md",
+            "blob": "4dcbcc81500f4c4cb7cf0ae6fb263e51de03bf2c"
+          },
+          {
+            "path": "skills/react-native-best-practices/references/native-measure-tti.md",
+            "blob": "90c872500a27b20348a20b96c6ac882d3091cf03"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "openai/skills",
@@ -62,7 +98,19 @@
       ],
       "adaptation_license": "Apache-2.0",
       "notice_path": "vendor/adaptation-licenses/SenteLabsAI--OpenExecutive/NOTICE",
-      "notice_sha256": "ea69ff38994633433451bfecc1d04cbb1c2b2ca11f4ca007e96cabb9842e3798"
+      "notice_sha256": "ea69ff38994633433451bfecc1d04cbb1c2b2ca11f4ca007e96cabb9842e3798",
+      "review": {
+        "revision": "ad56027fe18c25c12c9c9e6416d10fefc68e419c",
+        "reviewed_on": "2026-10-15",
+        "disposition": "adaptation-updated",
+        "files": [
+          {
+            "path": "packages/core/openexecutive/prompts/executive_persona.py",
+            "blob": "7de8b88fecd874810ebc2061b1183d87772fe594"
+          }
+        ],
+        "note": "Keep factual answers direct and invoke the decision packet only for an actual decision. Retain Agentit's permission and optional-specialist boundaries; do not adopt proactive outbound messaging, personas or runtime."
+      }
     },
     {
       "repo": "coreyhaines31/marketingskills",
@@ -86,7 +134,31 @@
         "skills/ad-creative/references/hook-system.md",
         "skills/ad-creative/references/motion-video-ads.md",
         "skills/ads/SKILL.md"
-      ]
+      ],
+      "review": {
+        "revision": "55ff469422c3592dac45bcad08dfb40221981c02",
+        "reviewed_on": "2026-10-15",
+        "disposition": "adaptation-updated",
+        "files": [
+          {
+            "path": "skills/customer-research/SKILL.md",
+            "blob": "a00538447e9e75489dbf07378325dfa428ec46da"
+          },
+          {
+            "path": "skills/ad-creative/references/hook-system.md",
+            "blob": "d1f01ae99cfc814d7f94ba82ecb0bb08047008fd"
+          },
+          {
+            "path": "skills/ad-creative/SKILL.md",
+            "blob": "74745ca43aaf64682e8e155465915d01d0a85246"
+          },
+          {
+            "path": "skills/ads/references/payback-period.md",
+            "blob": "df10d99150e59556058a1cfe785f1f667093fc84"
+          }
+        ],
+        "note": "Add falsifiable creative hypotheses, exact product names, explicit untrusted research handling and margin/cohort-based payback. Exclude promotional integrations, universal scaling thresholds and unsupported platform-performance claims."
+      }
     },
     {
       "repo": "anthropics/skills",
@@ -100,7 +172,19 @@
       "targets": [
         "skills/skill-authoring-and-evals/references/paired-evaluations.md"
       ],
-      "adaptation_license": "Apache-2.0"
+      "adaptation_license": "Apache-2.0",
+      "review": {
+        "revision": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "skills/skill-creator/SKILL.md",
+            "blob": "65b3a402dbd09b8e83f9d637c6b553875189085c"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "trailofbits/skills",
@@ -117,7 +201,23 @@
         "skills/security-analysis/SKILL.md",
         "skills/security-analysis/references/finding-triage.md"
       ],
-      "adaptation_license": "CC-BY-SA-4.0"
+      "adaptation_license": "CC-BY-SA-4.0",
+      "review": {
+        "revision": "e1f86a390d4caf28bf1c377a7d86707b2898669c",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "plugins/property-based-testing/skills/property-based-testing/SKILL.md",
+            "blob": "1cc39d8d8cba5955bf9c8d7c9a2aef348722a55e"
+          },
+          {
+            "path": "plugins/static-analysis/skills/codeql/SKILL.md",
+            "blob": "79856ae812a9c6bedbbf0cb410aa474e1091f701"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "trailofbits/testing-handbook",
@@ -170,7 +270,31 @@
         "skills/editorial-design/SKILL.md"
       ],
       "adaptation_license": "Apache-2.0",
-      "source_paths_required": true
+      "source_paths_required": true,
+      "review": {
+        "revision": "482c9bf74697fc1e311bd4dca5ce301f046c4b76",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "skills/brand-identity/SKILL.md",
+            "blob": "f3a8ef85cffcc47d639cfb3406d188e58d5ec9ce"
+          },
+          {
+            "path": "skills/design-system/SKILL.md",
+            "blob": "7131f57b01f614da1e37c13cf76a3ac3b8cb7646"
+          },
+          {
+            "path": "skills/creative-direction/SKILL.md",
+            "blob": "0545b604222d7438f5e167eeacc36384b59db95a"
+          },
+          {
+            "path": "skills/art-direction/SKILL.md",
+            "blob": "1e9a3c1a34483ee8dab51aea2bc0bc5a12f0cb57"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "peterbamuhigire/design-system-skills",
@@ -332,7 +456,19 @@
         "skills/accessibility-design-review/references/standards-boundary.md"
       ],
       "adaptation_license": "Apache-2.0",
-      "source_paths_required": true
+      "source_paths_required": true,
+      "review": {
+        "revision": "c628a5917754ec2396d9cbb47988f280ba1d5cb0",
+        "reviewed_on": "2026-10-15",
+        "disposition": "source-unchanged",
+        "files": [
+          {
+            "path": "skills/fixing-accessibility/SKILL.md",
+            "blob": "e2dcd7004645277488a142be152878b7310437e1"
+          }
+        ],
+        "note": "Compared the adaptation's inspected source files at the original and current pinned revisions; bytes are unchanged. Repository changes outside those inputs do not require rewriting this adaptation."
+      }
     },
     {
       "repo": "Boriwatopal/agent-skill-remotion-motion-graphics",

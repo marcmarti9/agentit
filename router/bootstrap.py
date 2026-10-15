@@ -554,7 +554,7 @@ def _install_dependencies(*, home: Path, dependencies: list[str], skip_dependenc
     python = _venv_python(home)
     if not python.is_file():
         _ensure_parent(venv_root / "placeholder", home=home)
-        venv.EnvBuilder(with_pip=True, symlinks=False).create(venv_root)
+        venv.EnvBuilder(with_pip=not skip_dependencies, symlinks=False).create(venv_root)
     if not python.is_file():
         raise BootstrapError(f"venv python was not created: {python}")
     if dependencies and not skip_dependencies:

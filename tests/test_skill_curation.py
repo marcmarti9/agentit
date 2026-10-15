@@ -68,6 +68,23 @@ class SkillCurationTests(unittest.TestCase):
                 with self.subTest(path=path), self.assertRaises(ValueError):
                     checked_file(root, path)
 
+    def test_adaptation_reviews_require_pinned_scoped_source_evidence(self):
+        manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())
+        index = next(i for i, s in enumerate(manifest["sources"]) if "review" in s)
+        mutations = [lambda r: r.update(revision="main"),
+                     lambda r: r.update(reviewed_on="2026-99-99"),
+                     lambda r: r.update(disposition="latest-is-better"),
+                     lambda r: r.update(note=""),
+                     lambda r: r.update(files=[]),
+                     lambda r: r["files"][0].update(path="../SKILL.md"),
+                     lambda r: r["files"][0].update(blob="HEAD"),
+                     lambda r: r["files"].append(copy.deepcopy(r["files"][0]))]
+        for mutate in mutations:
+            bad = copy.deepcopy(manifest)
+            mutate(bad["sources"][index]["review"])
+            with self.assertRaises(ValueError):
+                check_sources(ROOT, bad)
+
     def test_inspected_source_paths_cannot_disappear_or_escape_repository(self):
         manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())
         index = next(i for i, s in enumerate(manifest["sources"])

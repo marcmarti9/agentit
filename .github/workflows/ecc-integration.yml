@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: affaan-m/ECC
-          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          ref: b92f181b3b748d1abbc2afd94af6aa7d8c8fca29
           persist-credentials: false
           path: ecc
       - uses: actions/setup-python@v5
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: affaan-m/ECC
-          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          ref: b92f181b3b748d1abbc2afd94af6aa7d8c8fca29
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:

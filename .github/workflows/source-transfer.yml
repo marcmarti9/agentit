@@ -1,24 +1,63 @@
-name: Agentit source transfer
+name: Complete reviewed ECC source update
 on:
   push:
     branches: ["refresh/tasteskill-skills-2026-10-15"]
     paths: [".github/workflows/source-transfer.yml"]
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: reviewed-ecc-refresh
+  cancel-in-progress: false
 jobs:
-  snapshot:
+  materialize:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Export exact public source snapshot
+        with:
+          fetch-depth: 1
+      - uses: actions/checkout@v4
+        with:
+          repository: affaan-m/ECC
+          ref: b92f181b3b748d1abbc2afd94af6aa7d8c8fca29
+          path: .reviewed-ecc-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install 'PyYAML>=6,<7'
+      - name: Verify old ownership and materialize exact reviewed Git source
         shell: python
         run: |
-          import base64, hashlib, subprocess
-          data = subprocess.check_output(["git", "archive", "--format=tar.gz", "HEAD"])
-          print("AGENTIT_SOURCE_SHA=" + subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip())
-          print("AGENTIT_ARCHIVE_SHA256=" + hashlib.sha256(data).hexdigest())
-          print("AGENTIT_ARCHIVE_BEGIN")
-          encoded = base64.b64encode(data).decode()
-          for offset in range(0, len(encoded), 16384):
-              print(encoded[offset:offset + 16384])
-          print("AGENTIT_ARCHIVE_END")
+          import json, os, pathlib, shutil, subprocess
+          from router.ecc import verify
+          from scripts.ecc_integrate import generate
+          root = pathlib.Path.cwd()
+          policy = root / "references/ecc-policy.json"
+          reviewed = policy.read_bytes()
+          old = json.loads(reviewed)
+          old["revision"] = json.loads((root / "vendor/ecc.lock.json").read_text())["revision"]
+          try:
+              policy.write_text(json.dumps(old))
+              print(verify(root))
+          finally:
+              policy.write_bytes(reviewed)
+          shutil.move(str(root / "vendor/ecc"), str(pathlib.Path(os.environ["RUNNER_TEMP"]) / "previous-ecc-source"))
+          print(generate(root, root / ".reviewed-ecc-source"))
+      - name: Verify Agentit and the new source boundary
+        run: |
+          python3 -m unittest discover -s router -p 'test_*.py' -v
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 scripts/sync_upstream_skills.py
+          python3 scripts/check_skill_curation.py
+          python3 scripts/ecc_integrate.py --source .reviewed-ecc-source
+      - name: Publish generated source only to the existing review branch
+        env:
+          REVIEW_BRANCH: refresh/tasteskill-skills-2026-10-15
+        run: |
+          test "$(git ls-remote origin "refs/heads/$REVIEW_BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          git add --all -- vendor/ecc vendor/ecc.lock.json profiles.yaml references/agentit-skill-packs.md
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(ecc): integrate reviewed b92f181 source and regenerate JIT catalog'
+          git push origin "HEAD:refs/heads/$REVIEW_BRANCH"

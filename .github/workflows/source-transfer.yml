@@ -1,0 +1,24 @@
+name: Agentit source transfer
+on:
+  push:
+    branches: ["refresh/tasteskill-skills-2026-10-15"]
+    paths: [".github/workflows/source-transfer.yml"]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export exact public source snapshot
+        shell: python
+        run: |
+          import base64, hashlib, subprocess
+          data = subprocess.check_output(["git", "archive", "--format=tar.gz", "HEAD"])
+          print("AGENTIT_SOURCE_SHA=" + subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip())
+          print("AGENTIT_ARCHIVE_SHA256=" + hashlib.sha256(data).hexdigest())
+          print("AGENTIT_ARCHIVE_BEGIN")
+          encoded = base64.b64encode(data).decode()
+          for offset in range(0, len(encoded), 16384):
+              print(encoded[offset:offset + 16384])
+          print("AGENTIT_ARCHIVE_END")

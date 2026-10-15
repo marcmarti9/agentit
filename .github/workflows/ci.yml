@@ -16,9 +16,19 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      run_full: ${{ steps.scope.outputs.run_full }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine CI scope from the complete change diff
+        id: scope
+        env:
+          CHANGE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python3 scripts/ci_change_scope.py --base "$CHANGE_BASE" --head "$GITHUB_SHA"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -28,10 +38,23 @@ jobs:
       - name: Install YAML dependency
         run: python3 -m pip install PyYAML
 
+      - name: Check skill/catalog contracts (fast path)
+        if: steps.scope.outputs.run_full == 'false'
+        run: |
+          python3 -m unittest -v \
+            router.test_profiles.ProfileCatalogTests \
+            router.test_skills_cli.JitSkillsCliTests \
+            router.test_upstream_skill_registry.UpstreamSkillRegistryTests \
+            router.test_jit_adversarial.CatalogRegressionTests \
+            router.test_design_studio.DesignStudioTests
+          python3 -m unittest discover -s tests -p 'test_ci_change_scope.py' -v
+
       - name: Run runtime and utility tests
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 -m unittest discover -s router -p 'test_*.py' -v
 
       - name: Run script tests
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Verify canonical upstream package and license integrity
@@ -41,33 +64,42 @@ jobs:
         run: python3 scripts/check_skill_curation.py
 
       - name: Verify complete pinned ECC source
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 scripts/ecc_integrate.py
 
       - name: Check legacy shell syntax
+        if: steps.scope.outputs.run_full == 'true'
         run: bash -n install.sh update.sh security/harden-local.sh scripts/sync-upstream-design-skills.sh scripts/sync-upstream-skills.sh hooks/precompact-memory.sh
 
       - name: Check portable Python entrypoints
+        if: steps.scope.outputs.run_full == 'true'
         run: |
           python3 -m py_compile agentit bootstrap.py router/entrypoint.py router/bootstrap.py
           python3 agentit --help >/dev/null
           python3 bootstrap.py --help >/dev/null
 
       - name: Validate registry YAML
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 -c "import yaml; yaml.safe_load(open('registry.yaml', encoding='utf-8'))"
 
       - name: Validate settings JSON
+        if: steps.scope.outputs.run_full == 'true'
         run: |
           python3 -m json.tool settings.json >/dev/null
           python3 -m json.tool templates/claude/settings.local.example.json >/dev/null
           python3 -m json.tool bootstrap-manifest.json >/dev/null
 
       - name: Validate profile catalog
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 -c "import yaml; yaml.safe_load(open('profiles.yaml', encoding='utf-8'))"
 
       - name: Validate capability catalog
+        if: steps.scope.outputs.run_full == 'true'
         run: python3 -c "from router.capabilities import load_capability_catalog; load_capability_catalog()"
 
   portable-bootstrap:
+    needs: test
+    if: needs.test.outputs.run_full == 'true'
     strategy:
       fail-fast: false
       matrix:

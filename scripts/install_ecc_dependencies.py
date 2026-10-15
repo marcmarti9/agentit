@@ -72,7 +72,7 @@ def install_invocation(manager: str) -> tuple[list[str], dict[str, str]]:
     command = ['corepack', manager, 'install', '--immutable', '--mode=skip-build']
     env = dict(os.environ, COREPACK_DEFAULT_TO_LATEST='0', COREPACK_ENABLE_AUTO_PIN='0',
                COREPACK_ENABLE_PROJECT_SPEC='1', COREPACK_ENABLE_STRICT='1',
-               COREPACK_ENV_FILE='0', YARN_ENABLE_SCRIPTS='false')
+               COREPACK_ENV_FILE='0', YARN_ENABLE_SCRIPTS='false', YARN_IGNORE_PATH='1')
     # Preserve Corepack's built-in integrity checks even if the caller disabled them.
     env.pop('COREPACK_INTEGRITY_KEYS', None)
     return command, env

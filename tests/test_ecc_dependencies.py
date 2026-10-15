@@ -88,6 +88,8 @@ class NativeDependencySourceTests(unittest.TestCase):
                                     'COREPACK_ENABLE_STRICT': '0',
                                     'COREPACK_ENV_FILE': '/tmp/override.env',
                                     'COREPACK_INTEGRITY_KEYS': '0',
+                                    'YARN_IGNORE_PATH': '0',
+                                    'YARN_YARN_PATH': '/tmp/alternate-yarn.cjs',
                                     'YARN_ENABLE_SCRIPTS': 'true'}):
             command, env = install_invocation(manager)
         self.assertEqual(['corepack', manager, 'install', '--immutable', '--mode=skip-build'], command)
@@ -95,6 +97,7 @@ class NativeDependencySourceTests(unittest.TestCase):
         self.assertEqual('1', env['COREPACK_ENABLE_STRICT'])
         self.assertEqual('0', env['COREPACK_ENV_FILE'])
         self.assertEqual('false', env['YARN_ENABLE_SCRIPTS'])
+        self.assertEqual('1', env['YARN_IGNORE_PATH'])
         self.assertNotIn('COREPACK_INTEGRITY_KEYS', env)
 
     def test_unpinned_or_incomplete_manager_is_rejected(self):

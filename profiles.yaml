@@ -22,6 +22,8 @@ profiles:
     - frontend-ui-engineering
     - react-composition-patterns
     - browser-testing-with-devtools
+    - playwright-cli
+    - web-design-guidelines
     - performance-optimization
     - code-simplification
     - anti-overengineering
@@ -162,6 +164,8 @@ profiles:
     - emil-design-eng
     - design-inspiration-research
     - design-md-workflow
+    - awesome-design-md
+    - image-to-code
     - diagram-design
     - design-trend-researcher
     - creative-web-experiences
@@ -441,6 +445,8 @@ profiles:
     - motion-design-review
     - impeccable
     - browser-testing-with-devtools
+    - playwright-cli
+    - web-design-guidelines
     - reference-intelligence
     - verification-before-completion
     - frontend-a11y

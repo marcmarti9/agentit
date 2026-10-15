@@ -415,10 +415,23 @@ The independently authored Remotion adapter includes no official Remotion skill 
 ## ECC (Everything Claude Code) complete pinned source
 
 - Source: https://github.com/affaan-m/ECC
-- Revision: `ef648e01899ba3e8dc6371642deaaf64b4477775` (2.2.3).
+- Revision: `b92f181b3b748d1abbc2afd94af6aa7d8c8fca29` (2.2.3).
 - Retained source: `vendor/ecc/`; MIT license: `vendor/ecc/LICENSE`.
 - Copyright and third-party notices inside the original tree are retained unchanged.
 - File provenance and integrity: `vendor/ecc.lock.json`; integration decisions:
   `references/ecc-policy.json` and `docs/ECC_INTEGRATION.md`.
 - The original source is unmodified. Agentit-owned adapters and catalog metadata
   are separate; the root Apache-2.0 license does not relicense upstream material.
+- Per-file licenses remain applicable, including
+  `vendor/ecc/skills/osint-investigation/LICENSE.txt` (CC-BY-SA-4.0).
+
+## October 15 adaptation source review
+
+The original adaptation revisions above are preserved. The `review` records in
+`skills/ADAPTATION_SOURCES.json` pin the newly inspected sources and files:
+OpenExecutive `ad56027` (Apache-2.0) and marketingskills `55ff469` (MIT) informed
+the bounded decision and marketing reference changes. Six other newer source
+repositories had unchanged relevant inputs. Their original LICENSE/NOTICE
+bytes were compared with the reviewed revisions and remain unchanged.
+No source runtime, promotional service integration or new global skill is
+installed by these source-informed changes.

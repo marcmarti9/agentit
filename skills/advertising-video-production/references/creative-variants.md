@@ -23,6 +23,11 @@ production fidelity to the evidence and decision: draft stills/animatics for
 unresolved ideas, fuller execution for approved or promising concepts. Do not
 invent a fixed minimum number of concepts, thresholds or a spend ladder.
 
+Make each hypothesis falsifiable: name the metric, comparison/control, audience
+and expected direction. State a magnitude only when a real baseline supports
+it, and keep the learning tied to the creative premise. Preserve the exact
+approved product name across concepts unless a short form is authorized.
+
 Inspect the complete funnel with the channel's actual event definitions:
 
 | Evidence | Possible investigation, not a diagnosis by itself |

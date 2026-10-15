@@ -75,7 +75,8 @@ def load_lock(repo: Path = ROOT) -> dict[str, Any] | None:
         raise ECCError(f'cannot load ECC lock: {exc}') from exc
 
 
-def verified_bytes(repo: Path, relative: str, lock: dict[str, Any] | None = None) -> bytes:
+def verified_bytes(repo: Path, relative: str, lock: dict[str, Any] | None = None,
+                   *, package_manifest: bytes | None = None) -> bytes:
     lock = load_lock(repo) if lock is None else lock
     if lock is None or relative not in lock['files']:
         raise ECCError(f'ECC file is not in the pinned source manifest: {relative}')
@@ -90,7 +91,14 @@ def verified_bytes(repo: Path, relative: str, lock: dict[str, Any] | None = None
         # independently of dependency-copy state. All other modes stay checked.
         bins = {}
         if not entry['executable'] and relative != 'package.json':
-            package = json.loads(verified_bytes(repo, 'package.json', lock))
+            if package_manifest is None:
+                package_manifest = verified_bytes(repo, 'package.json', lock)
+            else:
+                pinned = lock['files']['package.json']
+                if (len(package_manifest) != pinned['bytes']
+                        or hashlib.sha256(package_manifest).hexdigest() != pinned['sha256']):
+                    raise ECCError('canonical package manifest integrity mismatch')
+            package = json.loads(package_manifest)
             bins = package.get('bin', {})
         declared = {bins} if isinstance(bins, str) else set(bins.values())
         if relative not in declared:

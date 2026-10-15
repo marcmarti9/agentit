@@ -29,6 +29,7 @@ class UpstreamSyncTests(unittest.TestCase):
         self.package = self.root / "skills/example"
         self.package.mkdir(parents=True)
         (self.package / "SKILL.md").write_bytes(b"old body\n")
+        (self.package / "SKILL.md").chmod(0o644)
         (self.root / sync.LOCK).write_text(json.dumps(self.lock))
         self.archive(self.old_sha, {"skills/example/SKILL.md": b"old body\n", "LICENSE": b"license\n"})
         self.archive(self.new_sha, {"skills/example/SKILL.md": b"new body\n", "skills/example/scripts/never-run.sh": b"exit 99\n", "LICENSE": b"license\n"})

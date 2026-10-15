@@ -7,7 +7,76 @@ const fs = require("fs")
 const os = require("os")
 const path = require("path")
 const { spawnSync } = require("child_process")
+const { pathToFileURL } = require("url")
 const { getNpmPackEntry } = require("../lib/npm-pack-output")
+const { createManifestInstallPlan, applyInstallPlan } = require("../../scripts/lib/install-executor")
+const { withHookConsent } = require("../../scripts/lib/install/hook-consent")
+
+function checkRuntime(runtimeRoot, extension, loader, installedHome = false) {
+  const check = `
+    const assert = require("node:assert/strict")
+    const path = require("node:path")
+    const { pathToFileURL } = require("node:url")
+    const [root, extension, installedHome] = process.argv.slice(1)
+    const load = (name) => import(pathToFileURL(path.join(root, name + extension)).href)
+
+    async function main() {
+      const tools = await load("tools/index")
+      assert.deepEqual(Object.keys(tools).sort(), [
+        "changedFiles", "checkCoverage", "dependencyAnalyzer", "formatCode",
+        "gitSummary", "lintCheck", "runTests", "securityAudit",
+      ])
+      for (const tool of Object.values(tools)) {
+        assert.equal(typeof tool.description, "string")
+        assert.equal(typeof tool.execute, "function")
+      }
+
+      const plugins = await load("plugins/index")
+      const entry = await load("index")
+      assert.deepEqual(Object.keys(entry), ["default"])
+      assert.equal(entry.default, plugins.default)
+      const logs = []
+      // Home installs are auto-discovered. Their barrel must stay inert so
+      // the hooks module is initialized exactly once; published package entry
+      // imports continue to expose the actual plugin.
+      const active = installedHome === "true" ? await load("plugins/ecc-hooks") : entry
+      if (installedHome === "true") assert.deepEqual(await entry.default({}), {})
+      const plugin = await active.default({
+        client: { app: { log: (event) => logs.push(event.body) } },
+        $: () => { throw new Error("Unexpected shell execution") },
+        directory: process.cwd(),
+        worktree: process.cwd(),
+      })
+      assert.equal(typeof plugin["session.created"], "function")
+      await plugin["file.edited"]({ path: path.join(process.cwd(), "example.txt") })
+      const changed = JSON.parse(await tools.changedFiles.execute({ format: "json" }, {}))
+      assert.equal(changed.changed, true)
+      assert.deepEqual(changed.files, [{ path: "example.txt", changeType: "modified" }])
+      assert.ok(!logs.some((log) => log.message.includes("tracking disabled")))
+    }
+    main().catch((error) => { console.error(error); process.exit(1) })
+  `
+  const args = loader ? ["--loader", pathToFileURL(loader).href] : []
+  const fixture = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "ecc-opencode-runtime-"))
+  try {
+    const home = path.join(fixture, "home")
+    const project = path.join(fixture, "project")
+    fs.mkdirSync(home)
+    fs.mkdirSync(project)
+    const result = spawnSync(process.execPath, [...args, "-e", check, runtimeRoot, extension, String(installedHome)], {
+      cwd: project,
+      encoding: "utf8",
+      timeout: 30000,
+      env: { ...process.env, HOME: home, USERPROFILE: home,
+        CLAUDE_CONFIG_DIR: path.join(home, ".claude"), ECC_AGENT_DATA_HOME: path.join(home, ".claude"),
+        XDG_CONFIG_HOME: path.join(home, ".config"), XDG_DATA_HOME: path.join(home, ".local", "share"),
+        OPENCODE_CONFIG_DIR: installedHome ? runtimeRoot : path.join(home, ".config", "opencode") },
+    })
+    assert.strictEqual(result.status, 0, result.error?.message || result.stderr || result.stdout)
+  } finally {
+    fs.rmSync(fixture, { recursive: true, force: true })
+  }
+}
 
 function runTest(name, fn) {
   try {
@@ -182,6 +251,41 @@ function main() {
         encoding: "utf8",
       })
       assert.strictEqual(result.status, 0, result.stderr)
+    }],
+    ["compiled barrels load and share the lazy changed-files store", () => {
+      checkRuntime(path.dirname(distEntry), ".js")
+    }],
+    ["full home install loads TypeScript barrels and the lazy changed-files store", () => {
+      // Keep the fixture beneath the repo so the installed tools can resolve
+      // the real SDK dependency without installing packages in the user's home.
+      const fixture = fs.mkdtempSync(path.join(repoRoot, "tests", ".opencode-home-"))
+      try {
+        const homeDir = path.join(fixture, "home")
+        const projectRoot = path.join(fixture, "project")
+        fs.mkdirSync(homeDir)
+        fs.mkdirSync(projectRoot)
+        const plan = withHookConsent(createManifestInstallPlan({
+          sourceRoot: repoRoot,
+          homeDir,
+          projectRoot,
+          env: {},
+          target: "opencode",
+          profileId: "full",
+        }), "enabled")
+        applyInstallPlan(plan)
+        const config = JSON.parse(fs.readFileSync(path.join(plan.targetRoot, "opencode.json"), "utf8"))
+        assert.deepStrictEqual(config.skills.paths, ["./skills"])
+        assert.ok(fs.existsSync(path.join(plan.targetRoot, config.skills.paths[0], "tdd-workflow", "SKILL.md")))
+        assert.ok(!fs.existsSync(path.join(plan.targetRoot, "tools", "run-tests.js")))
+        checkRuntime(
+          plan.targetRoot,
+          ".ts",
+          path.join(repoRoot, "tests", "fixtures", "opencode-ts-loader.mjs"),
+          true,
+        )
+      } finally {
+        fs.rmSync(fixture, { recursive: true, force: true })
+      }
     }],
     ["npm pack includes the compiled OpenCode dist payload", () => {
       fs.rmSync(path.dirname(distEntry), { recursive: true, force: true })

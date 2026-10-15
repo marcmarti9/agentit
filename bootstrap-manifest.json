@@ -7,6 +7,7 @@
     "agentit",
     "bootstrap.py",
     "bootstrap-manifest.json",
+    "scripts/install_ecc_dependencies.py",
     "profiles.yaml",
     "registry.yaml",
     "settings.json",

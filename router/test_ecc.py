@@ -118,8 +118,7 @@ class ECCIntegrationTests(unittest.TestCase):
             with self.assertRaisesRegex(ecc.ECCError,'revision'):
                 generate(root,ROOT/'vendor/ecc','0'*40)
             (root/'skills').mkdir()
-            for alias in self.lock['aliases'].values():
-                sid=alias['canonical']
+            for sid in {alias['canonical'] for alias in self.lock['aliases'].values()}:
                 if (ROOT/'skills'/sid).exists():
                     shutil.copytree(ROOT/'skills'/sid,root/'skills'/sid)
             (root/'vendor').symlink_to(ROOT/'vendor',target_is_directory=True)

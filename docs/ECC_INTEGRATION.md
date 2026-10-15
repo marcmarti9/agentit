@@ -3,15 +3,15 @@
 ## Scope and ownership
 
 Agentit retains the complete `affaan-m/ECC` 2.2.3 source at commit
-`ef648e01899ba3e8dc6371642deaaf64b4477775` in `vendor/ecc`: all 4,212
-source files, including 293 skills, 68 agent definitions, 94 legacy command
+`b92f181b3b748d1abbc2afd94af6aa7d8c8fca29` in `vendor/ecc`: all 4,615
+source files, including 311 skills, 71 agent definitions, 97 legacy command
 shims, rules, hooks, memory, continuous learning, native CLIs, host adapters,
 tests, assets and original licenses. Nothing is fetched at skill-activation time.
 
-The unified catalog exposes **380 canonical skills: 96 existing Agentit skills
-and 284 ECC skills**. Nine overlapping/deprecated ECC skill names resolve to one
+The unified catalog exposes **398 canonical skills: 98 existing Agentit skills
+and 300 ECC skills**. Eleven overlapping/deprecated ECC skill names resolve to one
 canonical procedure. Source retention is not duplicate activation: the original
-nine remain inside the pinned tree so upstream commands, links, tests and
+eleven remain inside the pinned tree so upstream commands, links, tests and
 attribution keep working, but they are not installed/discovered as extra
 Agentit procedures. The explicit decisions and reasons live in
 `references/ecc-policy.json`; `agentit ecc resolve NAME` displays the winner.
@@ -86,13 +86,21 @@ install-script policy first. The canonical package manager is pinned in
 `package.json`; do not upgrade it to an unspecified latest version.
 
 ```sh
-cd vendor/ecc
-corepack yarn install --immutable --mode=skip-build
-cd ../..
+python3 scripts/install_ecc_dependencies.py          # plan only
+python3 scripts/install_ecc_dependencies.py --apply
 python3 agentit ecc run -- --help
 # Only after choosing a native operation and approving its host-state effects:
 python3 agentit ecc run --allow-host-changes -- <native-command> <arguments>
 ```
+
+Yarn may reserialize Unicode escapes in `package.json` even with an immutable
+lockfile. The installer keeps the exact integrity-pinned manager and disables
+build scripts. It restores the original manifest bytes only after strict JSON
+comparison proves the entire document is unchanged semantically and every
+other pinned source file still verifies. Duplicate keys, changed commands,
+changed scalar types, other source edits and concurrent manifest changes are
+refused. The original source manifest remains authoritative; the verifier does
+not acquire a semantic-equivalence exception. Installer failure remains failure.
 
 The flag acknowledges a boundary; it is not an OS sandbox or automatic user
 permission. The wrapper never installs packages, launches daemons or registers

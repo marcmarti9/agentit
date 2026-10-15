@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "affaan-m/ECC",
-  "revision": "ef648e01899ba3e8dc6371642deaaf64b4477775",
+  "revision": "b92f181b3b748d1abbc2afd94af6aa7d8c8fca29",
   "integration": "Complete unchanged ECC source tree; one Agentit delivery, selection and lifecycle authority.",
   "aliases": {
     "tdd-workflow": {
@@ -39,6 +39,14 @@
     "team-builder": {
       "canonical": "specialist-agent-routing",
       "reason": "Keep model-owned, justified specialist selection instead of a second manual team picker with a fixed five-agent cap."
+    },
+    "conventional-commit-review": {
+      "canonical": "git-workflow-and-versioning",
+      "reason": "One commit and PR owner; retain Agentit repository conventions without an additional mandatory commit-message procedure."
+    },
+    "docs-governance": {
+      "canonical": "documentation-and-adrs",
+      "reason": "Keep Agentit documentation ownership and model-owned selection; do not add a second automatic documentation router."
     }
   },
   "packs": {
@@ -106,6 +114,7 @@
         "laravel-tdd",
         "laravel-verification",
         "liquid-glass-design",
+        "mybatis-patterns",
         "nestjs-patterns",
         "perl-patterns",
         "perl-security",
@@ -143,11 +152,14 @@
         "benchmark",
         "benchmark-optimization-loop",
         "blueprint",
+        "brownfield-retrospective",
+        "change-impact",
         "code-tour",
         "codebase-onboarding",
         "codehealth-mcp",
         "coding-standards",
         "content-hash-cache-pattern",
+        "context-and-decisions",
         "contract-first",
         "cost-aware-llm-pipeline",
         "delivery-gate",
@@ -162,6 +174,7 @@
         "living-docs-governance",
         "loop-design-check",
         "mcp-server-patterns",
+        "module-regression",
         "opensource-pipeline",
         "plan-canvas",
         "plankton-code-quality",
@@ -172,8 +185,10 @@
         "regex-vs-llm-structured-text",
         "repo-scan",
         "search-first",
+        "story-lifecycle",
         "terminal-opener",
-        "terminal-ops"
+        "terminal-ops",
+        "test-collaboration"
       ]
     },
     "ecc-agent-systems": {
@@ -183,6 +198,7 @@
         "agent-eval",
         "agent-harness-construction",
         "agent-introspection-debugging",
+        "agent-runtime-gateway-smoke-test",
         "agent-self-evaluation",
         "agentic-engineering",
         "agentic-os",
@@ -197,6 +213,7 @@
         "cost-tracking",
         "council",
         "council-multi-model",
+        "deepseek-harness-setup",
         "dev-team",
         "dmux-workflows",
         "dynamic-workflow-mode",
@@ -222,16 +239,19 @@
         "orch-refine-code",
         "parallel-execution-optimizer",
         "plan-orchestrate",
+        "prompt-caching-strategy",
         "ralphinho-rfc-pipeline",
         "recursive-decision-ledger",
         "rules-distill",
         "santa-method",
         "skill-comply",
+        "skill-host-compat",
         "skill-scout",
         "skill-stocktake",
         "strategic-compact",
         "team-agent-orchestration",
         "token-budget-advisor",
+        "token-card",
         "unified-memory",
         "workspace-surface-audit"
       ]
@@ -239,6 +259,7 @@
     "ecc-data": {
       "description": "Databases, data pipelines, machine learning, model operation and structured analysis.",
       "skills": [
+        "bengali-nlp",
         "clickhouse-io",
         "dashboard-builder",
         "data-scraper-agent",
@@ -278,6 +299,7 @@
         "lead-intelligence",
         "market-research",
         "marketing-campaign",
+        "osint-investigation",
         "research-ops",
         "scientific-db-pubmed-database",
         "scientific-db-uspto-database",
@@ -354,6 +376,7 @@
       "description": "Specialist security, healthcare and financial protocols; not authorization for external actions.",
       "skills": [
         "agent-payment-x402",
+        "agent-security-hardening",
         "defi-amm-security",
         "evm-token-decimals",
         "gateguard",
@@ -363,6 +386,7 @@
         "healthcare-phi-compliance",
         "hipaa-compliance",
         "llm-trading-agent-security",
+        "mcp-dependency-review",
         "nodejs-keccak256",
         "prediction-market-oracle-research",
         "prediction-market-risk-review",

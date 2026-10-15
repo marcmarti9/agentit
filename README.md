@@ -45,8 +45,8 @@ You + capable coding agent
 ## ECC + Agentit
 
 The complete pinned ECC 2.2.3 source is included: skills, agents, commands, hooks,
-rules, memory, native tools and host adapters. One JIT catalog exposes **380
-canonical skills** (96 Agentit + 284 ECC), with nine explicit redundant-name
+rules, memory, native tools and host adapters. One JIT catalog exposes **398
+canonical skills** (98 Agentit + 300 ECC), with eleven explicit redundant-name
 resolutions. Agentit's three-body core, BUILDER/REVIEW, Remotion expertise,
 worker contracts and verified runtime remain intact. No global ECC hook,
 transcript collector or provider configuration is enabled by importing it.

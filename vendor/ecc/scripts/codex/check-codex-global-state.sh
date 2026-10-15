@@ -106,8 +106,10 @@ if [[ -f "$CONFIG_FILE" ]]; then
   else
     warn "persistent_instructions is not set (recommended but optional)"
   fi
-  check_config_pattern '^\[profiles\.strict\]' "profiles.strict exists"
-  check_config_pattern '^\[profiles\.yolo\]' "profiles.yolo exists"
+  require_file "$CODEX_HOME/strict.config.toml" "strict named profile"
+  require_file "$CODEX_HOME/yolo.config.toml" "yolo named profile"
+  check_config_absent '^[[:space:]]*\[profiles[.]' "legacy profile tables are absent (migrate to named .config.toml files)"
+  check_config_absent '^[[:space:]]*profile[[:space:]]*=' "legacy profile selector is absent"
 
   # Current default connector set (docs/MCP-CONNECTOR-POLICY.md): exactly
   # one connector. Former defaults (github, memory, sequential-thinking,

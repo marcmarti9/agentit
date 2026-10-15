@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
+      - scripts/install_ecc_dependencies.py
       - router/ecc.py
       - router/test_ecc*.py
       - references/ecc-policy.json
@@ -15,6 +16,7 @@ on:
     paths:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
+      - scripts/install_ecc_dependencies.py
       - router/ecc.py
       - router/test_ecc*.py
       - references/ecc-policy.json
@@ -44,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: affaan-m/ECC
-          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          ref: b92f181b3b748d1abbc2afd94af6aa7d8c8fca29
           persist-credentials: false
           path: ecc
       - uses: actions/setup-python@v5
@@ -72,12 +74,8 @@ jobs:
         with:
           node-version: '22'
       - run: python3 -m pip install 'PyYAML>=6,<7'
-      - name: Install ECC's pinned Yarn manager and immutable lockfile without build scripts
-        working-directory: vendor/ecc
-        env:
-          COREPACK_DEFAULT_TO_LATEST: '0'
-          YARN_ENABLE_SCRIPTS: 'false'
-        run: corepack yarn install --immutable --mode=skip-build
+      - name: Install native dependencies while preserving canonical source bytes
+        run: python3 scripts/install_ecc_dependencies.py --apply
       - name: Exercise the retained CLI through Agentit's real wrapper
         run: |
           python3 agentit ecc run -- --help
@@ -96,7 +94,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: affaan-m/ECC
-          ref: ef648e01899ba3e8dc6371642deaaf64b4477775
+          ref: b92f181b3b748d1abbc2afd94af6aa7d8c8fca29
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:

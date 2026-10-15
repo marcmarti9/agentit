@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import date
 from pathlib import Path, PurePosixPath
 
 import yaml
@@ -43,6 +44,31 @@ def check_sources(root: Path, manifest: dict) -> int:
         if (repo, revision) in seen:
             raise ValueError(f"duplicate source record: {repo}")
         seen.add((repo, revision))
+        review = item.get("review")
+        if review is not None:
+            if (not isinstance(review, dict)
+                    or not re.fullmatch(r"[0-9a-f]{40}", str(review.get("revision", "")))
+                    or review.get("disposition") not in {"source-unchanged", "adaptation-updated"}
+                    or not isinstance(review.get("note"), str) or not review["note"].strip()):
+                raise ValueError(f"invalid adaptation review: {repo}")
+            try:
+                date.fromisoformat(review.get("reviewed_on", ""))
+            except (ValueError, TypeError) as exc:
+                raise ValueError(f"invalid adaptation review date: {repo}") from exc
+            files = review.get("files")
+            if not isinstance(files, list) or not files:
+                raise ValueError(f"missing reviewed files: {repo}")
+            reviewed_paths = set()
+            for entry in files:
+                if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
+                    raise ValueError(f"invalid reviewed file: {repo}")
+                raw = entry["path"]
+                path = PurePosixPath(raw)
+                if (not raw or raw == "." or path.is_absolute() or ".." in path.parts
+                        or "\\" in raw or path.as_posix() != raw or raw in reviewed_paths
+                        or not re.fullmatch(r"[0-9a-f]{40}", str(entry.get("blob", "")))):
+                    raise ValueError(f"unsafe or unfixed reviewed file: {repo}: {raw}")
+                reviewed_paths.add(raw)
         # New records explicitly declare path provenance mandatory. Older
         # records predate that contract; do not invent retroactive source paths.
         if item.get("source_paths_required") or "source_paths" in item:

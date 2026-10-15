@@ -63,7 +63,16 @@ function resolveEccRoot(options = {}) {
   }
 
   const homeDir = options.homeDir || os.homedir();
-  const claudeDir = path.join(homeDir, '.claude');
+  const configuredDir = options.configDir !== undefined
+    ? options.configDir
+    : process.env.CLAUDE_CONFIG_DIR;
+  const rawDir = typeof configuredDir === 'string' ? configuredDir.trim() : '';
+  const expandedDir = rawDir === '~'
+    ? homeDir
+    : (rawDir.startsWith('~/') || rawDir.startsWith('~\\'))
+      ? path.join(homeDir, rawDir.slice(2))
+      : rawDir;
+  const claudeDir = expandedDir ? path.resolve(expandedDir) : path.join(homeDir, '.claude');
 
   // Decide whether a candidate directory is a usable ECC root. An explicit
   // caller probe is honored exactly (script consumers know the artifact they
@@ -93,35 +102,22 @@ function resolveEccRoot(options = {}) {
     }
   }
 
-  // Plugin cache — Claude Code stores marketplace plugins under
-  // ~/.claude/plugins/cache/<plugin-name>/<org>/<version>/
-  try {
-    for (const slug of PLUGIN_CACHE_SLUGS) {
-      const cacheBase = path.join(claudeDir, 'plugins', 'cache', slug);
-      const orgDirs = fs.readdirSync(cacheBase, { withFileTypes: true });
-
-      for (const orgEntry of orgDirs) {
-        if (!orgEntry.isDirectory()) continue;
-        const orgPath = path.join(cacheBase, orgEntry.name);
-
-        let versionDirs;
-        try {
-          versionDirs = fs.readdirSync(orgPath, { withFileTypes: true });
-        } catch {
-          continue;
-        }
-
-        for (const verEntry of versionDirs) {
-          if (!verEntry.isDirectory()) continue;
-          const candidate = path.join(orgPath, verEntry.name);
-          if (isRoot(candidate)) {
-            return candidate;
-          }
-        }
+  // Missing cache locations are independent; unreadable/corrupt locations must surface.
+  const directories = (dir) => {
+    try { return fs.readdirSync(dir, { withFileTypes: true }); }
+    catch (error) { if (error.code === 'ENOENT') return [];throw error; }
+  };
+  for (const slug of PLUGIN_CACHE_SLUGS) {
+    const cacheBase = path.join(claudeDir, 'plugins', 'cache', slug);
+    for (const orgEntry of directories(cacheBase)) {
+      if (!orgEntry.isDirectory()) continue;
+      const orgPath = path.join(cacheBase, orgEntry.name);
+      for (const verEntry of directories(orgPath)) {
+        if (!verEntry.isDirectory()) continue;
+        const candidate = path.join(orgPath, verEntry.name);
+        if (isRoot(candidate)) return candidate;
       }
     }
-  } catch {
-    // Plugin cache doesn't exist or isn't readable — continue to fallback
   }
 
   return claudeDir;
@@ -158,7 +154,7 @@ function normalizePluginRootForPlatform(rootDir, platform = process.platform) {
  *   const _r = <paste INLINE_RESOLVE>;
  *   const sm = require(_r + '/scripts/lib/session-manager');
  */
-const INLINE_RESOLVE = `(function(){var p=require('path'),f=require('fs'),o=require('os');var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var d=p.join(o.homedir(),'.claude');function L(x){try{return require(p.join(x,'scripts','lib','resolve-ecc-root')).resolveEccRoot()}catch(_){return null}}var r=L(d);if(r)return r;var s=['ecc','ecc@ecc','marketplaces/ecc','everything-claude-code','everything-claude-code@everything-claude-code','marketplaces/everything-claude-code'];for(var i=0;i<s.length;i++){r=L(p.join(d,'plugins',s[i]));if(r)return r}try{var g=['ecc','everything-claude-code'];for(var j=0;j<g.length;j++){var c=p.join(d,'plugins','cache',g[j]);var O=f.readdirSync(c);for(var k=0;k<O.length;k++){var q=p.join(c,O[k]);var V=f.readdirSync(q);for(var m=0;m<V.length;m++){r=L(p.join(q,V[m]));if(r)return r}}}}catch(_){}return d})()`;
+const INLINE_RESOLVE = `(function(){var p=require('path'),f=require('fs'),o=require('os');var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var d=(process.env.CLAUDE_CONFIG_DIR||'').trim()||p.join(o.homedir(),'.claude');if(d==='~')d=o.homedir();else if(d.charAt(0)==='~'&&(d.charAt(1)==='/'||d.charCodeAt(1)===92))d=p.join(o.homedir(),d.slice(2));d=p.resolve(d);function L(x){try{return require(p.join(x,'scripts','lib','resolve-ecc-root')).resolveEccRoot()}catch(_){return null}}var r=L(d);if(r)return r;var s=['ecc','ecc@ecc','marketplaces/ecc','everything-claude-code','everything-claude-code@everything-claude-code','marketplaces/everything-claude-code'];for(var i=0;i<s.length;i++){r=L(p.join(d,'plugins',s[i]));if(r)return r}function D(x){try{return f.readdirSync(x,{withFileTypes:true}).filter(function(z){return z.isDirectory()}).map(function(z){return z.name})}catch(e){if(e.code==='ENOENT')return [];throw e}}var g=['ecc','everything-claude-code'];for(var j=0;j<g.length;j++){var c=p.join(d,'plugins','cache',g[j]);var O=D(c);for(var k=0;k<O.length;k++){var q=p.join(c,O[k]);var V=D(q);for(var m=0;m<V.length;m++){r=L(p.join(q,V[m]));if(r)return r}}}return d})()`;
 
 module.exports = {
   resolveEccRoot,

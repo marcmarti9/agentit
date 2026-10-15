@@ -1267,20 +1267,33 @@ async function main(suite = createTestRunner()) {
       const bound = await staleCanvas.listen(0);
       const opened = jsonBody(await request(bound.port, 'POST', '/api/sessions', { body: { file: staleArtifact } }));
 
-      await request(bound.port, 'POST', `/api/session/${opened.key}/typing`, { body: { state: 'typing' } });
-      assert.strictEqual(staleCanvas.presenceFor(opened.key), 'typing');
-      await new Promise(resolve => setTimeout(resolve, 60));
-      assert.strictEqual(staleCanvas.presenceFor(opened.key), 'waiting');
+      // Keep real HTTP transitions, but advance their activity clock explicitly:
+      // loaded runners can exceed the expiry between two HTTP round trips.
+      const originalNow = Date.now;
+      let now = originalNow();
+      Date.now = () => now;
+      try {
+        await request(bound.port, 'POST', `/api/session/${opened.key}/typing`, { body: { state: 'typing' } });
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'typing');
+        now += 19;
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'typing');
+        now += 1;
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'waiting');
 
-      // An abandoned agent decays to queued so the human is never told a
-      // stalled session is still being worked on.
-      await request(bound.port, 'POST', `/api/session/${opened.key}/typing`, { body: { state: 'thinking' } });
-      await request(bound.port, 'POST', `/api/session/${opened.key}/feedback`, {
-        body: { items: [{ kind: 'chat', text: 'still there?' }] }
-      });
-      assert.strictEqual(staleCanvas.presenceFor(opened.key), 'thinking');
-      await new Promise(resolve => setTimeout(resolve, 60));
-      assert.strictEqual(staleCanvas.presenceFor(opened.key), 'queued');
+        // An abandoned agent decays to queued so the human is never told a
+        // stalled session is still being worked on.
+        await request(bound.port, 'POST', `/api/session/${opened.key}/typing`, { body: { state: 'thinking' } });
+        await request(bound.port, 'POST', `/api/session/${opened.key}/feedback`, {
+          body: { items: [{ kind: 'chat', text: 'still there?' }] }
+        });
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'thinking');
+        now += 39;
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'thinking');
+        now += 1;
+        assert.strictEqual(staleCanvas.presenceFor(opened.key), 'queued');
+      } finally {
+        Date.now = originalNow;
+      }
       await closeStaleCanvas();
     });
 

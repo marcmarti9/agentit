@@ -1994,6 +1994,218 @@ else {
   }
 }
 
+// Contributor carry-forward regressions for #2858 and #2897.
+for (const [name, command, expected] of [
+  [
+    "blocks include.path config override",
+    "git -c include.path=/tmp/evil.conf commit -m x",
+    2
+  ],
+  [
+    "blocks quoted include.path config",
+    "git \"-c\" \"include.path=/tmp/evil.conf\" push origin main",
+    2
+  ],
+  [
+    "blocks inline include.path config",
+    "git -cinclude.path=/tmp/evil.conf commit -m x",
+    2
+  ],
+  [
+    "blocks include.path config-env",
+    "git --config-env=include.path=EVIL commit -m x",
+    2
+  ],
+  [
+    "blocks separated include.path config-env",
+    "git --config-env include.path=EVIL commit -m x",
+    2
+  ],
+  [
+    "blocks case-insensitive include.path",
+    "git -c INCLUDE.PATH=/tmp/evil.conf commit -m x",
+    2
+  ],
+  [
+    "blocks conditional include capability",
+    "git -c includeIf.gitdir:**/.path=/tmp/evil.conf commit -m x",
+    2
+  ],
+  [
+    "blocks counted include.path environment",
+    "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=include.path GIT_CONFIG_VALUE_0=/tmp/evil.conf git commit -m x",
+    2
+  ],
+  [
+    "blocks encoded include.path parameters",
+    "GIT_CONFIG_PARAMETERS=\"'include.path'='/tmp/evil.conf'\" git commit -m x",
+    2
+  ],
+  [
+    "allows unrelated config value",
+    "git -c user.name=ECC commit -m x",
+    0
+  ],
+  [
+    "allows include setting outside protected command",
+    "git -c include.path=/tmp/evil.conf status",
+    0
+  ],
+  [
+    "blocks env long inline split-string",
+    "env --split-string='git commit --no-verify -m x'",
+    2
+  ],
+  [
+    "blocks env split-string after ignore-environment",
+    "env -i --split-string='git commit --no-verify -m x'",
+    2
+  ],
+  [
+    "blocks env separated long split-string",
+    "env --split-string 'git commit --no-verify -m x'",
+    2
+  ],
+  [
+    "blocks env attached short split-string",
+    "env -S'git commit --no-verify -m x'",
+    2
+  ],
+  [
+    "blocks appended argv after env split-string",
+    "env --split-string='git commit' --no-verify -m x",
+    2
+  ],
+  [
+    "allows quoted bypass text passed through env printf",
+    "env --split-string=\"printf '%s' 'git commit --no-verify -m x'\"",
+    0
+  ]
+]) {
+  if (test(name, () => {
+    const result = runHook({ tool_input: { command } });
+    assert.strictEqual(result.code, expected, result.stderr);
+  })) passed++; else failed++;
+}
+
+for (const n of [100, 1000, 4000]) {
+  for (const tail of ['git status', 'git commit --no-verify']) {
+    if (test(`literal env split copies stay within the input quota at ${n}: ${tail}`, () => {
+      const command = 'env ' + '-S -i '.repeat(n) + tail;
+      const quota = 24 * (command.length + 1) + 4096;
+      const result = countedClassification(command);
+      assert.strictEqual(result.result.exitCode, 2, JSON.stringify(result));
+      assert.match(result.result.stderr, /work budget/);
+      assert.ok(result.copiedElements <= quota, JSON.stringify(result));
+      assert.ok(result.copiedElements <= result.spent, JSON.stringify(result));
+      // The rejected charge may exceed the quota, but allocation must not run.
+      assert.ok(result.spent >= quota && result.spent <= quota + 2 * (2 * n + 4) + 1, JSON.stringify(result));
+    })) passed++; else failed++;
+  }
+}
+for (const n of [0, 1, 2, 4]) {
+  if (test(`shallow literal env splits allow harmless argv at ${n}`, () => {
+    const command = 'env ' + '-S -i '.repeat(n) + 'git status';
+    const result = countedClassification(command);
+    assert.strictEqual(result.result.exitCode, 0, JSON.stringify(result));
+    assert.ok(result.copiedElements <= result.spent, JSON.stringify(result));
+  })) passed++; else failed++;
+}
+
+const quoteSplitPayload = payload => `'${payload.replace(/'/g, `'\\''`)}'`;
+const escapedSplitCases = [
+  ['unquoted escaped separators', 'git\\_commit\\_--no-verify', 2],
+  ['single-quoted literal separators', "'git\\_commit\\_--no-verify'", 0],
+  ['double-quoted escaped separators', '"git\\_commit\\_--no-verify"', 2],
+  ['mixed quoted escaped separators', 'git\\_commit\\_"--no-verify"', 2],
+  ['unsupported stop escape', 'printf ok\\c ignored', 2],
+  ['unsupported double-quoted stop escape', 'printf "ok\\c" ignored', 2],
+  ['single-quoted stop data', "printf '%s' 'ok\\c'", 0],
+  ['single-quoted separator data', "printf '%s' 'git\\_commit\\_--no-verify'", 0],
+  ['single-quoted newline format', "printf '%s\\n' 'git commit --no-verify'", 0],
+  ['unsupported newline escape', 'printf ok\\n', 2],
+  ['unsupported tab escape', 'printf ok\\t', 2],
+  ['unsupported escaped backslash', 'printf ok\\\\_', 2],
+  ['unsupported single-quoted backslash escape', "printf '%s' 'ok\\\\_'", 2],
+  ['unsupported single-quoted apostrophe escape', "printf '%s' 'ok\\'data'", 2],
+];
+for (const [name, payload, expected] of escapedSplitCases) {
+  for (const option of ['-S ', '-S', '--split-string=', '--split-string ']) {
+    if (test(`env escape boundary ${name}: ${option}`, () => {
+      const command = 'env ' + option + quoteSplitPayload(payload);
+      for (const input of [command, JSON.stringify({ tool_input: { command } })]) {
+        const result = runHook(input);
+        assert.strictEqual(result.code, expected, result.stderr);
+        if (expected === 2) assert.match(result.stderr, /Unsupported env split-string escape/);
+      }
+    })) passed++; else failed++;
+  }
+}
+
+// --- GNU sed execution model (#3051 test intent) ---
+// sed is a text transformer: its script operand and file operands are data,
+// except the `e` command and the s///e flag, which run text through the shell.
+// Ported from the #3051 litmus set: quoted-as-data stays data, real execution
+// is blocked, and unmodeled invocations keep the conservative opaque default.
+
+const sedCases = [
+  // False positives fixed: non-executing sed operands are data.
+  ['sed filename is data (the #3051 false positive)', "sed 's/x/y/' 'e git commit --no-verify'", 0],
+  ['non-executing script containing a git command is data', "sed 's/x/git commit --no-verify/'", 0],
+  ['file operand containing git is data', "sed 's/eee/zzz/' 'git commit --no-verify.txt'", 0],
+  ['benign line-range script is data', "sed -n '1,3p' file.txt", 0],
+  ['s///e replacement is shell source', "printf x | sed 's/x/git commit --no-verify/e'", 2],
+  ['s///e replacement still blocked further downstream', "printf x | sed 's/x/git commit --no-verify/e' | cat", 2],
+  ['e command operand is shell source', "sed -e 'e git commit --no-verify'", 2],
+  ['bare e consumes piped source as shell code', "printf 'git commit --no-verify' | sed -e 'e'", 2],
+  ['--expression= form is modeled', "sed --expression='s/x/git commit --no-verify/e'", 2],
+  // Conservative defaults preserved: unmodeled invocations stay opaque.
+  ['-f scripts are unreadable: opaque default', "sed -f script.sed 'git commit --no-verify'", 2],
+  ['-i suffix ambiguity: opaque default', "sed -i 's/a/b/' 'git commit --no-verify'", 2],
+  // Litmus anchors from the #3051 direction check (existing behavior pinned).
+  ['quoted-as-data through echo stays allowed', 'echo "git commit --no-verify"', 0],
+  ['direct --no-verify stays blocked', 'git commit --no-verify -m x', 2],
+  ['mixed quoting smuggling a real flag stays blocked', "git commit '--no-verify' -m x", 2],
+  // GNU sed collects -e scripts from any argv position (CodeRabbit finding on
+  // this PR): an execution construct after positional operands still executes.
+  ['later -e script after positional operands is scanned', "printf x | sed -e 's/x/y/' - -e 's/y/git commit --no-verify/e'", 2],
+  ['later -e after a positional script operand is scanned', "sed 's/x/y/' -e 'e git commit --no-verify'", 2],
+  ['later --expression= after positionals is scanned', "sed 's/x/y/' --expression='s/x/git commit --no-verify/e'", 2],
+  ['-- ends options: later tokens are file operands', "sed -e 's/x/y/' -- 'git commit --no-verify'", 0],
+  // With no script option before --, the first operand after -- is still the
+  // script (Greptile P1 on this PR, GNU sed 4.9 verified).
+  ['first operand after -- is still the script', "printf x | sed -- 's/x/git commit --no-verify/e'", 2],
+  ['file operands after the -- script stay data', "sed -- 's/x/y/' 'git commit --no-verify'", 0],
+  // GNU sed decodes escapes in exec-bearing fragments before execution
+  // (Greptile P1 findings on this PR): decoding that surface faithfully is out
+  // of scope, so escaped fragments are conservatively blocked instead.
+  ['hex escape decoding bypass is conservatively blocked', "printf x | sed 's/x/\\x67it commit --no-verify/e'", 2],
+  ['unknown escape decoding bypass is conservatively blocked', "printf x | sed 's/x/\\git commit --no-verify/e'", 2],
+  ['escaped-newline continued e operand is conservatively blocked', "printf x | sed -e 'e git commit \\\n--no-verify'", 2],
+  ['octal escape decoding bypass is conservatively blocked', "printf x | sed 's/x/\\147it commit --no-verify/e'", 2],
+  ['backslash in a non-executing script stays data', "sed 's/a\\/b/c/' 'git commit --no-verify'", 0],
+  // Labels end at `;` and following commands still execute (GNU sed 4.9
+  // verified: ':a;e cmd' runs cmd). Reading label operands to end of line
+  // let an e command hide behind a label (CodeRabbit finding, landed via
+  // #3495). The label reader must stop at `;` so the rest is scanned.
+  ['e command after a label is scanned', "sed ':a;e git commit --no-verify'", 2],
+  ['e command after a b branch is scanned', "printf x | sed 'ba;e git commit --no-verify'", 2],
+  ['e command after a T branch is scanned', "printf x | sed 'TX;e git commit --no-verify'", 2],
+  ['e command after a newline label is scanned', "sed ':a\ne git commit --no-verify'", 2],
+  ['e command after a t branch is scanned', "printf x | sed 'tX;e git commit --no-verify'", 2],
+  ['plain label without following commands stays data', "sed ':a' 'git commit --no-verify'", 0],
+  ['b branch alone stays data', "sed 'bx' 'git commit --no-verify'", 0]
+];
+for (const [name, command, expected] of sedCases) {
+  if (test(`sed model ${name}`, () => {
+    for (const input of [command, JSON.stringify({ tool_input: { command } })]) {
+      const result = runHook(input);
+      assert.strictEqual(result.code, expected, `expected exit ${expected}, got ${result.code}: ${result.stderr}`);
+      if (expected === 2) assert.match(result.stderr, /BLOCKED/);
+    }
+  })) passed++; else failed++;
+}
+
 console.log('─'.repeat(50));
 console.log(`Passed: ${passed}  Failed: ${failed}`);
 

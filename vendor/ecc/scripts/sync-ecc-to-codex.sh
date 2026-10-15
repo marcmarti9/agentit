@@ -338,6 +338,16 @@ for agent_file in "$CODEX_AGENTS_SRC"/*.toml; do
   fi
 done
 
+# Named profiles are independent user configuration. Seed only absent files;
+# customized or legacy choices require explicit user migration, never overwrite.
+for profile_name in strict yolo; do
+  profile_dest="$CODEX_HOME/$profile_name.config.toml"
+  if [[ ! -e "$profile_dest" && ! -L "$profile_dest" ]]; then
+    record_managed_path "$profile_dest"
+    run_or_echo cp "$REPO_ROOT/.codex/$profile_name.config.toml" "$profile_dest"
+  fi
+done
+
 # Skills are NOT synced here — Codex CLI reads directly from
 # ~/.agents/skills/ (installed by ECC installer / npx skills).
 # Copying into ~/.codex/skills/ was unnecessary.

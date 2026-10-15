@@ -23,6 +23,7 @@ const { applyInstallPlan: applyInstallPlanDirect } = require('../../scripts/lib/
 const { normalizeInstallRequest } = require('../../scripts/lib/install/request');
 const { createInstallPlanFromRequest } = require('../../scripts/lib/install/runtime');
 const { withHookConsent } = require('../../scripts/lib/install/hook-consent');
+const { repairInstalledStates, uninstallInstalledStates } = require('../../scripts/lib/install-lifecycle');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
@@ -161,6 +162,7 @@ function writeManifestSourceFixture(root) {
   writeFile(root, path.join('src', 'stray.pyd'), 'ignored\n');
   writeFile(root, path.join('src', 'nested', 'ecc-install-state.json'), '{}\n');
   writeFile(root, path.join('rules', 'common', 'coding-style.md'), '# Common\n');
+  writeFile(root, path.join('rules', 'common', 'agents.md'), 'Use the `ecc:planner` agent.\n');
   writeFile(root, path.join('skills', 'demo', 'SKILL.md'), '# Demo\n');
   writeFile(root, 'standalone.txt', 'standalone\n');
   writeFile(root, path.join('runtime', 'ecc', 'install-state.json'), '{}\n');
@@ -683,6 +685,11 @@ function runTests() {
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'src', 'app.js')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'standalone.txt')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'plugin.json')));
+      const installedAgentsRule = fs.readFileSync(
+        path.join(homeDir, '.claude', 'rules', 'ecc', 'common', 'agents.md'),
+        'utf8'
+      );
+      assert.strictEqual(installedAgentsRule, 'Use the `planner` agent.\n');
       const state = JSON.parse(fs.readFileSync(path.join(homeDir, '.claude', 'ecc', 'install-state.json'), 'utf8'));
       assert.strictEqual(state.request.profile, 'minimal');
       assert.deepStrictEqual(state.resolution.selectedModules, ['fixture-core']);
@@ -740,6 +747,189 @@ function runTests() {
       );
       assert.deepStrictEqual(events, [destinationPath]);
       assert.strictEqual(fs.readFileSync(destinationPath, 'utf8'), 'user\n');
+    } finally {
+      cleanup(tempDir);
+    }
+  })) passed++; else failed++;
+
+  if (test('OpenCode home installs resolve bundled skills inside the config root', () => {
+    const tempDir = createTempDir('install-executor-opencode-skills-');
+    try {
+      const sourceRoot = path.join(tempDir, 'source');
+      writeManifestSourceFixture(sourceRoot);
+      const modulesPath = path.join(sourceRoot, 'manifests', 'install-modules.json');
+      const manifest = JSON.parse(fs.readFileSync(modulesPath, 'utf8'));
+      writeJson(sourceRoot, 'manifests/install-modules.json', {
+        ...manifest,
+        modules: manifest.modules.map(module => ({
+          ...module,
+          paths: ['.opencode', '.cursor', 'skills/demo'],
+          targets: ['opencode'],
+        })),
+      });
+      writeFile(sourceRoot, '.opencode/dist/index.js', 'export default () => ({});\n');
+      writeFile(sourceRoot, '.opencode/dist/plugins/index.js', 'export {};\n');
+      writeFile(sourceRoot, '.opencode/dist/tools/index.js', 'export {};\n');
+      writeFile(sourceRoot, '.cursor/foreign.txt', 'must not install\n');
+      const sourceConfig = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.opencode', 'opencode.json'), 'utf8'));
+      const configs = [
+        {
+          ...sourceConfig,
+          skills: { ...sourceConfig.skills, paths: ['../skills', '/custom/skills', '../other-skills'] },
+        },
+        { ...sourceConfig, skills: { paths: ['/custom/skills'] } },
+        { plugin: ['./plugins'] },
+      ];
+
+      for (const [index, config] of configs.entries()) {
+        const configSourcePath = path.join(sourceRoot, '.opencode', 'opencode.json');
+        writeJson(sourceRoot, '.opencode/opencode.json', config);
+        const originalContent = fs.readFileSync(configSourcePath, 'utf8');
+        const plan = createManifestInstallPlan({
+          sourceRoot,
+          projectRoot: path.join(tempDir, 'project'),
+          homeDir: path.join(tempDir, `home-${index}`),
+          target: 'opencode',
+          moduleIds: ['fixture-core'],
+        });
+        const configPath = path.join(plan.targetRoot, 'opencode.json');
+        assert.strictEqual(plan.operations.filter(operation => operation.destinationPath === configPath).length, 1);
+        applyInstallPlan(plan);
+        const installed = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const dormantConfig = { ...config, plugin: config.plugin.filter(plugin => plugin !== './plugins') };
+        const expected = index === 0
+          ? { ...dormantConfig, skills: { ...config.skills, paths: ['./skills', '/custom/skills', '../other-skills'] } }
+          : dormantConfig;
+        assert.deepStrictEqual(installed, expected);
+        assert.strictEqual(fs.readFileSync(configSourcePath, 'utf8'), originalContent, 'repository template must stay unchanged');
+        assert.ok(fs.existsSync(path.join(plan.targetRoot, 'skills', 'demo', 'SKILL.md')));
+        assert.ok(!fs.existsSync(path.join(plan.targetRoot, '.cursor')));
+        if (index === 0) {
+          const lifecycleOptions = {
+            repoRoot: sourceRoot,
+            projectRoot: path.join(tempDir, 'project'),
+            homeDir: path.join(tempDir, `home-${index}`),
+            targets: ['opencode'],
+          };
+          fs.unlinkSync(configPath);
+          const repaired = repairInstalledStates(lifecycleOptions);
+          assert.strictEqual(repaired.results[0].status, 'repaired', repaired.results[0].error);
+          assert.deepStrictEqual(JSON.parse(fs.readFileSync(configPath, 'utf8')), expected);
+          const state = JSON.parse(fs.readFileSync(plan.installStatePath, 'utf8'));
+          const recordedConfig = state.operations.find(operation => operation.destinationPath === configPath);
+          assert.strictEqual(recordedConfig.contentSha256, crypto.createHash('sha256')
+            .update(fs.readFileSync(configPath)).digest('hex'));
+          const uninstalled = uninstallInstalledStates(lifecycleOptions);
+          assert.strictEqual(uninstalled.results[0].status, 'uninstalled', uninstalled.results[0].error);
+          assert.ok(!fs.existsSync(configPath));
+        }
+      }
+    } finally {
+      cleanup(tempDir);
+    }
+  })) passed++; else failed++;
+
+  if (test('OpenCode pre-fix managed sources upgrade on repair and uninstall preserves user changes', () => {
+    const tempDir = createTempDir('install-executor-opencode-upgrade-');
+    try {
+      const sourceRoot = path.join(tempDir, 'source');
+      writeManifestSourceFixture(sourceRoot);
+      const modulesPath = path.join(sourceRoot, 'manifests', 'install-modules.json');
+      const manifest = JSON.parse(fs.readFileSync(modulesPath, 'utf8'));
+      writeJson(sourceRoot, 'manifests/install-modules.json', {
+        ...manifest,
+        modules: manifest.modules.map(module => ({
+          ...module,
+          paths: ['.opencode'],
+          targets: ['opencode'],
+        })),
+      });
+      writeFile(sourceRoot, '.opencode/dist/index.js', 'export default () => ({});\n');
+      writeFile(sourceRoot, '.opencode/dist/plugins/index.js', 'export {};\n');
+      writeFile(sourceRoot, '.opencode/dist/tools/index.js', 'export {};\n');
+      writeJson(sourceRoot, '.opencode/opencode.json', { plugin: ['./plugins'] });
+      fs.cpSync(path.join(REPO_ROOT, '.opencode', 'tools'), path.join(sourceRoot, '.opencode', 'tools'), {
+        recursive: true,
+      });
+      const currentContent = fs.readFileSync(path.join(REPO_ROOT, '.opencode', 'tools', 'index.ts'), 'utf8');
+      const legacyContent = [
+        'export { default as runTests } from "./run-tests.js"',
+        'export { default as checkCoverage } from "./check-coverage.js"',
+        'export { default as securityAudit } from "./security-audit.js"',
+        'export { default as formatCode } from "./format-code.js"',
+        'export { default as lintCheck } from "./lint-check.js"',
+        'export { default as gitSummary } from "./git-summary.js"',
+        'export { default as changedFiles } from "./changed-files.js"',
+        'export { default as dependencyAnalyzer } from "./dependency-analyzer.js"',
+        '',
+      ].join('\n');
+      const digest = content => crypto.createHash('sha256').update(content).digest('hex');
+
+      for (const upgrade of [false, true]) {
+        writeFile(sourceRoot, '.opencode/tools/index.ts', legacyContent);
+        const homeDir = path.join(tempDir, upgrade ? 'repair-home' : 'uninstall-home');
+        const projectRoot = path.join(tempDir, 'project');
+        const plan = createManifestInstallPlan({
+          sourceRoot, projectRoot, homeDir, target: 'opencode', moduleIds: ['fixture-core'],
+        });
+        applyInstallPlan(plan);
+        const barrelPath = path.join(plan.targetRoot, 'tools', 'index.ts');
+        const toolPath = path.join(plan.targetRoot, 'tools', 'run-tests.ts');
+        const userPath = writeFile(plan.targetRoot, 'tools/user-note.txt', 'Keep my settings.\n');
+        const installedState = JSON.parse(fs.readFileSync(plan.installStatePath, 'utf8'));
+        const recordedBarrel = installedState.operations.find(operation => operation.destinationPath === barrelPath);
+        assert.strictEqual(fs.readFileSync(barrelPath, 'utf8'), legacyContent);
+        assert.strictEqual(recordedBarrel.contentTransform, undefined, 'TypeScript imports are copied, not transformed');
+        assert.strictEqual(recordedBarrel.contentSha256, digest(legacyContent));
+        assert.ok(fs.existsSync(toolPath));
+        assert.ok(!fs.existsSync(path.join(plan.targetRoot, 'tools', 'run-tests.js')), 'legacy import has no adjacent JavaScript file');
+
+        // Upgrade the repository independently of the existing managed home.
+        writeFile(sourceRoot, '.opencode/tools/index.ts', currentContent);
+        const lifecycleOptions = { repoRoot: sourceRoot, projectRoot, homeDir, targets: ['opencode'] };
+        if (upgrade) {
+          const repaired = repairInstalledStates(lifecycleOptions);
+          assert.strictEqual(repaired.results.length, 1);
+          assert.strictEqual(repaired.results[0].status, 'repaired', JSON.stringify(repaired));
+          assert.ok(repaired.results[0].repairedPaths.includes(barrelPath));
+          const repairedContent = fs.readFileSync(barrelPath, 'utf8');
+          assert.strictEqual(repairedContent, currentContent);
+          assert.ok(repairedContent.includes('from "./run-tests.ts"'));
+          assert.ok(!repairedContent.includes('.js"'), 'repair replaces legacy JavaScript specifiers');
+          const repairedState = JSON.parse(fs.readFileSync(plan.installStatePath, 'utf8'));
+          const repairedBarrel = repairedState.operations.find(operation => operation.destinationPath === barrelPath);
+          assert.strictEqual(repairedBarrel.contentSha256, digest(currentContent));
+          assert.notStrictEqual(repairedBarrel.contentSha256, recordedBarrel.contentSha256);
+          assert.strictEqual(fs.readFileSync(userPath, 'utf8'), 'Keep my settings.\n');
+        }
+
+        const toolFd = fs.openSync(toolPath, fs.constants.O_RDWR | (fs.constants.O_NOFOLLOW || 0));
+        let modifiedContent;
+        try {
+          assert.ok(fs.fstatSync(toolFd).isFile());
+          modifiedContent = `${fs.readFileSync(toolFd, 'utf8')}\n// User test customisation.\n`;
+          const modifiedBytes = Buffer.from(modifiedContent);
+          assert.strictEqual(fs.writeSync(toolFd, modifiedBytes, 0, modifiedBytes.length, 0), modifiedBytes.length);
+          fs.ftruncateSync(toolFd, modifiedBytes.length);
+        } finally {
+          fs.closeSync(toolFd);
+        }
+        const uninstalled = uninstallInstalledStates(lifecycleOptions);
+        assert.strictEqual(uninstalled.results.length, 1);
+        assert.strictEqual(uninstalled.results[0].status, 'partial', JSON.stringify(uninstalled));
+        assert.ok(uninstalled.results[0].removedPaths.includes(barrelPath));
+        assert.ok(!fs.existsSync(barrelPath), 'both legacy and repaired managed barrels are recognised');
+        assert.deepStrictEqual(uninstalled.results[0].retainedPaths, [toolPath]);
+        const retainedFd = fs.openSync(toolPath, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0));
+        try {
+          assert.ok(fs.fstatSync(retainedFd).isFile());
+          assert.strictEqual(fs.readFileSync(retainedFd, 'utf8'), modifiedContent);
+        } finally {
+          fs.closeSync(retainedFd);
+        }
+        assert.strictEqual(fs.readFileSync(userPath, 'utf8'), 'Keep my settings.\n');
+        assert.ok(fs.existsSync(plan.installStatePath), 'modified managed content retains its ownership record');
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -934,6 +1124,7 @@ function runTests() {
         'utf8'
       ));
       assert.ok(!installedConfig.plugin.includes('./plugins'));
+      assert.deepStrictEqual(installedConfig.skills.paths, ['./skills']);
 
       const enabledWithoutRuntime = createInstallPlanFromRequest(
         normalizeInstallRequest({
@@ -985,14 +1176,19 @@ function runTests() {
       const enabledConfig = enabledPlan.operations.find(operation => (
         operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/opencode.json'
       ));
-      assert.strictEqual(enabledConfig.contentTransform, undefined);
+      assert.strictEqual(enabledConfig.contentTransform, 'opencode-home-skills-path');
       applyInstallPlanDirect(enabledPlan);
+      assert.deepStrictEqual(JSON.parse(fs.readFileSync(enabledConfig.destinationPath, 'utf8')).skills.paths, ['./skills']);
       for (const name of OPENCODE_ENTRYPOINTS) {
         assert.strictEqual(
           fs.readFileSync(path.join(homeDir, '.config', 'opencode', 'plugins', name), 'utf8'),
-          fs.readFileSync(path.join(REPO_ROOT, '.opencode', 'plugins', name), 'utf8')
+          name === 'index.ts' ? INERT_OPENCODE_PLUGIN : fs.readFileSync(path.join(REPO_ROOT, '.opencode', 'plugins', name), 'utf8')
         );
       }
+      assert.strictEqual(
+        enabledPlan.statePreview.operations.find(operation => operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/plugins/index.ts').contentTransform,
+        'opencode-disable-plugin-entrypoint'
+      );
       applyInstallPlanDirect(declinedPlan);
       const declinedState = JSON.parse(fs.readFileSync(declinedPlan.installStatePath, 'utf8'));
       assert.strictEqual(declinedState.request.hookConsent, 'declined');

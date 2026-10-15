@@ -536,6 +536,7 @@ profiles:
     - laravel-tdd
     - laravel-verification
     - liquid-glass-design
+    - mybatis-patterns
     - nestjs-patterns
     - perl-patterns
     - perl-security
@@ -574,11 +575,14 @@ profiles:
     - benchmark
     - benchmark-optimization-loop
     - blueprint
+    - brownfield-retrospective
+    - change-impact
     - code-tour
     - codebase-onboarding
     - codehealth-mcp
     - coding-standards
     - content-hash-cache-pattern
+    - context-and-decisions
     - contract-first
     - cost-aware-llm-pipeline
     - delivery-gate
@@ -593,6 +597,7 @@ profiles:
     - living-docs-governance
     - loop-design-check
     - mcp-server-patterns
+    - module-regression
     - opensource-pipeline
     - plan-canvas
     - plankton-code-quality
@@ -603,8 +608,10 @@ profiles:
     - regex-vs-llm-structured-text
     - repo-scan
     - search-first
+    - story-lifecycle
     - terminal-opener
     - terminal-ops
+    - test-collaboration
   ecc-agent-systems:
     description: Agent tools, orchestration, memory, learning, context and host adapters; explicit
       selection only. Availability only, never auto-activation.
@@ -615,6 +622,7 @@ profiles:
     - agent-eval
     - agent-harness-construction
     - agent-introspection-debugging
+    - agent-runtime-gateway-smoke-test
     - agent-self-evaluation
     - agentic-engineering
     - agentic-os
@@ -629,6 +637,7 @@ profiles:
     - cost-tracking
     - council
     - council-multi-model
+    - deepseek-harness-setup
     - dev-team
     - dmux-workflows
     - dynamic-workflow-mode
@@ -654,16 +663,19 @@ profiles:
     - orch-refine-code
     - parallel-execution-optimizer
     - plan-orchestrate
+    - prompt-caching-strategy
     - ralphinho-rfc-pipeline
     - recursive-decision-ledger
     - rules-distill
     - santa-method
     - skill-comply
+    - skill-host-compat
     - skill-scout
     - skill-stocktake
     - strategic-compact
     - team-agent-orchestration
     - token-budget-advisor
+    - token-card
     - unified-memory
     - workspace-surface-audit
   ecc-data:
@@ -672,6 +684,7 @@ profiles:
     extends:
     - core
     skills:
+    - bengali-nlp
     - clickhouse-io
     - dashboard-builder
     - data-scraper-agent
@@ -712,6 +725,7 @@ profiles:
     - lead-intelligence
     - market-research
     - marketing-campaign
+    - osint-investigation
     - research-ops
     - scientific-db-pubmed-database
     - scientific-db-uspto-database
@@ -791,6 +805,7 @@ profiles:
     - core
     skills:
     - agent-payment-x402
+    - agent-security-hardening
     - defi-amm-security
     - evm-token-decimals
     - gateguard
@@ -800,6 +815,7 @@ profiles:
     - healthcare-phi-compliance
     - hipaa-compliance
     - llm-trading-agent-security
+    - mcp-dependency-review
     - nodejs-keccak256
     - prediction-market-oracle-research
     - prediction-market-risk-review

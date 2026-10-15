@@ -53,6 +53,7 @@ function normalizeExecutionRecord(input, options = {}) {
   const outcome = input.outcome;
   const recordedAt = input.recorded_at || options.now || new Date().toISOString();
   const userFeedback = input.user_feedback || input.userFeedback || null;
+  const failureReasons = [input.failure_reason, input.failureReason];
 
   if (typeof skillId !== 'string' || skillId.trim().length === 0) {
     throw new Error('skill_id is required');
@@ -72,6 +73,10 @@ function normalizeExecutionRecord(input, options = {}) {
 
   if (userFeedback !== null && !VALID_FEEDBACK.has(userFeedback)) {
     throw new Error('user_feedback must be accepted, corrected, rejected, or null');
+  }
+
+  if (failureReasons.some(value => value != null && typeof value !== 'string')) {
+    throw new Error('failure_reason must be a string or null');
   }
 
   if (Number.isNaN(Date.parse(recordedAt))) {
@@ -102,7 +107,13 @@ function readJsonl(filePath) {
     .filter(Boolean)
     .reduce((rows, line) => {
       try {
-        rows.push(JSON.parse(line));
+        const record = JSON.parse(line);
+        if (record && typeof record === 'object' && !Array.isArray(record)
+          && typeof record.skill_id === 'string' && record.skill_id.trim().length > 0
+          && VALID_OUTCOMES.has(record.outcome)
+          && typeof record.recorded_at === 'string' && !Number.isNaN(Date.parse(record.recorded_at))) {
+          rows.push(record);
+        }
       } catch {
         // Ignore malformed rows so analytics remain best-effort.
       }

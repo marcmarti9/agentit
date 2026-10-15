@@ -2081,6 +2081,19 @@
       }
     },
     {
+      "skill": "image-to-code",
+      "repo": "Leonxlnx/taste-skill",
+      "path": "skills/image-to-code-skill",
+      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "kind": "canonical-vendored",
+      "files": {
+        "SKILL.md": {
+          "sha256": "4c060a8064a8b13380bc2ef3d6e6a1d0b1e316aa093cd9807d0ce9e4eeb037fa",
+          "mode": 420
+        }
+      }
+    },
+    {
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
@@ -2402,6 +2415,59 @@
       "files": {
         "SKILL.md": {
           "sha256": "ed0f90cc5951ddd4bcab7f871f64efec93a49af9279ef93bc470da77ad8da3f7",
+          "mode": 420
+        }
+      }
+    },
+    {
+      "skill": "playwright-cli",
+      "repo": "microsoft/playwright",
+      "path": "packages/playwright-core/src/tools/skills/playwright-cli",
+      "snapshot": "343d8e7d0f59b91b5bbce3226fa4a2d17d023745",
+      "kind": "canonical-vendored",
+      "files": {
+        "SKILL.md": {
+          "sha256": "49bebc4b652d58860e91d6478fa446645e349ba8556667cc02702645d7ffde0b",
+          "mode": 420
+        },
+        "references/element-attributes.md": {
+          "sha256": "bf19aa4671e0a50a0fefa9c790f39124e803060eefe395042b723c29fcb7faa2",
+          "mode": 420
+        },
+        "references/playwright-tests.md": {
+          "sha256": "c5b0719fef2cfdff50bd744051b2f9afc119775db4b48e9b2882c1cf3886797c",
+          "mode": 420
+        },
+        "references/pr-attachments.md": {
+          "sha256": "24b118e74598be72e73e24fe223d295b9099c85b1860a7c8f6e5690c9038fa2a",
+          "mode": 420
+        },
+        "references/request-mocking.md": {
+          "sha256": "54e801c9663fc2b6d68ceb058cb1c360724c2499f42acc7852a68e83e5b5f37c",
+          "mode": 420
+        },
+        "references/running-code.md": {
+          "sha256": "3029569ed6ddaeffc0b87badde967efdc2973b1677f078830098146eb3b78ebe",
+          "mode": 420
+        },
+        "references/session-management.md": {
+          "sha256": "a4f16271f95d3eec7bc56e659d8adbb8f6ad7d603a6fa15efdcdd071a50c6ce3",
+          "mode": 420
+        },
+        "references/storage-state.md": {
+          "sha256": "71e90f774b5a7d61367f2336940f30be7c5693d43197b63d1154634b99ae5045",
+          "mode": 420
+        },
+        "references/test-generation.md": {
+          "sha256": "27ecb11ef647999bd7486695bb1aacc3682097e6bb5742804cb6c8769c2b5364",
+          "mode": 420
+        },
+        "references/tracing.md": {
+          "sha256": "ef73e71bee792e341df9cd4f60529c929ade48b538ac76e033f4f20843e8dbda",
+          "mode": 420
+        },
+        "references/video-recording.md": {
+          "sha256": "1c800b897824cb54394c34265d8ebffdbb530adfc8d612c5d798b667a1799f48",
           "mode": 420
         }
       }
@@ -3028,35 +3094,19 @@
   "integrity_version": 1,
   "licenses": [
     {
-      "repo": "Appllama/appllama-skills",
-      "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/Appllama--appllama-skills/LICENSE",
-      "sha256": "14cffee850f5c761273dfc49798cddc96786b4520c23f3ed1da727c334f07476",
-      "mode": 420
-    },
-    {
-      "repo": "Leonxlnx/taste-skill",
-      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/Leonxlnx--taste-skill/LICENSE",
-      "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
-      "mode": 420
-    },
-    {
-      "repo": "Nutlope/hallmark",
-      "snapshot": "13ac0ec7e148655948100b6396439e481361d690",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/Nutlope--hallmark/LICENSE",
-      "sha256": "06088a8b94598626f27612dea42300154bf7be967c85d9d3eee4490cb056af7d",
-      "mode": 420
-    },
-    {
       "repo": "addyosmani/agent-skills",
       "snapshot": "aeac41d4d005999432bb7312f7ff06383a91d59d",
       "source": "LICENSE",
       "destination": "vendor/licenses/addyosmani--agent-skills/LICENSE",
       "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
+      "mode": 420
+    },
+    {
+      "repo": "Appllama/appllama-skills",
+      "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Appllama--appllama-skills/LICENSE",
+      "sha256": "14cffee850f5c761273dfc49798cddc96786b4520c23f3ed1da727c334f07476",
       "mode": 420
     },
     {
@@ -3108,11 +3158,35 @@
       "mode": 420
     },
     {
+      "repo": "Leonxlnx/taste-skill",
+      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Leonxlnx--taste-skill/LICENSE",
+      "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
+      "mode": 420
+    },
+    {
+      "repo": "microsoft/playwright",
+      "snapshot": "343d8e7d0f59b91b5bbce3226fa4a2d17d023745",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/microsoft--playwright/LICENSE",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "mode": 420
+    },
+    {
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
       "snapshot": "616663179c5f9b5e2b3e07cab23ac9cad76378f3",
       "source": "LICENSE",
       "destination": "vendor/licenses/nextlevelbuilder--ui-ux-pro-max-skill/LICENSE",
       "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+      "mode": 420
+    },
+    {
+      "repo": "Nutlope/hallmark",
+      "snapshot": "13ac0ec7e148655948100b6396439e481361d690",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Nutlope--hallmark/LICENSE",
+      "sha256": "06088a8b94598626f27612dea42300154bf7be967c85d9d3eee4490cb056af7d",
       "mode": 420
     },
     {

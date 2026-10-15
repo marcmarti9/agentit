@@ -29,7 +29,8 @@ jobs:
       - name: Verify old ownership and materialize exact reviewed Git source
         shell: python
         run: |
-          import json, os, pathlib, shutil, subprocess
+          import json, os, pathlib, shutil, subprocess, sys
+          sys.path.insert(0, str(pathlib.Path.cwd()))
           from router.ecc import verify
           from scripts.ecc_integrate import generate
           root = pathlib.Path.cwd()

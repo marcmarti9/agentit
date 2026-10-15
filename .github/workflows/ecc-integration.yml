@@ -80,6 +80,7 @@ jobs:
         run: corepack yarn install --immutable --mode=skip-build
       - name: Exercise the retained CLI through Agentit's real wrapper
         run: |
+          git diff -- vendor/ecc/package.json
           python3 agentit ecc run -- --help
           python3 agentit ecc verify
           # ecc verify enforces modes, including the narrow declared-bin install

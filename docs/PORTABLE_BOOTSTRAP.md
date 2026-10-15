@@ -27,7 +27,10 @@ The full library goes into `~/.agentit/runtime`. Only the three core skills go
 into provider discovery roots; see [JIT skill loading](JIT_SKILL_LOADING.md).
 Settings and hooks require explicit flags. Installation creates a private
 virtual environment and installs the manifest's Python dependencies without
-running vendored skill scripts. `--skip-dependencies` is for offline tests only.
+running vendored skill scripts. `--skip-dependencies` omits both pip bootstrap
+and dependency installation, so offline/test setup does not require
+`ensurepip`. The installed CLI still needs the declared dependencies to be
+provided and verified separately; the flag does not make them optional.
 
 ## Durable file transaction
 

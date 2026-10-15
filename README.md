@@ -194,7 +194,7 @@ Non-trivial ideation cannot jump from `idea-refine` to a recommended direction. 
 
 ### Design studio
 
-Design work stays JIT. The `design` and `mobile` profiles are installation/discovery bundles, not context dumps. Craft specialties cover typography, cross-media identity, implemented design systems, chart encoding and editorial composition. The `design-review` profile offers visual/copy, task-flow, accessibility (with optional cognitive branch) and motion critics. Choose the relevant lens JIT. Other capabilities include visual taste (`design-taste-frontend`, `hallmark`, `impeccable`, `emil-design-eng`), durable design memory (`design-md-workflow`), diagrams (`diagram-design`), motion (`gsap-*`, `scrollytelling-web`), native app UI (`appllama-*`), and optional Figma/3D/storytelling specialists.
+Design work stays JIT. The `design` and `mobile` profiles are installation/discovery bundles, not context dumps. Craft specialties cover typography, cross-media identity, implemented design systems, chart encoding and editorial composition. The `design-review` profile offers visual/copy, task-flow, accessibility (with optional cognitive branch) and motion critics. Choose the relevant lens JIT. Other capabilities include visual taste (`design-taste-frontend`, `hallmark`, `impeccable`, `emil-design-eng`), durable design memory (`design-md-workflow`) and reference scouting (`awesome-design-md`), image-first implementation (`image-to-code`), live UI audits (`web-design-guidelines`), browser QA (`playwright-cli`), diagrams (`diagram-design`), motion (`gsap-*`, `scrollytelling-web`), native app UI (`appllama-*`), and optional Figma/3D/storytelling specialists.
 
 ### Writing and anti-slop
 

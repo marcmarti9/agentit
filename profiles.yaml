@@ -341,6 +341,8 @@ profiles:
     - app-security-gate
     - architect-orchestrator
     - browser-testing-with-devtools
+    - playwright-cli
+    - web-design-guidelines
     - ci-cd-and-automation
     - code-review-and-quality
     - code-simplification
@@ -355,7 +357,9 @@ profiles:
     - deprecation-and-migration
     - design-inspiration-research
     - design-md-workflow
+    - awesome-design-md
     - design-taste-frontend
+    - image-to-code
     - design-trend-researcher
     - diagram-design
     - documentation-and-adrs

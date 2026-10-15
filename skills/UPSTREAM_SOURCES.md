@@ -49,3 +49,5 @@ Canonical packages are copied byte-for-byte from pinned upstream commits. File h
 `skills/using-agent-skills` is an Agentit-owned adapter; its raw upstream source is retained separately under `vendor/agent-skills`. Other packages absent from this registry are Agentit-owned or source-informed composites described in `THIRD_PARTY_NOTICES.md`.
 
 Verify offline with `python3 scripts/sync_upstream_skills.py`. Plan a refresh with `--refresh`; use `--refresh --apply` only after reviewing the source changes. No upstream scripts or dependency installers are executed.
+| `image-to-code` | `skills/image-to-code` | [Leonxlnx/taste-skill@f624f37a8c65](https://github.com/Leonxlnx/taste-skill/tree/f624f37a8c650b9cc550253104925efe4c8de246/skills/image-to-code-skill) |
+| `playwright-cli` | `skills/playwright-cli` | [microsoft/playwright@343d8e7d0f59](https://github.com/microsoft/playwright/tree/343d8e7d0f59b91b5bbce3226fa4a2d17d023745/packages/playwright-core/src/tools/skills/playwright-cli) |

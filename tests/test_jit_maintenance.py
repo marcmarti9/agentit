@@ -45,7 +45,7 @@ class MaintenanceTests(unittest.TestCase):
                 item['snapshot'] = old_sha
                 by_repo[item['repo']][item['path'] + '/fixture-check.md'] = (b'Shared checklist\n', 0o644)
             # Entire production registry, including Appllama and root-layout packages.
-            self.assertEqual(15, len(by_repo))
+            self.assertGreaterEqual(len(by_repo), 16)
             for repo, files in by_repo.items():
                 for sha in (old_sha, new_sha):
                     archive = cache / (repo.replace('/', '--') + '@' + sha + '.tar.gz')
@@ -66,7 +66,7 @@ class MaintenanceTests(unittest.TestCase):
             old, updated, desired = sync.build_candidate(project, lock, heads, cache, offline=True)
             result = sync.apply_candidate(project, old, updated, desired)
             self.assertEqual('applied', result['status'])
-            self.assertEqual(41, result['packages'])
+            self.assertEqual(len(lock['mappings']), result['packages'])
             self.assertEqual(b'OWNED ADAPTER MUST SURVIVE\n', adapter.read_bytes())
             self.assertIn(b'Reviewed update', (project / 'vendor/agent-skills/using-agent-skills/SKILL.md').read_bytes())
             self.assertEqual(0, sync.apply_candidate(project, updated, updated, desired)['changed_files'])

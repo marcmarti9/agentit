@@ -96,6 +96,8 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
 - `react-composition-patterns` — repair demonstrated reusable-component API pressure (boolean-prop proliferation, compound components, shared provider contracts) without abstracting ordinary one-off UI.
 - `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
+- `playwright-cli` — run official Playwright CLI browser sessions and explicit interaction tests when CLI automation is suitable.
+- `web-design-guidelines` — review implemented UI against freshly retrieved Vercel Web Interface Guidelines; return file-and-line findings.
 - `performance-optimization` — measure and improve frontend performance when evidence shows a bottleneck.
 - `code-simplification` — keep component/state architecture lean.
 - `hallmark` — substantial visual alternative/guard against generic visual clichés and fabricated content.
@@ -133,6 +135,8 @@ If visual direction is material, inspect the `design` pack too. That does not re
 - `hallmark` — detect cliché AI aesthetics, fabricated proof and generic structural repetition.
 - `design-inspiration-research` — research references, extract design DNA, synthesize rather than clone, and preserve provenance. Its references include the distilled premium/high-craft website production playbook.
 - `design-md-workflow` — encode/read/verify durable project visual identity and tokens when persistent multi-session design memory is useful.
+- `awesome-design-md` — selectively read fresh brand DESIGN.md references for inspiration without treating them as project requirements.
+- `image-to-code` — image-first visual direction and faithful implementation of visual section references when authorized and useful.
 - `diagram-design` — route branded/general diagrams, code-grounded architecture maps, or simpler project-native diagrams without defaulting to AI-slop boxes.
 - `impeccable` — structured visual critique and polish passes.
 - `ui-ux-pro-max` — broader UI/UX pattern intelligence when the task benefits from it.

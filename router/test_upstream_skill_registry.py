@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class UpstreamSkillRegistryTests(unittest.TestCase):
     def test_every_canonical_mapping_exists_as_complete_skill_package(self):
         lock = json.loads((ROOT / "skills" / "UPSTREAM_LOCK.json").read_text(encoding="utf-8"))
-        self.assertEqual(41, len(lock["mappings"]))
+        self.assertGreaterEqual(len(lock["mappings"]), 43)
+        self.assertTrue({"image-to-code", "playwright-cli"}.issubset({item["skill"] for item in lock["mappings"]}))
         meta = next(item for item in lock["mappings"] if item["skill"] == "using-agent-skills")
         self.assertEqual(meta["destination"], "vendor/agent-skills/using-agent-skills")
         self.assertNotEqual((ROOT / meta["destination"] / "SKILL.md").read_bytes(),

@@ -435,3 +435,10 @@ repositories had unchanged relevant inputs. Their original LICENSE/NOTICE
 bytes were compared with the reviewed revisions and remain unchanged.
 No source runtime, promotional service integration or new global skill is
 installed by these source-informed changes.
+
+## Additional design and browser QA integrations (2026-10-15)
+
+- **Leonxlnx/taste-skill / image-to-code:** the verbatim skill is vendored at `skills/image-to-code` from commit `f624f37a8c650b9cc550253104925efe4c8de246`. Its MIT license is already retained under `vendor/licenses/Leonxlnx--taste-skill/LICENSE`. The existing `design-taste-frontend` matched that exact upstream revision and required no change.
+- **Microsoft Playwright / playwright-cli:** the official skill and ten references are vendored at `skills/playwright-cli` from commit `343d8e7d0f59b91b5bbce3226fa4a2d17d023745` under Apache-2.0. License at `vendor/licenses/microsoft--playwright/LICENSE`. Bundling the instructions does not install the `@playwright/cli` executable.
+- **Vercel Web Interface Guidelines:** the Agentit-authored `skills/web-design-guidelines` adapter references the official skill at https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines and fetches the live guidelines for reviews. No upstream skill body is copied.
+- **VoltAgent / awesome-design-md:** the Agentit-authored `skills/awesome-design-md` adapter selectively loads live references from https://github.com/VoltAgent/awesome-design-md, an MIT-licensed collection. No reference DESIGN.md files are vendored.

@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
+      - scripts/install_ecc_dependencies.py
       - router/ecc.py
       - router/test_ecc*.py
       - references/ecc-policy.json
@@ -15,6 +16,7 @@ on:
     paths:
       - .github/workflows/ecc-integration.yml
       - scripts/ecc_integrate.py
+      - scripts/install_ecc_dependencies.py
       - router/ecc.py
       - router/test_ecc*.py
       - references/ecc-policy.json
@@ -72,15 +74,10 @@ jobs:
         with:
           node-version: '22'
       - run: python3 -m pip install 'PyYAML>=6,<7'
-      - name: Install ECC's pinned Yarn manager and immutable lockfile without build scripts
-        working-directory: vendor/ecc
-        env:
-          COREPACK_DEFAULT_TO_LATEST: '0'
-          YARN_ENABLE_SCRIPTS: 'false'
-        run: corepack yarn install --immutable --mode=skip-build
+      - name: Install native dependencies while preserving canonical source bytes
+        run: python3 scripts/install_ecc_dependencies.py --apply
       - name: Exercise the retained CLI through Agentit's real wrapper
         run: |
-          git diff -- vendor/ecc/package.json
           python3 agentit ecc run -- --help
           python3 agentit ecc verify
           # ecc verify enforces modes, including the narrow declared-bin install

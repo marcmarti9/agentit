@@ -86,13 +86,21 @@ install-script policy first. The canonical package manager is pinned in
 `package.json`; do not upgrade it to an unspecified latest version.
 
 ```sh
-cd vendor/ecc
-corepack yarn install --immutable --mode=skip-build
-cd ../..
+python3 scripts/install_ecc_dependencies.py          # plan only
+python3 scripts/install_ecc_dependencies.py --apply
 python3 agentit ecc run -- --help
 # Only after choosing a native operation and approving its host-state effects:
 python3 agentit ecc run --allow-host-changes -- <native-command> <arguments>
 ```
+
+Yarn may reserialize Unicode escapes in `package.json` even with an immutable
+lockfile. The installer keeps the exact integrity-pinned manager and disables
+build scripts. It restores the original manifest bytes only after strict JSON
+comparison proves the entire document is unchanged semantically and every
+other pinned source file still verifies. Duplicate keys, changed commands,
+changed scalar types, other source edits and concurrent manifest changes are
+refused. The original source manifest remains authoritative; the verifier does
+not acquire a semantic-equivalence exception. Installer failure remains failure.
 
 The flag acknowledges a boundary; it is not an OS sandbox or automatic user
 permission. The wrapper never installs packages, launches daemons or registers

@@ -1,12 +1,15 @@
 from __future__ import annotations
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from router.ecc import ECCError, verified_bytes
-from scripts.install_ecc_dependencies import restore_manifest
+from router.bootstrap import build_install_plan
+from scripts.install_ecc_dependencies import ROOT, install_invocation, restore_manifest
 
 
 class NativeDependencySourceTests(unittest.TestCase):
@@ -78,6 +81,32 @@ class NativeDependencySourceTests(unittest.TestCase):
         (self.root / 'vendor/ecc/tool.js').chmod(0o755)
         with self.assertRaisesRegex(ECCError, 'manifest integrity'):
             verified_bytes(self.root, 'tool.js', package_manifest=b'{"bin":{"native":"tool.js"}}')
+
+    def test_inherited_corepack_overrides_cannot_replace_pinned_manager(self):
+        manager = 'yarn@4.9.2+sha512.' + 'a' * 128
+        with patch.dict(os.environ, {'COREPACK_ENABLE_PROJECT_SPEC': '0',
+                                    'COREPACK_ENABLE_STRICT': '0',
+                                    'COREPACK_ENV_FILE': '/tmp/override.env',
+                                    'COREPACK_INTEGRITY_KEYS': '0',
+                                    'YARN_ENABLE_SCRIPTS': 'true'}):
+            command, env = install_invocation(manager)
+        self.assertEqual(['corepack', manager, 'install', '--immutable', '--mode=skip-build'], command)
+        self.assertEqual('1', env['COREPACK_ENABLE_PROJECT_SPEC'])
+        self.assertEqual('1', env['COREPACK_ENABLE_STRICT'])
+        self.assertEqual('0', env['COREPACK_ENV_FILE'])
+        self.assertEqual('false', env['YARN_ENABLE_SCRIPTS'])
+        self.assertNotIn('COREPACK_INTEGRITY_KEYS', env)
+
+    def test_unpinned_or_incomplete_manager_is_rejected(self):
+        for manager in ('yarn', 'yarn@4.9.2', 'yarn@4.9.2+sha512.abcd', None):
+            with self.subTest(manager=manager), self.assertRaises(ECCError):
+                install_invocation(manager)
+
+    def test_portable_runtime_includes_native_installer(self):
+        (self.root / 'home').mkdir()
+        plan = build_install_plan(home=self.root / 'home', source_root=ROOT, provider='codex')
+        destination = str(self.root / 'home/.agentit/runtime/scripts/install_ecc_dependencies.py')
+        self.assertIn(destination, {item['destination'] for item in plan['operations']})
 
 
 if __name__ == '__main__':

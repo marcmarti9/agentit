@@ -66,6 +66,18 @@ def restore_manifest(repo: Path, original: bytes) -> dict:
             'source': verify(repo)}
 
 
+def install_invocation(manager: str) -> tuple[list[str], dict[str, str]]:
+    if not isinstance(manager, str) or not re.fullmatch(r'yarn@\d+\.\d+\.\d+\+sha512\.[0-9a-f]{128}', manager):
+        raise ECCError('native manager must be an exact integrity-pinned Yarn version')
+    command = ['corepack', manager, 'install', '--immutable', '--mode=skip-build']
+    env = dict(os.environ, COREPACK_DEFAULT_TO_LATEST='0', COREPACK_ENABLE_AUTO_PIN='0',
+               COREPACK_ENABLE_PROJECT_SPEC='1', COREPACK_ENABLE_STRICT='1',
+               COREPACK_ENV_FILE='0', YARN_ENABLE_SCRIPTS='false')
+    # Preserve Corepack's built-in integrity checks even if the caller disabled them.
+    env.pop('COREPACK_INTEGRITY_KEYS', None)
+    return command, env
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apply', action='store_true', help='Execute the native dependency installation.')
@@ -74,14 +86,10 @@ def main() -> int:
         verify(ROOT)
         original = verified_bytes(ROOT, 'package.json')
         manager = strict_json(original).get('packageManager', '')
-        if not isinstance(manager, str) or not re.fullmatch(r'yarn@\d+\.\d+\.\d+\+sha512\.[0-9a-f]+', manager):
-            raise ECCError('native manager must be an exact integrity-pinned Yarn version')
-        command = ['corepack', 'yarn', 'install', '--immutable', '--mode=skip-build']
+        command, env = install_invocation(manager)
         if not args.apply:
             print(json.dumps({'mode': 'plan', 'manager': manager, 'command': command}))
             return 0
-        env = dict(os.environ, COREPACK_DEFAULT_TO_LATEST='0', COREPACK_ENABLE_AUTO_PIN='0',
-                   YARN_ENABLE_SCRIPTS='false')
         subprocess.run(command, cwd=ROOT / SOURCE, env=env, check=True)
         print(json.dumps(restore_manifest(ROOT, original), indent=2))
         return 0

@@ -29,12 +29,14 @@ Canonical packages are copied byte-for-byte from pinned upstream commits. File h
 | `humanizer` | `skills/humanizer` | [blader/humanizer@225a6f39ac85](https://github.com/blader/humanizer/tree/225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8/.) |
 | `i-have-adhd` | `skills/i-have-adhd` | [ayghri/i-have-adhd@1ecea1993b7f](https://github.com/ayghri/i-have-adhd/tree/1ecea1993b7fce257ffbd686c070948b5e07eda6/skills/i-have-adhd) |
 | `idea-refine` | `skills/idea-refine` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/idea-refine) |
+| `image-to-code` | `skills/image-to-code` | [Leonxlnx/taste-skill@f624f37a8c65](https://github.com/Leonxlnx/taste-skill/tree/f624f37a8c650b9cc550253104925efe4c8de246/skills/image-to-code-skill) |
 | `impeccable` | `skills/impeccable` | [pbakaus/impeccable@2f98774f86bc](https://github.com/pbakaus/impeccable/tree/2f98774f86bc05563876643db37e6c37c322850f/.agents/skills/impeccable) |
 | `incremental-implementation` | `skills/incremental-implementation` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/incremental-implementation) |
 | `interview-me` | `skills/interview-me` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/interview-me) |
 | `observability-and-instrumentation` | `skills/observability-and-instrumentation` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/observability-and-instrumentation) |
 | `performance-optimization` | `skills/performance-optimization` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/performance-optimization) |
 | `planning-and-task-breakdown` | `skills/planning-and-task-breakdown` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/planning-and-task-breakdown) |
+| `playwright-cli` | `skills/playwright-cli` | [microsoft/playwright@343d8e7d0f59](https://github.com/microsoft/playwright/tree/343d8e7d0f59b91b5bbce3226fa4a2d17d023745/packages/playwright-core/src/tools/skills/playwright-cli) |
 | `security-and-hardening` | `skills/security-and-hardening` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/security-and-hardening) |
 | `shipping-and-launch` | `skills/shipping-and-launch` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/shipping-and-launch) |
 | `source-driven-development` | `skills/source-driven-development` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/source-driven-development) |
@@ -49,5 +51,3 @@ Canonical packages are copied byte-for-byte from pinned upstream commits. File h
 `skills/using-agent-skills` is an Agentit-owned adapter; its raw upstream source is retained separately under `vendor/agent-skills`. Other packages absent from this registry are Agentit-owned or source-informed composites described in `THIRD_PARTY_NOTICES.md`.
 
 Verify offline with `python3 scripts/sync_upstream_skills.py`. Plan a refresh with `--refresh`; use `--refresh --apply` only after reviewing the source changes. No upstream scripts or dependency installers are executed.
-| `image-to-code` | `skills/image-to-code` | [Leonxlnx/taste-skill@f624f37a8c65](https://github.com/Leonxlnx/taste-skill/tree/f624f37a8c650b9cc550253104925efe4c8de246/skills/image-to-code-skill) |
-| `playwright-cli` | `skills/playwright-cli` | [microsoft/playwright@343d8e7d0f59](https://github.com/microsoft/playwright/tree/343d8e7d0f59b91b5bbce3226fa4a2d17d023745/packages/playwright-core/src/tools/skills/playwright-cli) |

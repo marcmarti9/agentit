@@ -5,8 +5,10 @@ from __future__ import annotations
 import json
 import subprocess
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from router.mcp_runtime import (
     McpRuntimeError,
@@ -267,6 +269,28 @@ class McpRuntimeTestCase(unittest.TestCase):
             apply=True,
         )
         self.assertEqual(r["status"], "applied")
+
+    def test_google_ads_codex_forwards_names_without_persisting_secrets(self) -> None:
+        config = self.project / ".codex" / "config.toml"
+        config.parent.mkdir()
+        before = '[mcp_servers.existing]\ncommand = "existing-tool"\n'
+        config.write_text(before)
+        with patch("router.mcp_providers.HOME", self.project), patch.dict(
+            "os.environ", {"GOOGLE_ADS_DEVELOPER_TOKEN": "private-test-token"}
+        ):
+            planned = set_server_enabled("codex", "google-ads", enabled=True, project_root=self.project, apply=False)
+            self.assertEqual(planned["status"], "planned")
+            self.assertEqual(config.read_text(), before)
+            applied = set_server_enabled("codex", "google-ads", enabled=True, project_root=self.project, apply=True)
+            self.assertEqual(applied["status"], "applied")
+        text = config.read_text()
+        servers = tomllib.loads(text)["mcp_servers"]
+        self.assertEqual(servers["existing"]["command"], "existing-tool")
+        self.assertEqual(servers["google-ads"]["command"], "google-ads-mcp")
+        self.assertIn("GOOGLE_ADS_DEVELOPER_TOKEN", servers["google-ads"]["env_vars"])
+        self.assertNotIn("env", servers["google-ads"])
+        self.assertNotIn("private-test-token", text)
+        self.assertTrue(list(config.parent.glob("config.toml.agentit-bak-*")))
 
 
 if __name__ == "__main__":

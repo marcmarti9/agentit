@@ -50,6 +50,42 @@ stacks:
     servers: [sentry, github, linear]
 
 servers:
+  - id: google-ads
+    name: Google Ads MCP (official)
+    tier: situational
+    category: advertising
+    risk: RISK_2
+    trust: official_vendor
+    summary: "Read Google Ads accounts, resource metadata and performance with the official Google server. Requires local installation and Google ADC authentication."
+    homepage: https://github.com/googleads/google-ads-mcp
+    package: "git+https://github.com/googleads/google-ads-mcp.git@9a78cbdceebae71a6bc8483bdec333695834ef9c"
+    requires_secret: true
+    write_capable: false
+    evidence:
+      - "Official googleads/google-ads-mcp source at 9a78cbdceebae71a6bc8483bdec333695834ef9c (package version 0.0.5)."
+      - "Exposes customers_list_accessible_customers, metadata_get_resource_metadata and search_search; no mutation tools."
+    claude_add: "claude mcp add google-ads -- google-ads-mcp"
+    mcp_json:
+      command: google-ads-mcp
+      args: []
+    codex_env_vars:
+      - GOOGLE_APPLICATION_CREDENTIALS
+      - GOOGLE_CLOUD_PROJECT
+      - GOOGLE_PROJECT_ID
+      - GOOGLE_ADS_LOGIN_CUSTOMER_ID
+    codex_toml: |
+      [mcp_servers.google-ads]
+      command = "google-ads-mcp"
+      args = []
+      env_vars = ["GOOGLE_APPLICATION_CREDENTIALS", "GOOGLE_CLOUD_PROJECT", "GOOGLE_PROJECT_ID", "GOOGLE_ADS_LOGIN_CUSTOMER_ID"]
+    safety_notes:
+      - "Install the pinned package with pipx first; enabling a catalog entry does not install it or authenticate Google."
+      - "Keep ADC/OAuth files outside repositories. Codex forwards environment variable names without copying secret values to config."
+      - "Developer tokens were sunset by Google on 2026-09-09; access is determined by the OAuth project in Google Cloud."
+      - "Google Ads has no separate read-only OAuth scope; the pinned server restricts operations to read methods."
+      - "Use local stdio. Do not set GOOGLE_ADS_MCP_OAUTH_CLIENT_ID/SECRET on this process: together they switch the server to HTTP."
+      - "For other clients, use standard ADC discovery and configure optional Google Ads environment values in the client's private secret settings."
+
   - id: agentit-manager
     name: Agentit MCP Manager
     tier: core

@@ -39,6 +39,19 @@ class McpCatalogTestCase(unittest.TestCase):
         ids = [s["id"] for s in rec["servers"]]
         self.assertEqual(ids, ["agentit-manager", "context7", "github", "playwright"])
 
+    def test_google_ads_is_optional_official_read_only_and_pinned(self) -> None:
+        server = get_server("google-ads")
+        self.assertEqual(server["tier"], "situational")
+        self.assertEqual(server["trust"], "official_vendor")
+        self.assertFalse(server["write_capable"])
+        self.assertTrue(server["requires_secret"])
+        self.assertRegex(server["package"], r"^git\+https://github\.com/googleads/google-ads-mcp\.git@[0-9a-f]{40}$")
+        entry = snippet_for_server("google-ads", provider="json")["mcpServers"]["google-ads"]
+        self.assertEqual(entry, {"command": "google-ads-mcp", "args": []})
+        self.assertIn("env_vars = [", snippet_for_server("google-ads", provider="codex")["snippet"])
+        self.assertNotIn("GOOGLE_ADS_DEVELOPER_TOKEN", server["codex_env_vars"])
+        self.assertNotIn("google-ads", [s["id"] for s in recommend_stack("developer_core")["servers"]])
+
     def test_mobile_design_stack_is_opt_in_remote_research(self) -> None:
         rec = recommend_stack("mobile_design")
         self.assertEqual(rec["stack"], "mobile_design")

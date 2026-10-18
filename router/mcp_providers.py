@@ -168,6 +168,9 @@ def _upsert_toml_mcp_server(
             lines.append(f"args = [{args_lit}]")
         if "url" in entry:
             lines.append(f'url = {_toml_str(entry["url"])}')
+        if "env_vars" in entry and isinstance(entry["env_vars"], list):
+            names = ", ".join(_toml_str(name) for name in entry["env_vars"])
+            lines.append(f"env_vars = [{names}]")
         if "env" in entry and isinstance(entry["env"], dict):
             env_parts = []
             for k, v in entry["env"].items():
@@ -181,6 +184,16 @@ def _upsert_toml_mcp_server(
         rf"^\[mcp_servers\.{re.escape(server_id)}\][^\n]*\n(?:(?!^\[).*\n)*",
         re.MULTILINE,
     )
+    # Disabling must preserve the existing command, args and forwarded env.
+    if not enabled and entry is None:
+        existing = pattern.search(text)
+        if existing:
+            saved = existing.group(0).rstrip("\n")
+            if re.search(r"(?m)^\s*enabled\s*=", saved):
+                saved = re.sub(r"(?m)^(\s*enabled\s*=\s*).*$", r"\g<1>false", saved, count=1)
+            else:
+                saved += "\nenabled = false"
+            return text[:existing.start()] + saved + "\n" + text[existing.end():]
     text2 = pattern.sub("", text)
     text2 = text2.rstrip() + "\n\n" + new_block
     return text2
@@ -319,6 +332,10 @@ def set_server_enabled(
         return _set_json_mcp(path, server_id, enabled=enabled, entry=entry, apply=apply, provider=provider)
 
     if provider in {"codex", "grok"}:
+        if provider == "codex" and entry is not None:
+            names = get_server(server_id).get("codex_env_vars")
+            if names:
+                entry = {**entry, "env_vars": names}
         path = HOME / (".codex" if provider == "codex" else ".grok") / "config.toml"
         return _set_toml_mcp(path, server_id, enabled=enabled, entry=entry, apply=apply, provider=provider)
 

@@ -166,6 +166,35 @@ Neither a profile nor a stack auto-activates its members merely by existing.
 - Do not use cleanup as an excuse to mutate unrelated/global MCP configuration.
 - Track task-added enablement so the task can clean up only what it owns.
 
+## Optional Google Ads reporting
+
+`google-ads` registers Google's official [Google Ads MCP](https://github.com/googleads/google-ads-mcp) as a situational reporting server. It is excluded from the default developer stack. The reviewed source is pinned to `9a78cbdceebae71a6bc8483bdec333695834ef9c` (package version `0.0.5`); that version exposes only `customers_list_accessible_customers`, `metadata_get_resource_metadata` and `search_search`, with no campaign/budget mutation tools.
+
+Install Python 3.10+ and [pipx](https://pipx.pypa.io/), then install the pinned server separately from enabling its client configuration:
+
+```bash
+pipx install 'git+https://github.com/googleads/google-ads-mcp.git@9a78cbdceebae71a6bc8483bdec333695834ef9c'
+pipx runpip google-ads-mcp install 'fastmcp==4.0.6' 'mcp[cli]==2.0.0'
+agentit mcp enable google-ads --providers codex --project /absolute/project
+agentit mcp enable google-ads --providers codex --project /absolute/project --apply
+```
+
+The documented stdio setup was verified with FastMCP `4.0.6` and MCP SDK `2.0.0`; the second command pins those transport dependencies inside the isolated environment. The `google-ads-mcp` executable must be on the client's PATH. **Scope note:** Agentit's `--project` tracks desired state per project, but its Codex adapter currently writes server registration into the user-wide `~/.codex/config.toml`; it is not project-isolated. Enable this situational server only when that visibility is acceptable. The catalog's `package` records the reviewed installation spec; enabling does not install the package or enforce the installed version. Recheck its tools before upgrading. Reload/reconnect Codex after registration and use `customers_list_accessible_customers` to verify authenticated access.
+
+For local stdio authentication, follow the upstream ADC instructions: enable the Google Ads API in your Google Cloud project, create/download your own OAuth desktop client and authorize a user with access to the intended Ads accounts:
+
+```bash
+gcloud auth application-default login \
+  --scopes https://www.googleapis.com/auth/adwords,https://www.googleapis.com/auth/cloud-platform \
+  --client-id-file=/absolute/private/path/oauth-client.json
+```
+
+Keep OAuth files and ADC credentials outside Git. Standard ADC discovery uses the user's gcloud credentials directory; set `GOOGLE_APPLICATION_CREDENTIALS` only when using another supported credential file. Google [retired developer tokens on 2026-09-09](https://developers.google.com/google-ads/api/docs/api-policy/developer-token): API access levels are now assigned to the Google Cloud project that owns the OAuth credentials. Do not request or configure a new developer token; the pinned upstream server tolerates legacy variables, but Google ignores those token headers. `GOOGLE_ADS_LOGIN_CUSTOMER_ID` optionally selects a manager account, and can also be passed per tool call. `GOOGLE_CLOUD_PROJECT`/`GOOGLE_PROJECT_ID` are optional project settings. Codex's catalog adapter emits these **names** in `env_vars`; secret values are never copied into `config.toml`. Other clients use normal ADC discovery and their private environment/secret settings for optional values.
+
+This catalog entry uses stdio. Do not supply `GOOGLE_ADS_MCP_OAUTH_CLIENT_ID` and `GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET` to it: upstream switches to an HTTP server when both exist. A shared OAuth HTTP service is a separate deployment and authentication decision. Google has no dedicated read-only Ads OAuth scope, so the read boundary comes from this pinned server's tools and the Google user's account permissions. Installation and tool discovery can pass before authenticated Ads queries work; report those outcomes separately.
+
+To undo this setup, disable the entry with `agentit mcp disable google-ads --providers codex --project /absolute/project --apply`, then `pipx uninstall google-ads-mcp` if no other client uses the local executable. Provider config backups are created on apply.
+
 ## Optional ClickUp team tracking
 
 ClickUp is available as the opt-in `clickup` server (named stack: `team_tracking`), not a global always-on tool. Its official remote MCP endpoint is `https://mcp.clickup.com/mcp` and authentication is performed by the client's OAuth flow, not by committing a token. For the human-identity, task-deduplication, privacy, status, and error-handling rules, see [ClickUp tracking](CLICKUP_TRACKING.md). On Codex, one supported setup path is `codex mcp add clickup --url https://mcp.clickup.com/mcp`, then `codex mcp login clickup` and a session reload when necessary. The alternative `agentit mcp enable clickup --providers codex --apply` writes the same remote server configuration (plan first if uncertain), but does not complete OAuth.

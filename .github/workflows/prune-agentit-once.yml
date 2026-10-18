@@ -1,0 +1,58 @@
+# Temporary one-time maintenance workflow; remove after successful branch pruning.
+name: Prune reviewed Agentit branches (one time)
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify branch tips and delete only reviewed non-main refs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="$GITHUB_REPOSITORY"
+          # Do not clean up while new pull requests are being worked on.
+          open_count="$(gh api "repos/$repo/pulls?state=open&per_page=100" --jq 'length')"
+          test "$open_count" = 0
+          for number in 64 65 66; do
+            merged="$(gh api "repos/$repo/pulls/$number" --jq '.merged')"
+            test "$merged" = true
+          done
+          reviewed=(
+            "chore/lean-skill-ci-2026-10-15 e2b9dc9772b44ccd3ff856dcf6f79e35bd61913d"
+            "chore/update-design-skills-2026-10-15 9fba1007f98269212e405da0101620e3f9260648"
+            "codex/ecc-agentit-unification fb9ef0585092452b6b614d28c7a8c70694e1b72d"
+            "codex/google-ads-mcp-20261016 3b660374e3891a34efbef2c0ca2d7a9f0f6795b9"
+            "feat/clickup-team-tracking-20261013 ec5fb5892d93f4e3e37905747d87d4ac5defccb7"
+            "feat/epstein-md-design 871d566f0606bd458ca13bf4efd543784c14904a"
+            "feat/reliable-coding-skill f8edbcfea407e2d9a2010578b303ce370e90f1e2"
+            "feat/scroll-world-skillfinder 64f11e177294b4657545b3e9e7c04a4c883602b2"
+            "feat/skills-quality-audit-20261003 32fa121317ec35fc52bf56d3c3ddd8949abe1264"
+            "feature/private-cross-machine-continuity f34783909cd0c2168e414a397618689ae1953819"
+            "refresh/tasteskill-skills-2026-10-15 7f042856ce873debea907c8d3b44d52e2d5bf4fe"
+            "temp-la-rosa-vercel-import fd7792af204b0d4e13c6728e4056195401426c97"
+          )
+          # Preflight every ref before any irreversible deletion.
+          for item in "${reviewed[@]}"; do
+            read -r branch expected <<< "$item"
+            actual="$(gh api "repos/$repo/git/ref/heads/$branch" --jq '.object.sha')"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "::error::Unexpected changes on $branch; stop without deleting refs"
+              exit 1
+            fi
+          done
+          for item in "${reviewed[@]}"; do
+            read -r branch expected <<< "$item"
+            echo "Deleting reviewed branch: $branch ($expected)"
+            gh api -X DELETE "repos/$repo/git/refs/heads/$branch"
+          done
+          remaining="$(gh api "repos/$repo/branches?per_page=100" --jq '.[].name')"
+          echo "Remaining branches: $remaining"
+          test "$remaining" = main

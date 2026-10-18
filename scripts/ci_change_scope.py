@@ -14,7 +14,6 @@ from pathlib import Path
 
 CORE_SKILLS = {"using-agentit", "task-router", "using-agent-skills"}
 CATALOG_FILES = {
-    "profiles.yaml",
     "references/agentit-skill-packs.md",
     "skills/UPSTREAM_LOCK.json",
     "skills/UPSTREAM_SOURCES.md",
@@ -29,6 +28,7 @@ SKILL_CONTENT_SUFFIXES = {
 }
 
 
+# Profile changes affect installation; do not skip integration tests.
 def content_only_path(path: str) -> bool:
     """Allowlist safe, non-executable content and catalog metadata."""
     if path in CATALOG_FILES:

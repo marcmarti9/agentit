@@ -13,7 +13,6 @@ class SkillChangeScopeTests(unittest.TestCase):
             "skills/design-taste-frontend/library/directions.json",
             "skills/UPSTREAM_LOCK.json",
             "skills/UPSTREAM_SOURCES.md",
-            "profiles.yaml",
             "references/agentit-skill-packs.md",
         ]
         self.assertTrue(all(map(content_only_path, paths)))
@@ -21,6 +20,9 @@ class SkillChangeScopeTests(unittest.TestCase):
 
     def test_readme_or_other_docs_do_not_require_full_installers(self):
         self.assertFalse(needs_full_suite(["README.md", "docs/JIT_SKILL_LOADING.md"]))
+
+    def test_profile_catalog_changes_run_full_suite(self):
+        self.assertTrue(needs_full_suite(["profiles.yaml"]))
 
     def test_core_skill_edits_run_full_suite(self):
         for name in ("using-agentit", "task-router", "using-agent-skills"):

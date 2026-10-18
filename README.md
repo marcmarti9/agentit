@@ -208,7 +208,7 @@ Writing work can select:
 
 Skills are already stored in this repository (`skills/<id>/`; ECC stays under `vendor/ecc/`). **No extra install or duplicate skill repository is needed.** The model still selects only the relevant skill bodies JIT. The existing pinned-source refresh and integrity registry remain the update mechanism for external skills.
 
-For changes confined to non-executable skill content, design references, or catalog metadata, CI runs focused discovery/profile tests plus source and license integrity checks. The **full runtime suite and the Linux/macOS bootstrap matrix** run when installer, runtime, core skills, executable skill scripts, ECC source or CI itself changes (or when the diff cannot be verified). See `scripts/ci_change_scope.py`.
+For changes confined to non-executable skill content, design references, or non-executable catalog metadata, CI runs focused discovery/profile tests plus source and license integrity checks. Changes to `profiles.yaml` run the full suite because they affect project installations. The **full runtime suite and the Linux/macOS bootstrap matrix** run when installer, runtime, core skills, executable skill scripts, ECC source or CI itself changes (or when the diff cannot be verified). See `scripts/ci_change_scope.py`.
 
 ### Upstream skills
 

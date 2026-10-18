@@ -55,6 +55,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 - `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
 
+- `reliable-coding` — preferred JIT coding discipline: minimal changes, proportionate BUILDER checks, focused REVIEW and fresh proof; do not stack overlapping general-purpose skills.
 - `anti-overengineering` — enforce BUILDER throughput and REVIEW depth without speculative architecture or repeated full-suite churn.
 - `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
 - `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
@@ -93,6 +94,7 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 - `app-security-gate` — test changed application trust boundaries before release.
 
+- `reliable-coding` — apply minimal implementation and fresh verification discipline to non-trivial UI code changes.
 - `frontend-ui-engineering` — production frontend implementation, component structure and accessibility baseline.
 - `react-composition-patterns` — repair demonstrated reusable-component API pressure (boolean-prop proliferation, compound components, shared provider contracts) without abstracting ordinary one-off UI.
 - `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
@@ -212,6 +214,7 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 - `data-analysis-quality` — metric/query-output grain and reconciliation; not API implementation or database operation.
 
 
+- `reliable-coding` — default lean implementation and review discipline; specialist security checks remain separate.
 - `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
 
 - `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.

@@ -26,6 +26,7 @@ profiles:
     - web-design-guidelines
     - performance-optimization
     - code-simplification
+    - reliable-coding
     - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
@@ -56,6 +57,7 @@ profiles:
     - observability-and-instrumentation
     - performance-optimization
     - code-simplification
+    - reliable-coding
     - anti-overengineering
     - constraint-driven-development
     - security-and-hardening
@@ -274,6 +276,7 @@ profiles:
     - growth
     skills:
     - incremental-implementation
+    - reliable-coding
     - anti-overengineering
     - git-workflow-and-versioning
     - artifact-production
@@ -346,6 +349,7 @@ profiles:
     - ci-cd-and-automation
     - code-review-and-quality
     - code-simplification
+    - reliable-coding
     - anti-overengineering
     - constraint-driven-development
     - context-engineering

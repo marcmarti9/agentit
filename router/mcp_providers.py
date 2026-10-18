@@ -184,6 +184,16 @@ def _upsert_toml_mcp_server(
         rf"^\[mcp_servers\.{re.escape(server_id)}\][^\n]*\n(?:(?!^\[).*\n)*",
         re.MULTILINE,
     )
+    # Disabling must preserve the existing command, args and forwarded env.
+    if not enabled and entry is None:
+        existing = pattern.search(text)
+        if existing:
+            saved = existing.group(0).rstrip("\n")
+            if re.search(r"(?m)^\s*enabled\s*=", saved):
+                saved = re.sub(r"(?m)^(\s*enabled\s*=\s*).*$", r"\g<1>false", saved, count=1)
+            else:
+                saved += "\nenabled = false"
+            return text[:existing.start()] + saved + "\n" + text[existing.end():]
     text2 = pattern.sub("", text)
     text2 = text2.rstrip() + "\n\n" + new_block
     return text2

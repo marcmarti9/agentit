@@ -49,6 +49,7 @@ class McpCatalogTestCase(unittest.TestCase):
         entry = snippet_for_server("google-ads", provider="json")["mcpServers"]["google-ads"]
         self.assertEqual(entry, {"command": "google-ads-mcp", "args": []})
         self.assertIn("env_vars = [", snippet_for_server("google-ads", provider="codex")["snippet"])
+        self.assertNotIn("GOOGLE_ADS_DEVELOPER_TOKEN", server["codex_env_vars"])
         self.assertNotIn("google-ads", [s["id"] for s in recommend_stack("developer_core")["servers"]])
 
     def test_mobile_design_stack_is_opt_in_remote_research(self) -> None:

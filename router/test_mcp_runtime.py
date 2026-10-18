@@ -287,10 +287,21 @@ class McpRuntimeTestCase(unittest.TestCase):
         servers = tomllib.loads(text)["mcp_servers"]
         self.assertEqual(servers["existing"]["command"], "existing-tool")
         self.assertEqual(servers["google-ads"]["command"], "google-ads-mcp")
-        self.assertIn("GOOGLE_ADS_DEVELOPER_TOKEN", servers["google-ads"]["env_vars"])
+        self.assertIn("GOOGLE_ADS_LOGIN_CUSTOMER_ID", servers["google-ads"]["env_vars"])
         self.assertNotIn("env", servers["google-ads"])
         self.assertNotIn("private-test-token", text)
         self.assertTrue(list(config.parent.glob("config.toml.agentit-bak-*")))
+        # Disabling preserves executable and env, allowing a clean re-enable.
+        with patch("router.mcp_providers.HOME", self.project):
+            off = set_server_enabled("codex", "google-ads", enabled=False, project_root=self.project, apply=True)
+            self.assertEqual(off["status"], "applied")
+            disabled = tomllib.loads(config.read_text())["mcp_servers"]["google-ads"]
+            self.assertFalse(disabled["enabled"])
+            self.assertEqual(disabled["command"], "google-ads-mcp")
+            self.assertIn("GOOGLE_ADS_LOGIN_CUSTOMER_ID", disabled["env_vars"])
+            on = set_server_enabled("codex", "google-ads", enabled=True, project_root=self.project, apply=True)
+            self.assertEqual(on["status"], "applied")
+            self.assertTrue(tomllib.loads(config.read_text())["mcp_servers"]["google-ads"]["enabled"])
 
 
 if __name__ == "__main__":

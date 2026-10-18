@@ -9,6 +9,7 @@ from pathlib import Path
 
 from router.skills_cli import list_packs, pack_candidates
 from router.skill_loader import load_skill_bodies
+from router.profiles import load_catalog, resolve_profile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +36,17 @@ class JitSkillsCliTests(unittest.TestCase):
         self.assertEqual(len(pairs), len(set(pairs)))
         self.assertIn(("engineering", "architect-orchestrator"), pairs)
         self.assertIn(("backend", "architect-orchestrator"), pairs)
+
+    def test_reliable_coding_is_discoverable_and_jit_loadable(self):
+        for pack in ("engineering", "frontend", "backend"):
+            self.assertIn("reliable-coding", {item["id"] for item in pack_candidates([pack])})
+        catalog = load_catalog()
+        for profile in ("frontend", "backend", "agency", "all"):
+            self.assertIn("reliable-coding", resolve_profile(profile, catalog, repo_root=ROOT))
+        with tempfile.TemporaryDirectory() as temporary:
+            bodies = load_skill_bodies(["reliable-coding"], project_root=Path(temporary))
+        self.assertEqual(["reliable-coding"], [item["id"] for item in bodies])
+        self.assertIn("canonical BUILDER/REVIEW policy", bodies[0]["content"])
 
     def test_selected_body_is_loaded_only_after_explicit_selection(self):
         with tempfile.TemporaryDirectory() as temporary:

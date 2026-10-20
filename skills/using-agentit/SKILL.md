@@ -5,7 +5,7 @@ description: Agentit entry contract for material work. Select context just in ti
 
 # Using Agentit
 
-Agentit is a provider-neutral reliability layer, not a replacement for host safety, tool authorization or model judgment. The CLI is agent-facing.
+Agentit is a provider-neutral reliability layer, not a replacement for host safety, tool authorization or model judgment. The user should not need to know or type Agentit CLI commands. Mechanical commands are agent-facing implementation details.
 
 ## Dispatch and context lifecycle
 
@@ -62,6 +62,6 @@ Challenge a materially weaker approach with concrete evidence and trade-offs. Pr
 
 ## Completion boundary
 
-Before every GitHub push/PR/release, follow `docs/ARTIFACT_LIFECYCLE.md`: cleanup review/check and capacity gates are mandatory.
+Each GitHub push/PR/release needs cleanup/capacity review: `docs/ARTIFACT_LIFECYCLE.md`.
 
 Report changes, evidence, limits and merge boundary. Disclose unavailable independent review, verify locally and keep unauthorized actions gated. A test process is not an independent model. Never claim `done`, `secure`, `independent`, `unloaded` or `passing` beyond observed evidence.

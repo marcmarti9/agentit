@@ -99,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
     else:
         print(format_plan(payload))
-    return 0
+    return 1 if args.apply and payload.get("blocking_failed") else 0
 
 
 if __name__ == "__main__":

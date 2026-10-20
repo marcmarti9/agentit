@@ -181,6 +181,8 @@ def plan_verification(
             script = REPO_ROOT / str(probe.get("script", ""))
             entry["command"] = ["python3", str(script), str(root)]
             entry["runnable"] = script.is_file()
+        elif kind == "cleanup_review":
+            entry["runnable"] = True
         elif kind == "detect_command":
             command = resolve_detect_command(probe, root)
             entry["command"] = command
@@ -234,6 +236,17 @@ def _run_command(command: list[str], *, cwd: Path, timeout: int = 300) -> dict[s
         return {"exit_code": 127, "output": str(exc), "ok": False}
 
 
+def _run_cleanup_probe(probe: dict[str, Any], root: Path) -> dict[str, Any]:
+    from router.cleanup import CleanupError, check
+
+    try:
+        summary = check(root)
+    except (CleanupError, OSError, subprocess.SubprocessError):
+        summary = {"allowed": False, "blocking_reasons": ["review_invalid"]}
+    return {**probe, "status": "passed" if summary["allowed"] else "failed",
+            "ok": summary["allowed"], "summary": summary}
+
+
 def apply_verification(
     project_root: Path,
     *,
@@ -252,11 +265,15 @@ def apply_verification(
     )
     root = Path(plan["project_root"])
     results: list[dict[str, Any]] = []
+    cleanup_probes: list[dict[str, Any]] = []
     blocking_failed = False
 
     for probe in plan["probes"]:
         item = dict(probe)
         severity = item.get("severity", "blocking")
+        if item.get("kind") == "cleanup_review":
+            cleanup_probes.append(item)
+            continue
         if item.get("kind") == "checklist":
             item["status"] = "pending_agent_evidence"
             item["ok"] = None
@@ -288,6 +305,12 @@ def apply_verification(
             blocking_failed = True
         results.append(item)
 
+    # Tests/builds can create artifacts or consume capacity. Cleanup is a final
+    # publication gate even when its catalog entry precedes those commands.
+    cleanup_results = [_run_cleanup_probe(probe, root) for probe in cleanup_probes]
+    results.extend(cleanup_results)
+    blocking_failed = blocking_failed or any(not item["ok"] for item in cleanup_results)
+
     receipt = {
         **plan,
         "mode": "apply",
@@ -306,6 +329,23 @@ def apply_verification(
     }
     path = _write_receipt(root, receipt)
     receipt["receipt_path"] = str(path)
+    # The receipt itself is a filesystem write. Check after it, too: a reviewed
+    # .agentit/verify scope or a tight capacity reserve can be invalidated here.
+    post_write_failed = False
+    for item in cleanup_results:
+        item.update(_run_cleanup_probe(item, root))
+        post_write_failed = post_write_failed or not item["ok"]
+    if post_write_failed:
+        receipt["blocking_failed"] = True
+        receipt["passed"] = False
+        _write_receipt(root, receipt, destination=path)
+        # Persisting BLOCKED can itself change inventory. Observe that final
+        # state without another write; an observed failure stays failed even if
+        # an external actor subsequently changes the filesystem.
+        for item in cleanup_results:
+            final = _run_cleanup_probe(item, root)
+            if not final["ok"]:
+                item.update(final)
     return receipt
 
 
@@ -354,12 +394,15 @@ def evaluate_done_claims(
     }
 
 
-def _write_receipt(project_root: Path, receipt: dict[str, Any]) -> Path:
+def _write_receipt(project_root: Path, receipt: dict[str, Any], *, destination: Path | None = None) -> Path:
     verify_dir = project_root / ".agentit" / "verify"
     verify_dir.mkdir(parents=True, exist_ok=True)
     os.chmod(verify_dir, stat.S_IRWXU)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    destination = verify_dir / f"{stamp}-receipt.json"
+    if destination is None:
+        destination = verify_dir / f"{stamp}-receipt.json"
+    elif destination.parent != verify_dir:
+        raise VerifyError("verification receipt destination must remain in .agentit/verify")
     fd, temporary_name = tempfile.mkstemp(
         prefix=f".{destination.name}.tmp-", dir=verify_dir, text=True
     )

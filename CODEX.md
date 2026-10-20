@@ -7,6 +7,7 @@
 - Use Codex subagents only when specialization, context isolation, independent review, or real parallelism materially helps. A fixed multi-agent chain is never required.
 - Before delegating, project a bounded Worker Context Contract: objective, scope, selected skill bodies, selected references, tools/permissions, ownership, expected handoff, verifier, and stop condition.
 - One writer owns each shared file or mutable resource unless isolation is explicit.
+- Apply the canonical cleanup/capacity gate in `AGENTS.md` before every GitHub publication; keep the detailed ledger private.
 
 ## Optional Codex worker profiles
 

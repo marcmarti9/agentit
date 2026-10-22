@@ -4,18 +4,19 @@ global_profiles:
 - core
 profiles:
   core:
-    description: 'Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a
-      domain pack, then load task skills JIT. Core also carries the minimum durable-documentation
-      and cold-session invariants.'
+    description: 'Minimal global Agentit bootstrap: decide whether Agentit is warranted, choose a domain
+      pack, then load task skills JIT. Core also carries the minimum durable-documentation and cold-session
+      invariants.'
     skills:
     - using-agentit
     - task-router
     - using-agent-skills
+    purpose: Enter Agentit, make the task decision, discover and activate selected skills.
   frontend:
-    description: Core plus browser, performance, UI maintenance, and development-security guidance.
-      Installation/discovery only; runtime selection remains JIT, but security implications are part
-      of the standing development bar and app-security-gate becomes mandatory when the change exposes
-      or modifies a meaningful application attack surface.
+    description: Core plus browser, performance, UI maintenance, and development-security guidance. Installation/discovery
+      only; runtime selection remains JIT, but security implications are part of the standing development
+      bar and app-security-gate becomes mandatory when the change exposes or modifies a meaningful application
+      attack surface.
     extends:
     - core
     skills:
@@ -44,11 +45,26 @@ profiles:
     - vue-patterns
     - vite-patterns
     - nextjs-turbopack
+    - accessibility
+    - angular-developer
+    - click-path-audit
+    - design-system
+    - e2e-testing
+    - frontend-design-direction
+    - frontend-patterns
+    - inherit-legacy-style
+    - make-interfaces-feel-better
+    - motion-advanced
+    - motion-foundations
+    - motion-patterns
+    - nuxt4-patterns
+    - ui-to-vue
+    purpose: Build accessible web UI, use framework patterns, check browser behavior and performance.
   backend:
     description: Core plus API boundaries, observability, service maintenance, and development-security
       guidance. Installation/discovery only; runtime selection remains JIT, but security implications
-      are part of the standing development bar and app-security-gate becomes mandatory for material
-      auth/API/data/admin/deploy surfaces.
+      are part of the standing development bar and app-security-gate becomes mandatory for material auth/API/data/admin/deploy
+      surfaces.
     extends:
     - core
     skills:
@@ -73,6 +89,7 @@ profiles:
     - postgres-patterns
     - redis-patterns
     - mcp-server-patterns
+    purpose: Design APIs and services, database boundaries, observability and application security.
   supabase:
     description: Backend profile plus PostgreSQL/Supabase-specific guidance.
     extends:
@@ -81,6 +98,7 @@ profiles:
     - supabase-postgres-best-practices
     - postgres-patterns
     - database-migrations
+    purpose: Work with Supabase, PostgreSQL and database migrations.
   product:
     description: Core plus discovery, adversarial ideation, marketing, CRO, and product decision support.
     extends:
@@ -103,11 +121,11 @@ profiles:
     - product-lens
     - competitive-platform-analysis
     - investor-materials
+    purpose: Refine product ideas, gather requirements, compare alternatives and define outcomes.
   executive:
-    description: 'Deep company-level executive bench: strategy, finance, people, legal, operations,
-      marketing, product, board and chief-of-staff judgment. Deliberately broad for installation/discovery;
-      each task still selects only the exact executive skill bodies, evidence and specialists it needs
-      JIT.'
+    description: 'Deep company-level executive bench: strategy, finance, people, legal, operations, marketing,
+      product, board and chief-of-staff judgment. Deliberately broad for installation/discovery; each
+      task still selects only the exact executive skill bodies, evidence and specialists it needs JIT.'
     extends:
     - core
     skills:
@@ -138,6 +156,7 @@ profiles:
     - investor-outreach
     - finance-billing-ops
     - competitive-report-structure
+    purpose: Use strategy, finance, people, legal, operations, board or chief-of-staff judgment.
   writing:
     description: Technical writing, documentation, and anti-AI-slop editing.
     extends:
@@ -153,11 +172,12 @@ profiles:
     - article-writing
     - brand-voice
     - content-engine
+    purpose: Write and edit documentation, articles, voice and reusable content.
   design:
     description: Craft-first design studio profile. Runtime workers still load only the selected design
       pack skills JIT; this profile is an installation/discovery bundle, not a context bundle.
     extends:
-    - frontend
+    - core
     skills:
     - hallmark
     - ui-ux-pro-max
@@ -199,11 +219,27 @@ profiles:
     - design-system
     - accessibility
     - make-interfaces-feel-better
+    - brand-discovery
+    - taste
+    - taste-application
+    - taste-distillation
+    - ios-icon-gen
+    - frontend-ui-engineering
+    - browser-testing-with-devtools
+    - playwright-cli
+    - web-design-guidelines
+    - performance-optimization
+    - code-simplification
+    - reliable-coding
+    - anti-overengineering
+    - frontend-a11y
+    - browser-qa
+    purpose: Create visual direction, design systems, interaction, typography and brand experiences.
   mobile:
     description: 'Expo/React Native product UI: study shipped mobile winners, then implement native-feeling
       screens. Installation/discovery bundle only; workers still load the selected skill JIT.'
     extends:
-    - frontend
+    - core
     skills:
     - appllama-app-design-skill
     - appllama-usage
@@ -215,6 +251,16 @@ profiles:
     - swiftui-patterns
     - android-clean-architecture
     - compose-multiplatform-patterns
+    - frontend-ui-engineering
+    - performance-optimization
+    - reliable-coding
+    - anti-overengineering
+    - security-and-hardening
+    - app-security-gate
+    - property-based-testing
+    - frontend-a11y
+    - accessibility-design-review
+    purpose: Build native mobile experiences across React Native, Flutter, SwiftUI and Android.
   release:
     description: Core plus CI, migration, launch, security gate, and operational readiness.
     extends:
@@ -234,6 +280,7 @@ profiles:
     - canary-watch
     - production-audit
     - github-ops
+    purpose: Prepare CI, migrations, security gates, launch and operational readiness.
   research:
     description: Current source-led research and synthesis, metric/data quality and reusable reports.
       Installation/discovery only; specs are selected only for an implementation contract.
@@ -256,9 +303,19 @@ profiles:
     - market-research
     - research-ops
     - scientific-thinking-literature-review
+    - benchmark-methodology
+    - competitive-platform-analysis
+    - competitive-report-structure
+    - exa-search
+    - osint-investigation
+    - scientific-db-pubmed-database
+    - scientific-db-uspto-database
+    - scientific-pkg-gget
+    - scientific-thinking-scholar-evaluation
+    purpose: Investigate current sources, competitors and scientific literature; check evidence quality.
   growth:
-    description: 'Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and
-      launch discipline. Live marketing data still requires separately reviewed connectors.'
+    description: 'Digital growth delivery on demand: product discovery, CRO, copy, SEO signals and launch
+      discipline. Live marketing data still requires separately reviewed connectors.'
     extends:
     - product
     skills:
@@ -269,6 +326,11 @@ profiles:
     - lead-intelligence
     - content-engine
     - crosspost
+    - investor-materials
+    - investor-outreach
+    - social-publisher
+    - x-api
+    purpose: Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach.
   agency:
     description: 'Agency operating profile: product and growth delivery plus incremental implementation
       and disciplined Git handoffs. Pair with the relevant coding profile for implementation.'
@@ -283,10 +345,10 @@ profiles:
     - brand-discovery
     - marketing-campaign
     - browser-qa
+    purpose: Deliver client product/growth work with implementation and Git handoffs.
   data:
-    description: 'Analysis and persistence quality: metric grain, source reconciliation, database
-      boundaries and reproducible artifact delivery. Installation/discovery only; select the relevant
-      procedure JIT.'
+    description: 'Analysis and persistence quality: metric grain, source reconciliation, database boundaries
+      and reproducible artifact delivery. Installation/discovery only; select the relevant procedure JIT.'
     extends:
     - core
     skills:
@@ -302,6 +364,22 @@ profiles:
     - clickhouse-io
     - data-throughput-accelerator
     - pytorch-patterns
+    - bengali-nlp
+    - data-scraper-agent
+    - database-migrations
+    - ito-baskets
+    - ito-compute
+    - ito-inference
+    - ito-training
+    - latency-critical-systems
+    - ml-adoption-playbook
+    - mle-workflow
+    - mysql-patterns
+    - prisma-patterns
+    - recsys-pipeline-architect
+    - redis-patterns
+    - social-graph-ranker
+    purpose: Analyze data, build pipelines, work with databases and machine learning.
   security:
     description: Bounded vulnerability investigation and hardening/release controls. Installation/discovery
       only; scanner availability and scan/publication authorization are separate.
@@ -317,11 +395,21 @@ profiles:
     - security-scan
     - safety-guard
     - agent-architecture-audit
+    - agent-security-hardening
+    - gateguard
+    - mcp-dependency-review
+    - security-bounty-hunter
+    - django-security
+    - laravel-security
+    - quarkus-security
+    - springboot-security
+    - perl-security
+    purpose: Investigate vulnerabilities, threat models, dependency risks and hardening.
   artifacts:
     description: Reusable editable documents, PDFs, spreadsheets and slide decks, including visual/semantic
       delivery checks. Installation/discovery only; does not imply renderer or connector availability.
     extends:
-    - writing
+    - core
     skills:
     - data-analysis-quality
     - typography-and-layout
@@ -331,115 +419,45 @@ profiles:
     - frontend-slides
     - nutrient-document-processing
     - dashboard-builder
-  all:
-    description: Every repository skill; use only when explicitly requested for installation/discovery,
-      never as a worker context bundle.
-    skills:
-    - adversarial-idea-review
-    - hallmark
+    - visa-doc-translate
+    - documentation-and-adrs
+    - artifact-production
+    - reference-intelligence
     - humanizer
     - stop-slop
-    - i-have-adhd
-    - api-and-interface-design
-    - app-security-gate
-    - architect-orchestrator
-    - browser-testing-with-devtools
-    - playwright-cli
-    - web-design-guidelines
-    - ci-cd-and-automation
-    - code-review-and-quality
-    - code-simplification
-    - reliable-coding
-    - anti-overengineering
-    - constraint-driven-development
-    - context-engineering
-    - creative-tool-scout
-    - creative-web-experiences
-    - debugging-and-error-recovery
-    - delight-and-whimsy
-    - mcp-tooling-fit
-    - deprecation-and-migration
-    - design-inspiration-research
-    - design-md-workflow
-    - awesome-design-md
-    - design-taste-frontend
-    - image-to-code
-    - design-trend-researcher
-    - diagram-design
-    - documentation-and-adrs
-    - doubt-driven-development
-    - emil-design-eng
-    - executive-board
-    - executive-chief-of-staff
-    - executive-finance
-    - executive-legal
-    - executive-marketing
-    - executive-operations
-    - executive-orchestration
-    - executive-people
-    - executive-product
-    - executive-strategy
-    - figma-design-workflow
-    - find-skills
-    - skillfinder-external-scout
-    - frontend-ui-engineering
-    - git-workflow-and-versioning
-    - gsap-performance
-    - gsap-scrolltrigger
-    - idea-refine
-    - impeccable
-    - incremental-implementation
-    - interview-me
-    - local-model-routing
-    - long-horizon-recovery
-    - marketing-and-growth
-    - mcp-server-development
-    - react-composition-patterns
-    - skill-authoring-and-evals
-    - appllama-app-design-skill
-    - appllama-usage
-    - observability-and-instrumentation
-    - performance-optimization
-    - planning-and-task-breakdown
-    - reference-intelligence
-    - scrollytelling-web
-    - scroll-world
-    - security-and-hardening
-    - shipping-and-launch
-    - source-driven-development
-    - specialist-agent-routing
-    - spec-driven-development
-    - spec-kit-workflow
-    - supabase-postgres-best-practices
-    - task-router
-    - test-driven-development
-    - threejs-product-storytelling
-    - threejs-spatial-experiences
-    - ui-ux-pro-max
-    - using-agent-skills
-    - using-agentit
-    - verification-before-completion
-    - verification-gauntlet
-    - visual-storytelling-director
-    - property-based-testing
-    - data-analysis-quality
-    - security-analysis
-    - mobile-runtime-engineering
-    - artifact-production
-    - typography-and-layout
-    - brand-identity-design
-    - design-system-engineering
-    - data-visualization-design
-    - editorial-design
-    - design-critique
-    - ux-heuristic-review
-    - accessibility-design-review
-    - motion-design-review
-    - motion-graphics-production
-    - remotion-video-engineering
-    - advertising-video-production
+    - brand-voice
+    purpose: Produce editable documents, spreadsheets, slide decks, reports and translations.
+  all:
+    description: Complete canonical skill inventory for explicit installation/discovery only. Inspect
+      body cost; never activate automatically.
     extends:
-    - ecc
+    - core
+    - frontend
+    - backend
+    - supabase
+    - product
+    - executive
+    - writing
+    - design
+    - mobile
+    - release
+    - research
+    - growth
+    - agency
+    - data
+    - security
+    - artifacts
+    - design-review
+    - video
+    - languages
+    - engineering
+    - agent-systems
+    - infrastructure
+    - operations
+    - healthcare
+    - financial-protocols
+    skills: []
+    purpose: Inspect the complete canonical inventory only when explicitly needed; never auto-activate.
   design-review:
     description: 'Read-only design review bench: visual/copy critique, task-flow heuristics, accessibility
       and motion diagnostics. Availability only; choose the needed lens and evidence JIT, not an always-on
@@ -460,10 +478,11 @@ profiles:
     - frontend-a11y
     - browser-qa
     - click-path-audit
+    purpose: Review visual quality, task flows, accessibility and motion using relevant evidence.
   video:
-    description: Authored motion graphics, selected Remotion engineering and video-ad production.
-      Installation/discovery only; select the production owner, technical adapter and conditional
-      references JIT. No runtime or media provider is installed or authorized.
+    description: Authored motion graphics, selected Remotion engineering and video-ad production. Installation/discovery
+      only; select the production owner, technical adapter and conditional references JIT. No runtime
+      or media provider is installed or authorized.
     extends:
     - core
     skills:
@@ -482,37 +501,91 @@ profiles:
     - manim-video
     - blender-motion-state-inspection
     - tasteforge-video
+    - fal-ai-media
+    - videodb
+    purpose: Produce motion graphics, video ads, Remotion, Blender and media workflows.
   ecc-web:
-    description: Frontend frameworks, web interaction, accessible implementation and browser testing.
-      Availability only, never auto-activation.
+    description: Compatibility alias for frontend. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
     extends:
-    - core
-    skills:
-    - accessibility
-    - angular-developer
-    - browser-qa
-    - click-path-audit
-    - design-system
-    - e2e-testing
-    - frontend-a11y
-    - frontend-design-direction
-    - frontend-patterns
-    - inherit-legacy-style
-    - make-interfaces-feel-better
-    - motion-advanced
-    - motion-foundations
-    - motion-patterns
-    - nextjs-turbopack
-    - nuxt4-patterns
-    - react-patterns
-    - react-performance
-    - react-testing
-    - ui-to-vue
-    - vite-patterns
-    - vue-patterns
+    - frontend
+    skills: []
   ecc-languages:
-    description: Language/framework engineering, architecture and ecosystem-specific verification.
-      Availability only, never auto-activation.
+    description: Compatibility alias for languages. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
+    extends:
+    - languages
+    skills: []
+  ecc-development:
+    description: Compatibility alias for engineering. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
+    extends:
+    - engineering
+    skills: []
+  ecc-agent-systems:
+    description: Compatibility alias for agent-systems. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
+    extends:
+    - agent-systems
+    skills: []
+  ecc-data:
+    description: Compatibility alias for data. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
+    extends:
+    - data
+    skills: []
+  ecc-research-growth:
+    description: Compatibility alias for research, growth, writing, design. Prefer the source-neutral
+      domain profiles.
+    compatibility_alias: true
+    extends:
+    - research
+    - growth
+    - writing
+    - design
+    skills: []
+  ecc-media:
+    description: Compatibility alias for video, artifacts, design. Prefer the source-neutral domain profiles.
+    compatibility_alias: true
+    extends:
+    - video
+    - artifacts
+    - design
+    skills: []
+  ecc-operations:
+    description: Compatibility alias for infrastructure, operations. Prefer the source-neutral domain
+      profiles.
+    compatibility_alias: true
+    extends:
+    - infrastructure
+    - operations
+    skills: []
+  ecc-security-domains:
+    description: Compatibility alias for security, healthcare, financial-protocols. Prefer the source-neutral
+      domain profiles.
+    compatibility_alias: true
+    extends:
+    - security
+    - healthcare
+    - financial-protocols
+    skills: []
+  ecc:
+    description: Compatibility inventory alias for the imported source domains. Prefer domain profiles
+      and exact JIT skill selection.
+    compatibility_alias: true
+    extends:
+    - ecc-web
+    - ecc-languages
+    - ecc-development
+    - ecc-agent-systems
+    - ecc-data
+    - ecc-research-growth
+    - ecc-media
+    - ecc-operations
+    - ecc-security-domains
+    skills: []
+  languages:
+    description: Language and framework engineering, ecosystem-specific architecture, tests and verification.
     extends:
     - core
     skills:
@@ -575,9 +648,9 @@ profiles:
     - swiftui-patterns
     - tinystruct-patterns
     - windows-desktop-e2e
-  ecc-development:
-    description: Repo execution, API contracts, measured optimization, tests and delivery. Availability
-      only, never auto-activation.
+    purpose: Use language/framework-specific architecture, coding, tests and verification.
+  engineering:
+    description: Repository implementation, debugging, contracts, tests, documentation and measured delivery.
     extends:
     - core
     skills:
@@ -626,9 +699,23 @@ profiles:
     - terminal-opener
     - terminal-ops
     - test-collaboration
-  ecc-agent-systems:
-    description: Agent tools, orchestration, memory, learning, context and host adapters; explicit
-      selection only. Availability only, never auto-activation.
+    - architect-orchestrator
+    - debugging-and-error-recovery
+    - test-driven-development
+    - verification-gauntlet
+    - incremental-implementation
+    - planning-and-task-breakdown
+    - git-workflow-and-versioning
+    - reliable-coding
+    - anti-overengineering
+    - code-review-and-quality
+    - code-simplification
+    - constraint-driven-development
+    - verification-before-completion
+    - documentation-and-adrs
+    purpose: Implement, debug, refactor and verify repository work with proportional checks.
+  agent-systems:
+    description: Agent architecture, orchestration, context, memory, evals and explicit host integration.
     extends:
     - core
     skills:
@@ -692,161 +779,95 @@ profiles:
     - token-card
     - unified-memory
     - workspace-surface-audit
-  ecc-data:
-    description: Databases, data pipelines, machine learning, model operation and structured analysis.
-      Availability only, never auto-activation.
+    - mcp-tooling-fit
+    - mcp-server-development
+    - skill-authoring-and-evals
+    - find-skills
+    - skillfinder-external-scout
+    - local-model-routing
+    - long-horizon-recovery
+    - context-engineering
+    - specialist-agent-routing
+    - architect-orchestrator
+    - using-agent-skills
+    purpose: Build agents, tools, orchestration, memory, evals and explicit host integrations.
+  infrastructure:
+    description: Infrastructure, containers, networking, environments, rollout monitoring and operational
+      diagnosis.
     extends:
     - core
     skills:
-    - bengali-nlp
-    - clickhouse-io
-    - dashboard-builder
-    - data-scraper-agent
-    - data-throughput-accelerator
-    - database-migrations
-    - ito-baskets
-    - ito-compute
-    - ito-inference
-    - ito-training
-    - latency-critical-systems
-    - ml-adoption-playbook
-    - mle-workflow
-    - mysql-patterns
-    - postgres-patterns
-    - prisma-patterns
-    - pytorch-patterns
-    - recsys-pipeline-architect
-    - redis-patterns
-    - social-graph-ranker
-  ecc-research-growth:
-    description: Evidence-backed research, brand voice, publishing, growth and commercial analysis.
-      Availability only, never auto-activation.
-    extends:
-    - core
-    skills:
-    - article-writing
-    - benchmark-methodology
-    - brand-discovery
-    - brand-voice
-    - competitive-platform-analysis
-    - competitive-report-structure
-    - content-engine
-    - crosspost
-    - deep-research
-    - exa-search
-    - investor-materials
-    - investor-outreach
-    - lead-intelligence
-    - market-research
-    - marketing-campaign
-    - osint-investigation
-    - research-ops
-    - scientific-db-pubmed-database
-    - scientific-db-uspto-database
-    - scientific-pkg-gget
-    - scientific-thinking-literature-review
-    - scientific-thinking-scholar-evaluation
-    - seo
-    - social-publisher
-    - taste
-    - taste-application
-    - taste-distillation
-    - x-api
-  ecc-media:
-    description: Video, motion, Blender, slides, media generation and document processing. Availability
-      only, never auto-activation.
-    extends:
-    - core
-    skills:
-    - blender-motion-state-inspection
-    - fal-ai-media
-    - frontend-slides
-    - ios-icon-gen
-    - manim-video
-    - nutrient-document-processing
-    - tasteforge-video
-    - ui-demo
-    - video-editing
-    - videodb
-    - visa-doc-translate
-  ecc-operations:
-    description: Infrastructure, integrations, networking and evidence-first business operations.
-      Availability only, never auto-activation.
-    extends:
-    - core
-    skills:
-    - automation-audit-ops
     - canary-watch
-    - carrier-relationship-management
     - cisco-ios-patterns
-    - ck
-    - counterparty-channel-discipline
-    - customer-billing-ops
-    - customs-trade-compliance
     - docker-patterns
-    - email-ops
-    - energy-procurement
-    - esign-field-placement
-    - finance-billing-ops
     - flox-environments
-    - google-workspace-ops
     - homelab-network-readiness
     - homelab-network-setup
     - homelab-pihole-dns
     - homelab-vlan-segmentation
     - homelab-wireguard-vpn
-    - inventory-demand-planning
-    - jira-integration
     - kubernetes-patterns
-    - logistics-exception-management
-    - mailtrap-email-integration
-    - master-agreement-generator
-    - messages-ops
     - netmiko-ssh-automation
     - network-bgp-diagnostics
     - network-config-validation
     - network-interface-health
+    - uncloud
+    - observability-and-instrumentation
+    - ci-cd-and-automation
+    - security-and-hardening
+    purpose: Operate containers, environments, networks, rollout monitoring and infrastructure.
+  operations:
+    description: Business operations, logistics, billing, procurement, agreements, workspace and messaging
+      integrations.
+    extends:
+    - core
+    skills:
+    - automation-audit-ops
+    - carrier-relationship-management
+    - ck
+    - counterparty-channel-discipline
+    - customer-billing-ops
+    - customs-trade-compliance
+    - email-ops
+    - energy-procurement
+    - esign-field-placement
+    - finance-billing-ops
+    - google-workspace-ops
+    - inventory-demand-planning
+    - jira-integration
+    - logistics-exception-management
+    - mailtrap-email-integration
+    - master-agreement-generator
+    - messages-ops
     - production-scheduling
     - project-flow-ops
     - quality-nonconformance
     - returns-reverse-logistics
-    - uncloud
     - unified-notifications-ops
-  ecc-security-domains:
-    description: Specialist security, healthcare and financial protocols; not authorization for external
-      actions. Availability only, never auto-activation.
+    purpose: Handle business workflows, logistics, billing, procurement and workspace integrations.
+  healthcare:
+    description: Healthcare systems, clinical decision support, sensitive health data and compliance;
+      domain expertise and authorization remain separate.
     extends:
     - core
     skills:
-    - agent-payment-x402
-    - agent-security-hardening
-    - defi-amm-security
-    - evm-token-decimals
-    - gateguard
     - healthcare-cdss-patterns
     - healthcare-emr-patterns
     - healthcare-eval-harness
     - healthcare-phi-compliance
     - hipaa-compliance
+    purpose: Work on clinical systems, sensitive health data and healthcare compliance.
+  financial-protocols:
+    description: Blockchain, payment protocols, trading agents and prediction markets; no financial or
+      external-action authority.
+    extends:
+    - core
+    skills:
+    - agent-payment-x402
+    - defi-amm-security
+    - evm-token-decimals
     - llm-trading-agent-security
-    - mcp-dependency-review
     - nodejs-keccak256
     - prediction-market-oracle-research
     - prediction-market-risk-review
-    - safety-guard
-    - security-bounty-hunter
-    - security-scan
-  ecc:
-    description: Complete canonical ECC library, JIT only. Native host integration remains opt-in.
-    extends:
-    - core
-    - ecc-web
-    - ecc-languages
-    - ecc-development
-    - ecc-agent-systems
-    - ecc-data
-    - ecc-research-growth
-    - ecc-media
-    - ecc-operations
-    - ecc-security-domains
-    skills: []
+    purpose: Work on blockchain, payment protocols, trading agents and prediction-market risk.

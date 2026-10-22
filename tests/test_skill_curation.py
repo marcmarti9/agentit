@@ -72,6 +72,7 @@ class SkillCurationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())
         index = next(i for i, s in enumerate(manifest["sources"]) if "review" in s)
         mutations = [lambda r: r.update(revision="main"),
+                     lambda r: r.update(comparison_revision="HEAD"),
                      lambda r: r.update(reviewed_on="2026-99-99"),
                      lambda r: r.update(disposition="latest-is-better"),
                      lambda r: r.update(note=""),
@@ -84,6 +85,16 @@ class SkillCurationTests(unittest.TestCase):
             mutate(bad["sources"][index]["review"])
             with self.assertRaises(ValueError):
                 check_sources(ROOT, bad)
+
+    def test_changed_sources_can_record_preserved_or_blocked_without_repinning_origin(self):
+        manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())
+        index = next(i for i, s in enumerate(manifest["sources"]) if "review" in s)
+        origin = manifest["sources"][index]["revision"]
+        for disposition in ("adaptation-preserved", "blocked"):
+            record = copy.deepcopy(manifest)
+            record["sources"][index]["review"]["disposition"] = disposition
+            self.assertEqual(check_sources(ROOT, record), len(record["sources"]))
+            self.assertEqual(record["sources"][index]["revision"], origin)
 
     def test_inspected_source_paths_cannot_disappear_or_escape_repository(self):
         manifest = json.loads((ROOT / "skills/ADAPTATION_SOURCES.json").read_text())

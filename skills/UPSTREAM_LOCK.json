@@ -189,7 +189,7 @@
       "skill": "design-taste-frontend",
       "repo": "Leonxlnx/taste-skill",
       "path": "skills/taste-skill",
-      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "snapshot": "6010f91a9935f1c167dfc500fb1a475681892e6b",
       "kind": "canonical-vendored",
       "files": {
         "README.md": {
@@ -197,19 +197,39 @@
           "mode": 420
         },
         "SKILL.md": {
-          "sha256": "ee847084e58f5a81a46120912be9cd15f083570a6ca8f3d1a30372a720633043",
+          "sha256": "d955dae4ba8ab2d994f4bb06b4bf412a1d9875433a8597939c391f4bae91dd7a",
+          "mode": 420
+        },
+        "assets/app.css": {
+          "sha256": "16518c3a999fb81b2698137f1f743128c189272e8b1d411c4b02598c6755b67f",
           "mode": 420
         },
         "assets/base.css": {
-          "sha256": "6cb587d7238819288599ea500c60f683be6601351202857c068c6ced1e54fab0",
+          "sha256": "aa6ea21613c79e06e06dea3d33200c78590c89b0346bb976ec07947bb45ceafa",
           "mode": 420
         },
         "assets/base.js": {
           "sha256": "8d50416125596b84c0083d5d5ffba09add57db4b06cbf0eedac2d4999b7653bc",
           "mode": 420
         },
+        "assets/charts.js": {
+          "sha256": "89071120bd09eb276d9e568bab433ed035ea8b3a1b72750a1fa204a63e3d4ab4",
+          "mode": 420
+        },
+        "assets/scenes/stage.css": {
+          "sha256": "b5c587dac45ac6fcc34ae7cb4aa2b3e43797b2ef5d71fd32b48483bda3fca3e0",
+          "mode": 420
+        },
+        "assets/scenes/stage.js": {
+          "sha256": "3012ade75e01a9c0c81b5835a60e9ade965ed310cd58d85a7ad10e4ed4a1ad16",
+          "mode": 420
+        },
         "evals/evals.json": {
-          "sha256": "07856fb030058f3dc5ab17f9ac25f5609bf0021b7f050587801823b6d31e9d68",
+          "sha256": "df0ee2a248cd5445c0e1600eb095dc0d43dd312f5b4bb4316a78471ae0d22a74",
+          "mode": 420
+        },
+        "library/app.json": {
+          "sha256": "3678ccbe1e8d05feff6d4f07fa16a0d610aefeea5e697e842a876713ba763cf5",
           "mode": 420
         },
         "library/directions.json": {
@@ -217,11 +237,11 @@
           "mode": 420
         },
         "library/heroes.json": {
-          "sha256": "b6015f6de0a6b8bcb8e20a118816df138e4e5ef31ce7dc08158bbe5d924d5877",
+          "sha256": "98d5e01104412a5fb27936f9c686f3bc0a5f76ce0793186d3de46b982c65b172",
           "mode": 420
         },
         "library/motions.json": {
-          "sha256": "1129ce0f0d552c9d5b4dccdd5ebeee66d3e487eaa385bf1e5cb7890f466f3237",
+          "sha256": "51815dd09a823c829897f99ed9ea7dc5c35bd305ac989b8a0632ea6d42a3f08b",
           "mode": 420
         },
         "library/palettes.json": {
@@ -233,15 +253,19 @@
           "mode": 420
         },
         "library/sections.json": {
-          "sha256": "4be76b7da5b1f5a84070385eba2bb88d8e1e91320981d734d08ad1617f46237b",
+          "sha256": "7c2c8a470a22501176948661f803434db8c542a511281752c717252de80c1ad8",
           "mode": 420
         },
         "library/sites.json": {
-          "sha256": "92196d14a05e7518d38b4bd189f45d24147a92179bf5ce5737922ba41ef2f9a4",
+          "sha256": "a2bc4d0cff8ebff481f0dfd4879c106d5e1e16cb3122f9ab3702184a5e1f3502",
           "mode": 420
         },
         "library/type.json": {
           "sha256": "01a36c53c4398f48ff945b0f31a256281c1c0c1075729747c11bec70867b6232",
+          "mode": 420
+        },
+        "references/app-screens.md": {
+          "sha256": "55e937ec30de605b53a11310b446f328a3ce7403de24fff008920a00be1a5ed4",
           "mode": 420
         },
         "references/colour.md": {
@@ -253,27 +277,31 @@
           "mode": 420
         },
         "references/critique.md": {
-          "sha256": "5943ea74ebe015cf33de3f8e2116f4fb990a126ae47fa56b4e6e8932d748f5b8",
+          "sha256": "9c2f4392674530b3f02ac529fba53d82ab37b85f401c4c1989fbe98d6217f0b4",
           "mode": 420
         },
         "references/imagery.md": {
-          "sha256": "c5e2b5e50a8f947a6ad65bb50ce2010a84972f777389bdeb61fd6a35ed019917",
+          "sha256": "518def6b2c643b295e13e66b09b66f2e3fc1421d3cf6c7dbb1dc749097ad2ad9",
           "mode": 420
         },
         "references/layout.md": {
-          "sha256": "87d915bfb9324cafa23d90d2b71e977c835c01f56ea96ada31f604ada81bf675",
+          "sha256": "40080640719b07737afb94a8868afef87767a1ab4892814d9b6882e2d283453b",
           "mode": 420
         },
         "references/motion.md": {
-          "sha256": "12b193563cc4b5d1107f61b90cdbaa9850885b73433d06976fa44b52cde11965",
+          "sha256": "79f94d8469898d2bf6186c198ad86ddf691a67c6536eaec36a4ec101285d9a37",
           "mode": 420
         },
         "references/research.md": {
-          "sha256": "016d908b429099f49c665fb0ef649932f79dc35832e2e5689eceefdb1a0ec5c7",
+          "sha256": "83433646a352cae588591e05bc0a75fe1deadff55ede8851bc8dd5dd483adfc5",
+          "mode": 420
+        },
+        "references/scenes.md": {
+          "sha256": "733ac7258a1a28f2f6ae8205bc36ba66c563594ad0a2e2f829c5eaaba3199a61",
           "mode": 420
         },
         "references/tells.md": {
-          "sha256": "31a759a787afdde60ec052086b7c2345d881b6cfadd3188af40df38eef404709",
+          "sha256": "8e6de4411c43d3108f832b3f33bb1a2a838148a72b92a176df893b67d99a0da9",
           "mode": 420
         },
         "references/type.md": {
@@ -285,27 +313,35 @@
           "mode": 420
         },
         "scripts/draw.mjs": {
-          "sha256": "1e680f8dc80341541afd3830a4598c574311415a1ffef6a3311f591bb6eb968d",
+          "sha256": "6c2047d207d2400d3b099956dfe2ac306203b614246e66bc8760212a7f797dbf",
           "mode": 420
         },
         "scripts/inspect.mjs": {
-          "sha256": "0fc0a847b038f554a70911c7da91c26a3491e86987fc34fea7cb25833e5d5906",
+          "sha256": "9482c546288d4d5c738a915905959e99394551ec27bc202ed443af12a02bd1f7",
+          "mode": 420
+        },
+        "scripts/lib/app-draw.mjs": {
+          "sha256": "aa0802d341d19b53ec14ec21746e428be49a8ec3ed7b30253194105fc18a8df6",
           "mode": 420
         },
         "scripts/lib/cdp.mjs": {
-          "sha256": "1065d3307c817e1b704477988cae1e4e4146f920ce38748dc3346d068a934c12",
+          "sha256": "320fb75c6454a97b88458e5c33559a1188042aa0041bd5eff53455900236c88a",
           "mode": 420
         },
         "scripts/lib/probe.mjs": {
-          "sha256": "5c5148893414ce7eeca4aaa0c476cf196cd8c22cfc514b737c2a614fac77fc1c",
+          "sha256": "c14fd0bed7727855a1f3fcf5ade945fba97f314562fd7430354168b2da25433b",
           "mode": 420
         },
         "scripts/lib/rules.mjs": {
-          "sha256": "71435cdac327b71f2ff8b79b8bbb26ff6023c40fb21eab8cce2ef71af4a3812a",
+          "sha256": "5de058543b3bd6f3dd2f85ff1c1e5e1f91918ba9f4454e7ee0b8934c607982f9",
           "mode": 420
         },
         "scripts/lint.mjs": {
-          "sha256": "8480ff2104f4b8f864678395d50ecefb8b2d353a48f96d72b950b6f82020c49e",
+          "sha256": "05f2fae2f56fc051b539cdbacb43a6f78fbbfb9644bb74aa11be472ff12dcaf5",
+          "mode": 420
+        },
+        "scripts/scenes.mjs": {
+          "sha256": "234ec582e2b841457c33033feeeba8535f9ac285495a74d08dc533a1566c90d5",
           "mode": 420
         }
       }
@@ -314,11 +350,11 @@
       "skill": "diagram-design",
       "repo": "cathrynlavery/diagram-design",
       "path": "skills/diagram-design",
-      "snapshot": "d97c5c7477e54cee17cfa6459190610da0643a05",
+      "snapshot": "7a12007b5a4246894f342a2e52e78facbc62eca3",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "1b30bb3c0da29a05e5b05c0a4510ce6f286a0d0f1da97b9aa6aaf03c92e98618",
+          "sha256": "1cad611bfe734dc967ce9c86f77d4e87470edf1922ff7ef01a89d6f36b037e1a",
           "mode": 420
         },
         "assets/example-architecture-containment-dark.html": {
@@ -1202,11 +1238,11 @@
           "mode": 420
         },
         "references/export.md": {
-          "sha256": "7b29948e881b04679608d3432ff1e0f6504d0127b0de98ca6e2bdcf1e94d918d",
+          "sha256": "da3f6ba8a693ec6467ac9ae8b476f8f2d7c0a0a20fd49762d07c2531e573dc65",
           "mode": 420
         },
         "references/import-drawio.md": {
-          "sha256": "44ab851f7f01f070e76779ee7e301f7573924f4199467309eb36aac13a4c393c",
+          "sha256": "a94b687bedba5795d3c960e58d014856135cea3cba558967b4c5e8b519c9a69e",
           "mode": 420
         },
         "references/import-excalidraw.md": {
@@ -1214,7 +1250,7 @@
           "mode": 420
         },
         "references/import-mermaid.md": {
-          "sha256": "ad5fd39d9ef09dec553b76f83cb35444b4727ad093d0b08ccc33461a4557bef4",
+          "sha256": "41c1e5a5d223c37b45897c331b481249ffbcb1a6d63e75d0e06a9d35bbfd07cc",
           "mode": 420
         },
         "references/layout-budget.md": {
@@ -1222,7 +1258,7 @@
           "mode": 420
         },
         "references/onboarding.md": {
-          "sha256": "3f503bdedbfed93a16f742e2c950805361aa0d804e2213ade32c33601ca5b6b8",
+          "sha256": "9e1268f502253b856a1dae2d1e8b109769e942c05306996fa5ae011a266edaec",
           "mode": 420
         },
         "references/output-spec.md": {
@@ -1350,7 +1386,7 @@
           "mode": 420
         },
         "references/type-loop.md": {
-          "sha256": "c7e98b8eda1e6d6904920f4d96310745deb0651920e9d531c8f40e54304ab60d",
+          "sha256": "9ac996dfa83f41064477f10b61b6bdd2b0ceaefa6053b87432554668adf22af6",
           "mode": 420
         },
         "references/type-medallion.md": {
@@ -1442,19 +1478,23 @@
           "mode": 420
         },
         "scripts/drawio_extract.py": {
-          "sha256": "e13ad9cb4c9425404ad396be5020ddf35cdf6b301856140f6452424221d15763",
+          "sha256": "72098800fb5893ba620a432275b332901cfdbfa45bcd608c15d055466b25abe6",
           "mode": 420
         },
         "scripts/excalidraw_extract.py": {
           "sha256": "10f6a6b999b3b2e8a626774515ba6817df331a6d39d671a4876541262b63697c",
           "mode": 420
         },
+        "scripts/export_png.py": {
+          "sha256": "430ddcc2d39441808bd4217fbdeb944dbb6de0be281782705a81747986d7d348",
+          "mode": 493
+        },
         "scripts/export_svg.py": {
-          "sha256": "0fd5fd85d99eaaa06df60235ee7a0a4f7478766e58de19c4de4cd944538afb5c",
+          "sha256": "03e88d277386e2c9f48d9fcfc6a9f8e5e818a8949ac8ec458ac569e8ff4bc8ad",
           "mode": 493
         },
         "scripts/mermaid_extract.py": {
-          "sha256": "fbee461a9c454f43e603afc0b9272a19632e3eb5be82b57dcddf522f74d17c33",
+          "sha256": "cf0a78bab8f8fdcb54564725c75e764ac602cc4e389efab395dc23c25650b7a3",
           "mode": 420
         },
         "scripts/self_check.py": {
@@ -1506,7 +1546,7 @@
       "skill": "find-skills",
       "repo": "vercel-labs/skills",
       "path": "skills/find-skills",
-      "snapshot": "13e4063a1cf913f5606d57d42ab83a86f5001e04",
+      "snapshot": "a80e4c9d12d607631249d4d7d059f835d4b2f13a",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -2008,7 +2048,7 @@
       "skill": "humanizer",
       "repo": "blader/humanizer",
       "path": ".",
-      "snapshot": "225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8",
+      "snapshot": "8c307f367c91bd974002f10f2be2965d642c13df",
       "kind": "canonical-vendored",
       "include": [
         "SKILL.md",
@@ -2091,17 +2131,23 @@
           "sha256": "4c060a8064a8b13380bc2ef3d6e6a1d0b1e316aa093cd9807d0ce9e4eeb037fa",
           "mode": 420
         }
+      },
+      "retired_upstream": {
+        "reviewed_head": "6010f91a9935f1c167dfc500fb1a475681892e6b",
+        "reviewed_on": "2026-10-22",
+        "reason": "Upstream removed skills/image-to-code-skill. Retain the last canonical package for existing users; the active design-taste-frontend package updates independently.",
+        "observed_head": "6010f91a9935f1c167dfc500fb1a475681892e6b"
       }
     },
     {
       "skill": "impeccable",
       "repo": "pbakaus/impeccable",
       "path": ".agents/skills/impeccable",
-      "snapshot": "2f98774f86bc05563876643db37e6c37c322850f",
+      "snapshot": "8644175285360c166e57b1e35ecadfbc85ff5209",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "58c0252bca04521de87007aeb495f7ec99dc4c7341bc890fe82b6d577573af91",
+          "sha256": "88e9a46a91b6ddd1059f03f578bd0f9bbe6d212d6a395124379b9bb5c97c5cf2",
           "mode": 420
         },
         "agents/impeccable_asset_producer.toml": {
@@ -2113,7 +2159,7 @@
           "mode": 420
         },
         "agents/impeccable_finish_reviewer.toml": {
-          "sha256": "5385afb120a988c9d821c1e57a75d7ace80d36fbb1a38e93f35d667611ba0864",
+          "sha256": "1b80232e22d52b06a7278b9ca1f24f871a181c62cd91f4b18728807e7cf49dbd",
           "mode": 420
         },
         "agents/impeccable_manual_edit_applier.toml": {
@@ -2121,15 +2167,15 @@
           "mode": 420
         },
         "agents/openai.yaml": {
-          "sha256": "cbd8bd68fa00935dd0f179adb169252629cf7ee443ea9dc7db77e7ef2cf77446",
+          "sha256": "ce9967ad70f99cf04456f3347c266723c2fbbb600267d10a822b7cd20562c321",
           "mode": 420
         },
         "reference/adapt.md": {
-          "sha256": "871a8e4d749b807c693ebabd83defbd6c76e1bd2a0f53a28a460cb1308ba8634",
+          "sha256": "9807cdc112b8bcbdeff9cd2516cda4d07129f1d47f29df4d57645344f34950c1",
           "mode": 420
         },
         "reference/adapt.native.md": {
-          "sha256": "6acc0bf221a4ddc6e5c6438348920b2ca2393b29c4314dbde2cdc23f2b1a9639",
+          "sha256": "2455a2613e1fa29b986521c73cbad9424ccda70ef6cbe505779dbca5e16272a2",
           "mode": 420
         },
         "reference/android.md": {
@@ -2141,15 +2187,15 @@
           "mode": 420
         },
         "reference/audit.md": {
-          "sha256": "41764be7bf974b95ee469f11c496714b4b3cf2ba594c0b8f838a0742680229a9",
+          "sha256": "4b726d8f13ca1dbb82ca8179cbfefca8c53c13766fef4d7b8870f5d4324da2d6",
           "mode": 420
         },
         "reference/audit.native.md": {
-          "sha256": "960cb922bc934adbf9192e9428ff6bec1f382038166f02a785939c93b7391067",
+          "sha256": "2898eff507738f9102107809e671df3e69f889dee30073030fe96fb2483d8ea3",
           "mode": 420
         },
         "reference/bolder.md": {
-          "sha256": "f964506c0fae87b3c2c1db7016ddc9be9ef970bbcf5548d684b997b5d5991586",
+          "sha256": "05b78fb0595e4d5afbf5f17470c84e89cf82f205fea3a6e9b6d8d779b7c4aab1",
           "mode": 420
         },
         "reference/clarify.md": {
@@ -2165,7 +2211,7 @@
           "mode": 420
         },
         "reference/craft-floor.md": {
-          "sha256": "e802e4f7bdc89050a9c0f2ca506e1d493a2316e6e810c0336c57aa073717ef3e",
+          "sha256": "52b523e92b76daff71be2ec8c732c374c670f8d03e1296388738e581479ec1bb",
           "mode": 420
         },
         "reference/craft.md": {
@@ -2173,7 +2219,7 @@
           "mode": 420
         },
         "reference/critique.md": {
-          "sha256": "cb8caddbb3919e5bf7f252143b519fb16db28a244642d937b186cb89962d9201",
+          "sha256": "c210c9506877c6c8d88880a337fddd95d4315daf70ed6bc631ee6520481f1a0c",
           "mode": 420
         },
         "reference/degraded/asset-producer.md": {
@@ -2185,7 +2231,7 @@
           "mode": 420
         },
         "reference/degraded/finish-reviewer.md": {
-          "sha256": "c40865450b53e0947bb4318e5e4a413d13e2ca0e8e26a8bea92aa043382d5910",
+          "sha256": "c33c4cfa7f0ce0bedde80d4fc3b595e747d0e9b43a77f06cacb8e899802f709d",
           "mode": 420
         },
         "reference/degraded/manual-edit-applier.md": {
@@ -2197,7 +2243,7 @@
           "mode": 420
         },
         "reference/distill.md": {
-          "sha256": "ea8432c90c30ecb0426662a681ead5c0941113079704e1a766cda09e85b15b4f",
+          "sha256": "56ca75d680eb8b61ca3a298d18e895cd4a0dcc520c31d7938a4807ff8dcf18ea",
           "mode": 420
         },
         "reference/doctor.md": {
@@ -2205,27 +2251,27 @@
           "mode": 420
         },
         "reference/document.md": {
-          "sha256": "3673248740bcdd1122ccc610093ba2fe52f3943a61ce0b7170b74dc49e5b6098",
+          "sha256": "531d2b6c8c9affc7b794de7904905ff9b73962b986968fd1e90273eb26930b6e",
           "mode": 420
         },
         "reference/extract.md": {
-          "sha256": "31b90048c0b540daec46762a10c2b6b6434737a89af005054d8b848d829d003b",
+          "sha256": "5477ae97189e5c1236cee71a25a5ae50014429a5a2e6da28355c8021a6cdeddd",
           "mode": 420
         },
         "reference/generate.md": {
-          "sha256": "53628d05b7eff0d4f48b95e48fad40266452fe1b42f398bd88dd9328353e0dd8",
+          "sha256": "11385badfb532196cec249e73bac2b7f58ada033ed8c4b02b9f0d64ddb46f0dc",
           "mode": 420
         },
         "reference/harden.md": {
-          "sha256": "16ba7fca1973c5faf53dd2ca523559129c0fe9e5f8d50b645f527afa78186cd2",
+          "sha256": "4167eb7fc456cdfe09ff0ac2dbcb5e59cee57e590137aab6cc8ec08aafb6d775",
           "mode": 420
         },
         "reference/hooks.md": {
-          "sha256": "3e3209e6b45497c7aee8234f5be880399ed6d99db442dcf3e024f061cd2027ba",
+          "sha256": "3c623f602043dcbdad8c043491e57ece96f699106f8378cc8a720e6b39c0ddcd",
           "mode": 420
         },
         "reference/init.md": {
-          "sha256": "da813ff325f84cefa1d01698caa093c78bca804d7e9746af14db925351266110",
+          "sha256": "51349b3a32c7f907102dd680d8e2df9da27082caf46ee15c673be7ce14a5363b",
           "mode": 420
         },
         "reference/ios.md": {
@@ -2241,7 +2287,7 @@
           "mode": 420
         },
         "reference/live.md": {
-          "sha256": "68c5636a7858dd0b5137a9229c15e25fdc2ee40a0f8a4e9d809f78e809256262",
+          "sha256": "7caeecefe54d68bc915a7f2978cba5e88eda69a239cb09dcce78c6d94e93df84",
           "mode": 420
         },
         "reference/mode-operate.md": {
@@ -2257,11 +2303,11 @@
           "mode": 420
         },
         "reference/new-work.md": {
-          "sha256": "9f51c0e9c693e549dfbb4634b89e2ce946998cfd67a3f9bda054dd9301f059be",
+          "sha256": "c2eb99db2f30598ef0d2e2f7163bb8a62ca2e5524de42a784b0d1f7117b1800f",
           "mode": 420
         },
         "reference/onboard.md": {
-          "sha256": "ef2dde00030580ed2765cbf7be9b2ea4a6f64cb915b804fd6f6abcf38051c7b9",
+          "sha256": "a2b8fd01ea12139b39b3285393f805bb8c326e11b2234dbff4c26c17b4e9c280",
           "mode": 420
         },
         "reference/operate.md": {
@@ -2269,11 +2315,11 @@
           "mode": 420
         },
         "reference/optimize.md": {
-          "sha256": "f672ef8251a3ed4051a053d30819664951b17540b2899acd27d20e500c234abc",
+          "sha256": "89d679ec08e55fe7661d54addc950c2ff77cf574aa97e593ec6da089fd1efedf",
           "mode": 420
         },
         "reference/overdrive.md": {
-          "sha256": "fce6688138d2ceb1e3d2cde5231f54b1d8dc8748b4c95a7919aa83b6f924cf96",
+          "sha256": "0a0d4ae6eea720c6d6e1c073fc77192d7c2100f78a44d9a8d262ddf22270cf4d",
           "mode": 420
         },
         "reference/polish.md": {
@@ -2281,7 +2327,7 @@
           "mode": 420
         },
         "reference/quieter.md": {
-          "sha256": "190a4e642ca362d7499f3c3ab123e21f18f75457d11f072b545a183f296e6495",
+          "sha256": "9e03b55c6bbdd4acba28cfa9c3b74ba1a4448cdbd35a7200990ab460c6eecaa0",
           "mode": 420
         },
         "reference/region-map.md": {
@@ -2297,7 +2343,7 @@
           "mode": 420
         },
         "reference/typeset.md": {
-          "sha256": "442749aed338f51c1a3ccfb182c6ade9b74b90590b67984062ac94a5b100e914",
+          "sha256": "c26c5b4524f3ccb650ed0680c10c25fd18083f8ebfd00a54c4d983c4747aab70",
           "mode": 420
         },
         "reference/visualize.md": {
@@ -2305,7 +2351,7 @@
           "mode": 420
         },
         "scripts/VERSION": {
-          "sha256": "9940d4b5219de8404015bc18af844c88d7e9e9105682a5d47b1d369d027dbd25",
+          "sha256": "7470694a0b5af87394b523c1a640e2ad099efbe0e6d9e6d2f7a70703e4d04457",
           "mode": 420
         },
         "scripts/command-metadata.json": {
@@ -2321,15 +2367,15 @@
           "mode": 420
         },
         "scripts/impeccable": {
-          "sha256": "39d9600489073e227e4f4d55c451ce4252a6632ed7ae37923efbbcbc91f16d07",
+          "sha256": "f5d9fcd37559ed6af782306f71b7688ad1ec5e1a4f8ae1ef4d3168f42523b1b1",
           "mode": 493
         },
         "scripts/impeccable.cmd": {
-          "sha256": "69cad1ae7355825ef320ac9638a1c9675ba9fda01c9a0fa12244cc4a1973e550",
+          "sha256": "e0dcc4cd739c8a6ac9e8ce637c216cf8bd4ddae36a8bac458345bdb5a5d7e252",
           "mode": 420
         },
         "scripts/live-browser-dom.js": {
-          "sha256": "24f09f2597b9b55a1e2c4acd2ae5c95db5c8615cfc20aa07d1a3950538ad5c4a",
+          "sha256": "4b379aff87ce0f485008a2b6a0dc711d00a869f5cf0ec2459279d6364fbf0c9e",
           "mode": 420
         },
         "scripts/live-browser-ignores.js": {
@@ -2337,11 +2383,11 @@
           "mode": 420
         },
         "scripts/live-browser-session.js": {
-          "sha256": "42831c3cd874346d8e7f120808d91e6ed3cda5c3eca6eefd76b126659536bc87",
+          "sha256": "2b45c12bef4e25d40b673044c9f124d1da6dfa72ef3f0c09ff30fdb419048e5d",
           "mode": 420
         },
         "scripts/live-browser.js": {
-          "sha256": "d7f1ee3fdfc423e90268e9c666dce61b2180b62431dbb6ecfc48bca65398a1f8",
+          "sha256": "8f26a309ae1af52d2413a39a886908721e78c55b468025054e06e8faffe90cf0",
           "mode": 420
         },
         "scripts/modern-screenshot.umd.js": {
@@ -2423,11 +2469,11 @@
       "skill": "playwright-cli",
       "repo": "microsoft/playwright",
       "path": "packages/playwright-core/src/tools/skills/playwright-cli",
-      "snapshot": "343d8e7d0f59b91b5bbce3226fa4a2d17d023745",
+      "snapshot": "ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
-          "sha256": "49bebc4b652d58860e91d6478fa446645e349ba8556667cc02702645d7ffde0b",
+          "sha256": "b07a6cbe4e5b638046fe0b9df0e84783cb9899f0aed3db1eef915601c3260a64",
           "mode": 420
         },
         "references/element-attributes.md": {
@@ -2459,11 +2505,11 @@
           "mode": 420
         },
         "references/test-generation.md": {
-          "sha256": "27ecb11ef647999bd7486695bb1aacc3682097e6bb5742804cb6c8769c2b5364",
+          "sha256": "b9c5dda349a469b9abf9f10f3787135e6521f433f5743de399a164e14e76f7ce",
           "mode": 420
         },
         "references/tracing.md": {
-          "sha256": "ef73e71bee792e341df9cd4f60529c929ade48b538ac76e033f4f20843e8dbda",
+          "sha256": "4e397e16e6bd92d8696cb815c4ee6dc4ce0be1da9e760e261a9c30b44c7857c7",
           "mode": 420
         },
         "references/video-recording.md": {
@@ -2727,7 +2773,7 @@
       "skill": "ui-ux-pro-max",
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
       "path": ".claude/skills/ui-ux-pro-max",
-      "snapshot": "616663179c5f9b5e2b3e07cab23ac9cad76378f3",
+      "snapshot": "623a9a9037d006ea727f8213f084d02a6b6f11b5",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -3042,7 +3088,7 @@
       "skill": "verification-before-completion",
       "repo": "obra/superpowers",
       "path": "skills/verification-before-completion",
-      "snapshot": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "snapshot": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
@@ -3094,19 +3140,35 @@
   "integrity_version": 1,
   "licenses": [
     {
-      "repo": "addyosmani/agent-skills",
-      "snapshot": "aeac41d4d005999432bb7312f7ff06383a91d59d",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/addyosmani--agent-skills/LICENSE",
-      "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
-      "mode": 420
-    },
-    {
       "repo": "Appllama/appllama-skills",
       "snapshot": "dd5caaec3d5d50ad7fc0324da238119c6b7c3707",
       "source": "LICENSE",
       "destination": "vendor/licenses/Appllama--appllama-skills/LICENSE",
       "sha256": "14cffee850f5c761273dfc49798cddc96786b4520c23f3ed1da727c334f07476",
+      "mode": 420
+    },
+    {
+      "repo": "Leonxlnx/taste-skill",
+      "snapshot": "6010f91a9935f1c167dfc500fb1a475681892e6b",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Leonxlnx--taste-skill/LICENSE",
+      "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
+      "mode": 420
+    },
+    {
+      "repo": "Nutlope/hallmark",
+      "snapshot": "13ac0ec7e148655948100b6396439e481361d690",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Nutlope--hallmark/LICENSE",
+      "sha256": "06088a8b94598626f27612dea42300154bf7be967c85d9d3eee4490cb056af7d",
+      "mode": 420
+    },
+    {
+      "repo": "addyosmani/agent-skills",
+      "snapshot": "aeac41d4d005999432bb7312f7ff06383a91d59d",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/addyosmani--agent-skills/LICENSE",
+      "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
       "mode": 420
     },
     {
@@ -3119,7 +3181,7 @@
     },
     {
       "repo": "blader/humanizer",
-      "snapshot": "225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8",
+      "snapshot": "8c307f367c91bd974002f10f2be2965d642c13df",
       "source": "LICENSE",
       "destination": "vendor/licenses/blader--humanizer/LICENSE",
       "sha256": "4ac4810254ab36d45419141aeb8e69bf50652cfafe5b2dab947d06d44e5cbf96",
@@ -3127,7 +3189,7 @@
     },
     {
       "repo": "cathrynlavery/diagram-design",
-      "snapshot": "d97c5c7477e54cee17cfa6459190610da0643a05",
+      "snapshot": "7a12007b5a4246894f342a2e52e78facbc62eca3",
       "source": "LICENSE",
       "destination": "vendor/licenses/cathrynlavery--diagram-design/LICENSE",
       "sha256": "bb7e12e91fecef43024111123ff784cec6c485585561d8b552557c0173b3ed29",
@@ -3158,40 +3220,32 @@
       "mode": 420
     },
     {
-      "repo": "Leonxlnx/taste-skill",
-      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/Leonxlnx--taste-skill/LICENSE",
-      "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
-      "mode": 420
-    },
-    {
       "repo": "microsoft/playwright",
-      "snapshot": "343d8e7d0f59b91b5bbce3226fa4a2d17d023745",
+      "snapshot": "ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3",
       "source": "LICENSE",
       "destination": "vendor/licenses/microsoft--playwright/LICENSE",
       "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
       "mode": 420
     },
     {
+      "repo": "microsoft/playwright",
+      "snapshot": "ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3",
+      "source": "NOTICE",
+      "destination": "vendor/licenses/microsoft--playwright/NOTICE",
+      "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+      "mode": 420
+    },
+    {
       "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "snapshot": "616663179c5f9b5e2b3e07cab23ac9cad76378f3",
+      "snapshot": "623a9a9037d006ea727f8213f084d02a6b6f11b5",
       "source": "LICENSE",
       "destination": "vendor/licenses/nextlevelbuilder--ui-ux-pro-max-skill/LICENSE",
       "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
       "mode": 420
     },
     {
-      "repo": "Nutlope/hallmark",
-      "snapshot": "13ac0ec7e148655948100b6396439e481361d690",
-      "source": "LICENSE",
-      "destination": "vendor/licenses/Nutlope--hallmark/LICENSE",
-      "sha256": "06088a8b94598626f27612dea42300154bf7be967c85d9d3eee4490cb056af7d",
-      "mode": 420
-    },
-    {
       "repo": "obra/superpowers",
-      "snapshot": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "snapshot": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
       "source": "LICENSE",
       "destination": "vendor/licenses/obra--superpowers/LICENSE",
       "sha256": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400",
@@ -3199,7 +3253,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "2f98774f86bc05563876643db37e6c37c322850f",
+      "snapshot": "8644175285360c166e57b1e35ecadfbc85ff5209",
       "source": "LICENSE",
       "destination": "vendor/licenses/pbakaus--impeccable/LICENSE",
       "sha256": "02bb8c3b4e70190e3986c0404ad2fd8d639b4f534252d82379cc1b502b6d1812",
@@ -3207,7 +3261,7 @@
     },
     {
       "repo": "pbakaus/impeccable",
-      "snapshot": "2f98774f86bc05563876643db37e6c37c322850f",
+      "snapshot": "8644175285360c166e57b1e35ecadfbc85ff5209",
       "source": "NOTICE.md",
       "destination": "vendor/licenses/pbakaus--impeccable/NOTICE.md",
       "sha256": "c60a093c2845fd9fb82f9c6f742ece31f379f8190b535309d32d66c45ccffdcb",
@@ -3223,7 +3277,7 @@
     },
     {
       "repo": "vercel-labs/skills",
-      "snapshot": "13e4063a1cf913f5606d57d42ab83a86f5001e04",
+      "snapshot": "a80e4c9d12d607631249d4d7d059f835d4b2f13a",
       "source": "LICENSE",
       "destination": "vendor/licenses/vercel-labs--skills/LICENSE",
       "sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca",

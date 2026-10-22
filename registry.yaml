@@ -23,6 +23,16 @@ providers:
     expected_status: AVAILABLE_ON_DEMAND
 
 entries:
+  - id: portable-chat-entry
+    kind: reference
+    category: orchestration
+    provenance: local-repository
+    paths:
+      - "${REPO_ROOT}/AGENTIT.md"
+      - "${REPO_ROOT}/docs/CHAT_USAGE.md"
+      - "${REPO_ROOT}/references/agentit-profile-index.md"
+    state: AVAILABLE_ON_DEMAND
+
   - id: agentit-core-bootstrap
     kind: skill-set
     category: orchestration
@@ -39,6 +49,7 @@ entries:
     provenance: local-repository
     paths:
       - "${REPO_ROOT}/references/agentit-skill-packs.md"
+      - "${REPO_ROOT}/references/agentit-profile-index.md"
       - "${REPO_ROOT}/profiles.yaml"
     state: AVAILABLE_ON_DEMAND
 

@@ -2,11 +2,34 @@
 
 ## What JIT means here
 
-Agentit separates **availability → discovery → explicit selection → delivered bytes → host retention → observed outcome**. These are different states. A profile is not an active task, a skill ID is not its body, a digest does not prove a model followed instructions, and a new selection does not erase an existing conversation.
+Agentit separates **availability → discovery → explicit selection → delivered bytes → host retention → observed outcome**. These are different states. A profile is domain discovery plus optional installation availability, not an active task, a skill ID is not its body, a digest does not prove a model followed instructions, and a new selection does not erase an existing conversation.
 
 The primary model makes semantic decisions. Code resolves explicit IDs, reads selected material and checks structural contracts. There is no keyword classifier, fixed skill quota or automatic full-pack activation.
 
 The canonical execution-depth/risk policy lives in `skills/task-router/SKILL.md`. `using-agentit` is the entry protocol; `using-agent-skills` is the **Agentit-owned** integration adapter. The latter is no longer overwritten by the Addy upstream refresh. Upstream specialist procedures cannot override host safety, user/project constraints, granted tools or that scoped mode policy.
+
+## Portable entry and profile discovery
+
+`AGENTIT.md` contains the three exact core bodies plus generated pointers to all
+profiles. `references/agentit-profile-index.md` contains the domain skill metadata
+and real source links for the unified library. Both work through an authorized
+file/repository reader in ordinary chats; no installer or terminal is required.
+Full selected skill reads and task-specific application remain required. Native
+host discovery is an optional adapter, not a prerequisite for instruction use.
+See [chat usage](CHAT_USAGE.md).
+
+```sh
+agentit skills profiles --format json
+agentit skills candidates --profile backend --format json
+```
+
+These commands expose metadata without activating or installing profile bodies.
+Select sufficient expertise for all material task requirements. An explicitly
+justified complete profile may fit a narrow task; broad profiles should be
+selected in stages or delegated with bounded bodies. No automatic full-profile
+activation is introduced. Profile selection still does not prove body reads or
+application. Keep an application record tied to actual artifacts/checks and
+report missing reads/tools.
 
 ## Installation and discovery
 

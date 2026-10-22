@@ -18,6 +18,9 @@ const PLATFORM_SOURCE_PATH_OWNERS = Object.freeze({
   '.joycode': 'joycode',
   '.opencode': 'opencode',
   '.openclaw': 'openclaw',
+  // Pi loads ECC through `pi install`, not install-apply, so `.pi` is
+  // foreign to every install target.
+  '.pi': 'pi',
   '.codebuddy': 'codebuddy',
   '.qwen': 'qwen',
   '.zed': 'zed',

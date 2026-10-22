@@ -58,6 +58,37 @@ class UpstreamSyncTests(unittest.TestCase):
         self.assertEqual(sync.check_integrity(self.root, updated)["packages"], 1)
         self.assertEqual(sync.apply_candidate(self.root, updated, updated, desired)["changed_files"], 0)
 
+    def test_reviewed_retirement_preserves_old_package_while_active_sibling_refreshes(self):
+        retired = self.root / "skills/retired"
+        retired.mkdir()
+        (retired / "SKILL.md").write_bytes(b"retired body\n")
+        (retired / "SKILL.md").chmod(0o644)
+        self.archive(self.old_sha, {"skills/example/SKILL.md": b"old body\n",
+                                    "skills/retired/SKILL.md": b"retired body\n", "LICENSE": b"license\n"})
+        self.lock["mappings"].append({"skill": "retired", "repo": "example/skills",
+                                      "path": "skills/retired", "snapshot": self.old_sha,
+                                      "retired_upstream": {"reviewed_head": self.new_sha, "reviewed_on": "2026-10-22",
+                                                           "reason": "Upstream removed this public capability."}})
+        old, updated, desired = self.candidate()
+        active, retained = updated["mappings"]
+        self.assertEqual(active["snapshot"], self.new_sha)
+        self.assertEqual(retained["snapshot"], self.old_sha)
+        self.assertEqual(retained["retired_upstream"]["observed_head"], self.new_sha)
+        sync.apply_candidate(self.root, old, updated, desired)
+        self.assertEqual((retired / "SKILL.md").read_bytes(), b"retired body\n")
+        self.assertEqual((self.package / "SKILL.md").read_bytes(), b"new body\n")
+        self.assertIn("retired upstream", sync.provenance_markdown(updated).decode())
+
+    def test_retirement_requires_review_and_reappearing_source_requires_new_review(self):
+        for record in ({"reviewed_head": "HEAD", "reason": "removed"},
+                       {"reviewed_head": self.new_sha, "reason": ""},
+                       {"reviewed_head": self.new_sha, "reason": "removed", "reviewed_on": "invalid"},
+                       {"reviewed_head": self.new_sha, "reason": "removed", "reviewed_on": "2026-10-22"}):
+            with self.subTest(record=record):
+                self.lock["mappings"][0]["retired_upstream"] = record
+                with self.assertRaises(sync.SyncError):
+                    self.candidate()
+
     def test_initial_lock_requires_exact_old_upstream_bytes(self):
         (self.package / "SKILL.md").write_bytes(b"local edit\n")
         with self.assertRaisesRegex(sync.SyncError, "integrity differs"):

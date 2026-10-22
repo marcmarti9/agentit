@@ -6,6 +6,16 @@ Read this for a material positioning, campaign, launch, CRO or customer-research
 
 Set the business decision the work must inform: choose an ICP, revise a message, fund a channel, improve a conversion step, or decide whether a launch is ready. Capture the offer, intended customer, current alternative, available proof, operating constraint, target behavior and review window. If the proposed claim cannot be supported by product truth or customer evidence, remove or qualify it before creative production.
 
+Before proposing copy or paid experiments, inspect the project's existing marketing context and recorded learnings. Reuse established offer names, approved constraints, conversion definitions, spending floors and limits. Do not present a previously tested angle, audience, offer or format as a new idea; apply its recorded lesson unless new evidence or the user changes it. Use an existing context location rather than requiring a particular host-specific filename.
+
+## Diagnose a paid account before changing it
+
+For an operating check, inspect spend, traffic, conversions, creative, landing page and tracking in that order, comparing movements with change history. Separate brand from non-brand and account for attribution windows, conversion lag and sample size. If the inputs are unreliable, investigate them before recommending spend changes.
+
+End the check with one bounded decision: **HOLD** for normal variance or insufficient evidence; **FIX** for an observed problem with a known remedy; **TEST** for a falsifiable hypothesis with a metric, exposure cap and stopping rule; or **INVESTIGATE** when data reliability prevents the other decisions. These labels organize a recommendation and do not authorize live account changes.
+
+Separate observed facts, hypotheses and missing data in the readout. Label unavailable inputs **MISSING** instead of estimating account figures. Propose a material account change with current state, intended change, expected effect and rollback, and obtain the required authorization before applying it.
+
 ## Build a traceable customer-evidence set
 
 Use three evidence modes deliberately:

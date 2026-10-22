@@ -63,6 +63,11 @@ jobs:
       - name: Verify opt-in catalog and adaptation provenance
         run: python3 scripts/check_skill_curation.py
 
+      - name: Verify unified profile coverage and portable core entry
+        run: |
+          python3 scripts/build_profile_index.py --check
+          python3 scripts/build_chat_entry.py --check
+
       - name: Verify complete pinned ECC source
         if: steps.scope.outputs.run_full == 'true'
         run: python3 scripts/ecc_integrate.py

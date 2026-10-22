@@ -19,6 +19,7 @@ import tarfile
 import tempfile
 import urllib.request
 from pathlib import Path, PurePosixPath
+from datetime import date
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -245,7 +246,25 @@ def build_candidate(root: Path, lock: dict, heads: dict, cache: Path, *, offline
     updated["licenses"] = []
     desired = {}
     for item in updated["mappings"]:
-        item["snapshot"] = heads[item["repo"]]
+        latest_sha = heads[item["repo"]]
+        retired = item.get("retired_upstream")
+        if retired is not None:
+            if (not isinstance(retired, dict)
+                    or not re.fullmatch(r"[0-9a-f]{40}", str(retired.get("reviewed_head", "")))
+                    or not isinstance(retired.get("reason"), str) or not retired["reason"].strip()):
+                raise SyncError(f"invalid retired upstream record: {item['skill']}")
+            try:
+                date.fromisoformat(retired.get("reviewed_on", ""))
+            except (ValueError, TypeError) as exc:
+                raise SyncError(f"invalid retired upstream review date: {item['skill']}") from exc
+            # A reviewed retirement preserves its last canonical bytes. Never
+            # silently delete a public skill or relabel the old body as latest.
+            source = item["path"].strip("/")
+            if ("SKILL.md" if source == "." else f"{source}/SKILL.md") in snapshot(item["repo"], latest_sha):
+                raise SyncError(f"retired upstream package reappeared; review its retention policy: {item['skill']}")
+            retired["observed_head"] = latest_sha
+        else:
+            item["snapshot"] = latest_sha
         item.pop("replaces", None)
         # The upstream meta-workflow remains verbatim source material; Agentit's
         # own global adapter keeps the stable using-agent-skills public ID.
@@ -284,7 +303,8 @@ def provenance_markdown(lock: dict) -> bytes:
     lines = ["# Skill provenance registry", "", "Canonical packages are copied byte-for-byte from pinned upstream commits. File hashes, modes, repository-root package selections and original license/NOTICE files are recorded in `UPSTREAM_LOCK.json`. Agentit authority and composition remain outside these packages.", "", "| Skill source | Distributed path | Upstream snapshot |", "| --- | --- | --- |"]
     for item in lock["mappings"]:
         link = f"https://github.com/{item['repo']}/tree/{item['snapshot']}/{item['path']}"
-        lines.append(f"| `{item['skill']}` | `{package_destination(item)}` | [{item['repo']}@{item['snapshot'][:12]}]({link}) |")
+        status = " (retired upstream; retained last canonical package)" if item.get("retired_upstream") else ""
+        lines.append(f"| `{item['skill']}` | `{package_destination(item)}` | [{item['repo']}@{item['snapshot'][:12]}]({link}){status} |")
     lines += ["", "`skills/using-agent-skills` is an Agentit-owned adapter; its raw upstream source is retained separately under `vendor/agent-skills`. Other packages absent from this registry are Agentit-owned or source-informed composites described in `THIRD_PARTY_NOTICES.md`.", "", "Verify offline with `python3 scripts/sync_upstream_skills.py`. Plan a refresh with `--refresh`; use `--refresh --apply` only after reviewing the source changes. No upstream scripts or dependency installers are executed.", ""]
     return "\n".join(lines).encode()
 
@@ -392,6 +412,10 @@ def main(argv=None) -> int:
                 raise SyncError("heads map must contain exactly the locked source repositories")
             old, updated, desired = build_candidate(ROOT, lock, heads, args.cache_dir, offline=args.offline)
             result = {"status": "plan", "packages": len(updated["mappings"]), "source_commits": heads, "candidate_files": len(desired)}
+            retained = [{"skill": item["skill"], "snapshot": item["snapshot"], **item["retired_upstream"]}
+                        for item in updated["mappings"] if item.get("retired_upstream")]
+            if retained:
+                result["retained_retired_packages"] = retained
             if args.apply:
                 result.update(apply_candidate(ROOT, old, updated, desired))
         print(json.dumps(result, indent=2, sort_keys=True))

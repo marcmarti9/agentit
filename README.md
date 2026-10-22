@@ -5,9 +5,13 @@
 
 **A provider-neutral reliability and just-in-time expertise layer for capable AI agents.**
 
-Agentit gives coding agents a compact operating protocol for material work: start from a tiny clean core, choose the right expertise only when it is useful, challenge important decisions independently, use current references when needed, delegate with bounded context, preserve durable project knowledge, verify execution with fresh evidence, and ship reviewable changes.
+Agentit gives chat assistants and coding agents a compact operating protocol for material work: start from a tiny clean core, choose the right expertise only when it is useful, challenge important decisions independently, use current references when needed, delegate with bounded context, preserve durable project knowledge, verify execution with fresh evidence, and ship reviewable changes.
 
-It is open source under Apache-2.0 and is designed to sit around the coding agent you already use.
+It is open source under Apache-2.0. Start by reading **[AGENTIT.md](AGENTIT.md)**:
+three complete core instructions plus purpose pointers for every profile. Then
+open the selected skill files and apply them to the task. This works through an
+authorized file/repository reader in an ordinary chat, as well as coding agents.
+Installation is optional; it does not by itself mean Agentit was used.
 
 ```text
 You + capable coding agent
@@ -42,18 +46,15 @@ You + capable coding agent
  branch → PR → human merge
 ```
 
-## ECC + Agentit
+## One expertise library
 
-The complete pinned ECC 2.2.3 source is included: skills, agents, commands, hooks,
-rules, memory, native tools and host adapters. One JIT catalog exposes **398
-canonical skills** (98 Agentit + 300 ECC), with eleven explicit redundant-name
-resolutions. Agentit's three-body core, BUILDER/REVIEW, Remotion expertise,
-worker contracts and verified runtime remain intact. No global ECC hook,
-transcript collector or provider configuration is enabled by importing it.
-
-See [ECC integration, native tools and deduplication](docs/ECC_INTEGRATION.md).
-`agentit ecc status` shows the actual inventory; `agentit ecc verify` checks the
-retained source. Native host setup remains a separate, explicitly scoped action.
+Agentit-owned and imported skills share the same
+[domain profiles and direct source pointers](references/agentit-profile-index.md).
+Discover by task/domain, not upstream brand. Canonical aliases resolve redundant
+names to one owner. `vendor/ecc` retains original sources and licenses; it is a
+provenance boundary, not a second profile system. Importing source does not enable
+native hooks, logging or provider configuration. See
+[upstream integration details](docs/ECC_INTEGRATION.md).
 
 ## JIT assurance and limits
 
@@ -70,20 +71,24 @@ Native host/model behavior still needs its own observed evaluation.
 
 ## Quick start
 
-Give this repository to a compatible coding agent and ask it:
+Give the chat or agent authorized access to this repository, then ask:
 
 ```text
-Install Agentit for this environment, inspect the installation plan before applying it,
-and then use Agentit automatically for material work.
+Use Agentit for this task. Read AGENTIT.md completely, inspect the profile
+pointers, then read the full relevant skill files and apply their procedures.
+Finish the requested work and report actual verification and access limitations.
 ```
 
-After installation, work normally. The agent makes a first-task semantic decision:
+For a chat without repository access, provide `AGENTIT.md`, the profile index,
+and the selected skill files as uploads. The starter does not contain domain
+bodies. For recurring use, put the startup instruction in the host's project
+instructions and make the files available as project sources. See
+[chat and coding-agent usage](docs/CHAT_USAGE.md).
 
-```text
-DISPATCH_DECISION: bare | agentit
-```
-
-Trivial work can stay direct. Material work activates Agentit's JIT workflow.
+Adapters can optionally install the three navigation skills for native host
+discovery. After installation, explicit Agentit requests and material work follow
+the same read → select → read bodies → apply → verify path. Trivial work can stay
+direct. A delivery receipt records bytes, not model compliance.
 
 For maintainers and agents that want the explicit bootstrap surface:
 
@@ -118,7 +123,8 @@ The core also carries two universal invariants without loading extra specialist 
 Agentit deliberately separates what is installed from what is active:
 
 ```text
-profile installed      = skills available for discovery
+profile inspected      = domain expertise and source paths discovered
+profile installed      = optional private availability cache
 pack inspected         = capabilities visible as possibilities
 delivered skill body   = content available to this stage; not proof of compliance
 MCP configured         = tool available to the host

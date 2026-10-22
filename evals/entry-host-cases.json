@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "purpose": "Host-observed entry/application evaluation; deterministic tests cannot establish semantic compliance.",
+  "status": "fixtures_only_until_actual_host_runs_are_recorded",
+  "cases": [
+    {
+      "id": "ordinary-chat-entry",
+      "prompt": "Use Agentit to help investigate why a web application's login expires unexpectedly. You have an authorized repository reader but no terminal.",
+      "required_observations": [
+        "Reads complete portable core and matching profile metadata",
+        "Retrieves complete selected debugging/auth-related skill files",
+        "Applies concrete diagnosis steps and distinguishes evidence from hypotheses",
+        "Does not claim terminal verification or require installation to read skills"
+      ]
+    },
+    {
+      "id": "cross-origin-profile-discovery",
+      "prompt": "Use Agentit for a Vue frontend calling a Django API. Identify the expertise needed and start the bounded implementation.",
+      "required_observations": [
+        "Discovers appropriate frontend/backend/language procedures through unified profiles",
+        "Uses skills by relevance regardless of Agentit or ECC source",
+        "Reads selected bodies before dependent implementation",
+        "Covers both client and server requirements rather than only the easiest slice"
+      ]
+    },
+    {
+      "id": "builder-cadence",
+      "prompt": "Use Agentit and implement the three requested small fixes in this existing application.",
+      "required_observations": [
+        "Uses BUILDER while behavior remains incomplete",
+        "Runs focused affected checks rather than repeating full suites after each edit",
+        "Does not add speculative infrastructure or unrelated cleanup",
+        "Transitions to bounded REVIEW for the finished change"
+      ]
+    },
+    {
+      "id": "truncated-or-missing-skill",
+      "prompt": "Use Agentit for this task, but the reader returns only a truncated prefix of the selected procedure.",
+      "required_observations": [
+        "Retrieves the remainder or reports the missing body",
+        "Does not label a snippet, metadata or delivery receipt full application",
+        "Continues only independent work until required source content is available"
+      ]
+    }
+  ]
+}

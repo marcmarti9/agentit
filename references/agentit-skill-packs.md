@@ -43,44 +43,95 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 
 ---
 
-## engineering
+The same canonical skill library is grouped by purpose below and in [the profile index](agentit-profile-index.md). Upstream source names are provenance, never separate runtime catalogs. Use `agentit skills profiles` and `agentit skills candidates --profile ID` for inherited profile membership and body cost. Legacy `ecc-*` pack IDs remain compatibility aliases in the CLI.
 
-**Use for:** general implementation, bugs, refactors, repository changes, code quality, architecture, testing, debugging, security-sensitive code, performance work and engineering delivery.
+## marketing
+
+**Use for:** ICP/customer research, positioning, copy, campaigns, content strategy, email, CRO, launch planning and marketing operations.
 
 **Skills in this pack:**
 
-- `property-based-testing` — generated-domain invariants, independent properties, generators and shrinking; not ordinary example tests.
-- `security-analysis` — scanner/SARIF triage, source-to-sink proof and variants of confirmed flaws; not routine hardening.
+- `advertising-video-production` — actual timed video-ad production, proof and creative variants; no ads-account operations.
+
+- `data-analysis-quality` — validate campaign/funnel/cohort claims before drawing conclusions.
 
 
-- `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
-
-- `reliable-coding` — preferred JIT coding discipline: minimal changes, proportionate BUILDER checks, focused REVIEW and fresh proof; do not stack overlapping general-purpose skills.
-- `anti-overengineering` — enforce BUILDER throughput and REVIEW depth without speculative architecture or repeated full-suite churn.
-- `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
-- `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
-- `planning-and-task-breakdown` — decompose non-trivial work when an explicit execution plan would help.
-- `test-driven-development` — use behavioral tests to drive or prove implementation when TDD fits the change.
-- `code-review-and-quality` — independent correctness/quality review before accepting meaningful code changes.
-- `code-simplification` — reduce unnecessary complexity while preserving proven behavior.
-- `constraint-driven-development` — write a project quality bar (`CONSTRAINTS.md`) and keep agents from quietly lowering it.
-- `verification-before-completion` — fresh evidence before done/fixed/passing claims.
-- `verification-gauntlet` — only for multiple material evidence surfaces; broader verification discipline when multiple evidence surfaces matter.
-- `doubt-driven-development` — adversarially challenge unfamiliar, risky or consequential engineering decisions.
-- `security-and-hardening` — threat modeling, trust boundaries, auth, secrets, input handling and hardening when security is materially involved.
-- `performance-optimization` — measure and optimize real bottlenecks rather than guessing.
-- `source-driven-development` — version-specific technical contracts; current official framework/library/protocol documentation materially affects correctness.
-- `architect-orchestrator` — structural decomposition, architectural ownership or multi-stage coordination when one direct execution path is insufficient.
-- `specialist-agent-routing` — spawn bounded specialists only when specialization, independence or context isolation is useful.
-- `context-engineering` — control large or fragmented engineering context deliberately.
-- `git-workflow-and-versioning` — branch/commit/history discipline when Git handoff matters.
-- `documentation-and-adrs` — preserve durable architecture/decision knowledge when it would be expensive to rediscover.
-- `diagram-design` — choose a truthful architecture/flow visualization route when spatial structure materially improves engineering understanding.
-- `observability-and-instrumentation` — logs, metrics, traces and operational diagnostics when runtime behavior matters.
-- `ci-cd-and-automation` — CI/CD and automated quality gates.
-- `deprecation-and-migration` — safely retire or migrate interfaces/systems while preserving compatibility requirements.
+- `marketing-and-growth` — main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.
+- `shipping-and-launch` — launch/distribution readiness and operational launch checks.
+- `humanizer` — preserve claims and brand voice while removing generic/robotic wording, structural AI tells and unsupported hype.
+- `reference-intelligence` — source-role/provenance judgment; current competitor/market/launch evidence and source provenance.
+- `source-driven-development` — version-specific technical contracts; current platform/API/policy behavior when it affects execution.
+- `doubt-driven-development` — challenge high-impact strategy, claims or unsupported assumptions.
+- `context-engineering` — large customer/competitor/content evidence sets.
+- `documentation-and-adrs` — durable campaign/positioning decisions when worth preserving.
 
 ---
+
+## seo
+
+**Use for:** technical SEO, local SEO/GBP, search opportunity discovery, schema, search/content gaps, indexability, generative-AI search visibility and measurable organic-growth loops.
+
+**Skills in this pack:**
+
+- `marketing-and-growth` — the single SEO operating skill. Load `references/seo-growth-loop.md` for general/technical/search-loop work and `references/local-seo.md` for local/GBP work; load both only when the task spans both.
+- `source-driven-development` — version-specific technical contracts; current search engine, structured-data, GBP and platform documentation.
+- `context-engineering` — large GSC/site/query/competitor/GBP evidence sets.
+- `reference-intelligence` — source-role/provenance judgment; current competitor/search evidence, authority classification and provenance.
+- `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
+- `browser-testing-with-devtools` — rendered/indexability/runtime checks.
+- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO, location expansion or large-scale changes.
+- `verification-before-completion` — evidence that technical/local changes actually landed and behave as expected.
+
+AEO/GEO is not a parallel permanent skill by default. Treat it as a search surface inside the same SEO operating loop and use current platform-specific evidence when the behavior diverges.
+
+---
+
+## agent-runtime
+
+**Use for:** explicit skill discovery, model/provider capability selection, resumable work and user-requested interaction adaptation. These are optional support procedures, not a mandatory task lifecycle.
+
+**Skills in this pack:**
+
+- `find-skills` — discover an absent durable capability only after checking existing project/library fit.
+- `skillfinder-external-scout` — heavyweight semantic fallback across the external skill ecosystem; use only when local/catalog discovery is insufficient or explicitly requested.
+- `local-model-routing` — assess an actually available local model endpoint; no automatic routing implementation is implied.
+- `long-horizon-recovery` — resumable multi-session work with fresh selection and bounded private checkpoints.
+- `i-have-adhd` — only on explicit user request; do not infer a diagnosis, impose persistence across new tasks, or override user/host output constraints.
+- `mcp-tooling-fit` — choose tools from observed capability and authorization, not their mere presence.
+- `skill-authoring-and-evals` — author or evaluate Agentit/agent skills when the task itself is maintaining the instruction system.
+
+---
+
+## Cross-cutting rules
+
+- A skill may appear in multiple packs. Packs are **views over capabilities**, not ownership boundaries.
+- Pack order does not imply priority.
+- Skill order inside a pack does not imply priority or execution sequence.
+- There are no hidden pack levels or recommended counts.
+- The primary AI may inspect multiple packs and choose any justified subset.
+- Profiles classify installation/discovery availability; packs classify semantic possibilities; neither one is active runtime context by itself.
+- Every new session re-selects non-core skill bodies, references and tools from the actual current task.
+- General Agentit procedures are provider/model-neutral; provider-specific details belong only where the real integration/source requires them.
+- `reference-intelligence` is JIT, not global. Load it when source/provenance judgment is material.
+- `mcp-tooling-fit` is JIT when external tool/MCP selection itself needs judgment.
+- `security-and-hardening` is JIT when a real security/trust boundary exists, not for every code edit.
+- `architect-orchestrator` / `specialist-agent-routing` are JIT when orchestration/delegation actually helps.
+- `long-horizon-recovery` is JIT for long/resumable work.
+- `design-md-workflow` is JIT even when `DESIGN.md` persists as durable project knowledge.
+- `diagram-design` is JIT; a diagram tool is never required merely because a task is technical.
+- The base Agentit protocol still requires appropriate verification and documentation-drift checks even when no dedicated verification/documentation skill body is selected.
+
+## Missing pack or skill
+
+If no pack covers the domain well:
+
+1. do not force the nearest unrelated pack;
+2. use current authoritative sources for the domain when needed;
+3. inspect project-local skills;
+4. use `find-skills` / approved skill discovery if a reusable specialist procedure would materially help;
+5. create/adapt a new skill only when the procedure is durable and likely to recur.
+
+> **Packs are a map, not a prison. The model decides the route and how much knowledge it needs.**
 
 ## frontend
 
@@ -111,6 +162,189 @@ Do not infer a skill count from pack size, task size, risk label, worker title, 
 - `verification-before-completion` — fresh runtime/build/test evidence before completion claims.
 
 If visual direction is material, inspect the `design` pack too. That does not require loading the whole design pack.
+
+- `anti-overengineering` — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
+- `constraint-driven-development` — Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar — new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about — accessibility, web performance, coverage — set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+- `specialist-agent-routing` — Select and use temporary domain specialists with bounded JIT context and concrete task-scoped skills.
+- `react-patterns` — React 18/19 patterns including hooks discipline, server/client component boundaries, Suspense + error boundaries, form actions, data fetching, state management decision trees, and accessibility-first composition. Use when writing or reviewing React components.
+- `react-performance` — React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/vercel-labs/agent-skills). Organizes 70+ rules across 8 priority categories — waterfalls, bundle size, server-side, client fetching, re-render, rendering, JS micro-perf, advanced. Use when writing, reviewing, or refactoring React/Next.js code for performance.
+- `react-testing` — React component testing with React Testing Library, Vitest/Jest, MSW for network mocking, accessibility assertions with axe, and the decision boundary between component tests and Playwright/Cypress end-to-end runs. Use when writing or fixing tests for React components, hooks, or pages.
+- `frontend-a11y` — Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building or reviewing forms, modals, dropdowns, tooltips, or tabs, fixing a11y lint or code-review findings, or wiring up keyboard navigation and focus management.
+- `browser-qa` — Run automated post-deploy UI verification with a browser automation MCP (claude-in-chrome, Playwright, or Puppeteer): console-error and Core Web Vitals smoke checks, form and auth-flow interaction tests, screenshot visual regression across three breakpoints, and axe-core accessibility audits ending in a SHIP / DO-NOT-SHIP verdict. Use when testing a deployed feature on staging or preview, before shipping frontend changes, reviewing a frontend PR, or checking responsive layout and accessibility.
+- `vue-patterns` — Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia projects. Use when building or reviewing Vue 3, Nuxt, or Pinia code — Composition API, reactivity, or router navigation.
+- `vite-patterns` — Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Activate when working with vite.config.ts, Vite plugins, or Vite-based projects.
+- `nextjs-turbopack` — Next.js 16+ and Turbopack guidance — incremental Rust bundling, file-system caching, faster dev startup and HMR, Turbopack vs webpack tradeoffs, and the middleware.ts to proxy.ts filename change. Use when developing or debugging Next.js 16+ apps, diagnosing slow dev startup or hot reload, choosing between bundlers, or reviewing middleware/proxy file naming.
+- `accessibility` — Design, implement, and audit accessible UI to WCAG 2.2 Level AA across Web, iOS, and Android — semantic ARIA roles and labels, accessibility traits and hints, focus management, contrast, target size, and screen-reader support. Use when building or auditing UI for accessibility compliance, keyboard navigation, or screen-reader support.
+- `angular-developer` — Generates Angular code and provides architectural guidance. Trigger when creating projects, components, or services, or for best practices on reactivity (signals, linkedSignal, resource), forms, dependency injection, routing, SSR, accessibility (ARIA), animations, styling (component styles, Tailwind CSS), testing, or CLI tooling.
+- `click-path-audit` — Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work but cancel each other out, produce wrong final state, or leave the UI in an inconsistent state. Use when: systematic debugging found no bugs but users report broken buttons, or after any major refactor touching shared state stores.
+- `design-system` — Generate a design system from an existing codebase or audit one for visual consistency: extract tokens (colors, typography, spacing, shadows) into design-tokens.json and CSS custom properties with DESIGN.md rationale and an interactive HTML preview, score the UI across 10 dimensions, and flag AI-slop patterns. Use when starting a design system, auditing visual consistency before a redesign, or reviewing a PR that touches styling.
+- `e2e-testing` — Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies. Use when writing Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
+- `frontend-design-direction` — Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applications, components, landing pages, visual tools, or any web UI that needs stronger product-specific design judgment.
+- `frontend-patterns` — Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. Use when building or reviewing React or Next.js components, state, or render performance.
+- `inherit-legacy-style` — Prevent AI style drift on legacy projects by scanning the codebase for implicit conventions, resolving conflicts with the operator one at a time, and writing an enforceable .ai-style-rules.md (Golden Files, naming rules, DONTs) plus an optional CLAUDE.md hook. Use when onboarding an AI agent onto a hand-written legacy codebase or extracting a project's unwritten coding rules.
+- `make-interfaces-feel-better` — Apply concrete design-engineering details that make interfaces feel polished. Use when reviewing or improving UI spacing, typography, borders, shadows, motion, hit areas, icons, text wrapping, and interaction states.
+- `motion-advanced` — Advanced motion patterns for React / Next.js — drag & drop, gestures, text animations, SVG path drawing, custom hooks, imperative sequences (useAnimate), loaders, and the full API decision tree. Requires motion-foundations. Use when building drag and drop, gestures, text or SVG animation, or imperative animation sequences in React or Next.js.
+- `motion-foundations` — Motion tokens, spring presets, performance rules, device adaptation, accessibility enforcement, and SSR safety for React / Next.js using motion/react. Foundation layer — all other motion skills depend on this. Use when setting up motion tokens, spring presets, reduced-motion handling, or SSR-safe animation in React or Next.js.
+- `motion-patterns` — Production-ready animation patterns for React / Next.js — button, modal, toast, stagger, page transitions, exit animations, scroll, and layout — built on motion-foundations tokens and springs. Use when animating a specific UI element in React or Next.js — button, modal, toast, stagger, page transition, or scroll.
+- `nuxt4-patterns` — Nuxt 4 app patterns for hydration safety, performance, route rules, lazy loading, and SSR-safe data fetching with useFetch and useAsyncData. Use when building or reviewing a Nuxt 4 app, or debugging hydration mismatches and SSR-safe data fetching.
+- `ui-to-vue` — Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, Element Plus, or Ant Design Vue.
+
+---
+
+## backend
+
+**Use for:** APIs, integrations, services, server-side architecture, runtime operations and backend trust boundaries.
+
+**Skills in this pack:**
+
+- `property-based-testing` — codecs, validators, numeric rules and state-transition invariants with generators.
+- `security-analysis` — trace a suspected source-code vulnerability to its control and impact.
+- `data-analysis-quality` — metric/query-output grain and reconciliation; not API implementation or database operation.
+
+
+- `reliable-coding` — default lean implementation and review discipline; specialist security checks remain separate.
+- `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
+
+- `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
+- `mcp-server-development` — design and implement MCP server/tool surfaces; not for merely selecting or calling an existing MCP.
+- `observability-and-instrumentation` — logs, metrics, traces and diagnostics.
+- `test-driven-development` — service/API behavior proof when useful.
+- `code-simplification` — avoid accidental service/framework complexity.
+- `verification-before-completion` — fresh runtime/test evidence.
+- `security-and-hardening` — auth, secrets, PII, permissions and trust boundaries.
+- `performance-optimization` — measured server/data-path optimization.
+- `source-driven-development` — version-specific technical contracts; current protocols/framework/provider contracts.
+- `architect-orchestrator` — structural or multi-service work.
+- `debugging-and-error-recovery` — reproduce/localize backend failures.
+- `deprecation-and-migration` — interface/service migration and compatibility work.
+- `diagram-design` — communicate service topology/flows when a maintained visual is materially clearer than prose.
+
+- `anti-overengineering` — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
+- `constraint-driven-development` — Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar — new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about — accessibility, web performance, coverage — set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+- `api-design` — REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs. Use when designing or reviewing REST endpoints, resource names, status codes, pagination, or versioning.
+- `api-connector-builder` — Build a new API connector or provider by matching the target repo's existing integration pattern exactly. Use when adding one more integration without inventing a second architecture.
+- `backend-patterns` — Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes. Use when building or reviewing Node.js, Express, or Next.js API routes and their data access.
+- `error-handling` — Patterns for robust error handling across TypeScript, Python, and Go. Covers typed errors, error boundaries, retries, circuit breakers, and user-facing error messages. Use when designing error types, retries, circuit breakers, or user-facing failure messages in TypeScript, Python, or Go.
+- `database-migrations` — Safe, reversible database migration patterns: forward-only production changes, expand-contract zero-downtime renames, concurrent indexes, batched backfills, and per-tool workflows for PostgreSQL, Prisma, Drizzle, Kysely, Django, and golang-migrate. Use when writing a schema or data migration, adding a column or index to a large table, planning a rollback, or preparing a zero-downtime deploy.
+- `postgres-patterns` — PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL schemas, indexes, or RLS policies, or when a query is too slow.
+- `redis-patterns` — Redis data structure patterns, caching strategies, distributed locks, rate limiting, pub/sub, and connection management for production applications. Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis, or when key design needs review.
+- `mcp-server-patterns` — Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for latest API. Use when building or debugging an MCP server — tools, resources, prompts, validation, or transport choice.
+
+---
+
+## supabase
+
+**Use for:** Work with Supabase, PostgreSQL and database migrations.
+
+**Skills in this pack:**
+
+- `supabase-postgres-best-practices` — Postgres best practices maintained by Supabase, for Postgres running anywhere. Load this skill BEFORE writing or changing anything that lives in a Postgres database: creating or altering tables and columns (including choosing column types), schema design, migrations and declarative schema files, RLS policies and the tests that verify them, indexes, triggers, database functions, queues and scheduled jobs (pg_cron, pgmq), vector/semantic search (pgvector), and restoring dumps (pg_restore) or importing data. Also load it when diagnosing slow queries, high CPU, timeouts, EXPLAIN plans, connection exhaustion, locking, bloat, or rows visible to the wrong user or tenant. This is not just a performance guide — schema, migration, security, and SQL authoring tasks need these rules too, even for a one-column change or a single query.
+- `postgres-patterns` — PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL schemas, indexes, or RLS policies, or when a query is too slow.
+- `database-migrations` — Safe, reversible database migration patterns: forward-only production changes, expand-contract zero-downtime renames, concurrent indexes, batched backfills, and per-tool workflows for PostgreSQL, Prisma, Drizzle, Kysely, Django, and golang-migrate. Use when writing a schema or data migration, adding a column or index to a large table, planning a rollback, or preparing a zero-downtime deploy.
+
+---
+
+## product
+
+**Use for:** product discovery, ambiguous feature decisions, requirements, specifications, prioritization and product/technical trade-offs.
+
+**Skills in this pack:**
+
+- `data-analysis-quality` — validate counts, rates and product evidence before a product decision.
+
+
+- `adversarial-idea-review` — challenge business/product ideas before committing; not a substitute for code review.
+- `spec-kit-workflow` — only when Spec Kit is present or explicitly requested; opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.
+
+- `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
+- `idea-refine` — explore and refine an early concept before committing to one shape.
+- `spec-driven-development` — explicit requirements, scope and acceptance criteria.
+- `planning-and-task-breakdown` — turn a decided outcome into executable units when useful.
+- `documentation-and-adrs` — preserve durable product/architecture decisions.
+- `doubt-driven-development` — challenge high-impact assumptions and alternatives.
+- `reference-intelligence` — source-role/provenance judgment; market/product/comparable evidence materially affects the decision.
+- `architect-orchestrator` — broad product + technical decomposition or multi-stage ownership.
+- `marketing-and-growth` — product positioning/growth concerns are genuinely part of the decision.
+- `diagram-design` — journey/flow/story-map visuals when they materially clarify a product decision.
+
+- `verification-before-completion` — Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+- `ux-heuristic-review` — Review a concrete user task or prototype flow for navigation, comprehension, state transitions, error prevention/recovery and user control. Use for an expert usability walkthrough before or after implementation. Not a visual polish pass, participant research, keyboard/AT certification or a reason to redesign a functioning flow.
+- `design-critique` — Produce a read-only, brief-calibrated visual and copy critique of supplied UI, with located findings, evidence limits, priorities and retest instructions. Use for an actionable second opinion or comparison of rendered alternatives. Not a builder, automatic polish pass, usability study or accessibility certification; choose this or Impeccable critique as the primary review method, not both by default.
+- `accessibility-design-review` — Review an existing interface or flow for usable names, semantics, keyboard operation, focus, forms, dynamic states, reflow, cognitive comprehension when relevant, and evidence boundaries. Use for a scoped accessibility/design review; do not use to certify WCAG conformance, install a scanner, or automatically remediate source.
+- `market-research` — Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions.
+- `product-lens` — Validate the why before building through four product diagnostics — a YC-style product diagnostic that produces PRODUCT-BRIEF.md with a go/no-go recommendation, a founder review scoring product-market-fit signals, a user journey audit measuring time-to-value, and ICE feature prioritization. Use when pressure-testing product direction, choosing between features, sanity-checking a launch, or converting a vague idea into a product brief.
+- `competitive-platform-analysis` — Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmarking begins. Decides who counts as a competitor, which tier they belong to, and which sources to mine. First step in the three-skill competitive pipeline; precedes benchmark-methodology.
+- `investor-materials` — Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
+
+---
+
+## executive
+
+**Use for:** company-level strategy, finance, people, legal, operations, marketing, product, board/governance and executive-priority decisions where specialist business judgment or cross-functional synthesis materially improves the result.
+
+**Skills in this pack:**
+
+- `data-analysis-quality` — audit business metric definitions and source reconciliation before consequential advice.
+- `artifact-production` — usable board/report/deck files when a reusable artifact is requested.
+
+
+- `executive-orchestration` — single accountable executive synthesis, model-owned specialist selection, bounded fan-out, conflict resolution, company context and authority boundaries.
+- `executive-strategy` — positioning, market choice, moat, strategic options, partnerships, build/buy/partner and explicit non-goals.
+- `executive-finance` — cash/runway, unit economics, scenarios, pricing economics, ROI and capital allocation.
+- `executive-people` — role design, hiring, compensation, performance, retention and organization structure.
+- `executive-legal` — contract/IP/employment/privacy/regulatory framing with jurisdiction-aware evidence and qualified-counsel escalation.
+- `executive-operations` — bottlenecks, process, automation, vendor dependencies, capacity and operating metrics.
+- `executive-marketing` — ICP, positioning, GTM, channel/funnel economics, brand/demand and retention-linked marketing decisions.
+- `executive-product` — customer problem, PMF evidence, prioritization, sequencing, make/buy and product investment gates.
+- `executive-board` — board/investor narrative, KPI/variance, governance, material risks and explicit asks.
+- `executive-chief-of-staff` — triage, decision queue, ownership, blockers, follow-ups and operating cadence.
+- `adversarial-idea-review` — kill/pivot/gate a company-level idea before commitment.
+- `specialist-agent-routing` — bounded executive specialists only when independent expertise/context isolation/parallelism earns its coordination cost.
+- `reference-intelligence` — source-role/provenance judgment; current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
+- `source-driven-development` — version-specific technical contracts; current authoritative sources for changing domain rules/contracts/platform behavior.
+- `context-engineering` — large company/financial/customer/market evidence sets without dumping all context into every specialist.
+- `doubt-driven-development` — adversarially challenge high-impact bets and fragile assumptions.
+- `planning-and-task-breakdown` — turn a decided executive action into owned, sequenced work when useful.
+- `documentation-and-adrs` — preserve durable decisions/assumptions/ownership when rediscovery would be costly.
+- `verification-before-completion` — verify factual/action completion claims rather than accepting executive-sounding prose.
+- `marketing-and-growth` — deeper campaign/CRO/content/SEO execution after an executive marketing decision when needed.
+
+The `executive` profile is deliberately broad because profiles are installation/discovery surfaces. Installing or enabling it does **not** activate this pack or any executive skill body. A finance-only task may load only `executive-finance`; a cross-functional decision may load `executive-orchestration` plus whichever independent specialists can genuinely change the recommendation. Never preload the executive bench as a committee.
+
+Executive skills decide at the business-function level. Pair them with engineering, product, marketing, release or other operational skills only when the decision proceeds into actual implementation.
+
+- `interview-me` — Extracts what the user actually wants instead of what they think they should want. Achieves this through one-question-at-a-time interview until ~95% confidence about the underlying intent. Use when an ask is underspecified ("build me X" without "for whom" or "why now"), when the user explicitly invokes ("interview me", "grill me", "are we sure?", "stress-test my thinking"), or when you catch yourself silently filling in ambiguous requirements before any plan, spec, or code exists.
+- `investor-materials` — Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
+- `investor-outreach` — Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging.
+- `finance-billing-ops` — Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales snapshot, pricing comparison, duplicate-charge diagnosis, or code-backed billing reality instead of generic payments advice.
+- `competitive-report-structure` — Assemble scored competitor profile cards (from benchmark-methodology) into a decision-grade competitive report with landscape map, competitor tiers, benchmarking matrix, white-space analysis, strategic recommendations, and team alignment trigger questions. Use when presenting competitive findings to leadership or a board, writing a competitive landscape report, or as the final step of the competitive analysis pipeline.
+
+---
+
+## writing
+
+**Use for:** documentation, technical prose, reports, explanations and externally visible written material.
+
+**Skills in this pack:**
+
+- `artifact-production` — reusable PDF/document/spreadsheet/deck production and verification; not ordinary chat prose.
+
+
+- `stop-slop` — optional alternative editorial pass to humanizer; do not stack rigid style rules or remove factual qualifications.
+
+- `humanizer` — primary editorial rewrite preserving meaning/voice; choose it or stop-slop, not both by default.
+- `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state, no tangents.
+- `documentation-and-adrs` — durable technical/project documentation and decision records.
+- `skill-authoring-and-evals` — create/edit agent-facing skills and instruction docs, tune triggers, progressive disclosure and selection/delivery evals.
+- `source-driven-development` — version-specific technical contracts; factual/current source-grounded writing.
+- `reference-intelligence` — source-role/provenance judgment; multi-source reports, source roles and provenance.
+- `doubt-driven-development` — adversarial factual/argument review when stakes warrant it.
+- `context-engineering` — large source sets or long documents.
+- `verification-before-completion` — evidence before factual completion claims.
+
+- `article-writing` — Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from supplied examples or brand guidance. Use when the user wants polished written content longer than a paragraph, especially when voice consistency, structure, and credibility matter.
+- `brand-voice` — Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile across content, outreach, and social workflows. Use when the user wants voice consistency without generic AI writing tropes.
+- `content-engine` — Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars, or one source asset adapted cleanly across platforms.
 
 ---
 
@@ -165,22 +399,26 @@ The design pack intentionally has many possibilities. **Do not subdivide them in
 
 ---
 
+- `appllama-usage` — Use the Appllama MCP (mcp.appllama.io) well — research real top-grossing mobile apps, their screens, flows, and UI elements, then build from what you learn. Load when the Appllama MCP is connected and the task involves building a mobile app or screen, researching app design patterns, studying onboarding/paywall/feature flows, improving an existing screen, or whenever an appllama_* / search_apps / list_app_screens tool is available. Covers the tool map, pagination, expiring media, and the full build-from-research playbooks.
+- `frontend-design-direction` — Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applications, components, landing pages, visual tools, or any web UI that needs stronger product-specific design judgment.
+- `design-system` — Generate a design system from an existing codebase or audit one for visual consistency: extract tokens (colors, typography, spacing, shadows) into design-tokens.json and CSS custom properties with DESIGN.md rationale and an interactive HTML preview, score the UI across 10 dimensions, and flag AI-slop patterns. Use when starting a design system, auditing visual consistency before a redesign, or reviewing a PR that touches styling.
+- `accessibility` — Design, implement, and audit accessible UI to WCAG 2.2 Level AA across Web, iOS, and Android — semantic ARIA roles and labels, accessibility traits and hints, focus management, contrast, target size, and screen-reader support. Use when building or auditing UI for accessibility compliance, keyboard navigation, or screen-reader support.
+- `make-interfaces-feel-better` — Apply concrete design-engineering details that make interfaces feel polished. Use when reviewing or improving UI spacing, typography, borders, shadows, motion, hit areas, icons, text wrapping, and interaction states.
+- `brand-discovery` — Run a structured, resumable multi-session brand identity interview across 8 modules (purpose, positioning, audience, personality, voice, narrative, founder tension) using laddering, 5 Whys, and projective techniques, persisting answers to disk and producing a master brandbook (90_SYNTHESIS.md). Use when creating or repositioning a brand, briefing designers or writers, or making implicit founder knowledge explicit.
+- `taste` — Creative-direction layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop family — a named-genre aesthetic vocabulary, mood + color + light system, beat-synced editing grammar, and a pipeline chaining ECC's video skills from b-roll generation to distribution. Use when a video must feel intentional rather than merely functional — music videos, fancams, moodboard-driven reels, or giving AI-generated b-roll a coherent visual direction.
+- `taste-application` — Generate new video against a distilled style pack and cut it into a finished piece - plan takes from the reference's cut rhythm, generate on fal, grade with the pack's measured LUT, cut at the measured cadence, weave in existing footage, composite overlay plates, mint 3D props, and verify the result numerically. Use when the user wants to make a video in a captured style, supplement existing footage, or assemble generated clips into a real edit.
+- `taste-distillation` — Measure a set of reference videos into a reusable style pack - colour grade as a 3D LUT, cut rhythm as a shot-length distribution, hero stills, screen-blend overlay plates, and a text spec for a generative model. Use when the user wants to capture the look of reference footage, build a repeatable look, mint assets from references, or reproduce someone's grade and pacing.
+- `ios-icon-gen` — Generate iOS app icons as PNG imagesets for Xcode asset catalogs from SF Symbols (5000+ Apple-native) or Iconify API (275k+ open source icons from 200+ collections). Use when generating icons, creating icon assets, adding icons to asset catalog, or searching for icons for iOS projects.
+
+- `playwright-cli` — Automate browser interactions, test web pages and work with Playwright tests.
+- `web-design-guidelines` — Audit web UI against the latest Vercel Web Interface Guidelines, with concrete file-and-line findings. Use for frontend accessibility, usability and interface review.
+- `code-simplification` — Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
+- `reliable-coding` — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.
+- `anti-overengineering` — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
+- `frontend-a11y` — Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building or reviewing forms, modals, dropdowns, tooltips, or tabs, fixing a11y lint or code-review findings, or wiring up keyboard navigation and focus management.
+- `browser-qa` — Run automated post-deploy UI verification with a browser automation MCP (claude-in-chrome, Playwright, or Puppeteer): console-error and Core Web Vitals smoke checks, form and auth-flow interaction tests, screenshot visual regression across three breakpoints, and axe-core accessibility audits ending in a SHIP / DO-NOT-SHIP verdict. Use when testing a deployed feature on staging or preview, before shipping frontend changes, reviewing a frontend PR, or checking responsive layout and accessibility.
+
 ---
-
-## design-review
-
-**Use for:** read-only design criticism, comparing supplied alternatives and reviewing task flows, accessibility or motion. Reviews do not authorize remediation; expert observations are not participant tests or conformance proof.
-
-**Skills in this pack:**
-
-- `design-critique` — read-only brief-calibrated visual/copy second opinion with located evidence, concrete repairs and retests; primary alternative to Impeccable critique.
-- `ux-heuristic-review` — walk actual tasks/states for understanding, control, prevention and recovery; expert findings are not participant research.
-- `accessibility-design-review` — review names, keyboard/focus, forms, reflow and evidence limits; cognitive comprehension is an explicit JIT branch, not a conformance score.
-- `motion-design-review` — critique animation purpose/frequency, interruption, reduced motion and measured vs suspected runtime cost; not an animation builder.
-- `impeccable` — optional upstream critique/audit/polish workflow; choose a primary method rather than concatenating generic critics.
-- `browser-testing-with-devtools` — obtain actual rendered/runtime evidence when available and permitted.
-- `reference-intelligence` — establish applicable standards/reference authority when it matters.
-- `verification-before-completion` — fresh evidence before declaring corrections verified.
 
 ## mobile
 
@@ -201,35 +439,147 @@ The design pack intentionally has many possibilities. **Do not subdivide them in
 
 Appllama is **optional, paid and credit-metered**. Its presence never makes `appllama-app-design-skill` global/core, and the pack itself never auto-enables the MCP or dictates a fixed skill count.
 
+- `design-inspiration-research` — Research current visual and interaction references before public greenfield or total-redesign art direction; extract design DNA, synthesize original directions, and keep provenance traceable.
+- `react-native-patterns` — React Native and Expo app patterns — Expo Router navigation, state separation (server/client/route/form), TanStack Query data fetching with Zod, performant lists, NativeWind/StyleSheet styling, native APIs, and secure storage. Use when building or editing React Native / Expo screens, components, navigation, or data layers.
+- `dart-flutter-patterns` — Production-ready Dart and Flutter patterns covering null safety, immutable state with Freezed, async composition, widget architecture, state management (BLoC, Riverpod, Provider), GoRouter navigation with auth guards, Dio networking, error handling, and testing. Use when writing or reviewing Dart and Flutter code — state, widgets, navigation, networking, or architecture.
+- `swiftui-patterns` — SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and modern iOS/macOS UI best practices. Use when building or reviewing SwiftUI views, @Observable state, navigation, or render performance.
+- `android-clean-architecture` — Clean Architecture patterns for Android and Kotlin Multiplatform projects — module structure, dependency rules, UseCases, Repositories, and data layer patterns. Use when structuring modules, layers, or data flow in an Android or KMP project.
+- `compose-multiplatform-patterns` — Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and platform-specific UI. Use when building Compose or Jetpack Compose UI, state, navigation, or theming in a KMP project.
+
+- `frontend-ui-engineering` — Builds production-quality, accessible, responsive user-facing UIs. Use when building or modifying interfaces and pages, creating components, implementing layouts, meeting WCAG accessibility requirements, managing state, or when the output needs to look and feel production-quality rather than AI-generated.
+- `performance-optimization` — Optimizes application performance across frontend, backend, queries, and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing, or when profiling reveals bottlenecks.
+- `reliable-coding` — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.
+- `anti-overengineering` — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
+- `security-and-hardening` — Hardens code against vulnerabilities. Use when auditing an input handler for vulnerabilities, when handling user input, authentication, data storage, or external integrations, or when checking a login flow is safe against the OWASP Top Ten. Use when building any feature that accepts untrusted data, manages user sessions, or interacts with third-party services. Use when auditing dependencies for known vulnerabilities, triaging package-manager audit findings, or assessing supply-chain risk in a new package. Use when personal data or privacy compliance (GDPR, CCPA) is involved.
+- `app-security-gate` — Adversarial pre-deploy security gate for web apps and APIs, especially AI/vibe-coded builds. Use after substantial implementation, before production release, or when asked whether an app is safe to ship. Composes security-and-hardening with evidence-driven attack-path checks, safe remediation, and mandatory retesting. Not for pure security theory or a single isolated hardening question.
+- `property-based-testing` — Design, implement, or review property-based tests when behavior must hold across a generated input domain: codecs, parsers, normalizers, validators, ordering, numeric logic, state transitions, and invariants. Use after choosing a test target and before adding a generator-based test, or to investigate a minimized counterexample. Do not use for example-only unit tests, coverage-guided fuzzing, mutation testing, performance benchmarks, or browser flows.
+- `frontend-a11y` — Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building or reviewing forms, modals, dropdowns, tooltips, or tabs, fixing a11y lint or code-review findings, or wiring up keyboard navigation and focus management.
+- `accessibility-design-review` — Review an existing interface or flow for usable names, semantics, keyboard operation, focus, forms, dynamic states, reflow, cognitive comprehension when relevant, and evidence boundaries. Use for a scoped accessibility/design review; do not use to certify WCAG conformance, install a scanner, or automatically remediate source.
+
 ---
 
-## backend
+## release
 
-**Use for:** APIs, integrations, services, server-side architecture, runtime operations and backend trust boundaries.
+**Use for:** CI/CD, deployments, migrations, launches, operational readiness and rollback planning.
 
 **Skills in this pack:**
 
-- `property-based-testing` — codecs, validators, numeric rules and state-transition invariants with generators.
-- `security-analysis` — trace a suspected source-code vulnerability to its control and impact.
-- `data-analysis-quality` — metric/query-output grain and reconciliation; not API implementation or database operation.
+- `security-analysis` — triage confirmed/suspected source-code security findings; the app security gate still owns release disposition.
 
 
-- `reliable-coding` — default lean implementation and review discipline; specialist security checks remain separate.
-- `app-security-gate` — pre-release security evidence for APIs, sessions, data and integrations.
+- `app-security-gate` — explicit PASS/BLOCKED security release gate backed by adversarial retests.
 
-- `api-and-interface-design` — API/contracts/boundaries and compatibility decisions.
-- `mcp-server-development` — design and implement MCP server/tool surfaces; not for merely selecting or calling an existing MCP.
-- `observability-and-instrumentation` — logs, metrics, traces and diagnostics.
-- `test-driven-development` — service/API behavior proof when useful.
-- `code-simplification` — avoid accidental service/framework complexity.
-- `verification-before-completion` — fresh runtime/test evidence.
-- `security-and-hardening` — auth, secrets, PII, permissions and trust boundaries.
-- `performance-optimization` — measured server/data-path optimization.
-- `source-driven-development` — version-specific technical contracts; current protocols/framework/provider contracts.
-- `architect-orchestrator` — structural or multi-service work.
-- `debugging-and-error-recovery` — reproduce/localize backend failures.
-- `deprecation-and-migration` — interface/service migration and compatibility work.
-- `diagram-design` — communicate service topology/flows when a maintained visual is materially clearer than prose.
+- `shipping-and-launch` — release readiness, launch checks and rollback thinking.
+- `ci-cd-and-automation` — pipeline automation and quality gates.
+- `verification-before-completion` — fresh release evidence.
+- `verification-gauntlet` — only for multiple material evidence surfaces; multiple release verification surfaces when useful.
+- `observability-and-instrumentation` — know whether a release is healthy after change.
+- `deprecation-and-migration` — compatibility, retirement and migration plans.
+- `security-and-hardening` — production/security boundaries.
+- `doubt-driven-development` — high-risk rollout review.
+- `architect-orchestrator` — multi-stage releases/migrations and dependency coordination.
+- `git-workflow-and-versioning` — clean release/merge history and handoff.
+
+- `documentation-and-adrs` — Records decisions and documentation. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, or when you need to record context that future engineers and agents will need to understand the codebase.
+- `constraint-driven-development` — Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar — new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about — accessibility, web performance, coverage — set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+- `deployment-patterns` — Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up CI/CD, containerizing an app, or checking production readiness before a release.
+- `delivery-gate` — Stop hook that blocks Claude from finishing until quality checks pass. Detects rationalization patterns (surface text heuristics), stale learning logs (filesystem mtime), and low disk space. Complements self-audit by mechanically enforcing learning capture habits. Use when Claude should be mechanically blocked from declaring work finished before quality checks and learning capture actually pass.
+- `canary-watch` — Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console errors, and performance regressions after deploys, merges, or dependency upgrades. Smoke / canary / post-deploy verification.
+- `production-audit` — Local-evidence production readiness audit for shipped apps, pre-launch reviews, post-merge checks, and "what breaks in prod?" questions without sending repo data to an external audit service. Use when auditing production readiness before launch, after a merge, or when asked what breaks in prod.
+- `github-ops` — GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and security monitoring using the gh CLI. Use when the user wants to manage GitHub issues, PRs, CI status, releases, contributors, stale items, or any GitHub operational task beyond simple git commands.
+
+---
+
+## research
+
+**Use for:** factual or technical research, reports, unfamiliar domains, source-heavy synthesis and current-domain investigations.
+
+**Skills in this pack:**
+
+- `data-analysis-quality` — trace structured-data claims to grain, formula, population and source.
+- `artifact-production` — publishable local report/deck files when file structure/rendering matters.
+
+
+- `source-driven-development` — version-specific technical contracts; establish authoritative/canonical source hierarchy and verify current contracts.
+- `adversarial-idea-review` — attack a research/product direction before treating it as decided.
+- `reference-intelligence` — source-role/provenance judgment; decide curated vs live sources, distinguish source roles and preserve provenance.
+- `skillfinder-external-scout` — semantic external skill discovery when Agentit has no strong local owner or the user explicitly asks for the best skill across registries; never auto-installs candidates.
+- `context-engineering` — manage large source/context sets without flooding the synthesis model.
+- `verification-before-completion` — evidence-backed final claims.
+- `doubt-driven-development` — adversarial source/assumption review.
+- `architect-orchestrator` — parallel independent research branches and synthesis when that actually helps.
+- `documentation-and-adrs` — preserve durable research decisions/knowledge when relevant to a project.
+- `diagram-design` — visualize a researched system/process only when the visual is grounded in the collected evidence.
+
+For current legal, tax, regulatory, medical, financial or other domain-specific work, Agentit does **not** need a permanent domain pack first. Use live authoritative domain sources whenever correctness depends on them.
+
+- `spec-driven-development` — Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying.
+- `spec-kit-workflow` — Run GitHub Spec Kit's gated spec-driven flow before coding — constitution, specify, clarify, plan, tasks, analyze, implement, converge. Use when starting a feature from a vague prompt, when the project already has .specify/ or specs/, or when the user asks for Spec Kit / speckit / specify. Do not use for one-line fixes.
+- `constraint-driven-development` — Establishes a project's quality bar as a written contract and stops agents quietly lowering it. Interviews the user on which dimensions matter, supplies sane default thresholds when they have no number in mind, records everything in CONSTRAINTS.md, and watches the diff for a weakened bar — new @ts-ignore or eslint-disable suppressions, skipped or deleted tests, assertions stripped out, unimplemented stubs, thresholds edited down. Use when no quality bar is written down, when the user says "set up constraints" or "define our standards", when the user wants dimensions they care about — accessibility, web performance, coverage — set up as enforced constraints, when an agent keeps silencing checks or skipping tests to get to green, when you need a coverage or performance threshold and don't know what number to pick, or when an agent writes more code than anyone will read.
+- `deep-research` — Produce cited research reports from multiple web sources using firecrawl and exa MCP tools — plan sub-questions, search and deep-read sources, then synthesize findings with inline citations and confidence levels. Use when the user asks to research a topic in depth, run a deep dive or investigation, or do competitive analysis, technology evaluation, market sizing, or due diligence on a company.
+- `market-research` — Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions.
+- `research-ops` — Evidence-first current-state research workflow for ECC. Use when the user wants fresh facts, comparisons, enrichment, or a recommendation built from current public evidence and any supplied local context.
+- `scientific-thinking-literature-review` — Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging. Use when the task is to find, screen, synthesize, and cite a body of academic or technical literature.
+- `benchmark-methodology` — Score a scoped competitor set into comparable profile cards: nine weighted dimensions (positioning, voice, visual craft, offer packaging, evidence, enterprise-readiness, thought leadership, pricing, client tension) with 1-5 evidence-anchored rubrics and a tension 2x2 plot. Use when benchmarking or scoring competitors, building a competitive comparison matrix, or grading rival positioning before assembling the report; runs after competitive-platform-analysis and before competitive-report-structure.
+- `competitive-platform-analysis` — Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmarking begins. Decides who counts as a competitor, which tier they belong to, and which sources to mine. First step in the three-skill competitive pipeline; precedes benchmark-methodology.
+- `competitive-report-structure` — Assemble scored competitor profile cards (from benchmark-methodology) into a decision-grade competitive report with landscape map, competitor tiers, benchmarking matrix, white-space analysis, strategic recommendations, and team alignment trigger questions. Use when presenting competitive findings to leadership or a board, writing a competitive landscape report, or as the final step of the competitive analysis pipeline.
+- `exa-search` — Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search engine.
+- `osint-investigation` — Sparse-clue OSINT investigation methodology for extracting overlooked leads, connecting fragmented evidence, and testing explanations across sources. Use for multi-step CTF challenges, image/video geolocation, event reconstruction, public-account and entity verification, artifact interpretation, infrastructure research, or stalled investigations.
+- `scientific-db-pubmed-database` — Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and API-backed literature monitoring. Use when a task needs biomedical literature from PubMed rather than general web search.
+- `scientific-db-uspto-database` — USPTO patent and trademark data workflow for official record lookup, PatentSearch queries, TSDR checks, assignment data, and reproducible IP research logs. Use when a task needs official United States patent or trademark records from USPTO systems.
+- `scientific-pkg-gget` — gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and reproducible bioinformatics evidence logs. Use when a task needs quick bioinformatics lookup across genomic reference databases with the gget CLI or Python package.
+- `scientific-thinking-scholar-evaluation` — Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or scientific work — papers, proposals, methods sections, or evidence quality — against a repeatable rubric.
+
+---
+
+## growth
+
+**Use for:** Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach.
+
+**Skills in this pack:**
+
+- `shipping-and-launch` — Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
+- `advertising-video-production` — Produce short video advertisements from a grounded product/offer brief with visual hooks, timed script/storyboard, proof, captions, render handoff and controlled creative variants. Use for an actual ad deliverable with a conversion goal. Do not use for generic marketing strategy, ad-account operations, a non-ad film, UI motion, or a renderer-only bug.
+- `seo` — Audit, plan, and implement SEO improvements across technical SEO, on-page optimization, structured data, Core Web Vitals, and content strategy. Use when the user wants better search visibility, SEO remediation, schema markup, sitemap/robots work, or keyword mapping.
+- `marketing-campaign` — End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scripts, and content calendars. Use as the orchestration layer for multi-channel product launches. Use when planning or executing a multi-channel product launch, or producing landing page, email, social, or ad copy.
+- `lead-intelligence` — AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual ranking, warm path discovery, source-derived voice modeling, and channel-specific outreach across email, LinkedIn, and X. Use when the user wants to find, qualify, and reach high-value contacts.
+- `content-engine` — Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars, or one source asset adapted cleanly across platforms.
+- `crosspost` — Multi-platform content distribution across X, LinkedIn, Threads, and Bluesky. Adapts content per platform using content-engine patterns. Never posts identical content cross-platform. Use when the user wants to distribute content across social platforms.
+- `investor-materials` — Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
+- `investor-outreach` — Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging.
+- `social-publisher` — Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publish to X, LinkedIn, Instagram, Facebook Pages, TikTok, Discord, Telegram, YouTube, Reddit, WordPress, or Pinterest — or when managing campaigns, uploading media, or monitoring post delivery status.
+- `x-api` — X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants to interact with X programmatically.
+
+---
+
+## agency
+
+**Use for:** client delivery where several domains, handoffs, documentation, review and shipping concerns interact.
+
+`agency` is an **overlay/map**, not a mandatory parent pack. A client task can inspect `agency` plus `design`, `marketing`, `seo`, `engineering`, or any other domain that actually applies.
+
+**Skills in this pack:**
+
+- `artifact-production` — client-editable deliverables with honest visual/semantic verification.
+
+
+- `git-workflow-and-versioning` — reviewable repository handoff.
+- `anti-overengineering` — prevent client delivery from stalling in speculative architecture, test proliferation or repeated audit loops.
+- `incremental-implementation` — bounded client delivery and staged implementation.
+- `documentation-and-adrs` — durable client/project handoff context.
+- `shipping-and-launch` — deployment/launch readiness.
+- `architect-orchestrator` — multi-domain client programs when orchestration is useful.
+- `specialist-agent-routing` — cleanly separated workers when specialization/parallelism pays off.
+- `reference-intelligence` — source-role/provenance judgment; competitor, market, design or source-heavy client work.
+- `marketing-and-growth` — marketing/growth delivery.
+- `verification-before-completion` — prove client-facing changes before claiming completion.
+- `design-md-workflow` — preserve a client's visual identity across repeated delivery when a durable design contract exists or is justified.
+- `diagram-design` — client-facing system/process visuals when they materially improve handoff or decision quality.
+
+- `reliable-coding` — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.
+- `brand-discovery` — Run a structured, resumable multi-session brand identity interview across 8 modules (purpose, positioning, audience, personality, voice, narrative, founder tension) using laddering, 5 Whys, and projective techniques, persisting answers to disk and producing a master brandbook (90_SYNTHESIS.md). Use when creating or repositioning a brand, briefing designers or writers, or making implicit founder knowledge explicit.
+- `marketing-campaign` — End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scripts, and content calendars. Use as the orchestration layer for multi-channel product launches. Use when planning or executing a multi-channel product launch, or producing landing page, email, social, or ad copy.
+- `browser-qa` — Run automated post-deploy UI verification with a browser automation MCP (claude-in-chrome, Playwright, or Puppeteer): console-error and Core Web Vitals smoke checks, form and auth-flow interaction tests, screenshot visual regression across three breakpoints, and axe-core accessibility audits ending in a SHIP / DO-NOT-SHIP verdict. Use when testing a deployed feature on staging or preview, before shipping frontend changes, reviewing a frontend PR, or checking responsive layout and accessibility.
 
 ---
 
@@ -258,67 +608,104 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 
 If no existing data skill fits the actual engine/domain, discover a better skill or use current canonical sources. Never force PostgreSQL guidance onto an unrelated database because it happens to be the nearest pack entry.
 
----
-
-## product
-
-**Use for:** product discovery, ambiguous feature decisions, requirements, specifications, prioritization and product/technical trade-offs.
-
-**Skills in this pack:**
-
-- `data-analysis-quality` — validate counts, rates and product evidence before a product decision.
-
-
-- `adversarial-idea-review` — challenge business/product ideas before committing; not a substitute for code review.
-- `spec-kit-workflow` — only when Spec Kit is present or explicitly requested; opt-in Spec Kit artifact/toolchain specialization; use one spec pipeline, not two.
-
-- `interview-me` — unresolved material user/product decisions after discoverable facts have been inspected.
-- `idea-refine` — explore and refine an early concept before committing to one shape.
-- `spec-driven-development` — explicit requirements, scope and acceptance criteria.
-- `planning-and-task-breakdown` — turn a decided outcome into executable units when useful.
-- `documentation-and-adrs` — preserve durable product/architecture decisions.
-- `doubt-driven-development` — challenge high-impact assumptions and alternatives.
-- `reference-intelligence` — source-role/provenance judgment; market/product/comparable evidence materially affects the decision.
-- `architect-orchestrator` — broad product + technical decomposition or multi-stage ownership.
-- `marketing-and-growth` — product positioning/growth concerns are genuinely part of the decision.
-- `diagram-design` — journey/flow/story-map visuals when they materially clarify a product decision.
+- `reference-intelligence` — Decide whether a task materially benefits from external references, then use the smallest domain-appropriate curated/live set. Distinguish authority, actually read material sources, distill useful knowledge into existing skills, and record durable provenance without making the user re-paste references.
+- `data-visualization-design` — Design or review a decision-facing chart or analytical exhibit for honest encoding, perceptual clarity, uncertainty, accessibility, and target-size rendering. Use after data definitions are trustworthy; do not use to repair data-quality mathematics, invent precision, or compose a whole dashboard system.
+- `dashboard-builder` — Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metrics into a working dashboard instead of a vanity board.
+- `postgres-patterns` — PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL schemas, indexes, or RLS policies, or when a query is too slow.
+- `clickhouse-io` — ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads. Use when writing ClickHouse schemas or queries, or when an analytical query is too slow.
+- `data-throughput-accelerator` — Diagnose and accelerate large data movement — ingestion, backfill, export, ETL, warehouse loading, manifest catch-up, and table synchronization — by isolating the true bottleneck, benchmarking variants, and codifying the fastest path with a hard accounting block proving rows and timestamps cohere. Use when a pipeline or backfill is too slow and must get faster without losing data correctness.
+- `pytorch-patterns` — PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model architectures, and data loading. Use when writing or reviewing PyTorch training loops, model architectures, or data loading, or when a run will not reproduce.
+- `bengali-nlp` — Bengali (Bangla) text processing patterns including Unicode normalization, script detection, tokenization, conjunct handling, and Bangla-specific NLP best practices for AI applications.
+- `data-scraper-agent` — Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule, enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub Actions. Use when the user wants to monitor, collect, or track any public data automatically.
+- `database-migrations` — Safe, reversible database migration patterns: forward-only production changes, expand-contract zero-downtime renames, concurrent indexes, batched backfills, and per-tool workflows for PostgreSQL, Prisma, Drizzle, Kysely, Django, and golang-migrate. Use when writing a schema or data migration, adding a column or index to a large table, planning a rollback, or preparing a zero-downtime deploy.
+- `ito-baskets` — Read-only Itô basket and prediction-market data skill. Index the live basket catalog, compare a basket against user-supplied research or a watchlist, build a source-grounded market brief, or draft a non-executable planning worksheet. Use when a user asks to browse or index Itô baskets, compare a basket against notes or a thesis, research prediction-market events/venues/liquidity, or plan a basket or market idea without trading. Never advises, orders, trades, reserves, or executes.
+- `ito-compute` — Query live GPU inventory, submit an authenticated Itô fixed-rate RFQ, inspect RFQ or procurement status, revoke device credentials, and run explicitly gated node qualification through the separately installed canonical CLI. Use when a user asks to find H100/H200 capacity, request a fixed compute rate, check Itô compute status, validate GPU nodes, revoke Itô access, or rent or purchase GPU compute and needs the supported boundary explained.
+- `ito-inference` — Inspect the availability of model serving on a completed Itô compute booking and, when the canonical backend becomes available, hand off an explicitly confirmed serving manifest. Use after ito-compute has booked GPU nodes and the user asks for an OpenAI-compatible endpoint, ito-serve, hosted Kimi, or self-hosted open-weights inference. ECC implements no serving stack of its own.
+- `ito-training` — Inspect the availability of ML training on a completed Itô compute booking and, when the canonical backend becomes available, hand off an explicitly confirmed training manifest. Use after ito-compute has booked GPU nodes and the user wants pre-training, fine-tuning, or RL on that metal. ECC implements no training stack of its own.
+- `latency-critical-systems` — Optimize and verify latency-sensitive systems — realtime dashboards, market data feeds, streaming agents, execution gateways, queues, and caches — by tracking p50/p95/p99 latency, freshness age, and queue depth, mapping hot paths, and running live readbacks. Use when p95 latency, throughput, or data freshness matters.
+- `ml-adoption-playbook` — End-to-end methodology for AI agents and software engineers to add machine learning algorithms to existing non-ML codebases. Covers problem framing, data readiness, architectural decoupling, and baseline model integration. Use when adding a machine learning capability to a codebase that has none, from problem framing through a baseline model.
+- `mle-workflow` — Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitoring, and rollback. Use when building, reviewing, or hardening ML systems beyond one-off notebooks.
+- `mysql-patterns` — MySQL and MariaDB schema, query, indexing, transaction, replication, and connection-pool patterns for production backends. Use when designing MySQL or MariaDB schemas and indexes, or when a query, transaction, or replica lags.
+- `prisma-patterns` — Prisma ORM patterns for TypeScript backends — schema design, query optimization, transactions, pagination, and critical traps like updateMany returning count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt skipped on bulk writes, and serverless connection exhaustion. Use when writing a Prisma schema or query, or debugging transactions, migrations, or serverless connection limits.
+- `recsys-pipeline-architect` — Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffect framework popularized by xAI's open-sourced For You algorithm. Use this skill whenever the user is building any system that picks "the top K items for a (user, context)" — social feeds, content CMSs, RAG rerankers, task prioritizers, notification triage, search reranking, ad ranking.
+- `redis-patterns` — Redis data structure patterns, caching strategies, distributed locks, rate limiting, pub/sub, and connection management for production applications. Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis, or when key design needs review.
+- `social-graph-ranker` — Weighted social-graph ranking for warm intro discovery, bridge scoring, and network gap analysis across X and LinkedIn. Use when the user wants the reusable graph-ranking engine itself, not the broader outreach or network-maintenance workflow layered on top of it.
 
 ---
 
-## executive
+## security
 
-**Use for:** company-level strategy, finance, people, legal, operations, marketing, product, board/governance and executive-priority decisions where specialist business judgment or cross-functional synthesis materially improves the result.
+**Use for:** Investigate vulnerabilities, threat models, dependency risks and hardening.
 
 **Skills in this pack:**
 
-- `data-analysis-quality` — audit business metric definitions and source reconciliation before consequential advice.
-- `artifact-production` — usable board/report/deck files when a reusable artifact is requested.
+- `security-analysis` — Triage static-analysis results or conduct a bounded source-code security investigation using concrete sources, sinks, trust boundaries, and exploitability evidence. Use when reviewing SARIF/CodeQL/Semgrep findings, investigating a suspected vulnerability, or searching for variants of a confirmed weakness. Do not use for a routine secure-coding change, dependency-only audit, generic security explanation, or full application pre-release gate.
+- `security-and-hardening` — Hardens code against vulnerabilities. Use when auditing an input handler for vulnerabilities, when handling user input, authentication, data storage, or external integrations, or when checking a login flow is safe against the OWASP Top Ten. Use when building any feature that accepts untrusted data, manages user sessions, or interacts with third-party services. Use when auditing dependencies for known vulnerabilities, triaging package-manager audit findings, or assessing supply-chain risk in a new package. Use when personal data or privacy compliance (GDPR, CCPA) is involved.
+- `app-security-gate` — Adversarial pre-deploy security gate for web apps and APIs, especially AI/vibe-coded builds. Use after substantial implementation, before production release, or when asked whether an app is safe to ship. Composes security-and-hardening with evidence-driven attack-path checks, safe remediation, and mandatory retesting. Not for pure security theory or a single isolated hardening question.
+- `code-review-and-quality` — Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch. Use when asked to review a diff or a pull request, even when the diff is pasted inline.
+- `reference-intelligence` — Decide whether a task materially benefits from external references, then use the smallest domain-appropriate curated/live set. Distinguish authority, actually read material sources, distill useful knowledge into existing skills, and record durable provenance without making the user re-paste references.
+- `verification-before-completion` — Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+- `security-scan` — Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions. Use when auditing a .claude/ directory — CLAUDE.md, settings.json, MCP servers, hooks, or agent definitions.
+- `safety-guard` — Guard against destructive operations with three modes: Careful intercepts dangerous commands (rm -rf, git push --force, DROP TABLE) for confirmation, Freeze locks writes to one directory, and Guard combines both via PreToolUse hooks. Use when working on production systems, running agents autonomously, restricting edits to a directory, or during migrations, deploys, and data changes.
+- `agent-architecture-audit` — Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, tool discipline failures, hidden repair loops, and rendering corruption. Produces severity-ranked findings with code-first fixes. Essential for developers building agent applications, autonomous loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves and the failing layer is unknown, or before shipping an agent stack.
+- `agent-security-hardening` — Security hardening guidance for AI agent frameworks that process untrusted content, invoke tools, write workspace files, manage runtime identifiers, or handle credentials. Use when building or reviewing an agent runtime, autonomous worker, tool gateway, memory service, or multi-tenant agent deployment. Do not use for general web application security or offensive testing.
+- `gateguard` — PreToolUse fact-forcing gate that denies the first Edit/Write/Bash (including MultiEdit and NotebookEdit) attempt until the agent presents concrete facts (importers, data schemas, verbatim user instruction), then allows retry; A/B-tested at +2.25 quality points. Use when enabling or configuring the GateGuard hook, exempting paths via env vars, or handling first-touch denials.
+- `mcp-dependency-review` — Statically review MCP configuration for mutable package references before approval or CI, without executing discovered MCP servers. Use when reviewing .mcp.json, Cursor, VS Code, Claude, Windsurf, or other repo-scoped MCP config.
+- `security-bounty-hunter` — Hunt for exploitable, bounty-worthy security issues in repositories. Focuses on remotely reachable vulnerabilities that qualify for real reports instead of noisy local-only findings. Use when hunting reportable, remotely reachable vulnerabilities in a repository.
 
+- `django-security` — Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and secure deployment configurations. Use when reviewing Django authentication, authorization, input handling, or deployment settings.
+- `laravel-security` — Laravel security best practices — authentication, authorization, Eloquent safety, CSRF, XSS prevention, API security, and secure deployment configurations. Use when reviewing Laravel auth, Eloquent safety, CSRF, XSS, API security, or deployment configuration.
+- `quarkus-security` — Quarkus security implementation patterns: JWT and OIDC authentication, @RolesAllowed RBAC and SecurityIdentity checks, Bean Validation and custom validators, parameterized Panache queries, BCrypt password hashing, CORS and security headers, rate limiting, audit logging, Vault or environment-variable secrets, and dependency CVE scanning. Use when adding authentication or authorization, validating input, managing secrets, or hardening a Quarkus application.
+- `springboot-security` — Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services. Use when reviewing Spring Security authn/authz, validation, CSRF, secrets, headers, or rate limiting.
+- `perl-security` — Comprehensive Perl security covering taint mode, input validation, safe process execution, DBI parameterized queries, web security (XSS/SQLi/CSRF), and perlcritic security policies. Use when reviewing Perl input handling, process execution, DBI queries, or web-facing code.
 
-- `executive-orchestration` — single accountable executive synthesis, model-owned specialist selection, bounded fan-out, conflict resolution, company context and authority boundaries.
-- `executive-strategy` — positioning, market choice, moat, strategic options, partnerships, build/buy/partner and explicit non-goals.
-- `executive-finance` — cash/runway, unit economics, scenarios, pricing economics, ROI and capital allocation.
-- `executive-people` — role design, hiring, compensation, performance, retention and organization structure.
-- `executive-legal` — contract/IP/employment/privacy/regulatory framing with jurisdiction-aware evidence and qualified-counsel escalation.
-- `executive-operations` — bottlenecks, process, automation, vendor dependencies, capacity and operating metrics.
-- `executive-marketing` — ICP, positioning, GTM, channel/funnel economics, brand/demand and retention-linked marketing decisions.
-- `executive-product` — customer problem, PMF evidence, prioritization, sequencing, make/buy and product investment gates.
-- `executive-board` — board/investor narrative, KPI/variance, governance, material risks and explicit asks.
-- `executive-chief-of-staff` — triage, decision queue, ownership, blockers, follow-ups and operating cadence.
-- `adversarial-idea-review` — kill/pivot/gate a company-level idea before commitment.
-- `specialist-agent-routing` — bounded executive specialists only when independent expertise/context isolation/parallelism earns its coordination cost.
-- `reference-intelligence` — source-role/provenance judgment; current markets, competitors, legal/regulatory/compensation evidence and provenance when the decision depends on them.
-- `source-driven-development` — version-specific technical contracts; current authoritative sources for changing domain rules/contracts/platform behavior.
-- `context-engineering` — large company/financial/customer/market evidence sets without dumping all context into every specialist.
-- `doubt-driven-development` — adversarially challenge high-impact bets and fragile assumptions.
-- `planning-and-task-breakdown` — turn a decided executive action into owned, sequenced work when useful.
-- `documentation-and-adrs` — preserve durable decisions/assumptions/ownership when rediscovery would be costly.
-- `verification-before-completion` — verify factual/action completion claims rather than accepting executive-sounding prose.
-- `marketing-and-growth` — deeper campaign/CRO/content/SEO execution after an executive marketing decision when needed.
+---
 
-The `executive` profile is deliberately broad because profiles are installation/discovery surfaces. Installing or enabling it does **not** activate this pack or any executive skill body. A finance-only task may load only `executive-finance`; a cross-functional decision may load `executive-orchestration` plus whichever independent specialists can genuinely change the recommendation. Never preload the executive bench as a committee.
+## artifacts
 
-Executive skills decide at the business-function level. Pair them with engineering, product, marketing, release or other operational skills only when the decision proceeds into actual implementation.
+**Use for:** Produce editable documents, spreadsheets, slide decks, reports and translations.
+
+**Skills in this pack:**
+
+- `data-analysis-quality` — Validate whether a dataset, query result, metric calculation, or analytical claim is fit for a stated decision. Use before presenting counts, rates, trends, funnels, cohorts, dashboards, exports, or comparisons from structured data. Do not use to operate a database, design a dashboard, perform statistical modelling, or replace a domain-specific data contract.
+- `typography-and-layout` — Establish or review typography, reading measure, hierarchy, and responsive text layout for a web surface or document specification. Use for type decisions that affect legibility and page rhythm; do not use for brand-wide identity, component-system architecture, or printer preflight.
+- `editorial-design` — Shape a coherent reading experience for articles, reports, decks, and print concepts through content hierarchy, sequence, page rhythm, figures, and production-aware review. Use for editorial reading and art direction; do not use to produce or certify editable files, final PDFs, or press-ready artwork without their production owners and evidence.
+- `data-visualization-design` — Design or review a decision-facing chart or analytical exhibit for honest encoding, perceptual clarity, uncertainty, accessibility, and target-size rendering. Use after data definitions are trustworthy; do not use to repair data-quality mathematics, invent precision, or compose a whole dashboard system.
+- `brand-identity-design` — Create or assess a coherent visual identity across marks, colour, type, imagery, iconography, and motion for its real applications. Use when identity decisions must work across media; do not use for a single campaign asset, UI component implementation, or undefined positioning.
+- `frontend-slides` — Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.
+- `nutrient-document-processing` — Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, HTML, and images. Use when converting, OCRing, extracting from, redacting, signing, or filling documents via the Nutrient DWS API.
+- `dashboard-builder` — Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metrics into a working dashboard instead of a vanity board.
+- `visa-doc-translate` — Translate visa document images (bank deposit, employment, income, and retirement certificates; HEIC, PNG, or JPG) into English via OCR and produce a bilingual PDF pairing the original image with a formatted certified-style translation. Use when a visa application needs a document translated to English, an official certificate OCR'd and translated, or a bilingual translation PDF for immigration paperwork.
+
+- `documentation-and-adrs` — Records decisions and documentation. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, or when you need to record context that future engineers and agents will need to understand the codebase.
+- `artifact-production` — Produce or review a reusable PDF, editable document, spreadsheet or slide deck whose rendering, structure and data correctness matter. Own file delivery and visual/semantic verification. Not for ordinary chat prose, code documentation, image/video generation, or an analytical method without a file deliverable.
+- `reference-intelligence` — Decide whether a task materially benefits from external references, then use the smallest domain-appropriate curated/live set. Distinguish authority, actually read material sources, distill useful knowledge into existing skills, and record durable provenance without making the user re-paste references.
+- `humanizer` — Rewrite AI-sounding text so it reads like the writer without changing what it says. Use when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, or filler. Based on Wikipedia's "Signs of AI writing."
+- `stop-slop` — Remove AI writing patterns from prose. Use when drafting, editing, or reviewing text to eliminate predictable AI tells.
+- `brand-voice` — Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile across content, outreach, and social workflows. Use when the user wants voice consistency without generic AI writing tropes.
+
+---
+
+## design-review
+
+**Use for:** read-only design criticism, comparing supplied alternatives and reviewing task flows, accessibility or motion. Reviews do not authorize remediation; expert observations are not participant tests or conformance proof.
+
+**Skills in this pack:**
+
+- `design-critique` — read-only brief-calibrated visual/copy second opinion with located evidence, concrete repairs and retests; primary alternative to Impeccable critique.
+- `ux-heuristic-review` — walk actual tasks/states for understanding, control, prevention and recovery; expert findings are not participant research.
+- `accessibility-design-review` — review names, keyboard/focus, forms, reflow and evidence limits; cognitive comprehension is an explicit JIT branch, not a conformance score.
+- `motion-design-review` — critique animation purpose/frequency, interruption, reduced motion and measured vs suspected runtime cost; not an animation builder.
+- `impeccable` — optional upstream critique/audit/polish workflow; choose a primary method rather than concatenating generic critics.
+- `browser-testing-with-devtools` — obtain actual rendered/runtime evidence when available and permitted.
+- `reference-intelligence` — establish applicable standards/reference authority when it matters.
+- `verification-before-completion` — fresh evidence before declaring corrections verified.
+
+- `playwright-cli` — Automate browser interactions, test web pages and work with Playwright tests.
+- `web-design-guidelines` — Audit web UI against the latest Vercel Web Interface Guidelines, with concrete file-and-line findings. Use for frontend accessibility, usability and interface review.
+- `frontend-a11y` — Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building or reviewing forms, modals, dropdowns, tooltips, or tabs, fixing a11y lint or code-review findings, or wiring up keyboard navigation and focus management.
+- `browser-qa` — Run automated post-deploy UI verification with a browser automation MCP (claude-in-chrome, Playwright, or Puppeteer): console-error and Core Web Vitals smoke checks, form and auth-flow interaction tests, screenshot visual regression across three breakpoints, and axe-core accessibility audits ending in a SHIP / DO-NOT-SHIP verdict. Use when testing a deployed feature on staging or preview, before shipping frontend changes, reviewing a frontend PR, or checking responsive layout and accessibility.
+- `click-path-audit` — Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work but cancel each other out, produce wrong final state, or leave the UI in an inconsistent state. Use when: systematic debugging found no bugs but users report broken buttons, or after any major refactor touching shared state stores.
 
 ---
 
@@ -341,232 +728,19 @@ Executive skills decide at the business-function level. Pair them with engineeri
 
 Profiles and packs deliver metadata only. References are conditional reads; selecting a route does not install tools, grant accounts, authorize billed generation or prove an encode.
 
----
-
-## marketing
-
-**Use for:** ICP/customer research, positioning, copy, campaigns, content strategy, email, CRO, launch planning and marketing operations.
-
-**Skills in this pack:**
-
-- `advertising-video-production` — actual timed video-ad production, proof and creative variants; no ads-account operations.
-
-- `data-analysis-quality` — validate campaign/funnel/cohort claims before drawing conclusions.
-
-
-- `marketing-and-growth` — main marketing operating skill. Its references contain the distilled large marketing-prompt corpus, SEO/growth loop and launch/content system.
-- `shipping-and-launch` — launch/distribution readiness and operational launch checks.
-- `humanizer` — preserve claims and brand voice while removing generic/robotic wording, structural AI tells and unsupported hype.
-- `reference-intelligence` — source-role/provenance judgment; current competitor/market/launch evidence and source provenance.
-- `source-driven-development` — version-specific technical contracts; current platform/API/policy behavior when it affects execution.
-- `doubt-driven-development` — challenge high-impact strategy, claims or unsupported assumptions.
-- `context-engineering` — large customer/competitor/content evidence sets.
-- `documentation-and-adrs` — durable campaign/positioning decisions when worth preserving.
+- `video-editing` — AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capture through FFmpeg, Remotion, ElevenLabs, fal.ai, and final polish in Descript or CapCut. Use when the user wants to edit video, cut footage, create vlogs, or build video content.
+- `ui-demo` — Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutorial video of a web application. Produces WebM videos with visible cursor, natural pacing, and professional feel.
+- `manim-video` — Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the wider ECC video stack if needed. Use when the user wants a clean animated explainer rather than a generic talking-head script.
+- `blender-motion-state-inspection` — Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough.
+- `tasteforge-video` — Use for file-driven multimodal image, video, and 3D-asset discovery; taste interviews; distill or apply workflows; style-pack validation; editable EDL/FCPXML export; provenance audits; and offline planning that must fail closed before provider generation.
+- `fal-ai-media` — Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seedance, Kling, Veo 3), text-to-speech (CSM-1B), and video-to-audio (ThinkSound). Use when the user wants to generate images, videos, or audio with AI.
+- `videodb` — Ingest, index, search, edit, and monitor video and audio with the VideoDB Python SDK — upload from files, URLs, or RTSP feeds, build spoken and scene indexes with timestamped search and playable clips, transcode and reframe, do timeline edits (subtitles, overlays, dubbing), and run real-time alerts on live streams or desktop capture. Use when working with video search, transcription, clipping, transcoding, streaming, or live video alerts.
 
 ---
 
-## seo
+## languages
 
-**Use for:** technical SEO, local SEO/GBP, search opportunity discovery, schema, search/content gaps, indexability, generative-AI search visibility and measurable organic-growth loops.
-
-**Skills in this pack:**
-
-- `marketing-and-growth` — the single SEO operating skill. Load `references/seo-growth-loop.md` for general/technical/search-loop work and `references/local-seo.md` for local/GBP work; load both only when the task spans both.
-- `source-driven-development` — version-specific technical contracts; current search engine, structured-data, GBP and platform documentation.
-- `context-engineering` — large GSC/site/query/competitor/GBP evidence sets.
-- `reference-intelligence` — source-role/provenance judgment; current competitor/search evidence, authority classification and provenance.
-- `performance-optimization` — Core Web Vitals/performance when measured evidence points there.
-- `browser-testing-with-devtools` — rendered/indexability/runtime checks.
-- `doubt-driven-development` — risky canonicals, migrations, programmatic SEO, location expansion or large-scale changes.
-- `verification-before-completion` — evidence that technical/local changes actually landed and behave as expected.
-
-AEO/GEO is not a parallel permanent skill by default. Treat it as a search surface inside the same SEO operating loop and use current platform-specific evidence when the behavior diverges.
-
----
-
-## research
-
-**Use for:** factual or technical research, reports, unfamiliar domains, source-heavy synthesis and current-domain investigations.
-
-**Skills in this pack:**
-
-- `data-analysis-quality` — trace structured-data claims to grain, formula, population and source.
-- `artifact-production` — publishable local report/deck files when file structure/rendering matters.
-
-
-- `source-driven-development` — version-specific technical contracts; establish authoritative/canonical source hierarchy and verify current contracts.
-- `adversarial-idea-review` — attack a research/product direction before treating it as decided.
-- `reference-intelligence` — source-role/provenance judgment; decide curated vs live sources, distinguish source roles and preserve provenance.
-- `skillfinder-external-scout` — semantic external skill discovery when Agentit has no strong local owner or the user explicitly asks for the best skill across registries; never auto-installs candidates.
-- `context-engineering` — manage large source/context sets without flooding the synthesis model.
-- `verification-before-completion` — evidence-backed final claims.
-- `doubt-driven-development` — adversarial source/assumption review.
-- `architect-orchestrator` — parallel independent research branches and synthesis when that actually helps.
-- `documentation-and-adrs` — preserve durable research decisions/knowledge when relevant to a project.
-- `diagram-design` — visualize a researched system/process only when the visual is grounded in the collected evidence.
-
-For current legal, tax, regulatory, medical, financial or other domain-specific work, Agentit does **not** need a permanent domain pack first. Use live authoritative domain sources whenever correctness depends on them.
-
----
-
-## writing
-
-**Use for:** documentation, technical prose, reports, explanations and externally visible written material.
-
-**Skills in this pack:**
-
-- `artifact-production` — reusable PDF/document/spreadsheet/deck production and verification; not ordinary chat prose.
-
-
-- `stop-slop` — optional alternative editorial pass to humanizer; do not stack rigid style rules or remove factual qualifications.
-
-- `humanizer` — primary editorial rewrite preserving meaning/voice; choose it or stop-slop, not both by default.
-- `i-have-adhd` — reshape output for an ADHD reader: next action first, numbered steps, restated state, no tangents.
-- `documentation-and-adrs` — durable technical/project documentation and decision records.
-- `skill-authoring-and-evals` — create/edit agent-facing skills and instruction docs, tune triggers, progressive disclosure and selection/delivery evals.
-- `source-driven-development` — version-specific technical contracts; factual/current source-grounded writing.
-- `reference-intelligence` — source-role/provenance judgment; multi-source reports, source roles and provenance.
-- `doubt-driven-development` — adversarial factual/argument review when stakes warrant it.
-- `context-engineering` — large source sets or long documents.
-- `verification-before-completion` — evidence before factual completion claims.
-
----
-
-## release
-
-**Use for:** CI/CD, deployments, migrations, launches, operational readiness and rollback planning.
-
-**Skills in this pack:**
-
-- `security-analysis` — triage confirmed/suspected source-code security findings; the app security gate still owns release disposition.
-
-
-- `app-security-gate` — explicit PASS/BLOCKED security release gate backed by adversarial retests.
-
-- `shipping-and-launch` — release readiness, launch checks and rollback thinking.
-- `ci-cd-and-automation` — pipeline automation and quality gates.
-- `verification-before-completion` — fresh release evidence.
-- `verification-gauntlet` — only for multiple material evidence surfaces; multiple release verification surfaces when useful.
-- `observability-and-instrumentation` — know whether a release is healthy after change.
-- `deprecation-and-migration` — compatibility, retirement and migration plans.
-- `security-and-hardening` — production/security boundaries.
-- `doubt-driven-development` — high-risk rollout review.
-- `architect-orchestrator` — multi-stage releases/migrations and dependency coordination.
-- `git-workflow-and-versioning` — clean release/merge history and handoff.
-
----
-
-## agency
-
-**Use for:** client delivery where several domains, handoffs, documentation, review and shipping concerns interact.
-
-`agency` is an **overlay/map**, not a mandatory parent pack. A client task can inspect `agency` plus `design`, `marketing`, `seo`, `engineering`, or any other domain that actually applies.
-
-**Skills in this pack:**
-
-- `artifact-production` — client-editable deliverables with honest visual/semantic verification.
-
-
-- `git-workflow-and-versioning` — reviewable repository handoff.
-- `anti-overengineering` — prevent client delivery from stalling in speculative architecture, test proliferation or repeated audit loops.
-- `incremental-implementation` — bounded client delivery and staged implementation.
-- `documentation-and-adrs` — durable client/project handoff context.
-- `shipping-and-launch` — deployment/launch readiness.
-- `architect-orchestrator` — multi-domain client programs when orchestration is useful.
-- `specialist-agent-routing` — cleanly separated workers when specialization/parallelism pays off.
-- `reference-intelligence` — source-role/provenance judgment; competitor, market, design or source-heavy client work.
-- `marketing-and-growth` — marketing/growth delivery.
-- `verification-before-completion` — prove client-facing changes before claiming completion.
-- `design-md-workflow` — preserve a client's visual identity across repeated delivery when a durable design contract exists or is justified.
-- `diagram-design` — client-facing system/process visuals when they materially improve handoff or decision quality.
-
----
-
-## agent-runtime
-
-**Use for:** explicit skill discovery, model/provider capability selection, resumable work and user-requested interaction adaptation. These are optional support procedures, not a mandatory task lifecycle.
-
-**Skills in this pack:**
-
-- `find-skills` — discover an absent durable capability only after checking existing project/library fit.
-- `skillfinder-external-scout` — heavyweight semantic fallback across the external skill ecosystem; use only when local/catalog discovery is insufficient or explicitly requested.
-- `local-model-routing` — assess an actually available local model endpoint; no automatic routing implementation is implied.
-- `long-horizon-recovery` — resumable multi-session work with fresh selection and bounded private checkpoints.
-- `i-have-adhd` — only on explicit user request; do not infer a diagnosis, impose persistence across new tasks, or override user/host output constraints.
-- `mcp-tooling-fit` — choose tools from observed capability and authorization, not their mere presence.
-- `skill-authoring-and-evals` — author or evaluate Agentit/agent skills when the task itself is maintaining the instruction system.
-
----
-
-## Cross-cutting rules
-
-- A skill may appear in multiple packs. Packs are **views over capabilities**, not ownership boundaries.
-- Pack order does not imply priority.
-- Skill order inside a pack does not imply priority or execution sequence.
-- There are no hidden pack levels or recommended counts.
-- The primary AI may inspect multiple packs and choose any justified subset.
-- Profiles classify installation/discovery availability; packs classify semantic possibilities; neither one is active runtime context by itself.
-- Every new session re-selects non-core skill bodies, references and tools from the actual current task.
-- General Agentit procedures are provider/model-neutral; provider-specific details belong only where the real integration/source requires them.
-- `reference-intelligence` is JIT, not global. Load it when source/provenance judgment is material.
-- `mcp-tooling-fit` is JIT when external tool/MCP selection itself needs judgment.
-- `security-and-hardening` is JIT when a real security/trust boundary exists, not for every code edit.
-- `architect-orchestrator` / `specialist-agent-routing` are JIT when orchestration/delegation actually helps.
-- `long-horizon-recovery` is JIT for long/resumable work.
-- `design-md-workflow` is JIT even when `DESIGN.md` persists as durable project knowledge.
-- `diagram-design` is JIT; a diagram tool is never required merely because a task is technical.
-- The base Agentit protocol still requires appropriate verification and documentation-drift checks even when no dedicated verification/documentation skill body is selected.
-
-## Missing pack or skill
-
-If no pack covers the domain well:
-
-1. do not force the nearest unrelated pack;
-2. use current authoritative sources for the domain when needed;
-3. inspect project-local skills;
-4. use `find-skills` / approved skill discovery if a reusable specialist procedure would materially help;
-5. create/adapt a new skill only when the procedure is durable and likely to recur.
-
-> **Packs are a map, not a prison. The model decides the route and how much knowledge it needs.**
-
-<!-- ECC-GENERATED BEGIN -->
-
-The full ECC source lives once in `vendor/ecc`. See `docs/ECC_INTEGRATION.md` for canonical owners, native tool setup and the explicit alias decisions.
-
-## ecc-web
-
-**Use for:** Frontend frameworks, web interaction, accessible implementation and browser testing.
-
-**Skills in this pack:**
-
-- `accessibility` — Design, implement, and audit accessible UI to WCAG 2.2 Level AA across Web, iOS, and Android — semantic ARIA roles and labels, accessibility traits and hints, focus management, contrast, target size, and screen-reader support. Use when building or auditing UI for accessibility compliance, keyboard navigation, or screen-reader support.
-- `angular-developer` — Generates Angular code and provides architectural guidance. Trigger when creating projects, components, or services, or for best practices on reactivity (signals, linkedSignal, resource), forms, dependency injection, routing, SSR, accessibility (ARIA), animations, styling (component styles, Tailwind CSS), testing, or CLI tooling.
-- `browser-qa` — Run automated post-deploy UI verification with a browser automation MCP (claude-in-chrome, Playwright, or Puppeteer): console-error and Core Web Vitals smoke checks, form and auth-flow interaction tests, screenshot visual regression across three breakpoints, and axe-core accessibility audits ending in a SHIP / DO-NOT-SHIP verdict. Use when testing a deployed feature on staging or preview, before shipping frontend changes, reviewing a frontend PR, or checking responsive layout and accessibility.
-- `click-path-audit` — Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work but cancel each other out, produce wrong final state, or leave the UI in an inconsistent state. Use when: systematic debugging found no bugs but users report broken buttons, or after any major refactor touching shared state stores.
-- `design-system` — Generate a design system from an existing codebase or audit one for visual consistency: extract tokens (colors, typography, spacing, shadows) into design-tokens.json and CSS custom properties with DESIGN.md rationale and an interactive HTML preview, score the UI across 10 dimensions, and flag AI-slop patterns. Use when starting a design system, auditing visual consistency before a redesign, or reviewing a PR that touches styling.
-- `e2e-testing` — Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies. Use when writing Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
-- `frontend-a11y` — Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building or reviewing forms, modals, dropdowns, tooltips, or tabs, fixing a11y lint or code-review findings, or wiring up keyboard navigation and focus management.
-- `frontend-design-direction` — Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applications, components, landing pages, visual tools, or any web UI that needs stronger product-specific design judgment.
-- `frontend-patterns` — Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. Use when building or reviewing React or Next.js components, state, or render performance.
-- `inherit-legacy-style` — Prevent AI style drift on legacy projects by scanning the codebase for implicit conventions, resolving conflicts with the operator one at a time, and writing an enforceable .ai-style-rules.md (Golden Files, naming rules, DONTs) plus an optional CLAUDE.md hook. Use when onboarding an AI agent onto a hand-written legacy codebase or extracting a project's unwritten coding rules.
-- `make-interfaces-feel-better` — Apply concrete design-engineering details that make interfaces feel polished. Use when reviewing or improving UI spacing, typography, borders, shadows, motion, hit areas, icons, text wrapping, and interaction states.
-- `motion-advanced` — Advanced motion patterns for React / Next.js — drag & drop, gestures, text animations, SVG path drawing, custom hooks, imperative sequences (useAnimate), loaders, and the full API decision tree. Requires motion-foundations. Use when building drag and drop, gestures, text or SVG animation, or imperative animation sequences in React or Next.js.
-- `motion-foundations` — Motion tokens, spring presets, performance rules, device adaptation, accessibility enforcement, and SSR safety for React / Next.js using motion/react. Foundation layer — all other motion skills depend on this. Use when setting up motion tokens, spring presets, reduced-motion handling, or SSR-safe animation in React or Next.js.
-- `motion-patterns` — Production-ready animation patterns for React / Next.js — button, modal, toast, stagger, page transitions, exit animations, scroll, and layout — built on motion-foundations tokens and springs. Use when animating a specific UI element in React or Next.js — button, modal, toast, stagger, page transition, or scroll.
-- `nextjs-turbopack` — Next.js 16+ and Turbopack guidance — incremental Rust bundling, file-system caching, faster dev startup and HMR, Turbopack vs webpack tradeoffs, and the middleware.ts to proxy.ts filename change. Use when developing or debugging Next.js 16+ apps, diagnosing slow dev startup or hot reload, choosing between bundlers, or reviewing middleware/proxy file naming.
-- `nuxt4-patterns` — Nuxt 4 app patterns for hydration safety, performance, route rules, lazy loading, and SSR-safe data fetching with useFetch and useAsyncData. Use when building or reviewing a Nuxt 4 app, or debugging hydration mismatches and SSR-safe data fetching.
-- `react-patterns` — React 18/19 patterns including hooks discipline, server/client component boundaries, Suspense + error boundaries, form actions, data fetching, state management decision trees, and accessibility-first composition. Use when writing or reviewing React components.
-- `react-performance` — React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/vercel-labs/agent-skills). Organizes 70+ rules across 8 priority categories — waterfalls, bundle size, server-side, client fetching, re-render, rendering, JS micro-perf, advanced. Use when writing, reviewing, or refactoring React/Next.js code for performance.
-- `react-testing` — React component testing with React Testing Library, Vitest/Jest, MSW for network mocking, accessibility assertions with axe, and the decision boundary between component tests and Playwright/Cypress end-to-end runs. Use when writing or fixing tests for React components, hooks, or pages.
-- `ui-to-vue` — Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, Element Plus, or Ant Design Vue.
-- `vite-patterns` — Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Activate when working with vite.config.ts, Vite plugins, or Vite-based projects.
-- `vue-patterns` — Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia projects. Use when building or reviewing Vue 3, Nuxt, or Pinia code — Composition API, reactivity, or router navigation.
-
----
-
-## ecc-languages
-
-**Use for:** Language/framework engineering, architecture and ecosystem-specific verification.
+**Use for:** Use language/framework-specific architecture, coding, tests and verification.
 
 **Skills in this pack:**
 
@@ -632,11 +806,42 @@ The full ECC source lives once in `vendor/ecc`. See `docs/ECC_INTEGRATION.md` fo
 
 ---
 
-## ecc-development
+## engineering
 
-**Use for:** Repo execution, API contracts, measured optimization, tests and delivery.
+**Use for:** general implementation, bugs, refactors, repository changes, code quality, architecture, testing, debugging, security-sensitive code, performance work and engineering delivery.
 
 **Skills in this pack:**
+
+- `property-based-testing` — generated-domain invariants, independent properties, generators and shrinking; not ordinary example tests.
+- `security-analysis` — scanner/SARIF triage, source-to-sink proof and variants of confirmed flaws; not routine hardening.
+
+
+- `app-security-gate` — evidence-driven attack-path retesting for substantive application changes or release; not a global core skill.
+
+- `reliable-coding` — preferred JIT coding discipline: minimal changes, proportionate BUILDER checks, focused REVIEW and fresh proof; do not stack overlapping general-purpose skills.
+- `anti-overengineering` — enforce BUILDER throughput and REVIEW depth without speculative architecture or repeated full-suite churn.
+- `incremental-implementation` — build in small verifiable slices when incremental delivery reduces rework.
+- `debugging-and-error-recovery` — reproduce, localize, fix and guard when something is actually broken.
+- `planning-and-task-breakdown` — decompose non-trivial work when an explicit execution plan would help.
+- `test-driven-development` — use behavioral tests to drive or prove implementation when TDD fits the change.
+- `code-review-and-quality` — independent correctness/quality review before accepting meaningful code changes.
+- `code-simplification` — reduce unnecessary complexity while preserving proven behavior.
+- `constraint-driven-development` — write a project quality bar (`CONSTRAINTS.md`) and keep agents from quietly lowering it.
+- `verification-before-completion` — fresh evidence before done/fixed/passing claims.
+- `verification-gauntlet` — only for multiple material evidence surfaces; broader verification discipline when multiple evidence surfaces matter.
+- `doubt-driven-development` — adversarially challenge unfamiliar, risky or consequential engineering decisions.
+- `security-and-hardening` — threat modeling, trust boundaries, auth, secrets, input handling and hardening when security is materially involved.
+- `performance-optimization` — measure and optimize real bottlenecks rather than guessing.
+- `source-driven-development` — version-specific technical contracts; current official framework/library/protocol documentation materially affects correctness.
+- `architect-orchestrator` — structural decomposition, architectural ownership or multi-stage coordination when one direct execution path is insufficient.
+- `specialist-agent-routing` — spawn bounded specialists only when specialization, independence or context isolation is useful.
+- `context-engineering` — control large or fragmented engineering context deliberately.
+- `git-workflow-and-versioning` — branch/commit/history discipline when Git handoff matters.
+- `documentation-and-adrs` — preserve durable architecture/decision knowledge when it would be expensive to rediscover.
+- `diagram-design` — choose a truthful architecture/flow visualization route when spatial structure materially improves engineering understanding.
+- `observability-and-instrumentation` — logs, metrics, traces and operational diagnostics when runtime behavior matters.
+- `ci-cd-and-automation` — CI/CD and automated quality gates.
+- `deprecation-and-migration` — safely retire or migrate interfaces/systems while preserving compatibility requirements.
 
 - `ai-first-engineering` — Engineering operating model for teams where AI agents generate a large share of implementation output. Use when setting team process, review gates, or ownership rules for a codebase largely written by agents.
 - `ai-regression-testing` — Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-check workflows, and patterns to catch AI blind spots where the same model writes and reviews code. Use when adding regression coverage to AI-assisted code, or when the same model both wrote and reviewed a change.
@@ -686,9 +891,9 @@ The full ECC source lives once in `vendor/ecc`. See `docs/ECC_INTEGRATION.md` fo
 
 ---
 
-## ecc-agent-systems
+## agent-systems
 
-**Use for:** Agent tools, orchestration, memory, learning, context and host adapters; explicit selection only.
+**Use for:** Build agents, tools, orchestration, memory, evals and explicit host integrations.
 
 **Skills in this pack:**
 
@@ -752,166 +957,102 @@ The full ECC source lives once in `vendor/ecc`. See `docs/ECC_INTEGRATION.md` fo
 - `token-card` — Render a token-usage stat card from local Claude Code, Codex, Gemini CLI, and OpenCode session logs and commit it into the repository as a file. Use when someone wants a current usage figure in a README, or asks for a shareable card of their coding-agent activity.
 - `unified-memory` — Share durable, inspectable context and handoffs between Claude, Codex, Hermes, Cursor, OpenCode, and other agents through the local ECC Memory Vault. Use when an agent must save work state, transfer context, resume another agent's task, or search shared project knowledge.
 - `workspace-surface-audit` — Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-native skills, hooks, agents, and operator workflows. Use when the user wants help setting up Claude Code or understanding what capabilities are actually available in their environment.
+- `mcp-tooling-fit` — Select the smallest useful MCP/tool set for the current Agentit task, based on repository facts, explicit capability needs, least privilege, and current availability.
+- `mcp-server-development` — Designs and implements Model Context Protocol servers and tool surfaces for external APIs/services. Use when creating or substantially changing an MCP server, its tools/resources/prompts, auth boundary, transport, schemas, pagination or error model. Do not use merely to choose, enable or call an existing MCP; use mcp-tooling-fit for that.
+- `skill-authoring-and-evals` — Creates, edits and evaluates agent-facing skills and instruction documents with discriminative triggers, progressive disclosure and activation tests. Use when adding or changing SKILL.md files, AGENTS.md/CLAUDE.md guidance, skill descriptions, trigger behavior, or skill evals. Do not use merely because a task happens to consume an existing skill.
+- `find-skills` — Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+- `skillfinder-external-scout` — Search the external agent-skill ecosystem semantically when Agentit's installed/catalogued skills do not provide a strong owner, or when the user explicitly asks for the best available skill across registries. Prefer an actually installed SkillFinder runtime when available; otherwise fall back to normal find-skills/web discovery. Do not run on every routine task or auto-install third-party skills.
+- `local-model-routing` — Assess an explicitly available local or remote model endpoint for a bounded role. Guidance only; no automatic model-routing implementation or capability parity is implied.
+- `long-horizon-recovery` — Keep substantial multi-session Agentit work resumable using private local state, compact checkpoints, and a fresh task decision when a new execution session resumes.
+- `context-engineering` — Optimizes agent context setup. Use when starting a new session, when agent output quality degrades, when switching between tasks, or when you need to configure rules files and context for a project.
+- `specialist-agent-routing` — Select and use temporary domain specialists with bounded JIT context and concrete task-scoped skills.
+- `architect-orchestrator` — JIT orchestration for material work. Help the primary AI choose useful topology, bounded workers, independent alternatives/review, and deterministic Loop/Graph execution without imposing a fixed hierarchy.
+- `using-agent-skills` — Mechanical JIT discovery and exact full-body activation of explicitly selected Agentit skills/resources. Keeps profile availability, candidate metadata, selection and activation distinct.
 
 ---
 
-## ecc-data
+## infrastructure
 
-**Use for:** Databases, data pipelines, machine learning, model operation and structured analysis.
-
-**Skills in this pack:**
-
-- `bengali-nlp` — Bengali (Bangla) text processing patterns including Unicode normalization, script detection, tokenization, conjunct handling, and Bangla-specific NLP best practices for AI applications.
-- `clickhouse-io` — ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads. Use when writing ClickHouse schemas or queries, or when an analytical query is too slow.
-- `dashboard-builder` — Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metrics into a working dashboard instead of a vanity board.
-- `data-scraper-agent` — Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule, enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub Actions. Use when the user wants to monitor, collect, or track any public data automatically.
-- `data-throughput-accelerator` — Diagnose and accelerate large data movement — ingestion, backfill, export, ETL, warehouse loading, manifest catch-up, and table synchronization — by isolating the true bottleneck, benchmarking variants, and codifying the fastest path with a hard accounting block proving rows and timestamps cohere. Use when a pipeline or backfill is too slow and must get faster without losing data correctness.
-- `database-migrations` — Safe, reversible database migration patterns: forward-only production changes, expand-contract zero-downtime renames, concurrent indexes, batched backfills, and per-tool workflows for PostgreSQL, Prisma, Drizzle, Kysely, Django, and golang-migrate. Use when writing a schema or data migration, adding a column or index to a large table, planning a rollback, or preparing a zero-downtime deploy.
-- `ito-baskets` — Read-only Itô basket and prediction-market data skill. Index the live basket catalog, compare a basket against user-supplied research or a watchlist, build a source-grounded market brief, or draft a non-executable planning worksheet. Use when a user asks to browse or index Itô baskets, compare a basket against notes or a thesis, research prediction-market events/venues/liquidity, or plan a basket or market idea without trading. Never advises, orders, trades, reserves, or executes.
-- `ito-compute` — Query live GPU inventory, submit an authenticated Itô fixed-rate RFQ, inspect RFQ or procurement status, revoke device credentials, and run explicitly gated node qualification through the separately installed canonical CLI. Use when a user asks to find H100/H200 capacity, request a fixed compute rate, check Itô compute status, validate GPU nodes, revoke Itô access, or rent or purchase GPU compute and needs the supported boundary explained.
-- `ito-inference` — Inspect the availability of model serving on a completed Itô compute booking and, when the canonical backend becomes available, hand off an explicitly confirmed serving manifest. Use after ito-compute has booked GPU nodes and the user asks for an OpenAI-compatible endpoint, ito-serve, hosted Kimi, or self-hosted open-weights inference. ECC implements no serving stack of its own.
-- `ito-training` — Inspect the availability of ML training on a completed Itô compute booking and, when the canonical backend becomes available, hand off an explicitly confirmed training manifest. Use after ito-compute has booked GPU nodes and the user wants pre-training, fine-tuning, or RL on that metal. ECC implements no training stack of its own.
-- `latency-critical-systems` — Optimize and verify latency-sensitive systems — realtime dashboards, market data feeds, streaming agents, execution gateways, queues, and caches — by tracking p50/p95/p99 latency, freshness age, and queue depth, mapping hot paths, and running live readbacks. Use when p95 latency, throughput, or data freshness matters.
-- `ml-adoption-playbook` — End-to-end methodology for AI agents and software engineers to add machine learning algorithms to existing non-ML codebases. Covers problem framing, data readiness, architectural decoupling, and baseline model integration. Use when adding a machine learning capability to a codebase that has none, from problem framing through a baseline model.
-- `mle-workflow` — Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitoring, and rollback. Use when building, reviewing, or hardening ML systems beyond one-off notebooks.
-- `mysql-patterns` — MySQL and MariaDB schema, query, indexing, transaction, replication, and connection-pool patterns for production backends. Use when designing MySQL or MariaDB schemas and indexes, or when a query, transaction, or replica lags.
-- `postgres-patterns` — PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL schemas, indexes, or RLS policies, or when a query is too slow.
-- `prisma-patterns` — Prisma ORM patterns for TypeScript backends — schema design, query optimization, transactions, pagination, and critical traps like updateMany returning count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt skipped on bulk writes, and serverless connection exhaustion. Use when writing a Prisma schema or query, or debugging transactions, migrations, or serverless connection limits.
-- `pytorch-patterns` — PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model architectures, and data loading. Use when writing or reviewing PyTorch training loops, model architectures, or data loading, or when a run will not reproduce.
-- `recsys-pipeline-architect` — Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffect framework popularized by xAI's open-sourced For You algorithm. Use this skill whenever the user is building any system that picks "the top K items for a (user, context)" — social feeds, content CMSs, RAG rerankers, task prioritizers, notification triage, search reranking, ad ranking.
-- `redis-patterns` — Redis data structure patterns, caching strategies, distributed locks, rate limiting, pub/sub, and connection management for production applications. Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis, or when key design needs review.
-- `social-graph-ranker` — Weighted social-graph ranking for warm intro discovery, bridge scoring, and network gap analysis across X and LinkedIn. Use when the user wants the reusable graph-ranking engine itself, not the broader outreach or network-maintenance workflow layered on top of it.
-
----
-
-## ecc-research-growth
-
-**Use for:** Evidence-backed research, brand voice, publishing, growth and commercial analysis.
+**Use for:** Operate containers, environments, networks, rollout monitoring and infrastructure.
 
 **Skills in this pack:**
 
-- `article-writing` — Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from supplied examples or brand guidance. Use when the user wants polished written content longer than a paragraph, especially when voice consistency, structure, and credibility matter.
-- `benchmark-methodology` — Score a scoped competitor set into comparable profile cards: nine weighted dimensions (positioning, voice, visual craft, offer packaging, evidence, enterprise-readiness, thought leadership, pricing, client tension) with 1-5 evidence-anchored rubrics and a tension 2x2 plot. Use when benchmarking or scoring competitors, building a competitive comparison matrix, or grading rival positioning before assembling the report; runs after competitive-platform-analysis and before competitive-report-structure.
-- `brand-discovery` — Run a structured, resumable multi-session brand identity interview across 8 modules (purpose, positioning, audience, personality, voice, narrative, founder tension) using laddering, 5 Whys, and projective techniques, persisting answers to disk and producing a master brandbook (90_SYNTHESIS.md). Use when creating or repositioning a brand, briefing designers or writers, or making implicit founder knowledge explicit.
-- `brand-voice` — Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile across content, outreach, and social workflows. Use when the user wants voice consistency without generic AI writing tropes.
-- `competitive-platform-analysis` — Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmarking begins. Decides who counts as a competitor, which tier they belong to, and which sources to mine. First step in the three-skill competitive pipeline; precedes benchmark-methodology.
-- `competitive-report-structure` — Assemble scored competitor profile cards (from benchmark-methodology) into a decision-grade competitive report with landscape map, competitor tiers, benchmarking matrix, white-space analysis, strategic recommendations, and team alignment trigger questions. Use when presenting competitive findings to leadership or a board, writing a competitive landscape report, or as the final step of the competitive analysis pipeline.
-- `content-engine` — Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars, or one source asset adapted cleanly across platforms.
-- `crosspost` — Multi-platform content distribution across X, LinkedIn, Threads, and Bluesky. Adapts content per platform using content-engine patterns. Never posts identical content cross-platform. Use when the user wants to distribute content across social platforms.
-- `deep-research` — Produce cited research reports from multiple web sources using firecrawl and exa MCP tools — plan sub-questions, search and deep-read sources, then synthesize findings with inline citations and confidence levels. Use when the user asks to research a topic in depth, run a deep dive or investigation, or do competitive analysis, technology evaluation, market sizing, or due diligence on a company.
-- `exa-search` — Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search engine.
-- `investor-materials` — Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
-- `investor-outreach` — Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging.
-- `lead-intelligence` — AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual ranking, warm path discovery, source-derived voice modeling, and channel-specific outreach across email, LinkedIn, and X. Use when the user wants to find, qualify, and reach high-value contacts.
-- `market-research` — Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions.
-- `marketing-campaign` — End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scripts, and content calendars. Use as the orchestration layer for multi-channel product launches. Use when planning or executing a multi-channel product launch, or producing landing page, email, social, or ad copy.
-- `osint-investigation` — Sparse-clue OSINT investigation methodology for extracting overlooked leads, connecting fragmented evidence, and testing explanations across sources. Use for multi-step CTF challenges, image/video geolocation, event reconstruction, public-account and entity verification, artifact interpretation, infrastructure research, or stalled investigations.
-- `research-ops` — Evidence-first current-state research workflow for ECC. Use when the user wants fresh facts, comparisons, enrichment, or a recommendation built from current public evidence and any supplied local context.
-- `scientific-db-pubmed-database` — Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and API-backed literature monitoring. Use when a task needs biomedical literature from PubMed rather than general web search.
-- `scientific-db-uspto-database` — USPTO patent and trademark data workflow for official record lookup, PatentSearch queries, TSDR checks, assignment data, and reproducible IP research logs. Use when a task needs official United States patent or trademark records from USPTO systems.
-- `scientific-pkg-gget` — gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and reproducible bioinformatics evidence logs. Use when a task needs quick bioinformatics lookup across genomic reference databases with the gget CLI or Python package.
-- `scientific-thinking-literature-review` — Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging. Use when the task is to find, screen, synthesize, and cite a body of academic or technical literature.
-- `scientific-thinking-scholar-evaluation` — Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or scientific work — papers, proposals, methods sections, or evidence quality — against a repeatable rubric.
-- `seo` — Audit, plan, and implement SEO improvements across technical SEO, on-page optimization, structured data, Core Web Vitals, and content strategy. Use when the user wants better search visibility, SEO remediation, schema markup, sitemap/robots work, or keyword mapping.
-- `social-publisher` — Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publish to X, LinkedIn, Instagram, Facebook Pages, TikTok, Discord, Telegram, YouTube, Reddit, WordPress, or Pinterest — or when managing campaigns, uploading media, or monitoring post delivery status.
-- `taste` — Creative-direction layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop family — a named-genre aesthetic vocabulary, mood + color + light system, beat-synced editing grammar, and a pipeline chaining ECC's video skills from b-roll generation to distribution. Use when a video must feel intentional rather than merely functional — music videos, fancams, moodboard-driven reels, or giving AI-generated b-roll a coherent visual direction.
-- `taste-application` — Generate new video against a distilled style pack and cut it into a finished piece - plan takes from the reference's cut rhythm, generate on fal, grade with the pack's measured LUT, cut at the measured cadence, weave in existing footage, composite overlay plates, mint 3D props, and verify the result numerically. Use when the user wants to make a video in a captured style, supplement existing footage, or assemble generated clips into a real edit.
-- `taste-distillation` — Measure a set of reference videos into a reusable style pack - colour grade as a 3D LUT, cut rhythm as a shot-length distribution, hero stills, screen-blend overlay plates, and a text spec for a generative model. Use when the user wants to capture the look of reference footage, build a repeatable look, mint assets from references, or reproduce someone's grade and pacing.
-- `x-api` — X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants to interact with X programmatically.
-
----
-
-## ecc-media
-
-**Use for:** Video, motion, Blender, slides, media generation and document processing.
-
-**Skills in this pack:**
-
-- `blender-motion-state-inspection` — Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough.
-- `fal-ai-media` — Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seedance, Kling, Veo 3), text-to-speech (CSM-1B), and video-to-audio (ThinkSound). Use when the user wants to generate images, videos, or audio with AI.
-- `frontend-slides` — Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.
-- `ios-icon-gen` — Generate iOS app icons as PNG imagesets for Xcode asset catalogs from SF Symbols (5000+ Apple-native) or Iconify API (275k+ open source icons from 200+ collections). Use when generating icons, creating icon assets, adding icons to asset catalog, or searching for icons for iOS projects.
-- `manim-video` — Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the wider ECC video stack if needed. Use when the user wants a clean animated explainer rather than a generic talking-head script.
-- `nutrient-document-processing` — Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, HTML, and images. Use when converting, OCRing, extracting from, redacting, signing, or filling documents via the Nutrient DWS API.
-- `tasteforge-video` — Use for file-driven multimodal image, video, and 3D-asset discovery; taste interviews; distill or apply workflows; style-pack validation; editable EDL/FCPXML export; provenance audits; and offline planning that must fail closed before provider generation.
-- `ui-demo` — Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutorial video of a web application. Produces WebM videos with visible cursor, natural pacing, and professional feel.
-- `video-editing` — AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capture through FFmpeg, Remotion, ElevenLabs, fal.ai, and final polish in Descript or CapCut. Use when the user wants to edit video, cut footage, create vlogs, or build video content.
-- `videodb` — Ingest, index, search, edit, and monitor video and audio with the VideoDB Python SDK — upload from files, URLs, or RTSP feeds, build spoken and scene indexes with timestamped search and playable clips, transcode and reframe, do timeline edits (subtitles, overlays, dubbing), and run real-time alerts on live streams or desktop capture. Use when working with video search, transcription, clipping, transcoding, streaming, or live video alerts.
-- `visa-doc-translate` — Translate visa document images (bank deposit, employment, income, and retirement certificates; HEIC, PNG, or JPG) into English via OCR and produce a bilingual PDF pairing the original image with a formatted certified-style translation. Use when a visa application needs a document translated to English, an official certificate OCR'd and translated, or a bilingual translation PDF for immigration paperwork.
-
----
-
-## ecc-operations
-
-**Use for:** Infrastructure, integrations, networking and evidence-first business operations.
-
-**Skills in this pack:**
-
-- `automation-audit-ops` — Evidence-first automation inventory and overlap audit workflow for ECC. Use when the user wants to know which jobs, hooks, connectors, MCP servers, or wrappers are live, broken, redundant, or missing before fixing anything.
 - `canary-watch` — Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console errors, and performance regressions after deploys, merges, or dependency upgrades. Smoke / canary / post-deploy verification.
-- `carrier-relationship-management` — Manage truckload, LTL, and intermodal carrier portfolios: sourcing and FMCSA vetting, freight rate and fuel-surcharge negotiation, RFPs and routing guides, carrier scorecards, allocation, and renewals. Use when onboarding carriers, running freight RFPs, negotiating rates, evaluating carrier performance, reallocating freight, or building freight strategy.
 - `cisco-ios-patterns` — Cisco IOS and IOS-XE review patterns for show commands, config hierarchy, wildcard masks, ACL placement, interface hygiene, and safe change-window verification. Use when reading, writing, or reviewing Cisco IOS / IOS-XE configuration or planning a change window.
-- `ck` — Persistent per-project memory for Claude Code (Context Keeper) driven by deterministic Node.js /ck commands: init, save, resume, info, list, forget, and v1-to-v2 migrate, plus a SessionStart hook that injects a compact project brief. Use when context must survive across sessions, saving session state with next steps and decisions, resuming where a previous session left off, or picking up a project without re-explaining it.
-- `counterparty-channel-discipline` — Per-channel strict prompts, mention gating, silent observation, and a communication autonomy policy for agents that sit in shared channels with external counterparties. Use when an agent joins group chats, shared channels, or DMs where outsiders can read every message and you need it to speak only when addressed, never leak internal context, and route risky content to draft-only approval.
-- `customer-billing-ops` — Operate customer billing workflows such as subscriptions, refunds, churn triage, billing-portal recovery, and plan analysis using connected billing tools like Stripe. Use when the user needs to help a customer, inspect subscription state, or manage revenue-impacting billing operations.
-- `customs-trade-compliance` — Codified customs and trade compliance expertise — HS/HTS tariff classification with GRI rules, commercial invoices and entry documentation, Incoterms 2020, FTA qualification and duty optimization (USMCA, RCEP, FTZs, drawback), denied-party screening, and penalty mitigation across US, EU, UK, and APAC jurisdictions. Use when classifying goods, preparing import/export documentation, screening restricted parties, responding to customs audits or CF-28/penalty notices, or optimizing duties.
 - `docker-patterns` — Docker and Docker Compose patterns for local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration. Use when creating or reviewing Dockerfiles and Compose services, testing installers across Linux distributions, or planning accurate native macOS and Windows validation.
-- `email-ops` — Evidence-first mailbox triage, drafting, send verification, and sent-mail-safe follow-up workflow for ECC. Use when the user wants to organize email, draft or send through the real mail surface, or prove what landed in Sent.
-- `energy-procurement` — Procure electricity and natural gas for commercial and industrial facilities: tariff and rate-schedule optimization, demand-charge mitigation, supplier RFPs, fixed/index/block-and-index hedging, renewable PPA and REC evaluation, and sustainability reporting. Use when procuring energy, optimizing utility tariffs, managing demand charges, evaluating PPAs, or building energy budgets and hedge strategies.
-- `esign-field-placement` — Deterministic method for placing signature, date, and text fields in a web e-signature composer through a browser automation session, using a fixed signature page, numeric Location panel coordinates instead of drag, and a save-as-draft default. Use when automating envelope preparation for generated agreements and you need repeatable field positions, correct per-recipient ownership, and a hard gate before anything is sent or signed.
-- `finance-billing-ops` — Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales snapshot, pricing comparison, duplicate-charge diagnosis, or code-backed billing reality instead of generic payments advice.
 - `flox-environments` — Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager. Use when setting up project toolchains, installing system-level dependencies (compilers, databases, native libs), pinning exact package versions for a team, onboarding developers, running local services (PostgreSQL, Redis, Kafka), or solving 'works on my machine' problems — including agent/vibe-coding setups that need project-scoped tools without sudo. Also use when the user mentions .flox/, manifest.toml, flox activate, or FloxHub.
-- `google-workspace-ops` — Operate across Google Drive, Docs, Sheets, and Slides as one workflow surface for plans, trackers, decks, and shared documents. Use when the user needs to find, summarize, edit, migrate, or clean up Google Workspace assets without dropping to raw tool calls.
 - `homelab-network-readiness` — Readiness checklist for homelab VLAN segmentation, local DNS filtering (Pi-hole, AdGuard Home), and WireGuard-style remote access. Use when planning or reviewing home network changes — splitting a flat network into trusted, IoT, guest, or management VLANs, moving DHCP to a local resolver, or adding VPN access — before changing router, firewall, DHCP, or VPN configuration.
 - `homelab-network-setup` — Practical home and homelab network planning for gateways, switches, access points, IP ranges, DHCP reservations, DNS, cabling, and common beginner mistakes. Use when planning or fixing a home or homelab network — gateway, switch, AP, IP ranges, DHCP, DNS, or cabling.
 - `homelab-pihole-dns` — Pi-hole installation, blocklist management, DNS-over-HTTPS setup, DHCP integration, local DNS records, and troubleshooting broken DNS resolution on a home network. Use when the task explicitly involves Pi-hole — installing it, managing blocklists, configuring DoH or DHCP, adding local DNS records, or diagnosing DNS resolution with Pi-hole in the path.
 - `homelab-vlan-segmentation` — Segmenting home networks into VLANs for IoT, guest, trusted, and server traffic using UniFi, pfSense/OPNsense, and MikroTik — including switch trunk config, firewall rules, and wireless SSID mapping. Use when splitting a home network into IoT, guest, trusted, and server VLANs on UniFi, pfSense/OPNsense, or MikroTik.
 - `homelab-wireguard-vpn` — WireGuard VPN server setup, peer configuration, key generation, split tunneling vs full tunnel routing, and remote access to a home network from mobile and laptop clients. Use when setting up WireGuard for remote access to a home network, or deciding between split and full tunnel routing.
-- `inventory-demand-planning` — Codified demand planning expertise for multi-location retailers: demand forecasting method selection, ABC/XYZ segmentation, safety stock and reorder-point optimization, promotional lift and post-promo dip estimation, and seasonal transition and markdown timing. Use when forecasting demand, setting safety stock, planning replenishment, managing promotions, or optimizing inventory levels.
-- `jira-integration` — Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning issues. Provides Jira API patterns via MCP or direct REST calls.
 - `kubernetes-patterns` — Kubernetes workload patterns, resource management, RBAC, probes, autoscaling, ConfigMap/Secret handling, and kubectl debugging for production-grade deployments. Use when writing or reviewing Kubernetes manifests, or debugging probes, RBAC, autoscaling, or resource limits.
-- `logistics-exception-management` — Codified freight-exception handling expertise for shipment delays, damages, losses, shortages, and carrier disputes, with escalation protocols, carrier-specific behaviors by mode, claims procedures, and eat-the-cost vs fight-the-claim judgment frameworks. Use when handling shipping exceptions, freight claims, delivery issues, or carrier disputes.
-- `mailtrap-email-integration` — Guides agents through integrating transactional email sending via Mailtrap's Email API, including sandbox testing, domain verification, and API authentication. Use when implementing email-sending features, debugging delivery issues, or setting up safe dev/staging email testing.
-- `master-agreement-generator` — Generate review drafts of counterparty master agreements from one template plus a JSON spec, with role-selected clauses and a Schedule A workflow limited to the executed agreement's notice authority. Use when you need reproducible drafting and separately reviewed execution preparation.
-- `messages-ops` — Evidence-first live messaging workflow for ECC. Use when the user wants to read texts or DMs, recover a recent one-time code, inspect a thread before replying, or prove which message source was actually checked.
 - `netmiko-ssh-automation` — Safe Python Netmiko patterns for read-only collection, bounded batch SSH, TextFSM parsing, guarded config changes, timeouts, and network automation error handling. Use when automating network device access with Python Netmiko, whether collecting state or pushing guarded config changes.
 - `network-bgp-diagnostics` — Diagnostics-only BGP troubleshooting patterns for neighbor state, route exchange, prefix policy, AS path inspection, and safe evidence collection. Use when a BGP neighbor is down, routes are missing, or prefix policy and AS path need inspection.
 - `network-config-validation` — Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. Use when reviewing a router or switch configuration before deployment.
 - `network-interface-health` — Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs, flapping, or a duplex or speed mismatch.
+- `uncloud` — Use when managing an Uncloud cluster — deploying services, configuring Caddy ingress, adding static proxy routes for non-cluster devices, publishing ports, scaling, inspecting logs, or managing machines and volumes with the `uc` CLI.
+- `observability-and-instrumentation` — Instruments code so production behavior is visible and diagnosable. Use when adding logging, metrics, tracing, or alerting. Use when shipping any feature that runs in production and you need evidence it works. Use when production issues are reported but you can't tell what happened from the available data.
+- `ci-cd-and-automation` — Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
+- `security-and-hardening` — Hardens code against vulnerabilities. Use when auditing an input handler for vulnerabilities, when handling user input, authentication, data storage, or external integrations, or when checking a login flow is safe against the OWASP Top Ten. Use when building any feature that accepts untrusted data, manages user sessions, or interacts with third-party services. Use when auditing dependencies for known vulnerabilities, triaging package-manager audit findings, or assessing supply-chain risk in a new package. Use when personal data or privacy compliance (GDPR, CCPA) is involved.
+
+---
+
+## operations
+
+**Use for:** Handle business workflows, logistics, billing, procurement and workspace integrations.
+
+**Skills in this pack:**
+
+- `automation-audit-ops` — Evidence-first automation inventory and overlap audit workflow for ECC. Use when the user wants to know which jobs, hooks, connectors, MCP servers, or wrappers are live, broken, redundant, or missing before fixing anything.
+- `carrier-relationship-management` — Manage truckload, LTL, and intermodal carrier portfolios: sourcing and FMCSA vetting, freight rate and fuel-surcharge negotiation, RFPs and routing guides, carrier scorecards, allocation, and renewals. Use when onboarding carriers, running freight RFPs, negotiating rates, evaluating carrier performance, reallocating freight, or building freight strategy.
+- `ck` — Persistent per-project memory for Claude Code (Context Keeper) driven by deterministic Node.js /ck commands: init, save, resume, info, list, forget, and v1-to-v2 migrate, plus a SessionStart hook that injects a compact project brief. Use when context must survive across sessions, saving session state with next steps and decisions, resuming where a previous session left off, or picking up a project without re-explaining it.
+- `counterparty-channel-discipline` — Per-channel strict prompts, mention gating, silent observation, and a communication autonomy policy for agents that sit in shared channels with external counterparties. Use when an agent joins group chats, shared channels, or DMs where outsiders can read every message and you need it to speak only when addressed, never leak internal context, and route risky content to draft-only approval.
+- `customer-billing-ops` — Operate customer billing workflows such as subscriptions, refunds, churn triage, billing-portal recovery, and plan analysis using connected billing tools like Stripe. Use when the user needs to help a customer, inspect subscription state, or manage revenue-impacting billing operations.
+- `customs-trade-compliance` — Codified customs and trade compliance expertise — HS/HTS tariff classification with GRI rules, commercial invoices and entry documentation, Incoterms 2020, FTA qualification and duty optimization (USMCA, RCEP, FTZs, drawback), denied-party screening, and penalty mitigation across US, EU, UK, and APAC jurisdictions. Use when classifying goods, preparing import/export documentation, screening restricted parties, responding to customs audits or CF-28/penalty notices, or optimizing duties.
+- `email-ops` — Evidence-first mailbox triage, drafting, send verification, and sent-mail-safe follow-up workflow for ECC. Use when the user wants to organize email, draft or send through the real mail surface, or prove what landed in Sent.
+- `energy-procurement` — Procure electricity and natural gas for commercial and industrial facilities: tariff and rate-schedule optimization, demand-charge mitigation, supplier RFPs, fixed/index/block-and-index hedging, renewable PPA and REC evaluation, and sustainability reporting. Use when procuring energy, optimizing utility tariffs, managing demand charges, evaluating PPAs, or building energy budgets and hedge strategies.
+- `esign-field-placement` — Deterministic method for placing signature, date, and text fields in a web e-signature composer through a browser automation session, using a fixed signature page, numeric Location panel coordinates instead of drag, and a save-as-draft default. Use when automating envelope preparation for generated agreements and you need repeatable field positions, correct per-recipient ownership, and a hard gate before anything is sent or signed.
+- `finance-billing-ops` — Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales snapshot, pricing comparison, duplicate-charge diagnosis, or code-backed billing reality instead of generic payments advice.
+- `google-workspace-ops` — Operate across Google Drive, Docs, Sheets, and Slides as one workflow surface for plans, trackers, decks, and shared documents. Use when the user needs to find, summarize, edit, migrate, or clean up Google Workspace assets without dropping to raw tool calls.
+- `inventory-demand-planning` — Codified demand planning expertise for multi-location retailers: demand forecasting method selection, ABC/XYZ segmentation, safety stock and reorder-point optimization, promotional lift and post-promo dip estimation, and seasonal transition and markdown timing. Use when forecasting demand, setting safety stock, planning replenishment, managing promotions, or optimizing inventory levels.
+- `jira-integration` — Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning issues. Provides Jira API patterns via MCP or direct REST calls.
+- `logistics-exception-management` — Codified freight-exception handling expertise for shipment delays, damages, losses, shortages, and carrier disputes, with escalation protocols, carrier-specific behaviors by mode, claims procedures, and eat-the-cost vs fight-the-claim judgment frameworks. Use when handling shipping exceptions, freight claims, delivery issues, or carrier disputes.
+- `mailtrap-email-integration` — Guides agents through integrating transactional email sending via Mailtrap's Email API, including sandbox testing, domain verification, and API authentication. Use when implementing email-sending features, debugging delivery issues, or setting up safe dev/staging email testing.
+- `master-agreement-generator` — Generate review drafts of counterparty master agreements from one template plus a JSON spec, with role-selected clauses and a Schedule A workflow limited to the executed agreement's notice authority. Use when you need reproducible drafting and separately reviewed execution preparation.
+- `messages-ops` — Evidence-first live messaging workflow for ECC. Use when the user wants to read texts or DMs, recover a recent one-time code, inspect a thread before replying, or prove which message source was actually checked.
 - `production-scheduling` — Codified expertise for production scheduling, job sequencing, line balancing, changeover optimization, and bottleneck resolution in discrete and batch manufacturing. Informed by production schedulers with 15+ years experience. Includes TOC/drum-buffer-rope, SMED, OEE analysis, disruption response frameworks, and ERP/MES interaction patterns. Use when scheduling production, resolving bottlenecks, optimizing changeovers, responding to disruptions, or balancing manufacturing lines.
 - `project-flow-ops` — Operate execution flow across GitHub and Linear by triaging issues and pull requests, linking active work, and keeping GitHub public-facing while Linear remains the internal execution layer. Use when the user wants backlog control, PR triage, or GitHub-to-Linear coordination.
 - `quality-nonconformance` — Quality control and non-conformance management for regulated manufacturing (FDA 21 CFR 820, IATF 16949, AS9100): NCR lifecycle and disposition, 5-Why/Ishikawa/fault-tree/8D root cause analysis, CAPA systems, SPC interpretation, AQL sampling, and supplier quality audits. Use when investigating non-conformances, performing root cause analysis, managing CAPAs, interpreting SPC data, or handling supplier quality issues.
 - `returns-reverse-logistics` — Codified expertise for returns authorization, receipt and inspection, disposition decisions, refund processing, fraud detection, and warranty claims management. Informed by returns operations managers with 15+ years experience. Includes grading frameworks, disposition economics, fraud pattern recognition, and vendor recovery processes. Use when handling product returns, reverse logistics, refund decisions, return fraud detection, or warranty claims.
-- `uncloud` — Use when managing an Uncloud cluster — deploying services, configuring Caddy ingress, adding static proxy routes for non-cluster devices, publishing ports, scaling, inspecting logs, or managing machines and volumes with the `uc` CLI.
 - `unified-notifications-ops` — Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfaces. Use when the real problem is alert routing, deduplication, escalation, or inbox collapse.
 
 ---
 
-## ecc-security-domains
+## healthcare
 
-**Use for:** Specialist security, healthcare and financial protocols; not authorization for external actions.
+**Use for:** Work on clinical systems, sensitive health data and healthcare compliance.
 
 **Skills in this pack:**
 
-- `agent-payment-x402` — Add x402 payment execution to AI agents with per-task budgets, spending controls, and non-custodial wallets. Supports Base through agentwallet-sdk, X Layer through OKX Payments / OKX Agent Payments Protocol, and Solana plus multi-network EVM through the upstream x402 packages with facilitator-based settlement. Use when an agent must pay for something itself and needs per-task budgets, spending controls, and a non-custodial wallet.
-- `agent-security-hardening` — Security hardening guidance for AI agent frameworks that process untrusted content, invoke tools, write workspace files, manage runtime identifiers, or handle credentials. Use when building or reviewing an agent runtime, autonomous worker, tool gateway, memory service, or multi-tenant agent deployment. Do not use for general web application security or offensive testing.
-- `defi-amm-security` — Security checklist for Solidity AMM contracts, liquidity pools, and swap flows. Covers reentrancy, CEI ordering, donation or inflation attacks, oracle manipulation, slippage, admin controls, and integer math. Use when auditing or writing Solidity AMM, liquidity pool, or swap code.
-- `evm-token-decimals` — Prevent silent decimal mismatch bugs across EVM chains. Covers runtime decimal lookup, chain-aware caching, bridged-token precision drift, and safe normalization for bots, dashboards, and DeFi tools. Use when handling token amounts across EVM chains, or when a balance, price, or transfer amount is off by orders of magnitude.
-- `gateguard` — PreToolUse fact-forcing gate that denies the first Edit/Write/Bash (including MultiEdit and NotebookEdit) attempt until the agent presents concrete facts (importers, data schemas, verbatim user instruction), then allows retry; A/B-tested at +2.25 quality points. Use when enabling or configuring the GateGuard hook, exempting paths via env vars, or handling first-touch denials.
 - `healthcare-cdss-patterns` — Clinical Decision Support System (CDSS) development patterns. Drug interaction checking, dose validation, clinical scoring (NEWS2, qSOFA), alert severity classification, and integration into EMR workflows. Use when building clinical decision support — drug interaction checks, dose validation, clinical scoring, or alert severity.
 - `healthcare-emr-patterns` — EMR/EHR development patterns for healthcare applications. Clinical safety, encounter workflows, prescription generation, clinical decision support integration, and accessibility-first UI for medical data entry. Use when building EMR or EHR features such as encounter workflows, prescription generation, or clinical data entry UI.
 - `healthcare-eval-harness` — Patient safety evaluation harness for healthcare application deployments. Automated test suites for CDSS accuracy, PHI exposure, clinical workflow integrity, and integration compliance. Blocks deployments on safety failures. Use when a healthcare deployment must be gated on patient-safety tests for CDSS accuracy, PHI exposure, and workflow integrity.
 - `healthcare-phi-compliance` — Protected Health Information (PHI) and PII compliance patterns for healthcare applications: data classification, row-level access control, tamper-proof audit trails, schema tagging, and common leak vectors such as logs, URLs, and browser storage. Use when code touches patient or clinician data, when implementing HIPAA or GDPR access controls, or when auditing a healthcare system for data exposure.
 - `hipaa-compliance` — HIPAA-specific entrypoint for healthcare privacy and security work. Use when a task is explicitly framed around HIPAA, PHI handling, covered entities, BAAs, breach posture, or US healthcare compliance requirements.
-- `llm-trading-agent-security` — Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-send simulation, circuit breakers, MEV protection, and key handling. Use when an autonomous agent holds wallet or transaction authority and its limits, simulation, or key handling need review.
-- `mcp-dependency-review` — Statically review MCP configuration for mutable package references before approval or CI, without executing discovered MCP servers. Use when reviewing .mcp.json, Cursor, VS Code, Claude, Windsurf, or other repo-scoped MCP config.
-- `nodejs-keccak256` — Prevent Ethereum hashing bugs in JavaScript and TypeScript. Node's sha3-256 is NIST SHA3, not Ethereum Keccak-256, and silently breaks selectors, signatures, storage slots, and address derivation. Use when hashing for Ethereum in JavaScript or TypeScript, or when a selector, signature, storage slot, or derived address is wrong.
-- `prediction-market-oracle-research` — Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, caveats, and integration patterns without investment advice. Use when evaluating prediction markets as a data source or oracle signal for a product, agent, or dashboard.
-- `prediction-market-risk-review` — Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data, API keys, or trade planning.
-- `safety-guard` — Guard against destructive operations with three modes: Careful intercepts dangerous commands (rm -rf, git push --force, DROP TABLE) for confirmation, Freeze locks writes to one directory, and Guard combines both via PreToolUse hooks. Use when working on production systems, running agents autonomously, restricting edits to a directory, or during migrations, deploys, and data changes.
-- `security-bounty-hunter` — Hunt for exploitable, bounty-worthy security issues in repositories. Focuses on remotely reachable vulnerabilities that qualify for real reports instead of noisy local-only findings. Use when hunting reportable, remotely reachable vulnerabilities in a repository.
-- `security-scan` — Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions. Use when auditing a .claude/ directory — CLAUDE.md, settings.json, MCP servers, hooks, or agent definitions.
 
 ---
 
-<!-- ECC-GENERATED END -->
+## financial-protocols
+
+**Use for:** Work on blockchain, payment protocols, trading agents and prediction-market risk.
+
+**Skills in this pack:**
+
+- `agent-payment-x402` — Add x402 payment execution to AI agents with per-task budgets, spending controls, and non-custodial wallets. Supports Base through agentwallet-sdk, X Layer through OKX Payments / OKX Agent Payments Protocol, and Solana plus multi-network EVM through the upstream x402 packages with facilitator-based settlement. Use when an agent must pay for something itself and needs per-task budgets, spending controls, and a non-custodial wallet.
+- `defi-amm-security` — Security checklist for Solidity AMM contracts, liquidity pools, and swap flows. Covers reentrancy, CEI ordering, donation or inflation attacks, oracle manipulation, slippage, admin controls, and integer math. Use when auditing or writing Solidity AMM, liquidity pool, or swap code.
+- `evm-token-decimals` — Prevent silent decimal mismatch bugs across EVM chains. Covers runtime decimal lookup, chain-aware caching, bridged-token precision drift, and safe normalization for bots, dashboards, and DeFi tools. Use when handling token amounts across EVM chains, or when a balance, price, or transfer amount is off by orders of magnitude.
+- `llm-trading-agent-security` — Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-send simulation, circuit breakers, MEV protection, and key handling. Use when an autonomous agent holds wallet or transaction authority and its limits, simulation, or key handling need review.
+- `nodejs-keccak256` — Prevent Ethereum hashing bugs in JavaScript and TypeScript. Node's sha3-256 is NIST SHA3, not Ethereum Keccak-256, and silently breaks selectors, signatures, storage slots, and address derivation. Use when hashing for Ethereum in JavaScript or TypeScript, or when a selector, signature, storage slot, or derived address is wrong.
+- `prediction-market-oracle-research` — Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, caveats, and integration patterns without investment advice. Use when evaluating prediction markets as a data source or oracle signal for a product, agent, or dashboard.
+- `prediction-market-risk-review` — Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data, API keys, or trade planning.

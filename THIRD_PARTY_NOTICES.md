@@ -442,3 +442,21 @@ installed by these source-informed changes.
 - **Microsoft Playwright / playwright-cli:** the official skill and ten references are vendored at `skills/playwright-cli` from commit `343d8e7d0f59b91b5bbce3226fa4a2d17d023745` under Apache-2.0. License at `vendor/licenses/microsoft--playwright/LICENSE`. Bundling the instructions does not install the `@playwright/cli` executable.
 - **Vercel Web Interface Guidelines:** the Agentit-authored `skills/web-design-guidelines` adapter references the official skill at https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines and fetches the live guidelines for reviews. No upstream skill body is copied.
 - **VoltAgent / awesome-design-md:** the Agentit-authored `skills/awesome-design-md` adapter selectively loads live references from https://github.com/VoltAgent/awesome-design-md, an MIT-licensed collection. No reference DESIGN.md files are vendored.
+
+## October 22, 2026 source reconciliation
+
+The current canonical pins and original license/NOTICE records are authoritative
+in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`; dated snapshots
+above remain historical. The active TasteSkill package now uses
+`6010f91a9935f1c167dfc500fb1a475681892e6b`; `image-to-code` retains
+`f624f37a8c650b9cc550253104925efe4c8de246` because upstream removed its source
+package. Playwright CLI now uses `ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3`,
+including its original root NOTICE attributing Apache-2.0 Puppeteer-derived code.
+
+All 25 adaptation records retain their original source revisions and carry exact
+current-HEAD review evidence in `skills/ADAPTATION_SOURCES.json`. Expo feedback
+submission and provider-specific executive mail/tool behavior were excluded;
+marketing learning and paid-account evidence guidance was updated. Seven older
+source/reference origins are reconciled with exact HEADs and scoped dispositions
+in `docs/UPSTREAM_MAINTENANCE.md`. These reviews preserve original Agentit-owned
+guidance rather than relabeling it as canonical third-party package content.

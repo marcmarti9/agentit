@@ -10,7 +10,21 @@ Agentit's default operational state lives at:
 
 `.agentit/STATE.md`
 
-`.agentit/` is gitignored by the Agentit repository and should normally remain local/private in projects that adopt the same convention. Machine-readable checkpoints live under `.agentit/checkpoints/*.json`.
+`.agentit/` stays local/private. Before private writes, the runtime checks that
+its contents are untracked and excluded from project Git. If needed, init or a
+checkpoint appends an exact project-relative rule to the repository's local
+`info/exclude`, resolving the actual Git path for linked worktrees and nested
+project directories. The tracked `.gitignore` and existing private content stay
+unchanged. Machine-readable checkpoints live under `.agentit/checkpoints/*.json`.
+
+Tracked private content, unsafe symlinks, broken/unverifiable Git state or an
+overriding ignore rule block the write. Status/reading does not silently repair
+exclusions; an empty unlinked status remains read-only. If existing private
+state lacks exclusion, initialize its privacy deliberately before continuing.
+If it is tracked, review exposure and untracking explicitly; Agentit does not
+delete it or rewrite published history. Deliberate `git add -f` can bypass Git
+ignore rules, so staged changes still need inspection. Non-Git projects retain
+private filesystem state without requiring Git.
 
 If a project already has an intentional, tracked canonical state/status document, Agentit may reuse it. Do not create or commit a public task-state file merely because Agentit is active.
 

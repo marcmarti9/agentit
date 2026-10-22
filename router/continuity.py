@@ -9,7 +9,9 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import stat
+import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,6 +41,116 @@ REQUIRED_SECTIONS = (
 
 def state_path(project_root: Path) -> Path:
     return Path(project_root) / STATE_RELATIVE
+
+
+def _reject_symlink_components(path: Path) -> None:
+    for component in (path, *path.parents):
+        if component.is_symlink():
+            raise ContinuityError(f"refusing symlinked continuity path: {component}")
+
+
+def _project_root(project_root: Path) -> Path:
+    _reject_symlink_components(Path(project_root).absolute())
+    root = Path(os.path.abspath(project_root))
+    _reject_symlink_components(root)
+    if not root.is_dir():
+        raise ContinuityError(f"project root must be a regular directory: {root}")
+    return root
+
+
+def _local_git(root: Path, *args: str) -> subprocess.CompletedProcess:
+    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    try:
+        return subprocess.run(
+            ["git", "-c", f"core.hooksPath={os.devnull}", "-c", "core.fsmonitor=false",
+             "-C", str(root), *args], capture_output=True, timeout=15, env=env,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ContinuityError("Cannot verify local Git privacy for continuity") from exc
+
+
+def ensure_private_continuity(project_root: Path, *, establish: bool = False) -> None:
+    """Verify private state is untracked and ignored; optionally install a local exclusion.
+
+    Existing private bytes and tracked ignore files are never rewritten. Git's
+    own path resolution handles subdirectories and linked worktrees. Readers
+    use the default check-only mode so status/preview never repair Git state.
+    """
+    root = _project_root(project_root)
+    private = root / ".agentit"
+    for path in (private, private / "STATE.md", private / "checkpoints", private / "conflicts"):
+        _reject_symlink_components(path)
+    if private.exists() and not private.is_dir():
+        raise ContinuityError("continuity directory must be a regular directory")
+    has_git_marker = any((parent / ".git").exists() or (parent / ".git").is_symlink()
+                         for parent in (root, *root.parents))
+    if shutil.which("git") is None:
+        if has_git_marker:
+            raise ContinuityError("Git is unavailable; cannot verify private continuity")
+        return  # Non-Git continuity does not depend on a Git installation.
+    inside = _local_git(root, "rev-parse", "--is-inside-work-tree")
+    if inside.returncode:
+        # Distinguish an ordinary directory from a broken/unsafe repository.
+        if has_git_marker:
+            raise ContinuityError("Cannot verify project Git; private continuity was not changed")
+        return
+    if inside.stdout.strip() != b"true":
+        raise ContinuityError("Private continuity requires a Git worktree or a non-Git directory")
+    top_result = _local_git(root, "rev-parse", "--show-toplevel")
+    if top_result.returncode:
+        raise ContinuityError("Cannot locate project Git worktree")
+    top = Path(os.fsdecode(top_result.stdout.rstrip(b"\n")))
+    _reject_symlink_components(top / ".git")
+    relative = private.relative_to(top).as_posix()
+    if "\n" in relative or "\r" in relative:
+        raise ContinuityError("Unsupported newline in private continuity path")
+    tracked = _local_git(top, "ls-files", "-z", "--", f":(literal){relative}")
+    if tracked.returncode or tracked.stdout:
+        raise ContinuityError("Private .agentit content is tracked by Git or cannot be checked; untrack it explicitly before continuing")
+
+    def ignored() -> bool:
+        result = _local_git(top, "check-ignore", "-q", "--", relative + "/")
+        if result.returncode not in (0, 1):
+            raise ContinuityError("Cannot verify Git exclusion for private continuity")
+        return result.returncode == 0
+
+    if ignored():
+        return
+    if not establish:
+        raise ContinuityError("Private .agentit content is not ignored by Git; run continuity init to establish a local exclusion")
+    location = _local_git(top, "rev-parse", "--git-path", "info/exclude")
+    if location.returncode:
+        raise ContinuityError("Cannot locate local Git exclusion file")
+    exclude = Path(os.fsdecode(location.stdout.rstrip(b"\n")))
+    if not exclude.is_absolute():
+        exclude = top / exclude
+    _reject_symlink_components(exclude)
+    if exclude.exists() and not exclude.is_file():
+        raise ContinuityError("Local Git exclusion path must be a regular file")
+    pattern = "/" + "".join("\\" + char if char in "\\*?[]#! " else char for char in relative) + "/\n"
+    try:
+        exclude.parent.mkdir(parents=True, exist_ok=True)
+        # Append without replacing the user's file or its existing bytes.
+        with exclude.open("ab+") as stream:
+            stream.seek(0)
+            previous = stream.read()
+            addition = (b"\n" if previous and not previous.endswith(b"\n") else b"") + pattern.encode("utf-8")
+            stream.write(addition)
+            stream.flush()
+            if not ignored():
+                stream.truncate(len(previous))
+                raise ContinuityError("Project Git ignore rules override the local exclusion; private continuity was not changed")
+    except OSError as exc:
+        raise ContinuityError("Cannot establish local Git exclusion; private continuity was not changed") from exc
+
+
+def _check_private_path(path: Path, *, establish: bool = False) -> None:
+    _reject_symlink_components(path)
+    for parent in path.parents:
+        if parent.name == ".agentit":
+            ensure_private_continuity(parent.parent, establish=establish)
+            return
 
 
 def _format_packs(value: Any) -> str:
@@ -133,10 +245,11 @@ def default_state_markdown(
 
 def ensure_state_file(project_root: Path, *, goal: str = "", decision: dict[str, Any] | None = None, overwrite: bool = False) -> Path:
     """Create private local `.agentit/STATE.md` if missing."""
-    root = Path(project_root).resolve()
-    if not root.is_dir() or root.is_symlink():
-        raise ContinuityError(f"project root must be a regular directory: {root}")
+    root = _project_root(project_root)
+    ensure_private_continuity(root, establish=True)
     path = state_path(root)
+    if path.exists() and not path.is_file():
+        raise ContinuityError(f"state path must be a regular file: {path}")
     if path.exists() and not overwrite:
         return path
     decision = decision or {}
@@ -158,6 +271,8 @@ def ensure_state_file(project_root: Path, *, goal: str = "", decision: dict[str,
 
 
 def parse_state(path: Path) -> dict[str, Any]:
+    path = Path(path).absolute()
+    _check_private_path(path)
     if not path.is_file() or path.is_symlink():
         raise ContinuityError(f"state file missing or symlink: {path}")
     text = path.read_text(encoding="utf-8")
@@ -177,8 +292,9 @@ def parse_state(path: Path) -> dict[str, Any]:
 
 
 def resume_report(project_root: Path) -> dict[str, Any]:
-    root = Path(project_root).resolve()
+    root = _project_root(project_root)
     path = state_path(root)
+    _reject_symlink_components(path)
     if not path.is_file():
         return {"resumable": False, "reason": "no .agentit/STATE.md", "actions": ["create local state via agentit continuity init", "or inspect context + decide + review before substantial work"]}
     parsed = parse_state(path)
@@ -196,9 +312,8 @@ def resume_report(project_root: Path) -> dict[str, Any]:
 
 
 def write_checkpoint(project_root: Path, *, label: str, payload: dict[str, Any]) -> Path:
-    root = Path(project_root).resolve()
-    if not root.is_dir() or root.is_symlink():
-        raise ContinuityError(f"project root must be a regular directory: {root}")
+    root = _project_root(project_root)
+    ensure_private_continuity(root, establish=True)
     directory = root / CHECKPOINT_DIR
     _ensure_private_directory(directory)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -210,10 +325,15 @@ def write_checkpoint(project_root: Path, *, label: str, payload: dict[str, Any])
 
 
 def list_checkpoints(project_root: Path, *, limit: int = 20) -> list[str]:
-    directory = Path(project_root).resolve() / CHECKPOINT_DIR
+    directory = _project_root(project_root) / CHECKPOINT_DIR
+    _reject_symlink_components(directory)
     if not directory.is_dir():
         return []
-    return [str(path) for path in sorted(directory.glob("*.json"), reverse=True)[:limit]]
+    _check_private_path(directory)
+    paths = sorted(directory.glob("*.json"), reverse=True)[:limit]
+    for path in paths:
+        _reject_symlink_components(path)
+    return [str(path) for path in paths]
 
 
 def mid_task_decision_advice(decision: dict[str, Any] | None = None) -> list[str]:
@@ -226,6 +346,7 @@ def mid_task_decision_advice(decision: dict[str, Any] | None = None) -> list[str
 
 
 def _ensure_private_directory(path: Path) -> None:
+    _reject_symlink_components(path)
     path.mkdir(parents=True, exist_ok=True)
     if path.is_symlink() or not path.is_dir():
         raise ContinuityError(f"continuity directory must be a regular directory: {path}")
@@ -236,6 +357,9 @@ def _ensure_private_directory(path: Path) -> None:
 
 
 def _atomic_write_text(path: Path, content: str, *, private: bool = False) -> None:
+    _reject_symlink_components(path)
+    if private:
+        _check_private_path(path, establish=True)
     parent = path.parent
     if private:
         _ensure_private_directory(parent)

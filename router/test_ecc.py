@@ -25,6 +25,16 @@ class ECCIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.lock = ecc.load_lock(ROOT)
 
+    def test_ci_checkouts_match_the_retained_source_revision(self):
+        import yaml
+        workflow = yaml.safe_load((ROOT / '.github/workflows/ecc-integration.yml').read_text())
+        for job_id in ('source-integrity', 'native-full-suite'):
+            steps = workflow['jobs'][job_id]['steps']
+            checkouts = [step['with'] for step in steps
+                         if step.get('with', {}).get('repository') == self.lock['repository']]
+            self.assertEqual(1, len(checkouts), job_id)
+            self.assertEqual(self.lock['revision'], checkouts[0]['ref'], job_id)
+
     def test_inventory_and_single_canonical_owner(self):
         self.assertIsNotNone(self.lock)
         native = {p.parent.name for p in (ROOT/'skills').glob('*/SKILL.md')}

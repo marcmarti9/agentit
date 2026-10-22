@@ -115,6 +115,9 @@ entries:
     provenance: local-repository
     paths:
       - "${REPO_ROOT}/router/continuity.py"
+      - "${REPO_ROOT}/router/continuity_sync.py"
+      - "${REPO_ROOT}/router/handoff.py"
+      - "${REPO_ROOT}/router/handoff_cli.py"
       - "${REPO_ROOT}/skills/long-horizon-recovery/SKILL.md"
       - "${REPO_ROOT}/docs/PROJECT_CONTINUITY.md"
     state: AVAILABLE_ON_DEMAND

@@ -184,6 +184,9 @@ def resume_report(project_root: Path) -> dict[str, Any]:
     parsed = parse_state(path)
     return {
         "resumable": parsed["complete"],
+        "verification_scope": "local-state-structure",
+        "cross_machine_verified": False,
+        "handoff_action": "Use agentit continuity inspect/resume HANDOFF to verify code, skills and artifacts on the receiving machine.",
         "path": str(path),
         "missing_sections": parsed["missing_sections"],
         "next_actions_preview": parsed["sections"].get("Next actions", "")[:500],

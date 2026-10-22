@@ -15,7 +15,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 try:
     from .continuity import ContinuityError, _atomic_write_text, parse_state, state_path
@@ -27,18 +27,23 @@ MAX_STATE_BYTES = 1024 * 1024
 KEY_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
 
 
-def _git(*argv: str, cwd: Path | None = None) -> str:
+def _git(*argv: str, cwd: Path | None = None, raw: bool = False, input_data: bytes | None = None) -> str | bytes:
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+                 "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX"):
+        env.pop(name, None)
     try:
         result = subprocess.run(
-            ["git", *argv], cwd=cwd, capture_output=True, text=True,
-            timeout=60, env={**os.environ, "GIT_TERMINAL_PROMPT": "0"}, check=False,
+            ["git", "-c", f"core.hooksPath={os.devnull}", "-c", f"core.attributesFile={os.devnull}",
+             "-c", "core.fsmonitor=false", *argv], cwd=cwd, capture_output=True, text=not raw,
+            input=input_data, timeout=60, env=env, check=False,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except (OSError, UnicodeError, subprocess.TimeoutExpired) as exc:
         raise ContinuityError(f"Git transport failed: {type(exc).__name__}") from exc
     if result.returncode:
         # Git diagnostics sometimes echo credentials/remote URLs; do not expose them.
         raise ContinuityError(f"Git operation failed ({argv[0]}, exit {result.returncode}); check remote access and retry")
-    return result.stdout.strip()
+    return result.stdout if raw else result.stdout.strip()
 
 
 def _validate_remote(remote: str) -> str:
@@ -59,19 +64,82 @@ def _validate_remote(remote: str) -> str:
     return remote
 
 
-def _key_for_project(project_root: Path) -> str:
-    try:
-        origin = _git("-C", str(project_root), "config", "--get", "remote.origin.url")
-    except ContinuityError as exc:
-        raise ContinuityError("No Git origin found; supply a portable project key when linking") from exc
-    if re.match(r"^[^@/\s]+@[^:/\s]+:.+", origin):
-        host, path = origin.split("@", 1)[1].split(":", 1)
+def _remote_identity(remote: str, root: Path) -> tuple[str, str, str]:
+    """Compare repositories, without making credentials acceptable for sync.
+
+    Origin may contain credentials from the project's existing configuration;
+    they are deliberately excluded from identity and never returned or logged.
+    Only GitHub's repository path has a known case-insensitive contract.
+    """
+    if remote.startswith("/"):
+        return ("local", "", str(Path(remote).resolve()))
+    scp = re.fullmatch(r"(?:[^@/\s]+@)?([^:/\s]+):(.+)", remote) if "://" not in remote else None
+    if scp:
+        host, path = scp.groups()
+        host = host.lower()
     else:
-        parsed = urlsplit(origin)
-        host, path = parsed.hostname, parsed.path
+        try:
+            parsed = urlsplit(remote)
+            if parsed.scheme == "file":
+                if parsed.netloc not in {"", "localhost"}:
+                    raise ValueError("nonlocal file URL")
+                return ("local", "", str(Path(unquote(parsed.path)).resolve()))
+            if not parsed.scheme:
+                return ("local", "", str((root / remote).resolve()))
+            host, path = parsed.hostname, unquote(parsed.path)
+            port = parsed.port
+            if host and port and port != {"https": 443, "http": 80, "ssh": 22, "git": 9418}.get(parsed.scheme):
+                host = f"{host}:{port}"
+        except ValueError as exc:
+            raise ContinuityError("Cannot identify Git remote repository") from exc
     if not host or not path:
+        raise ContinuityError("Cannot identify Git remote repository")
+    path = path.strip("/").removesuffix(".git")
+    if host == "github.com":
+        path = path.lower()
+    return ("network", host.lower(), path)
+
+
+def _origin(root: Path) -> str | None:
+    try:
+        # get-url applies Git's configured insteadOf expansion as transport does.
+        return _git("-C", str(root), "remote", "get-url", "origin")
+    except ContinuityError:
+        return None
+
+
+def _require_separate_remote(root: Path, remote: str) -> str:
+    origin = _origin(root)
+    # Resolve aliases without contacting the remote, using the same Git config
+    # context as ls-remote/clone. Rewrites must not bypass remote validation.
+    effective = _validate_remote(_git("ls-remote", "--get-url", "--", remote, cwd=root))
+    if origin and _remote_identity(origin, root) == _remote_identity(effective, root):
+        raise ContinuityError("Continuity remote must be separate from the project's Git origin; verify the separate remote is private")
+    return effective
+
+
+def _require_push_destination(root: Path, cloned: Path, expected_remote: str) -> None:
+    """Inherited pushurl/pushInsteadOf must not export state elsewhere."""
+    destinations = _git("-C", str(cloned), "remote", "get-url", "--push", "--all", "origin").splitlines()
+    expected = _remote_identity(expected_remote, root)
+    if not destinations:
+        raise ContinuityError("No continuity push destination configured")
+    for destination in destinations:
+        if _remote_identity(_validate_remote(destination), root) != expected:
+            raise ContinuityError("Continuity push destination differs from the verified separate remote; check Git pushurl and pushInsteadOf configuration")
+
+
+def _key_for_project(project_root: Path) -> str:
+    origin = _origin(project_root)
+    if not origin:
+        raise ContinuityError("No Git origin found; supply a portable project key when linking")
+    try:
+        kind, host, path = _remote_identity(origin, project_root)
+    except ContinuityError as exc:
+        raise ContinuityError("Cannot derive a portable project key; supply one explicitly") from exc
+    if kind != "network":
         raise ContinuityError("Cannot derive a portable project key; supply one explicitly")
-    canonical = f"{host.lower()}/{path.strip('/').removesuffix('.git').lower()}"
+    canonical = f"{host}/{path}"
     return "repo-" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:20]
 
 
@@ -128,27 +196,33 @@ def _require_untracked_state(root: Path) -> None:
 def link_remote(project_root: Path, remote: str, *, project_key: str | None = None) -> dict:
     """Explicit opt-in only. Caller must confirm remote is private before invoking."""
     root = Path(project_root).resolve()
-    _require_untracked_state(root)
-    remote = _validate_remote(remote)
-    key = project_key or _key_for_project(root)
-    if not KEY_PATTERN.fullmatch(key):
-        raise ContinuityError("Project key must be 1-64 letters, digits, underscores or hyphens")
-    if _config_path(root).exists():
-        raise ContinuityError("Continuity remote already linked; unlink explicitly before changing it")
-    _git("ls-remote", "--", remote)
-    config = {"schema_version": 1, "remote": remote, "project_key": key, "last_sha256": None}
-    _save_config(root, config)
-    return {"status": "linked", "project_key": key, "sync": sync_state(root)}
+    with _project_lock(root):
+        _require_untracked_state(root)
+        remote = _validate_remote(remote)
+        _require_separate_remote(root, remote)
+        key = project_key or _key_for_project(root)
+        if not KEY_PATTERN.fullmatch(key):
+            raise ContinuityError("Project key must be 1-64 letters, digits, underscores or hyphens")
+        if _config_path(root).exists() or _config_path(root).is_symlink():
+            raise ContinuityError("Continuity remote already linked; unlink explicitly before changing it")
+        _git("ls-remote", "--", remote, cwd=root)
+        config = {"schema_version": 1, "remote": remote, "project_key": key, "last_sha256": None}
+        # Persist only after initial reconciliation succeeds. A failed link must
+        # not leave configuration that silently enables future transport.
+        result = _sync_locked(root, resolve=None, config=config)
+        return {"status": "linked", "project_key": key, "sync": result}
 
 
 def unlink_remote(project_root: Path) -> dict:
-    path = _config_path(Path(project_root).resolve())
-    if path.is_symlink():
-        raise ContinuityError("Unsafe continuity sync configuration path")
-    if not path.exists():
-        return {"status": "disabled"}
-    path.unlink()  # Does not touch either local STATE.md or remote data.
-    return {"status": "unlinked", "local_state_preserved": True, "remote_data_preserved": True}
+    root = Path(project_root).resolve()
+    with _project_lock(root):
+        path = _config_path(root)
+        if path.is_symlink():
+            raise ContinuityError("Unsafe continuity sync configuration path")
+        if not path.exists():
+            return {"status": "disabled"}
+        path.unlink()  # Does not touch either local STATE.md or remote data.
+        return {"status": "unlinked", "local_state_preserved": True, "remote_data_preserved": True}
 
 
 def _read_state(path: Path) -> bytes | None:
@@ -201,6 +275,27 @@ def _backup(root: Path, label: str, body: bytes) -> str:
     return str(path)
 
 
+def _remote_state(cloned: Path, key: str, scratch: Path) -> tuple[bool, bytes | None]:
+    """Read only the state blob, never checking out executable Git attributes."""
+    try:
+        _git("-C", str(cloned), "rev-parse", "--verify", "HEAD")
+    except ContinuityError:
+        return False, None  # An empty remote has an unborn HEAD.
+    relative = f"projects/{key}/STATE.md"
+    for path in ("projects", f"projects/{key}", relative):
+        entry = _git("-C", str(cloned), "ls-tree", "-z", "HEAD", "--", path)
+        if not entry:
+            return True, None
+        mode, kind, oid = entry.partition("\t")[0].split()
+        if (path != relative and (mode != "040000" or kind != "tree")) or (path == relative and (mode not in {"100644", "100755"} or kind != "blob")):
+            raise ContinuityError("Unsafe symlink or object in continuity remote")
+    if int(_git("-C", str(cloned), "cat-file", "-s", oid)) > MAX_STATE_BYTES:
+        raise ContinuityError("Continuity state exceeds 1 MiB")
+    body = _git("-C", str(cloned), "show", f"HEAD:{relative}", raw=True)
+    scratch.write_bytes(body)
+    return True, _read_state(scratch)
+
+
 def sync_state(project_root: Path, *, resolve: str | None = None) -> dict:
     """Reconcile one STATE.md with its authorized private Git remote.
 
@@ -212,25 +307,25 @@ def sync_state(project_root: Path, *, resolve: str | None = None) -> dict:
         raise ContinuityError("Conflict resolution must be local or remote")
     if _load_config(root) is None:
         return {"status": "disabled"}
-    _require_untracked_state(root)
     with _project_lock(root):
         return _sync_locked(root, resolve=resolve)
 
 
-def _sync_locked(root: Path, *, resolve: str | None) -> dict:
-    config = _load_config(root)
+def _sync_locked(root: Path, *, resolve: str | None, config: dict | None = None) -> dict:
+    new_link = config is not None
+    config = config if new_link else _load_config(root)
     if config is None:
         return {"status": "disabled"}
+    _require_untracked_state(root)
+    effective_remote = _require_separate_remote(root, config["remote"])
     local_path = state_path(root)
     local = _read_state(local_path)
     backup = None
     with tempfile.TemporaryDirectory(prefix="agentit-continuity-") as tmp:
         cloned = Path(tmp) / "remote"
-        _git("clone", "--quiet", "--depth", "1", "--", config["remote"], str(cloned))
-        target = cloned / "projects" / config["project_key"] / "STATE.md"
-        if any(path.is_symlink() for path in (target.parent.parent, target.parent, target)):
-            raise ContinuityError("Unsafe symlink in continuity remote")
-        remote = _read_state(target)
+        _git("clone", "--quiet", "--no-checkout", "--depth", "1", "--", config["remote"], str(cloned), cwd=root)
+        _require_push_destination(root, cloned, effective_remote)
+        has_head, remote = _remote_state(cloned, config["project_key"], Path(tmp) / "STATE.md")
         local_sha, remote_sha, base_sha = _digest(local), _digest(remote), config["last_sha256"]
 
         if local_sha == remote_sha:
@@ -250,9 +345,11 @@ def _sync_locked(root: Path, *, resolve: str | None) -> dict:
                 backup = _backup(root, "REMOTE", remote)
             if _read_state(local_path) != local:
                 raise ContinuityError("Local STATE.md changed during sync; retry")
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(local)
-            _git("-C", str(cloned), "add", "--", f"projects/{config['project_key']}/STATE.md")
+            # Seed the complete index, then replace only our blob without clean
+            # filters. Other projects and remote files remain byte-for-byte intact.
+            _git("-C", str(cloned), "read-tree", "HEAD" if has_head else "--empty")
+            oid = _git("-C", str(cloned), "hash-object", "-w", "--no-filters", "--stdin", raw=True, input_data=local).decode("ascii").strip()
+            _git("-C", str(cloned), "update-index", "--add", "--cacheinfo", "100644", oid, f"projects/{config['project_key']}/STATE.md")
             _git("-C", str(cloned), "-c", "user.name=Agentit Continuity", "-c", "user.email=agentit@localhost", "commit", "--quiet", "-m", f"Update Agentit continuity for {config['project_key']}")
             branch = _git("-C", str(cloned), "symbolic-ref", "--short", "HEAD")
             _git("-C", str(cloned), "push", "--quiet", "origin", f"HEAD:refs/heads/{branch}")
@@ -265,9 +362,11 @@ def _sync_locked(root: Path, *, resolve: str | None) -> dict:
             _atomic_write_text(local_path, remote.decode("utf-8"), private=True)
             status, final_sha = "resolved-pulled", remote_sha
         else:
-            raise ContinuityError("Continuity conflict: both machines changed STATE.md; compare both versions, then run sync --resolve local|remote --apply")
+            preview = _backup(root, "REMOTE", remote) if remote is not None else None
+            detail = f"; remote snapshot: {preview}" if preview else "; remote state is missing"
+            raise ContinuityError(f"Continuity conflict: both machines changed STATE.md{detail}; compare both versions, then run sync --resolve local|remote --apply")
 
-    if config["last_sha256"] != final_sha:
+    if new_link or config["last_sha256"] != final_sha:
         config["last_sha256"] = final_sha
         _save_config(root, config)
     result = {"status": status, "project_key": config["project_key"], "sha256": final_sha}

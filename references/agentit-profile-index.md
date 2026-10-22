@@ -26,12 +26,12 @@ Body cost includes inherited skills once per profile. Estimated tokens = UTF-8 b
 | [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258127 | ~64542 |
 | [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250695 | ~62680 |
 | [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 126656 | ~31669 |
-| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 403 | 3888562 | ~972290 |
+| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 403 | 3890332 | ~972733 |
 | [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121097 | ~30279 |
 | [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155238 | ~38814 |
 | [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809280 | ~202341 |
 | [engineering](#engineering) | Implement, debug, refactor and verify repository work with proportional checks. | 62 | 557283 | ~139340 |
-| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 73 | 454263 | ~113593 |
+| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 73 | 456033 | ~114036 |
 | [infrastructure](#infrastructure) | Operate containers, environments, networks, rollout monitoring and infrastructure. | 21 | 195427 | ~48862 |
 | [operations](#operations) | Handle business workflows, logistics, billing, procurement and workspace integrations. | 25 | 303924 | ~75991 |
 | [healthcare](#healthcare) | Work on clinical systems, sensitive health data and healthcare compliance. | 8 | 49347 | ~12340 |

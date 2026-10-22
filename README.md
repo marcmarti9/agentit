@@ -301,6 +301,15 @@ Substantial work can maintain compact **private operational continuity** in:
 
 A fresh session can recover resumable operational state when needed without committing raw task history. This state is distinct from normal tracked project documentation and stays local/private by default. Optional cross-machine transport syncs only `STATE.md` to a separately configured **private Git remote** (`agentit continuity link REMOTE --project . --apply`). `status`, `init` and `checkpoint` then reconcile it; conflicts stop without overwriting either copy. See [`docs/PROJECT_CONTINUITY.md`](docs/PROJECT_CONTINUITY.md).
 
+For a verified machine switch, `agentit continuity handoff` prepares a private
+manifest with the exact project/commit, core and selected skill hashes, state and
+explicit evidence files. On the other machine, `continuity inspect` and `resume`
+check compatibility before restoring state. Code travels through normal Git;
+credentials, provider settings and old model permissions do not travel. Different
+paths/providers are supported, conflicting state has an explicit backup, and
+artifacts are restored privately rather than over project code. A complete state
+file alone is never presented as proof that another machine is ready.
+
 ### Provider-neutral capabilities
 
 Agentit uses stable capability IDs and explicit host inventories so semantic roles are not tied to one vendor-specific tool name.

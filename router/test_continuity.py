@@ -23,6 +23,8 @@ class ContinuityAndProjectSignalTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
             self.assertTrue(parse_state(path)["complete"])
             self.assertTrue(resume_report(root)["resumable"])
+            self.assertFalse(resume_report(root)["cross_machine_verified"])
+            self.assertEqual("local-state-structure", resume_report(root)["verification_scope"])
 
     def test_state_init_does_not_invent_semantic_defaults(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -192,6 +192,11 @@ jobs:
           assert body['sha256'] == hashlib.sha256(expected).hexdigest()
           PY
 
+      - name: Exercise verified handoff through the installed runtime
+        env:
+          AGENTIT_TEST_CLI: ${{ runner.temp }}/agentit-home/.local/bin/agentit
+        run: python3 -m unittest router.test_handoff_cli -v
+
       - name: Verify explicit signal path through installed runtime
         run: |
           CLI="$RUNNER_TEMP/agentit-home/.local/bin/agentit"

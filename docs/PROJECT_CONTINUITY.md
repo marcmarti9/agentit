@@ -131,6 +131,127 @@ agentit continuity sync --resolve remote --apply --project .
 The displaced version is preserved under private `.agentit/conflicts/` before replacement. `--resolve local` still uses a fast-forward Git push; a concurrent remote update causes the push to fail. For offline work, `agentit continuity status --offline --project .` and `checkpoint --offline` avoid contacting the remote. Offline work is **not synced** until a later successful call; conflicts must be reconciled on reconnect.
 
 This sync is command-triggered, not an always-on daemon or automatic capture of chat transcripts. Agents must write useful STATE.md content and call continuity at cold start, meaningful milestones and handoff. Context not saved before a crash cannot be recovered.
+
+### Transport boundaries
+
+The continuity remote must differ from the project's normal origin. SSH/HTTPS
+spellings of the same GitHub repository, local/file URLs and local symlink
+aliases cannot bypass this check. The check also applies to previously saved
+links; it does not establish that a different repository is private. The caller
+must still verify access controls before linking. Agentit never creates or links
+a new cloud repository implicitly.
+
+Link, unlink and sync share a project lock. Failed initial synchronization leaves
+no newly enabled link. Divergent versions preserve the local state and save a
+private, hash-named remote snapshot for comparison. Explicit resolution still
+preserves the displaced version and never force-pushes.
+
+The Git transport disables hooks and filesystem-monitor callbacks, avoids
+checking out remote files, and writes the one selected state blob without clean
+or smudge filters. Existing unrelated remote files remain in their Git tree.
+Normal authentication helpers remain available; credentials are neither embedded
+in transport URLs nor copied to another machine.
+
+## Verified machine handoff
+
+State synchronization moves the compact working notes. It does not move the
+project's code, verify an installed skill library, or transfer evidence files.
+`continuity status` therefore labels its `resumable` result as
+`local-state-structure` and explicitly does not claim cross-machine verification.
+
+A private handoff directory adds the missing receiving-side checks. It contains
+the complete state, an inert `RESUME.md`, a versioned manifest, and only the
+explicitly selected evidence files. The manifest records:
+
+- normalized project identity and exact Git commit/branch;
+- hashes and sizes of the three core bodies and explicitly selected skill bodies;
+- profile IDs and their resolved membership as historical metadata;
+- state and artifact paths, byte counts and SHA-256 hashes.
+
+No skill bodies, credentials, provider settings, host grants, browser sessions,
+databases or automatic execution instructions travel in this package. Project
+code travels through normal Git. The receiving agent starts from a fresh core
+decision; past selections do not reactivate themselves.
+
+### Prepare on machine A
+
+Update `.agentit/STATE.md` with real decisions, evidence, blockers and an
+executable next step. Commit the intended code changes to the reviewed branch
+and publish them using the project's authorized Git workflow. A handoff refuses
+dirty tracked or untracked code; it never silently exports a working tree.
+
+These are agent-facing commands; the user can simply ask to continue on another
+machine:
+
+```sh
+# Preview first: no package or configuration is written.
+agentit continuity handoff --project . --output .agentit/next-pc \
+  --skill long-horizon-recovery --artifact docs/verification-summary.md
+
+# Create the reviewed package in a new private directory.
+agentit continuity handoff --project . --output .agentit/next-pc \
+  --skill long-horizon-recovery --artifact docs/verification-summary.md --apply
+```
+
+Select the skills and evidence relevant to the actual task, not the example
+unconditionally. `--profile ID` records profile metadata without loading or
+selecting every member. The output parent must already exist; the output itself
+must be new. Outputs inside the project must be ignored by project Git. Directory
+mode is 0700 and files are 0600.
+
+Transfer the directory through an explicitly authorized private channel. This
+feature provides no cloud account, background daemon or encryption service.
+Publishing the code and transferring the private handoff are separate actions.
+Preparation records the code SHA but does not certify its availability on a
+remote server; machine B must actually obtain that exact commit.
+
+### Resume on machine B
+
+Obtain the same project/commit through normal Git and provision the required
+Agentit core/skills locally using the reviewed installer. Locations and provider
+names may differ. Then inspect before applying:
+
+```sh
+agentit continuity inspect /private-transfer/next-pc --project .
+agentit continuity resume /private-transfer/next-pc --project . --apply
+```
+
+`ready: false` or exit 2 means a check blocked the operation. The report explains
+the mismatch without running commands from the incoming files. Wrong project,
+wrong commit, dirty destination, stale/missing selected skills, profile drift,
+corrupt/missing files, unsafe paths and unsupported schemas block restoration.
+Equal selected body bytes remain compatible even when one machine loads a
+managed cache and another loads the harness directly.
+
+A differing existing state requires a deliberate choice. After comparing both
+versions, `resume ... --replace-state --apply` retains the displaced state in a
+private backup. Artifacts are restored under `.agentit/received/`, never over
+project source. Repeated imports validate the actual bytes and are idempotent;
+altered received files or concurrent state edits are preserved and reported.
+The exact incoming manifest is retained beside the received artifacts as
+`handoff-manifest.json`, so its commit and skill fingerprints remain available
+after the transfer directory is removed.
+
+### Evidence and limitations
+
+Every transferred file must be regular, bounded and free of symlink/traversal
+paths. Artifacts are explicit files, not recursive folders. Current limits are
+32 artifacts, 1 MiB per file and 8 MiB total content. Credential/configuration,
+database and transcript paths are refused. A marker filter refuses obvious
+secret-like content without printing it; it cannot certify the absence of all
+personal or sensitive data. Review the selected material before transfer.
+
+Hashes detect accidental corruption and stale context, not a malicious producer
+that rewrites both content and hashes. State and `RESUME.md` remain untrusted
+source data: they cannot grant tools, waive project constraints, authorize a
+deployment, or substitute for current verification. This protocol does not
+transfer unsaved chat context, running processes or in-memory database state.
+
+`router/test_handoff.py` exercises separate actual Git clones and changed roots;
+`router/test_continuity_sync.py` exercises two local projects and a bare private
+remote. These are local integration tests, not evidence that two physical
+computers or a user's real remote have been connected.
+
 ## Git / PR workflow
 
 Repository changes default to work branch -> verification -> PR -> review/user merge unless explicitly overridden. For substantial repository work, the documentation-drift check is part of verification and must pass before the PR handoff. The implementation and durable project documentation travel in that PR. Local `.agentit/STATE.md` does not.

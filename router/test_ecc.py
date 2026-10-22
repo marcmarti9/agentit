@@ -25,6 +25,16 @@ class ECCIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.lock = ecc.load_lock(ROOT)
 
+    def test_ci_checkouts_match_the_retained_source_revision(self):
+        import yaml
+        workflow = yaml.safe_load((ROOT / '.github/workflows/ecc-integration.yml').read_text())
+        for job_id in ('source-integrity', 'native-full-suite'):
+            steps = workflow['jobs'][job_id]['steps']
+            checkouts = [step['with'] for step in steps
+                         if step.get('with', {}).get('repository') == self.lock['repository']]
+            self.assertEqual(1, len(checkouts), job_id)
+            self.assertEqual(self.lock['revision'], checkouts[0]['ref'], job_id)
+
     def test_inventory_and_single_canonical_owner(self):
         self.assertIsNotNone(self.lock)
         native = {p.parent.name for p in (ROOT/'skills').glob('*/SKILL.md')}
@@ -124,6 +134,33 @@ class ECCIntegrationTests(unittest.TestCase):
             (root/'vendor').symlink_to(ROOT/'vendor',target_is_directory=True)
             with self.assertRaisesRegex(ecc.ECCError,'symlink vendor'):
                 generate(root,ROOT/'vendor/ecc',self.lock['revision'])
+
+    def test_import_preserves_unified_catalog_and_is_idempotent(self):
+        """Refreshing a source must never recreate a separate source profile set."""
+        from scripts.ecc_integrate import generate
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'agentit'; source=Path(tmp)/'source'
+            (root/'references').mkdir(parents=True)
+            revision='1'*40
+            reviewed={'schema_version':1,'repository':'example/ecc','revision':revision,
+                      'aliases':{},'packs':{'source-provenance':{'skills':['example-skill']}}}
+            (root/'references/ecc-policy.json').write_text(json.dumps(reviewed))
+            catalog=root/'profiles.yaml'; catalog.write_text('unified profile catalog\n')
+            packs=root/'references/agentit-skill-packs.md'; packs.write_text('unified domain map\n')
+            for relative,content in {
+                'LICENSE':'Original license\n', 'package.json':'{"version":"1.0.0"}',
+                'scripts/ecc.js':'throw new Error("must not execute upstream");\n',
+                'skills/example-skill/SKILL.md':'---\nname: example-skill\ndescription: Example skill\n---\nComplete body.\n',
+            }.items():
+                target=source/relative;target.parent.mkdir(parents=True,exist_ok=True)
+                target.write_text(content)
+            with patch('scripts.ecc_integrate.subprocess.run',side_effect=AssertionError('upstream execution')):
+                first=generate(root,source,revision)
+                original_lock=(root/ecc.LOCK).read_bytes()
+                self.assertEqual(generate(root,source,revision),first)
+            self.assertEqual((root/ecc.LOCK).read_bytes(),original_lock)
+            self.assertEqual(catalog.read_text(),'unified profile catalog\n')
+            self.assertEqual(packs.read_text(),'unified domain map\n')
 
     def test_discovery_does_not_execute_or_load_skill_bodies(self):
         with patch.object(ecc.subprocess,'run',side_effect=AssertionError('unexpected execution')):

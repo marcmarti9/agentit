@@ -13,7 +13,9 @@
 `.codex/agents/` contains optional convenience profiles for installations where the named models are available:
 
 - `terra_worker` — balanced bounded execution worker.
-- `luna_worker` — fast bounded execution worker.
+- `luna_worker` — GPT-6 Luna, execution-only under GPT-6.1 Sol or GPT-6 Sol.
+
+Before selecting Luna, read [its delegation contract](docs/CODEX_SETUP.md). Sol must supply decided steps, bounded paths, acceptance checks and escalation conditions, then inspect the actual result. Luna must not own architecture, product/security decisions, open-ended implementation/research, independent review or supervision. Context size and writing volume are not selection criteria. This limit also applies to explicit model overrides and differently named roles; an unavailable profile does not waive it.
 
 They are adapters, not Agentit dependencies. If a profile/model is unavailable, use a host-native worker and project the same Agentit worker contract instead. Model availability and the primary model configuration are machine-local concerns and belong in the user's Codex configuration.
 

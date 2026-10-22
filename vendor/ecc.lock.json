@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "affaan-m/ECC",
-  "revision": "b92f181b3b748d1abbc2afd94af6aa7d8c8fca29",
+  "revision": "90606c8315ee09cafc303515c5f33024db6b9882",
   "version": "2.2.3",
   "files": {
     ".adal/README.md": {
@@ -1119,6 +1119,11 @@
       "bytes": 1996,
       "executable": false
     },
+    ".github/PR_MODERATION.md": {
+      "sha256": "eca66dcd5f8bbd575a014108146f20cc900ae82241a2043192b2ac72f3c8faef",
+      "bytes": 7335,
+      "executable": false
+    },
     ".github/PULL_REQUEST_TEMPLATE.md": {
       "sha256": "2e91a1cbbb2751d894fa37f2664d1271f3d3c8086923e5e24cfafce976191565",
       "bytes": 2250,
@@ -1132,6 +1137,11 @@
     ".github/dependabot.yml": {
       "sha256": "bc3713f4df1653ccc613b011f023d90f12a7383e68dc65f52d1d6cea701cc40e",
       "bytes": 2155,
+      "executable": false
+    },
+    ".github/pr-burst-policy.json": {
+      "sha256": "0c25276bfc98402a846d918c291fc27770e2d35eef9cd441f16e6f72fcdd308b",
+      "bytes": 151,
       "executable": false
     },
     ".github/prompts/build-fix.prompt.md": {
@@ -1165,8 +1175,8 @@
       "executable": false
     },
     ".github/workflows/ci.yml": {
-      "sha256": "62ecad64f01af305529eaccc19a78eec6f8713837a80e1084cd4a4699705b74a",
-      "bytes": 14740,
+      "sha256": "a80db4f3a3ad2023c2416a90d05440f822029a054577a96baafea119e9d6d708",
+      "bytes": 17196,
       "executable": false
     },
     ".github/workflows/discussion-announce.yml": {
@@ -1187,6 +1197,11 @@
     ".github/workflows/monthly-metrics.yml": {
       "sha256": "2ef0503093d9ca90e2328ef095685d1afc5d6170fd9f008f069663ef7af41a1f",
       "bytes": 6815,
+      "executable": false
+    },
+    ".github/workflows/pr-burst-guard.yml": {
+      "sha256": "8949716e317e6c7f07596142ac541d2b50c210efc0ae56715449d557f1eeb2d9",
+      "bytes": 1272,
       "executable": false
     },
     ".github/workflows/release-announce.yml": {
@@ -2530,8 +2545,8 @@
       "executable": false
     },
     "CLAUDE.md": {
-      "sha256": "8e89e0397fedbf4dfd240783d7cb9b8ae80273a3289e9bd0bc35eca591ed4109",
-      "bytes": 3936,
+      "sha256": "f42ac835a5d5ffaa83bec96429310abcca548baf630c16304b7ea0060a50feda",
+      "bytes": 4421,
       "executable": false
     },
     "CODE_OF_CONDUCT.md": {
@@ -2545,8 +2560,8 @@
       "executable": false
     },
     "CONTRIBUTING.md": {
-      "sha256": "1f2d9b76b995c8989b05eba1dbd53c4e6ec041c3e672fba0db9ccf4d249ef8c5",
-      "bytes": 15629,
+      "sha256": "410f50eb90b279d432b2de85f029e930c376098f10a8342054b50e5beb77678a",
+      "bytes": 16525,
       "executable": false
     },
     "LICENSE": {
@@ -2585,8 +2600,8 @@
       "executable": false
     },
     "TROUBLESHOOTING.md": {
-      "sha256": "3d079b331b36b058e05acbf03b55b03fdca6f7787df36a9462323ff9bb3f5a82",
-      "bytes": 11773,
+      "sha256": "1ca3b477b8325d8306a49f5a805a622e8f963157dd22b3a14f6baa2461e7c688",
+      "bytes": 11875,
       "executable": false
     },
     "VERSION": {
@@ -3465,28 +3480,28 @@
       "executable": false
     },
     "commands/multi-backend.md": {
-      "sha256": "38512263b611f3fb7139366dfcdb0b40b9d782520e50042f177160dd76bc5d8b",
-      "bytes": 5604,
+      "sha256": "ab0408f26ec89a0856ce30212f5828baec2162eaf98bac82366023497b8e6ae8",
+      "bytes": 5568,
       "executable": false
     },
     "commands/multi-execute.md": {
-      "sha256": "6a72e5d5f8ee3c2fd00e812b5b5c60046b11fef3c7789ce620f25c4ffb8c715b",
-      "bytes": 11067,
+      "sha256": "26bd2791fea77376866199dfe61fab3014a23563a507ac41cbdaa0a5b3ab02b4",
+      "bytes": 11013,
       "executable": false
     },
     "commands/multi-frontend.md": {
-      "sha256": "c95b83bd46b7c219905ab2bba68a05fe14d0499e71756aedd0f064874c349024",
-      "bytes": 5712,
+      "sha256": "6bd7aa24a69de287762f4b1b9bbb7e5b9267e5de565d4dd058979f9ff2bba068",
+      "bytes": 5676,
       "executable": false
     },
     "commands/multi-plan.md": {
-      "sha256": "34f6cb463a65d35149d3e1f9f059380264ce7499850d5240c7600acbfd5afa2a",
-      "bytes": 10048,
+      "sha256": "127dac50706cf2b04e8819811655b97ef108a514fd74c2db7199f9c67b740119",
+      "bytes": 10030,
       "executable": false
     },
     "commands/multi-workflow.md": {
-      "sha256": "6a519875b519d52aaa68d2695d5252ba419021b420c45c6605cb68169ab2d95a",
-      "bytes": 8063,
+      "sha256": "d2e3978fcd9f16ec9825ee02269ac0617d6fb1eb7962aecbaffd1c07108133bb",
+      "bytes": 8027,
       "executable": false
     },
     "commands/orch-add-feature.md": {
@@ -3755,8 +3770,8 @@
       "executable": false
     },
     "docker/context-profiles/ai-eval-lib.js": {
-      "sha256": "8741aa371e04b1a0d982eaeae1e89388da405fe1dd1d744df778a0ef4e152a2c",
-      "bytes": 50339,
+      "sha256": "02bcbd89c35f05d86885ae195d26ed334d19c826aecc007bc6af680a747cc3d8",
+      "bytes": 54389,
       "executable": false
     },
     "docker/context-profiles/ai-eval.js": {
@@ -5775,8 +5790,8 @@
       "executable": false
     },
     "docs/es/TROUBLESHOOTING.md": {
-      "sha256": "4c94756bf07c1221d80f42bdefb0ecf9451ff2b705d73c1dd8a29b2bda07eadd",
-      "bytes": 11585,
+      "sha256": "0e414c162c805b862467bf20a40b9c68e769084ec8eae7050180b5601768e05f",
+      "bytes": 11695,
       "executable": false
     },
     "docs/es/agents/architect.md": {
@@ -6565,8 +6580,8 @@
       "executable": false
     },
     "docs/ja-JP/TROUBLESHOOTING.md": {
-      "sha256": "0073aa743346084f763fa314b285c2bd0e5a1a275622b139b39162d4945740e3",
-      "bytes": 12638,
+      "sha256": "15cc1418d9b17b688ca6d2490ec8285eb531e9a3921a5bb0d7365db9ee8da574",
+      "bytes": 12772,
       "executable": false
     },
     "docs/ja-JP/agents/a11y-architect.md": {
@@ -7105,28 +7120,28 @@
       "executable": false
     },
     "docs/ja-JP/commands/multi-backend.md": {
-      "sha256": "ead21c1d4408df49096ffc4766613a59d98aeeec4dea1550c155a067f9b29881",
-      "bytes": 7037,
+      "sha256": "80f0387d59974ea524a184df6e6111c914ef4038273b46c20764f0f261695f05",
+      "bytes": 7001,
       "executable": false
     },
     "docs/ja-JP/commands/multi-execute.md": {
-      "sha256": "7b09120ae9045267bc867e9f1c6ee9edf269598cab12295471c1e0d28f3a5f0f",
-      "bytes": 13973,
+      "sha256": "c410cf5fba57d6bb41c6090657840e5f243b5cba5ef8b0e6c82573a00e405fd5",
+      "bytes": 13835,
       "executable": false
     },
     "docs/ja-JP/commands/multi-frontend.md": {
-      "sha256": "6a410c615fbbfb7b9ed5dd1aa86b8962210afa2d0b4dfc4bfac7810c06c549ac",
-      "bytes": 7154,
+      "sha256": "6404fd3a60bb157f35327927c5771c663ff074a6c88bdd879f56b89386ba717c",
+      "bytes": 7118,
       "executable": false
     },
     "docs/ja-JP/commands/multi-plan.md": {
-      "sha256": "764ff776fce7f49753a28b86940aeee432a66536d0cf961288a2c8762acbbcce",
-      "bytes": 12285,
+      "sha256": "bcc53dcef2b4386b9f0d3b75c627b7ed901282ba745c9837e195361804b4c99e",
+      "bytes": 12225,
       "executable": false
     },
     "docs/ja-JP/commands/multi-workflow.md": {
-      "sha256": "cc28a5cbb5de72f04b5ab886e8e0c0989b56f2f4fad3be6747fd719763767925",
-      "bytes": 9557,
+      "sha256": "03bc39605c2dfca1d4b03eeae9184ffa113de6dd52b836448da56114a6ad4a57",
+      "bytes": 9458,
       "executable": false
     },
     "docs/ja-JP/commands/orchestrate.md": {
@@ -10060,8 +10075,8 @@
       "executable": false
     },
     "docs/tr/TROUBLESHOOTING.md": {
-      "sha256": "9a360bc2c2914ad59775c0ea180edffcc4dfc44f781e405c40bef1959978ec89",
-      "bytes": 10680,
+      "sha256": "ced2c8ce2ec155c56248f3ab53d630e8ab9efb8e68c6bebf7a4d3d1c7a9a92db",
+      "bytes": 10791,
       "executable": false
     },
     "docs/tr/agents/architect.md": {
@@ -10275,28 +10290,28 @@
       "executable": false
     },
     "docs/tr/commands/multi-backend.md": {
-      "sha256": "7f684d8bae7303ebe74511f872200623e9af81e71806b96d1eebb08ae91d0363",
-      "bytes": 5922,
+      "sha256": "bbd1d966f49ac1df22f20a878e52a26c9dcac153e546922c2c887e81d46a3950",
+      "bytes": 5886,
       "executable": false
     },
     "docs/tr/commands/multi-execute.md": {
-      "sha256": "6dc2435e3d9a03503a3309296bc1959fb8fee6a6f1fd73ad7910fbb172f15dcd",
-      "bytes": 11736,
+      "sha256": "27e62eaabf05d245f1034a15940b60a5d59a3dcc0fe6ed0de39f51fbe3635f4d",
+      "bytes": 11598,
       "executable": false
     },
     "docs/tr/commands/multi-frontend.md": {
-      "sha256": "58a9abd2fc2d47674ac0c64bdbd76429872494bcb634856663e8e902c17c32b1",
-      "bytes": 5983,
+      "sha256": "5290c863309959fbe0064772b5f71dc0b9f0ba6ab23520298a92cc11bd4d376f",
+      "bytes": 5947,
       "executable": false
     },
     "docs/tr/commands/multi-plan.md": {
-      "sha256": "4341dff03f54e19074ef55a56fc35d42ab075bfdb90ae7da744080e8d68962b1",
-      "bytes": 10505,
+      "sha256": "98115404dbcd3f54b66aa5ded25866ef329b3dbb3ac27a2ffe3b4e9b61fa7836",
+      "bytes": 10445,
       "executable": false
     },
     "docs/tr/commands/multi-workflow.md": {
-      "sha256": "c2fda85abe86953b136261a2adeb831a7c6f8a7bba67cb129c49551df6106b87",
-      "bytes": 8511,
+      "sha256": "7c44e2911a3a706ce66ed79ff1bf2695ad91a8452a2592c770620555e37cfd13",
+      "bytes": 8412,
       "executable": false
     },
     "docs/tr/commands/orchestrate.md": {
@@ -10785,8 +10800,8 @@
       "executable": false
     },
     "docs/zh-CN/TROUBLESHOOTING.md": {
-      "sha256": "2a98d23eb4101ef7fc5ea2d0f401d5e23436b0e9225d09f91965258d7dd17c76",
-      "bytes": 9490,
+      "sha256": "99b29c6071aad0bfaf44d88436d2db793fa0f030523589b3f301127930d68fca",
+      "bytes": 9588,
       "executable": false
     },
     "docs/zh-CN/agents/architect.md": {
@@ -11235,28 +11250,28 @@
       "executable": false
     },
     "docs/zh-CN/commands/multi-backend.md": {
-      "sha256": "2b6071568034ed0fea7e892d08d8ba52a3627898fcba976b5cee70bc3625a975",
-      "bytes": 5340,
+      "sha256": "9dea3c7ff23078358e8da0c16226641415e95198a698c1e5aeca71edb169a844",
+      "bytes": 5304,
       "executable": false
     },
     "docs/zh-CN/commands/multi-execute.md": {
-      "sha256": "3f24230f01a5e2f7627ecf99a11baf3dc3d50c1c601e2555d52ef8d39b3ec529",
-      "bytes": 10561,
+      "sha256": "090f02e8d3ee332f59fe87ba6db85106b44e660d4da77ad2fedfe4fa0577a192",
+      "bytes": 10423,
       "executable": false
     },
     "docs/zh-CN/commands/multi-frontend.md": {
-      "sha256": "9bb5d11752f65e64c793515c33a6a03f67e268e89c9c3231bf05941a1e158f32",
-      "bytes": 5373,
+      "sha256": "ebdfa7800fdb43de9f56557f284cf654b2154224c17d1905772d461a5b3eaf63",
+      "bytes": 5337,
       "executable": false
     },
     "docs/zh-CN/commands/multi-plan.md": {
-      "sha256": "fe7692cc77ab91c1a65a8ab3105fb32688138f5c1ce23ebec2a54f245823c78a",
-      "bytes": 9157,
+      "sha256": "a6487ca92bb472936954faf3382f7391290e8f7618cb31dfebf5e86adafbdb14",
+      "bytes": 9097,
       "executable": false
     },
     "docs/zh-CN/commands/multi-workflow.md": {
-      "sha256": "446833a1aac214b67c9044b30832d2f57917b5f49973a145355b1e69758f8f4d",
-      "bytes": 7605,
+      "sha256": "497207c106d77ff87d9835acb13b0ff360abb56cfb75942fd2e85b9083d5715a",
+      "bytes": 7506,
       "executable": false
     },
     "docs/zh-CN/commands/orchestrate.md": {
@@ -15580,8 +15595,8 @@
       "executable": false
     },
     "scripts/ci/catalog.js": {
-      "sha256": "1bafe44980587806f74ed47d0c6fb696db65db3bcb64783173d2f696a2081073",
-      "bytes": 30528,
+      "sha256": "f7b0b947fe6a0962cfcfa156f3373cf35b2faec4d6d2eba3cb648132e72582bd",
+      "bytes": 30201,
       "executable": false
     },
     "scripts/ci/check-hooks-schema-keys.js": {
@@ -15603,6 +15618,11 @@
       "sha256": "71f56de2e67b942d32984505ae45b9496349aeb6a8b9b77d0f9f176e9273ea3a",
       "bytes": 3370,
       "executable": true
+    },
+    "scripts/ci/pr-burst-guard.js": {
+      "sha256": "bc867cc76883b19962dc44f7a403c21315f978d70365eabc115717d9567b9c33",
+      "bytes": 13068,
+      "executable": false
     },
     "scripts/ci/scan-supply-chain-iocs.js": {
       "sha256": "69249f60dffa402de2653017b69692862071d87fa56e780ad9f0ffc39cdf1c8f",
@@ -15635,8 +15655,8 @@
       "executable": false
     },
     "scripts/ci/validate-hooks.js": {
-      "sha256": "930d680c73545007ea067a757367f2f26daf4be0935910cb4d393f803e9ca483",
-      "bytes": 13635,
+      "sha256": "a62c3ff96ae8aa57a0fe11d2094b70d20bd1a81189f96294c3e8b163c895311a",
+      "bytes": 15865,
       "executable": false
     },
     "scripts/ci/validate-install-manifests.js": {
@@ -15850,8 +15870,8 @@
       "executable": false
     },
     "scripts/hooks/block-no-verify.js": {
-      "sha256": "b8135d622520587d3f8739a74d37e1c72e29805483c5a36191d1deb063720c80",
-      "bytes": 47237,
+      "sha256": "4eb3a82ae874b137e1d8dffb23122005bb4fc46aca4bcc34b84e3c82d4dd4d55",
+      "bytes": 52694,
       "executable": false
     },
     "scripts/hooks/check-console-log.js": {
@@ -15925,8 +15945,8 @@
       "executable": false
     },
     "scripts/hooks/gateguard-fact-force.js": {
-      "sha256": "3f7c7a92532b37bfbbac16755dab1451d593c116aba95c529f4c982c0ecd7686",
-      "bytes": 94740,
+      "sha256": "735c7e3fdb19f085f243e81b71073c906d28a29857226f22adfe115c1762152f",
+      "bytes": 97053,
       "executable": false
     },
     "scripts/hooks/gateguard-heredoc.js": {
@@ -15970,8 +15990,8 @@
       "executable": false
     },
     "scripts/hooks/lib/shell-scan.js": {
-      "sha256": "57783e1a29712524b14f603c2c8cf3c6e3adf85e0454ec39053ab15d0aaa2448",
-      "bytes": 16909,
+      "sha256": "564a3584019e67609368bbcab27c5907f42064e55a5c301eb0022e1ca3c4dd3f",
+      "bytes": 21115,
       "executable": false
     },
     "scripts/hooks/lifecycle-hook-bootstrap.js": {
@@ -16115,8 +16135,8 @@
       "executable": true
     },
     "scripts/hooks/session-end.js": {
-      "sha256": "bca245b6089c4a1d270742b8918f5db792553a76444f5fdab759d8d2683b473d",
-      "bytes": 14401,
+      "sha256": "10bbf79772ac1f41d68bef218869c54e75ac2f4e105a1e91a7fdf22a5f719e76",
+      "bytes": 14857,
       "executable": false
     },
     "scripts/hooks/session-start-bootstrap.js": {
@@ -16500,13 +16520,13 @@
       "executable": false
     },
     "scripts/lib/gateguard-code-lexer.js": {
-      "sha256": "a2863eb33f9a111c47b362edde7242882c462140095862f1087afc74b55a0bea",
-      "bytes": 17649,
+      "sha256": "4f73194d078b9ac7cc310dd623f1b09620072d80298e817d98caa421217cf7c2",
+      "bytes": 19088,
       "executable": false
     },
     "scripts/lib/gateguard-file-context.js": {
-      "sha256": "03454f0b4de32b7157ef614a615652751b3a88df180be664ee021007ba7d997a",
-      "bytes": 21078,
+      "sha256": "4d53348cf80f1b8b6b12856d8c2c53f26911f8859bf4ad77a81f31886851e45f",
+      "bytes": 24347,
       "executable": false
     },
     "scripts/lib/gateguard-metrics.js": {
@@ -16520,8 +16540,8 @@
       "executable": false
     },
     "scripts/lib/gateguard-search-evidence.js": {
-      "sha256": "d85e0579cf757c82e04cbd2a68acff2889a9cb469aecb398ed998aed93f3d963",
-      "bytes": 23260,
+      "sha256": "8272c5994146fcf278d567b75140121bedf999746b17322922d078068f87872b",
+      "bytes": 23826,
       "executable": false
     },
     "scripts/lib/gateguard-search-filters.js": {
@@ -16630,8 +16650,8 @@
       "executable": false
     },
     "scripts/lib/install-lifecycle.js": {
-      "sha256": "a1eb094a45328ca3b88627c37b1d9c3b388ae61cccadf8ebe405696db31bf8ba",
-      "bytes": 68228,
+      "sha256": "2f68cb863f2abe64c4e5ccfe1d21134202d6b155321514372b057a4a1149b7a9",
+      "bytes": 69893,
       "executable": false
     },
     "scripts/lib/install-manifests.js": {
@@ -16695,8 +16715,8 @@
       "executable": false
     },
     "scripts/lib/install-targets/helpers.js": {
-      "sha256": "f38cedd94cb13c48485c61f991e2e552a40d0b5252a09d38623efbe712e9bde3",
-      "bytes": 13679,
+      "sha256": "f9f5e5587c21a1530ff6ca08291b0baca1c01b6211c016e8a6e01f15471e7b39",
+      "bytes": 13803,
       "executable": false
     },
     "scripts/lib/install-targets/hermes-home.js": {
@@ -16945,8 +16965,8 @@
       "executable": false
     },
     "scripts/lib/nasiko-release.js": {
-      "sha256": "87d9253ea6c05d7495b2dfde17f8e7b2ccec30d835c2bdc5f39027a806c98d11",
-      "bytes": 24422,
+      "sha256": "5cb306e738b11935ec8169ea73aba5f4b0cfdc2ebdc15900e21a180b3b76ba6a",
+      "bytes": 25985,
       "executable": false
     },
     "scripts/lib/observer-sessions.js": {
@@ -17010,8 +17030,8 @@
       "executable": false
     },
     "scripts/lib/powershell-destructive-command.js": {
-      "sha256": "90748dfc22acabb22ebb6e8365d6821b6cb04acba3af467fdb239d5d66ceaa7b",
-      "bytes": 70203,
+      "sha256": "2eb97e1bae2933b4c0cc3346578f87360a176c56a39ba0b5b3dbff0172b25b2c",
+      "bytes": 76460,
       "executable": false
     },
     "scripts/lib/project-detect.js": {
@@ -17095,8 +17115,8 @@
       "executable": false
     },
     "scripts/lib/shell-substitution.js": {
-      "sha256": "36023c065ca40d2b40feccb3659deaa4dd195eda9ccf3ccd89ae44c0c45b10be",
-      "bytes": 14915,
+      "sha256": "f5249d74a98b3bae25f531817593a0d42b380f1bda446f704941649a4b9fbb3c",
+      "bytes": 11741,
       "executable": false
     },
     "scripts/lib/skill-evolution/dashboard.js": {
@@ -17265,8 +17285,8 @@
       "executable": false
     },
     "scripts/operator-readiness-dashboard.js": {
-      "sha256": "65a4a24ec7a1780879490a6cc1a8a13b601e11be61da8dab5982aa487fc63150",
-      "bytes": 55632,
+      "sha256": "5abe455f011a4d3c1f17574e2baaa5178a06cd7c19aad69fdbcc1f465f95e2c1",
+      "bytes": 54681,
       "executable": false
     },
     "scripts/orchestrate-codex-worker.sh": {
@@ -20704,6 +20724,16 @@
       "bytes": 5749,
       "executable": false
     },
+    "tests/ci/pr-burst-guard-workflow.test.js": {
+      "sha256": "8dc91adee0d38f0f6c4530db8f8a4832b4f784808cdc16bd89b93688b362ef6c",
+      "bytes": 5050,
+      "executable": false
+    },
+    "tests/ci/pr-burst-guard.test.js": {
+      "sha256": "d6e12ac45591fc6ea3d9d60e52fb950e4a0c1eb8226ade54a907d2df3ca11863",
+      "bytes": 12727,
+      "executable": false
+    },
     "tests/ci/release-announce-workflow.test.js": {
       "sha256": "7058be56d0619979520dbe0dcca180b391504a9263fe4b3202d34fe0d377e023",
       "bytes": 2149,
@@ -20715,8 +20745,8 @@
       "executable": false
     },
     "tests/ci/run-all.test.js": {
-      "sha256": "37f00929be104c9550b7ac17165f6a4deace1298aba8571aa437d94877fca122",
-      "bytes": 9210,
+      "sha256": "1cb835d398de67aaefebd0ea014c727da2fadbf0759249d6ac2d76b447f75389",
+      "bytes": 14647,
       "executable": false
     },
     "tests/ci/scan-supply-chain-iocs.test.js": {
@@ -20765,8 +20795,8 @@
       "executable": false
     },
     "tests/ci/validators.test.js": {
-      "sha256": "d6e2954797be3fc86c6bf321b44172de00a2025862e5f9acc399a5136e3a354a",
-      "bytes": 172691,
+      "sha256": "7d49d2b93431af80cc70f598ec370d066e97cbb82a7e14bf6ad110d351768f3e",
+      "bytes": 173488,
       "executable": false
     },
     "tests/codex-config.test.js": {
@@ -20787,6 +20817,11 @@
     "tests/commands/learn-skill-discovery.test.js": {
       "sha256": "6454cdd21ec3759088d5ff69b646d483e6962ddf7e12061d0d3edc66dd28429c",
       "bytes": 8762,
+      "executable": false
+    },
+    "tests/commands/multi-model-wrapper-tokens.test.js": {
+      "sha256": "2e779079a3edde277c1b4f37cce1630424e63c7e1638eb786ff30689eebe1a5f",
+      "bytes": 3214,
       "executable": false
     },
     "tests/commands/plan-command.test.js": {
@@ -20815,8 +20850,8 @@
       "executable": false
     },
     "tests/docker/plugin-setup-harness.test.js": {
-      "sha256": "b92b59d5c10d3a81e623a0578739c82df9bc0ad61cfc360a48753f40a1b9c90d",
-      "bytes": 14577,
+      "sha256": "776bcd8255927d2edd3c28bae4393ef61132404408cd0e77cc4f5e24b3ae4f01",
+      "bytes": 14665,
       "executable": false
     },
     "tests/docs/antigravity-guide.test.js": {
@@ -21529,6 +21564,11 @@
       "bytes": 8332,
       "executable": false
     },
+    "tests/lib/agent-tool-map.test.js": {
+      "sha256": "96b89c0aceffa1ecd1999d139a7e0b391ff642ce037543a2e7eff925c1dbcdee",
+      "bytes": 5422,
+      "executable": false
+    },
     "tests/lib/antigravity-legacy-migration.test.js": {
       "sha256": "eb6138bfb8a55970957c255dfd87ba2cb7a0467f3a417dabb42c64c690282831",
       "bytes": 27533,
@@ -21612,6 +21652,11 @@
     "tests/lib/command-plugin-root.test.js": {
       "sha256": "3bbcdd607b5802157e9a61abbea08832341df4fbc26ed3f37c14d6c248cf5649",
       "bytes": 11092,
+      "executable": false
+    },
+    "tests/lib/compute-sponsor.test.js": {
+      "sha256": "6c445a560d580c996654c0b8f0251a0d908221a930a8fa772a9a7158755ddc21",
+      "bytes": 3123,
       "executable": false
     },
     "tests/lib/context-carrier-fixture.test.js": {
@@ -21764,6 +21809,11 @@
       "bytes": 17042,
       "executable": false
     },
+    "tests/lib/cursor-agent-names.test.js": {
+      "sha256": "24f79dde75202fc9e3f75c7641720f6f54c13cc80a87d6ebc3a78ffabf8cfa13",
+      "bytes": 4013,
+      "executable": false
+    },
     "tests/lib/dry-run.test.js": {
       "sha256": "322c5b5cac41db28a3769e85727fa3b0f4f53b4231a2e0538c4a6b88fc514b8d",
       "bytes": 10479,
@@ -21817,6 +21867,11 @@
     "tests/lib/eval-harness/security.test.js": {
       "sha256": "2832253a79e2f3efb7279502e5b5f409b1b0dab27ea1888c328bc902d562b6af",
       "bytes": 9682,
+      "executable": false
+    },
+    "tests/lib/feedback-links.test.js": {
+      "sha256": "b4addb7b8d8ee2ddbd59f1242b0ad3aca32264a762e3024968d459f7a322ebe8",
+      "bytes": 4742,
       "executable": false
     },
     "tests/lib/file-tail.test.js": {
@@ -22050,13 +22105,18 @@
       "executable": false
     },
     "tests/lib/install-targets.test.js": {
-      "sha256": "51b72d1f28415e549cfb625e14a650cebadb1b89174c9a1507cf42a8b11aca3f",
-      "bytes": 56974,
+      "sha256": "a071ab27844c0658b9eb07a26ee76459e857aaca445d7da4b7f7c83cbb0a986d",
+      "bytes": 58616,
       "executable": false
     },
     "tests/lib/instinct-relevance.test.js": {
       "sha256": "e54983b8b527b563b5df376a6bae1c058876d1a96ec661606d544f83c49b53c4",
       "bytes": 8581,
+      "executable": false
+    },
+    "tests/lib/invocation-environment.test.js": {
+      "sha256": "e32c154283fee2bc666103939155a192439e66179949b65fe5b5e3d6e9e4e3b7",
+      "bytes": 3735,
       "executable": false
     },
     "tests/lib/llm-summary.test.js": {
@@ -22415,8 +22475,8 @@
       "executable": false
     },
     "tests/run-all.js": {
-      "sha256": "c6f31c632a838ef11ea4122cf715905c91b23a64b7532b7a5cd20e5ce5b2f160",
-      "bytes": 7122,
+      "sha256": "622f83ecb8d34d452afae1f80820ed2591ab73b027c1ddfd63fba3d7a39c12a8",
+      "bytes": 11000,
       "executable": false
     },
     "tests/scripts/astra-review.test.js": {

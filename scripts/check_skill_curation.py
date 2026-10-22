@@ -48,13 +48,16 @@ def check_sources(root: Path, manifest: dict) -> int:
         if review is not None:
             if (not isinstance(review, dict)
                     or not re.fullmatch(r"[0-9a-f]{40}", str(review.get("revision", "")))
-                    or review.get("disposition") not in {"source-unchanged", "adaptation-updated"}
+                    or review.get("disposition") not in {"source-unchanged", "adaptation-updated", "adaptation-preserved", "blocked"}
                     or not isinstance(review.get("note"), str) or not review["note"].strip()):
                 raise ValueError(f"invalid adaptation review: {repo}")
             try:
                 date.fromisoformat(review.get("reviewed_on", ""))
             except (ValueError, TypeError) as exc:
                 raise ValueError(f"invalid adaptation review date: {repo}") from exc
+            if ("comparison_revision" in review and not re.fullmatch(
+                    r"[0-9a-f]{40}", str(review["comparison_revision"]))):
+                raise ValueError(f"unfixed adaptation comparison revision: {repo}")
             files = review.get("files")
             if not isinstance(files, list) or not files:
                 raise ValueError(f"missing reviewed files: {repo}")

@@ -41,11 +41,18 @@ Codex also has two host-specific execution/model profiles under `.codex/agents/`
 - reasoning effort: Medium
 - role: routine bounded implementation, refactoring and tests when delegation helps.
 
-### `luna_worker`
+### `luna_worker` — execution only, supervised by Sol
 
-- model: GPT-5.6 Luna
+- model: GPT-6 Luna (`gpt-6-luna`)
 - reasoning effort: Max
-- role: high-context reading, complex implementation and larger isolated workloads.
+- supervisor: GPT-6.1 Sol or GPT-6 Sol, declared in the delegation contract.
+- role: execute concrete, already-decided steps inside bounded paths; report results and escalate ambiguity.
+
+Use it for applying a specified patch, repeating an approved transformation, extracting named facts from specified files or running listed checks. Do not select Luna because a task has a large context or produces much text. Do not assign open-ended implementation/research, diagnosis, architecture, product/security decisions, independent review, approval or supervision. These choices remain with Sol. Explicit `model` overrides and generic roles must respect the same limit.
+
+Before spawning, Sol supplies its model, decided steps, allowed read/write paths, expected output, exact acceptance commands and stop/escalation conditions together with the actual schema-3 context. Missing contract parts stop execution. Unexpected findings return to Sol; selected skills do not expand Luna's authority. Sol inspects the actual diff/output and evidence before acceptance. Luna does not commit, push, deploy, migrate, delete data/backups or mutate external systems.
+
+This is an instruction/selection contract, not an OS sandbox or cryptographic supervisor-model check. Host restrictions still need separate enforcement. Message counts alone do not establish which decisions a model took.
 
 These profiles are execution bindings, not semantic capabilities denied to other providers. The same selected Agentit skill bodies must remain usable directly in the parent when a native worker primitive is unavailable.
 
@@ -61,6 +68,10 @@ python3 bootstrap.py --provider codex --apply
 It installs the private Agentit runtime, projects only the three core skills to `~/.agents/skills`, preserves the two allowlisted worker profiles under `~/.codex/agents`, backs up replacements, and safely removes only provably unmodified legacy Agentit non-core copies from old Codex skill roots.
 
 `~/.codex/config.toml` remains machine-local and is not overwritten by the normal Agentit bootstrap.
+
+Updating the repository does not update another machine: run the bootstrap there too. Already-running chats can retain old role descriptions/model bindings; start a fresh session and verify its exposed role/model before using the updated worker. The normal bootstrap does not rewrite previous chats, unrelated custom roles or provider-internal models.
+
+The exact model ID and custom-agent `model` binding are documented by [OpenAI's Luna model page](https://developers.openai.com/api/docs/models/gpt-6-luna) and [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-10-22.
 
 ## Delegation contract
 

@@ -13,6 +13,7 @@ const {
   listInstallTargetAdapters,
   planInstallTargetScaffold,
 } = require('../../scripts/lib/install-targets/registry');
+const { isForeignPlatformPath } = require('../../scripts/lib/install-targets/helpers');
 const { resolveInvocationEnvironment } = require('../../scripts/lib/invocation-environment');
 
 function normalizedRelativePath(value) {
@@ -1250,6 +1251,50 @@ function runTests() {
       )),
       'Should skip foreign Zed platform paths'
     );
+  })) passed++; else failed++;
+
+  if (test('opencode adapter skips the foreign Pi harness directory', () => {
+    const repoRoot = path.join(__dirname, '..', '..');
+    const homeDir = path.join(os.tmpdir(), 'ecc-opencode-pi-home');
+
+    const plan = planInstallTargetScaffold({
+      target: 'opencode',
+      repoRoot,
+      homeDir,
+      exemptValidationCodes: ['opencode-plugin-not-built'],
+      modules: [
+        {
+          id: 'platform-configs',
+          paths: ['.opencode', '.pi', 'mcp-configs'],
+        },
+      ],
+    });
+
+    assert.ok(
+      plan.operations.some(operation => (
+        normalizedRelativePath(operation.sourceRelativePath) === 'mcp-configs'
+      )),
+      'Should still include non-foreign mcp-configs path (guards against empty-plan regression)'
+    );
+    assert.ok(
+      !plan.operations.some(operation => (
+        normalizedRelativePath(operation.sourceRelativePath) === '.pi'
+        || normalizedRelativePath(operation.sourceRelativePath).startsWith('.pi/')
+      )),
+      'Should skip the Pi harness directory, which Pi consumes via `pi install`'
+    );
+  })) passed++; else failed++;
+
+  if (test('every install target treats .pi as a foreign platform path', () => {
+    for (const adapter of listInstallTargetAdapters()) {
+      for (const sourcePath of ['.pi', '.pi/extensions/index.ts', '.pi/README.md']) {
+        assert.strictEqual(
+          isForeignPlatformPath(sourcePath, adapter.target),
+          true,
+          `${adapter.target} should treat ${sourcePath} as foreign`
+        );
+      }
+    }
   })) passed++; else failed++;
 
   if (test('resolves opencode adapter root and install-state path from home dir', () => {

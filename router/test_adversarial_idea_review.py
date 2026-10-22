@@ -25,9 +25,10 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
         self.assertIn(SKILL_ID, all_skills)
 
     def test_owned_policy_requires_adversarial_review_without_modifying_canonical_source(self) -> None:
-        adapter = (REPOSITORY / "skills/using-agent-skills/SKILL.md").read_text()
+        router = (REPOSITORY / "skills/task-router/SKILL.md").read_text()
         specialist = (REPOSITORY / "skills/adversarial-idea-review/SKILL.md").read_text()
-        self.assertIn("serious candidates require `adversarial-idea-review` before convergence", adapter)
+        self.assertIn("Select `adversarial-idea-review` before converging", router)
+        self.assertIn("consequential or materially uncertain proposals", router)
         self.assertIn("KILL", specialist)
         self.assertIn("PROCEED_WITH_GATES", specialist)
         import hashlib, json
@@ -36,13 +37,15 @@ class AdversarialIdeaReviewTests(unittest.TestCase):
         body = (REPOSITORY / "skills/idea-refine/SKILL.md").read_bytes()
         self.assertEqual(hashlib.sha256(body).hexdigest(), item["files"]["SKILL.md"]["sha256"])
 
-    def test_meta_skill_routes_exploration_through_adversarial_gate(self) -> None:
+    def test_mechanical_adapter_leaves_semantic_review_selection_to_router(self) -> None:
         meta_skill = (
             REPOSITORY / "skills" / "using-agent-skills" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("serious candidates require `adversarial-idea-review` before convergence", meta_skill)
-        self.assertIn("Exploration is not complete until the serious candidate has survived attack", meta_skill)
+        self.assertNotIn("adversarial-idea-review", meta_skill)
+        self.assertIn("`task-router` selects procedures and review depth", meta_skill)
+        router = (REPOSITORY / "skills/task-router/SKILL.md").read_text()
+        self.assertIn("A routine fix need not invoke a separate adversarial procedure or worker", router)
 
     def test_canonical_refresh_has_no_native_policy_overlay(self) -> None:
         self.assertFalse((REPOSITORY / "scripts/apply-agentit-skill-overlays.py").exists())

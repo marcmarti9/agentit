@@ -51,6 +51,10 @@ class MaintenanceTests(unittest.TestCase):
                     archive = cache / (repo.replace('/', '--') + '@' + sha + '.tar.gz')
                     with tarfile.open(archive, 'w:gz') as tar:
                         for path, (data, mode) in sorted(files.items()):
+                            if sha == new_sha and any(item.get('retired_upstream')
+                                    and item['repo'] == repo and path.startswith(item['path'] + '/')
+                                    for item in lock['mappings']):
+                                continue
                             if sha == new_sha and path.endswith('SKILL.md'):
                                 data += b'Reviewed update\n'
                             entry = tarfile.TarInfo('snapshot/' + path)

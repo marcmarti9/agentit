@@ -10,11 +10,22 @@ Use bare execution for trivial conversation or a tiny obvious negligible-risk ac
 
 The only global skill bodies are `using-agentit`, `task-router` and `using-agent-skills`. They define entry, semantic decision and mechanical discovery respectively. Everything else is selected just in time.
 
+## Mandatory startup when asked to use Agentit
+
+Read `AGENTIT.md` completely (it embeds the exact three core bodies), or read
+all three canonical core files completely. Consult the profile purpose pointers,
+then read the matching profiles' metadata and explicitly selected complete skill
+bodies before dependent work. Apply their procedures to the actual task and check
+outcome evidence. Opening this repository, installing Agentit or listing skill
+names is not completion. The CLI is optional: authorized repository/file readers
+support the same instruction workflow in ordinary chats. Missing reader/tool
+capabilities must be stated accurately. See `docs/CHAT_USAGE.md`.
+
 ## Model-owned selection
 
 The primary model chooses intent, scope, relevant packs, exact skill bodies, references, tools and topology using real task/project context. Do not replace this with Python, regexes, keyword tables, fixed quotas or a prompt classifier. Code may resolve explicit IDs, materialize resources, enforce contracts and run approved commands.
 
-Profiles are installation availability. Packs are metadata discovery maps. They do not activate themselves. Start each task with a fresh decision; do not reuse a previous task's selections or infer authority from configured MCPs.
+Profiles are unified domain discovery and optional installation availability. Packs are additional metadata discovery maps. They do not activate themselves. Start each task with a fresh decision; do not reuse a previous task's selections or infer authority from configured MCPs.
 
 ## Development mode
 

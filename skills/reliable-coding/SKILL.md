@@ -16,6 +16,22 @@ Use it for non-trivial implementation or code review. Skip it for obvious one-li
 3. **Make surgical changes.** Match local conventions. Avoid drive-by refactors, extra configuration, unnecessary tests and documentation churn. Remove the unused artifacts that *your own change* creates.
 4. **Verify before claiming success.** Use freshly observed checks that actually prove the scoped claim. Report what was tested and what remains unverified. A passed unit test does not prove production behavior.
 
+## Maintainability while coding
+
+Use descriptive names, straightforward control flow, clear responsibilities and
+explicit contracts/error paths. Follow the language and project's conventions.
+Apply Clean Code, KISS, DRY and SOLID where they improve the present design; do
+not add layers, interfaces or helpers solely to satisfy a slogan. A short
+function can still be wrong or obscure; a coherent longer one may be clearer.
+Remove only proven obsolete artifacts caused by the change, preserving other
+people's work and evidence needed to diagnose failures.
+
+Save meaningful verified increments with related documentation and a short
+rationale. Unfinished or failing work needs an honest private checkpoint before
+interruption, not a destructive reset or a fabricated pass. Select Git/docs or
+retention expertise when that procedure is needed; do not automatically load
+every related skill.
+
 ## Minimum-solution ladder
 
 After understanding the behavior and failure path, take the first solution that genuinely addresses the root cause:

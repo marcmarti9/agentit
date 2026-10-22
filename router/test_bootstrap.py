@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -173,6 +174,37 @@ class PortableBootstrapTests(unittest.TestCase):
             applied = apply_rollback(Path(result["backup_manifest"]))
             self.assertEqual(applied["status"], "rolled-back")
             self.assertEqual(destination.read_bytes(), original)
+
+    def test_luna_migration_is_reversible_and_preserves_local_model_settings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            destination = home / ".codex" / "agents" / "luna-worker.toml"
+            destination.parent.mkdir(parents=True)
+            original = b'name = "luna_worker"\nmodel = "gpt-5.6-luna"\n'
+            destination.write_bytes(original)
+            local_config = home / ".codex" / "config.toml"
+            config_bytes = b'model = "gpt-6.1-sol"\nmodel_reasoning_effort = "high"\n'
+            local_config.write_bytes(config_bytes)
+            custom_role = destination.parent / "my-local-reviewer.toml"
+            custom_bytes = b'name = "my_local_reviewer"\nmodel = "gpt-6-sol"\n'
+            custom_role.write_bytes(custom_bytes)
+
+            result = apply_install_plan(
+                build_install_plan(home=home, source_root=ROOT, provider="codex"),
+                skip_dependencies=True,
+            )
+            installed = tomllib.loads(destination.read_text(encoding="utf-8"))
+            self.assertEqual(installed["model"], "gpt-6-luna")
+            self.assertEqual(installed["name"], "luna_worker")
+            self.assertEqual(local_config.read_bytes(), config_bytes)
+            self.assertEqual(custom_role.read_bytes(), custom_bytes)
+            repeat = build_install_plan(home=home, source_root=ROOT, provider="codex")
+            self.assertTrue(all(op["action"] == "keep" for op in repeat["operations"]))
+
+            apply_rollback(Path(result["backup_manifest"]))
+            self.assertEqual(destination.read_bytes(), original)
+            self.assertEqual(local_config.read_bytes(), config_bytes)
+            self.assertEqual(custom_role.read_bytes(), custom_bytes)
 
     def test_rollback_refuses_post_install_user_changes(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -1,6 +1,7 @@
 # Web quality baseline
 
-Original baseline from PR #43; the cold-start core carries its compact form.
+Original baseline from PR #43. The core keeps universal evidence honesty and
+routes user-facing web work here; detailed visual choices stay conditional.
 
 ## User-facing web quality invariant
 

@@ -25,6 +25,9 @@ except ImportError:  # Direct script invocation.
 CONFIG_RELATIVE = Path(".agentit/continuity-sync.json")
 MAX_STATE_BYTES = 1024 * 1024
 KEY_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
+# Hosts that serve the same GitHub repositories. Ports are ignored here so
+# ssh.github.com:443 cannot look like a different service from github.com.
+_GITHUB_HOSTS = {"github.com", "www.github.com", "ssh.github.com"}
 
 
 def _git(*argv: str, cwd: Path | None = None, raw: bool = False, input_data: bytes | None = None) -> str | bytes:
@@ -64,40 +67,77 @@ def _validate_remote(remote: str) -> str:
     return remote
 
 
+def _canonical_repo_path(path: str) -> str:
+    """Collapse empty and '.' segments and resolve '..' without leaving the root.
+
+    Git and GitHub both fetch ``repo.git/../repo.git`` as ``repo``. A continuity
+    remote must be compared after that resolution, or the project origin can be
+    spelled as a supposedly separate remote.
+    """
+    parts: list[str] = []
+    for part in unquote(path).split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if not parts:
+                raise ContinuityError("Cannot identify Git remote repository")
+            parts.pop()
+            continue
+        parts.append(part)
+    if not parts:
+        raise ContinuityError("Cannot identify Git remote repository")
+    if parts[-1].endswith(".git"):
+        parts[-1] = parts[-1][:-4]
+        if not parts[-1]:
+            raise ContinuityError("Cannot identify Git remote repository")
+    return "/".join(parts)
+
+
+def _network_identity(host: str, path: str, *, port: int | None = None, scheme: str | None = None) -> tuple[str, str]:
+    host = host.lower().rstrip(".")
+    if host in _GITHUB_HOSTS:
+        host = "github.com"
+    else:
+        default = {"https": 443, "http": 80, "ssh": 22, "git": 9418}.get(scheme or "")
+        if port and port != default:
+            host = f"{host}:{port}"
+    path = _canonical_repo_path(path)
+    if host == "github.com":
+        path = path.lower()
+    return host, path
+
+
 def _remote_identity(remote: str, root: Path) -> tuple[str, str, str]:
     """Compare repositories, without making credentials acceptable for sync.
 
     Origin may contain credentials from the project's existing configuration;
     they are deliberately excluded from identity and never returned or logged.
     Only GitHub's repository path has a known case-insensitive contract.
+    ``www.github.com`` and ``ssh.github.com`` are the same host for that contract.
     """
     if remote.startswith("/"):
         return ("local", "", str(Path(remote).resolve()))
     scp = re.fullmatch(r"(?:[^@/\s]+@)?([^:/\s]+):(.+)", remote) if "://" not in remote else None
     if scp:
         host, path = scp.groups()
-        host = host.lower()
-    else:
-        try:
-            parsed = urlsplit(remote)
-            if parsed.scheme == "file":
-                if parsed.netloc not in {"", "localhost"}:
-                    raise ValueError("nonlocal file URL")
-                return ("local", "", str(Path(unquote(parsed.path)).resolve()))
-            if not parsed.scheme:
-                return ("local", "", str((root / remote).resolve()))
-            host, path = parsed.hostname, unquote(parsed.path)
-            port = parsed.port
-            if host and port and port != {"https": 443, "http": 80, "ssh": 22, "git": 9418}.get(parsed.scheme):
-                host = f"{host}:{port}"
-        except ValueError as exc:
-            raise ContinuityError("Cannot identify Git remote repository") from exc
-    if not host or not path:
-        raise ContinuityError("Cannot identify Git remote repository")
-    path = path.strip("/").removesuffix(".git")
-    if host == "github.com":
-        path = path.lower()
-    return ("network", host.lower(), path)
+        host, path = _network_identity(host, path, scheme="ssh")
+        return ("network", host, path)
+    try:
+        parsed = urlsplit(remote)
+        if parsed.scheme == "file":
+            if parsed.netloc not in {"", "localhost"}:
+                raise ValueError("nonlocal file URL")
+            return ("local", "", str(Path(unquote(parsed.path)).resolve()))
+        if not parsed.scheme:
+            return ("local", "", str((root / remote).resolve()))
+        if not parsed.hostname or not parsed.path:
+            raise ContinuityError("Cannot identify Git remote repository")
+        host, path = _network_identity(
+            parsed.hostname, parsed.path, port=parsed.port, scheme=parsed.scheme,
+        )
+    except ValueError as exc:
+        raise ContinuityError("Cannot identify Git remote repository") from exc
+    return ("network", host, path)
 
 
 def _origin(root: Path) -> str | None:

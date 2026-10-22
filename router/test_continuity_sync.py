@@ -175,6 +175,21 @@ class CrossMachineContinuityTests(unittest.TestCase):
             with self.assertRaisesRegex(ContinuityError, "not ignored"):
                 sync_state(project)
 
+    def test_github_transport_aliases_have_one_identity(self):
+        root = Path(".")
+        origin = "https://github.com/Org/Repo.git"
+        base = transport._remote_identity(origin, root)
+        for remote in (
+            "https://github.com/Org/Repo.git/../Repo.git",
+            "https://www.github.com/org/repo.git",
+            "ssh://git@ssh.github.com:443/Org/Repo.git",
+            "git@www.github.com:Org/Repo.git",
+        ):
+            self.assertEqual(base, transport._remote_identity(remote, root), remote)
+        self.assertNotEqual(base, transport._remote_identity("https://www.github.com/Org/Other.git", root))
+        with self.assertRaisesRegex(ContinuityError, "identify"):
+            transport._remote_identity("https://github.com/../Org/Repo.git", root)
+
     def test_origin_derives_same_key_for_https_and_ssh(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -198,6 +213,9 @@ class CrossMachineContinuityTests(unittest.TestCase):
             for index, (origin, remote) in enumerate((
                 ("https://user:secret@github.com/Org/Repo.git", "git@github.com:org/repo.git"),
                 ("git@github.com:Org/Repo.git", "https://github.com/org/repo"),
+                ("https://github.com/Org/Repo.git", "https://github.com/Org/Repo.git/../Repo.git"),
+                ("https://github.com/Org/Repo.git", "https://www.github.com/org/repo.git"),
+                ("git@github.com:Org/Repo.git", "ssh://git@ssh.github.com:443/Org/Repo.git"),
                 (str(root / "project.git"), (root / "project.git").as_uri()),
             )):
                 with self.subTest(origin=origin):

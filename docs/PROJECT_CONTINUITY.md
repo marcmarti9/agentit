@@ -171,8 +171,9 @@ This sync is command-triggered, not an always-on daemon or automatic capture of 
 ### Transport boundaries
 
 The continuity remote must differ from the project's normal origin. SSH/HTTPS
-spellings of the same GitHub repository, local/file URLs and local symlink
-aliases cannot bypass this check. The check also applies to previously saved
+spellings of the same GitHub repository, `www.github.com` and `ssh.github.com`,
+`.` / `..` path segments, local/file URLs and local symlink aliases cannot
+bypass this check. The check also applies to previously saved
 links; it does not establish that a different repository is private. The caller
 must still verify access controls before linking. Agentit never creates or links
 a new cloud repository implicitly.

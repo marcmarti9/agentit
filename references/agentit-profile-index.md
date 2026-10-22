@@ -10,32 +10,32 @@ Body cost includes inherited skills once per profile. Estimated tokens = UTF-8 b
 
 | Profile | Use for | Skills incl. inherited | Body bytes | Estimated tokens |
 | --- | --- | ---: | ---: | ---: |
-| [core](#core) | Enter Agentit, make the task decision, discover and activate selected skills. | 3 | 15907 | ~3977 |
-| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 42 | 503333 | ~125847 |
-| [backend](#backend) | Design APIs and services, database boundaries, observability and application security. | 24 | 238044 | ~59517 |
-| [supabase](#supabase) | Work with Supabase, PostgreSQL and database migrations. | 25 | 241275 | ~60325 |
-| [product](#product) | Refine product ideas, gather requirements, compare alternatives and define outcomes. | 20 | 155645 | ~38919 |
-| [executive](#executive) | Use strategy, finance, people, legal, operations, board or chief-of-staff judgment. | 30 | 212691 | ~53184 |
-| [writing](#writing) | Write and edit documentation, articles, voice and reusable content. | 13 | 98131 | ~24536 |
-| [design](#design) | Create visual direction, design systems, interaction, typography and brand experiences. | 58 | 624683 | ~156192 |
-| [mobile](#mobile) | Build native mobile experiences across React Native, Flutter, SwiftUI and Android. | 22 | 279918 | ~69985 |
-| [release](#release) | Prepare CI, migrations, security gates, launch and operational readiness. | 17 | 159130 | ~39787 |
-| [research](#research) | Investigate current sources, competitors and scientific literature; check evidence quality. | 28 | 243354 | ~60850 |
-| [growth](#growth) | Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach. | 30 | 220171 | ~55054 |
-| [agency](#agency) | Deliver client product/growth work with implementation and Git handoffs. | 37 | 276561 | ~69154 |
-| [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258127 | ~64542 |
-| [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250695 | ~62680 |
-| [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 126656 | ~31669 |
-| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 403 | 3890332 | ~972733 |
-| [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121097 | ~30279 |
-| [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155238 | ~38814 |
-| [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809280 | ~202341 |
-| [engineering](#engineering) | Implement, debug, refactor and verify repository work with proportional checks. | 62 | 557283 | ~139340 |
-| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 73 | 456033 | ~114036 |
-| [infrastructure](#infrastructure) | Operate containers, environments, networks, rollout monitoring and infrastructure. | 21 | 195427 | ~48862 |
-| [operations](#operations) | Handle business workflows, logistics, billing, procurement and workspace integrations. | 25 | 303924 | ~75991 |
-| [healthcare](#healthcare) | Work on clinical systems, sensitive health data and healthcare compliance. | 8 | 49347 | ~12340 |
-| [financial-protocols](#financial-protocols) | Work on blockchain, payment protocols, trading agents and prediction-market risk. | 10 | 64580 | ~16147 |
+| [core](#core) | Enter Agentit, make the task decision, discover and activate selected skills. | 3 | 15833 | ~3959 |
+| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 42 | 504281 | ~126085 |
+| [backend](#backend) | Design APIs and services, database boundaries, observability and application security. | 24 | 238992 | ~59755 |
+| [supabase](#supabase) | Work with Supabase, PostgreSQL and database migrations. | 25 | 242223 | ~60563 |
+| [product](#product) | Refine product ideas, gather requirements, compare alternatives and define outcomes. | 20 | 157235 | ~39317 |
+| [executive](#executive) | Use strategy, finance, people, legal, operations, board or chief-of-staff judgment. | 30 | 214281 | ~53582 |
+| [writing](#writing) | Write and edit documentation, articles, voice and reusable content. | 13 | 99721 | ~24934 |
+| [design](#design) | Create visual direction, design systems, interaction, typography and brand experiences. | 58 | 625631 | ~156430 |
+| [mobile](#mobile) | Build native mobile experiences across React Native, Flutter, SwiftUI and Android. | 22 | 280866 | ~70223 |
+| [release](#release) | Prepare CI, migrations, security gates, launch and operational readiness. | 18 | 169078 | ~42275 |
+| [research](#research) | Investigate current sources, competitors and scientific literature; check evidence quality. | 28 | 243280 | ~60832 |
+| [growth](#growth) | Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach. | 30 | 221761 | ~55452 |
+| [agency](#agency) | Deliver client product/growth work with implementation and Git handoffs. | 37 | 273573 | ~68408 |
+| [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258053 | ~64524 |
+| [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250621 | ~62662 |
+| [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 128246 | ~32067 |
+| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 404 | 3896553 | ~974289 |
+| [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121023 | ~30261 |
+| [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155164 | ~38796 |
+| [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809206 | ~202323 |
+| [engineering](#engineering) | Implement, debug, refactor and verify repository work with proportional checks. | 63 | 562653 | ~140684 |
+| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 74 | 465168 | ~116320 |
+| [infrastructure](#infrastructure) | Operate containers, environments, networks, rollout monitoring and infrastructure. | 22 | 203711 | ~50934 |
+| [operations](#operations) | Handle business workflows, logistics, billing, procurement and workspace integrations. | 25 | 303850 | ~75973 |
+| [healthcare](#healthcare) | Work on clinical systems, sensitive health data and healthcare compliance. | 8 | 49273 | ~12322 |
+| [financial-protocols](#financial-protocols) | Work on blockchain, payment protocols, trading agents and prediction-market risk. | 10 | 64506 | ~16129 |
 
 ## Profile contents
 
@@ -47,8 +47,8 @@ Enter Agentit, make the task decision, discover and activate selected skills.
 
 Inspect metadata: `agentit skills candidates --profile core`. Use `--direct` to omit inherited skills.
 
-- [using-agentit](../skills/using-agentit/SKILL.md) — Use Agentit for material work or explicit requests in chats/coding agents; read core, discover profiles, read full selected skills and apply them.
-- [task-router](../skills/task-router/SKILL.md) — Model-owned task decisions, sufficient JIT expertise, BUILDER/REVIEW cadence, risk gates and bounded verification; no programmatic semantic classifier.
+- [using-agentit](../skills/using-agentit/SKILL.md) — Use Agentit for material work or explicit requests; read core, discover profiles, read selected skills completely and apply them.
+- [task-router](../skills/task-router/SKILL.md) — Model-owned scope, JIT expertise, BUILDER/REVIEW cadence, risk and bounded verification; no semantic classifier.
 - [using-agent-skills](../skills/using-agent-skills/SKILL.md) — Agentit-owned JIT discovery, complete selected-body delivery and application records.
 
 ## frontend
@@ -322,6 +322,7 @@ Inherits: [core](#core).
 
 Inspect metadata: `agentit skills candidates --profile release`. Use `--direct` to omit inherited skills.
 
+- [artifact-retention-and-cleanup](../skills/artifact-retention-and-cleanup/SKILL.md) — Inventory and safely retire task artifacts, caches, generated output, worktrees and expired recovery copies using ownership, references, retention rules and measured reclaimed space. Use for scoped capacity or artifact-lifecycle work, not general machine cleaning.
 - [ci-cd-and-automation](../skills/ci-cd-and-automation/SKILL.md) — Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
 - [deprecation-and-migration](../skills/deprecation-and-migration/SKILL.md) — Manages deprecation and migration. Use when removing old systems, APIs, or features. Use when migrating users from one implementation to another. Use when migrating a database schema in production, such as renaming or dropping a column without downtime (expand/contract). Use when deciding whether to maintain or sunset existing code.
 - [shipping-and-launch](../skills/shipping-and-launch/SKILL.md) — Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
@@ -402,7 +403,7 @@ Inspect metadata: `agentit skills candidates --profile agency`. Use `--direct` t
 - [incremental-implementation](../skills/incremental-implementation/SKILL.md) — Delivers changes incrementally in thin, verifiable slices. Use when implementing any feature or change that touches more than one file, or when picking up the next task from a plan. Use when rolling a change out behind a feature flag, when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
 - [reliable-coding](../skills/reliable-coding/SKILL.md) — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.
 - [anti-overengineering](../skills/anti-overengineering/SKILL.md) — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
-- [git-workflow-and-versioning](../skills/git-workflow-and-versioning/SKILL.md) — Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog.
+- [git-workflow-and-versioning](../skills/git-workflow-and-versioning/SKILL.md) — Organize Git branches, coherent milestone commits, failure checkpoints, worktrees, authorized remote handoffs and releases. Use when history, recovery or publication needs explicit care.
 - [artifact-production](../skills/artifact-production/SKILL.md) — Produce or review a reusable PDF, editable document, spreadsheet or slide deck whose rendering, structure and data correctness matter. Own file delivery and visual/semantic verification. Not for ordinary chat prose, code documentation, image/video generation, or an analytical method without a file deliverable.
 - [brand-discovery](../vendor/ecc/skills/brand-discovery/SKILL.md) — Run a structured, resumable multi-session brand identity interview across 8 modules (purpose, positioning, audience, personality, voice, narrative, founder tension) using laddering, 5 Whys, and projective techniques, persisting answers to disk and producing a master brandbook (90_SYNTHESIS.md). Use when creating or repositioning a brand, briefing designers or writers, or making implicit founder knowledge explicit.
 - [marketing-campaign](../vendor/ecc/skills/marketing-campaign/SKILL.md) — End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scripts, and content calendars. Use as the orchestration layer for multi-channel product launches. Use when planning or executing a multi-channel product launch, or producing landing page, email, social, or ad copy.
@@ -629,6 +630,7 @@ Inherits: [core](#core).
 
 Inspect metadata: `agentit skills candidates --profile engineering`. Use `--direct` to omit inherited skills.
 
+- [artifact-retention-and-cleanup](../skills/artifact-retention-and-cleanup/SKILL.md) — Inventory and safely retire task artifacts, caches, generated output, worktrees and expired recovery copies using ownership, references, retention rules and measured reclaimed space. Use for scoped capacity or artifact-lifecycle work, not general machine cleaning.
 - [ai-first-engineering](../vendor/ecc/skills/ai-first-engineering/SKILL.md) — Engineering operating model for teams where AI agents generate a large share of implementation output. Use when setting team process, review gates, or ownership rules for a codebase largely written by agents.
 - [ai-regression-testing](../vendor/ecc/skills/ai-regression-testing/SKILL.md) — Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-check workflows, and patterns to catch AI blind spots where the same model writes and reviews code. Use when adding regression coverage to AI-assisted code, or when the same model both wrote and reviewed a change.
 - [api-connector-builder](../vendor/ecc/skills/api-connector-builder/SKILL.md) — Build a new API connector or provider by matching the target repo's existing integration pattern exactly. Use when adding one more integration without inventing a second architecture.
@@ -680,7 +682,7 @@ Inspect metadata: `agentit skills candidates --profile engineering`. Use `--dire
 - [verification-gauntlet](../skills/verification-gauntlet/SKILL.md) — Surround agent work with hard, signal-gated verification probes and anti-greenwash rules. Use before done claims, after implementations, or when tests look too easy; not for pure explanation.
 - [incremental-implementation](../skills/incremental-implementation/SKILL.md) — Delivers changes incrementally in thin, verifiable slices. Use when implementing any feature or change that touches more than one file, or when picking up the next task from a plan. Use when rolling a change out behind a feature flag, when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
 - [planning-and-task-breakdown](../skills/planning-and-task-breakdown/SKILL.md) — Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
-- [git-workflow-and-versioning](../skills/git-workflow-and-versioning/SKILL.md) — Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog.
+- [git-workflow-and-versioning](../skills/git-workflow-and-versioning/SKILL.md) — Organize Git branches, coherent milestone commits, failure checkpoints, worktrees, authorized remote handoffs and releases. Use when history, recovery or publication needs explicit care.
 - [reliable-coding](../skills/reliable-coding/SKILL.md) — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.
 - [anti-overengineering](../skills/anti-overengineering/SKILL.md) — Enforces Agentit's two-mode development discipline. Use for feature implementation, refactors, coding plans and code review to prevent speculative architecture, test proliferation, repeated full-suite verification, unrelated cleanup and review loops. BUILDER mode completes requested features with the minimum relevant checks; REVIEW mode freezes feature scope and deeply validates the finished implementation. Risk boundaries still require immediate targeted safety checks.
 - [code-review-and-quality](../skills/code-review-and-quality/SKILL.md) — Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch. Use when asked to review a diff or a pull request, even when the diff is pasted inline.
@@ -697,6 +699,7 @@ Inherits: [core](#core).
 
 Inspect metadata: `agentit skills candidates --profile agent-systems`. Use `--direct` to omit inherited skills.
 
+- [artifact-retention-and-cleanup](../skills/artifact-retention-and-cleanup/SKILL.md) — Inventory and safely retire task artifacts, caches, generated output, worktrees and expired recovery copies using ownership, references, retention rules and measured reclaimed space. Use for scoped capacity or artifact-lifecycle work, not general machine cleaning.
 - [agent-architecture-audit](../vendor/ecc/skills/agent-architecture-audit/SKILL.md) — Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, tool discipline failures, hidden repair loops, and rendering corruption. Produces severity-ranked findings with code-first fixes. Essential for developers building agent applications, autonomous loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves and the failing layer is unknown, or before shipping an agent stack.
 - [agent-eval](../vendor/ecc/skills/agent-eval/SKILL.md) — Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consistency metrics. Use when choosing between coding agents, or when a change to an agent setup needs measured pass rate, cost, and time rather than an impression.
 - [agent-harness-construction](../vendor/ecc/skills/agent-harness-construction/SKILL.md) — Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. Use when defining or revising an agent's tool set, action space, or observation format.
@@ -777,6 +780,7 @@ Inherits: [core](#core).
 
 Inspect metadata: `agentit skills candidates --profile infrastructure`. Use `--direct` to omit inherited skills.
 
+- [artifact-retention-and-cleanup](../skills/artifact-retention-and-cleanup/SKILL.md) — Inventory and safely retire task artifacts, caches, generated output, worktrees and expired recovery copies using ownership, references, retention rules and measured reclaimed space. Use for scoped capacity or artifact-lifecycle work, not general machine cleaning.
 - [canary-watch](../vendor/ecc/skills/canary-watch/SKILL.md) — Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console errors, and performance regressions after deploys, merges, or dependency upgrades. Smoke / canary / post-deploy verification.
 - [cisco-ios-patterns](../vendor/ecc/skills/cisco-ios-patterns/SKILL.md) — Cisco IOS and IOS-XE review patterns for show commands, config hierarchy, wildcard masks, ACL placement, interface hygiene, and safe change-window verification. Use when reading, writing, or reviewing Cisco IOS / IOS-XE configuration or planning a change window.
 - [docker-patterns](../vendor/ecc/skills/docker-patterns/SKILL.md) — Docker and Docker Compose patterns for local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration. Use when creating or reviewing Dockerfiles and Compose services, testing installers across Linux distributions, or planning accurate native macOS and Windows validation.

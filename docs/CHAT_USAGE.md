@@ -74,6 +74,15 @@ freezes feature scope and validates the finished change. These rules belong to
 the core and apply even if `anti-overengineering` was not selected. Imported
 workflows cannot force broader architecture, repeated audits or extra features.
 
+While coding, apply the core's maintainability baseline and select relevant
+language/coding procedures JIT. At meaningful milestones, save a concise account
+of the problem, change, rationale, verification/limits and next step in the
+appropriate authorized workspace. Keep durable docs with code increments and
+temporary operational notes private. If the chat cannot save or publish through
+its host, provide the usable artifact and report that limit; do not claim it
+reached GitHub. Artifact-retention expertise is conditional and grants no host
+cleanup authority.
+
 ## Honest boundaries
 
 If the host cannot read the remaining body after truncation, disclose the missing

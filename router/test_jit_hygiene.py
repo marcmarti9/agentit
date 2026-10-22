@@ -39,25 +39,26 @@ class JitHygieneTests(unittest.TestCase):
         text = (REPOSITORY / "skills" / "using-agentit" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("Every new execution session is **semantically cold**", text)
-        self.assertIn("Core documentation invariant", text)
-        self.assertIn("documentation-drift check", text)
-        self.assertIn("installed project profiles", text)
+        self.assertIn("**semantically cold**", text)
+        self.assertIn("Documentation and saved progress", text)
+        self.assertIn("documentation drift", text)
+        self.assertIn("not installed profiles or old receipts", text)
         self.assertIn("task-added MCP", text)
 
-    def test_core_skill_contains_compact_web_anti_slop_invariant(self) -> None:
+    def test_core_keeps_honesty_and_routes_web_details_to_existing_reference(self) -> None:
         core_text = (REPOSITORY / "skills" / "using-agentit" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         router_text = (REPOSITORY / "skills" / "task-router" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("## User-facing web quality invariant", core_text)
-        self.assertIn("Never fabricate reviews, testimonials, counters", core_text)
-        self.assertIn("anti-default rules, not absolute bans", core_text)
-        self.assertIn("`hallmark` JIT", core_text)
-        self.assertIn("compact anti-slop baseline from `using-agentit`", router_text)
-        self.assertIn("consider `hallmark` JIT", router_text)
+        self.assertIn("Never fabricate evidence, reviews, testimonials or counters", core_text)
+        for text in (core_text, router_text):
+            self.assertIn("references/web-quality-baseline.md", text)
+            self.assertIn("`hallmark`", text)
+        baseline = (REPOSITORY / "references/web-quality-baseline.md").read_text()
+        self.assertIn("anti-default rules, not absolute bans", baseline)
+        self.assertNotIn("glass-card", core_text)
 
     def test_profiles_packs_and_selected_context_remain_distinct(self) -> None:
         # The owned integration adapter must agree with the pack/runtime policy.
@@ -74,7 +75,7 @@ class JitHygieneTests(unittest.TestCase):
         self.assertIn("flat semantic discovery maps", pack_text)
         self.assertIn("Only the selected skill bodies consume worker skill context", pack_text)
         self.assertIn("semantically cold", pack_text)
-        self.assertIn("installed project profiles", core_text)
+        self.assertIn("not installed profiles or old receipts", core_text)
         self.assertIn("name: using-agent-skills", upstream_meta)
         self.assertIn("Agentit-owned", upstream_meta)
         self.assertIn("skills activate", upstream_meta)

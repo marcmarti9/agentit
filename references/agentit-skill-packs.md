@@ -464,6 +464,8 @@ Appllama is **optional, paid and credit-metered**. Its presence never makes `app
 
 **Skills in this pack:**
 
+- `artifact-retention-and-cleanup` — scoped artifact/capacity inventory, preservation, exact revalidation and measured reclamation; no automatic machine purge.
+
 - `security-analysis` — triage confirmed/suspected source-code security findings; the app security gate still owns release disposition.
 
 
@@ -812,6 +814,8 @@ Profiles and packs deliver metadata only. References are conditional reads; sele
 
 **Skills in this pack:**
 
+- `artifact-retention-and-cleanup` — scoped artifact/capacity inventory, preservation, exact revalidation and measured reclamation; no automatic machine purge.
+
 - `property-based-testing` — generated-domain invariants, independent properties, generators and shrinking; not ordinary example tests.
 - `security-analysis` — scanner/SARIF triage, source-to-sink proof and variants of confirmed flaws; not routine hardening.
 
@@ -897,6 +901,8 @@ Profiles and packs deliver metadata only. References are conditional reads; sele
 
 **Skills in this pack:**
 
+- `artifact-retention-and-cleanup` — scoped artifact/capacity inventory, preservation, exact revalidation and measured reclamation; no automatic machine purge.
+
 - `agent-architecture-audit` — Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, tool discipline failures, hidden repair loops, and rendering corruption. Produces severity-ranked findings with code-first fixes. Essential for developers building agent applications, autonomous loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves and the failing layer is unknown, or before shipping an agent stack.
 - `agent-eval` — Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consistency metrics. Use when choosing between coding agents, or when a change to an agent setup needs measured pass rate, cost, and time rather than an impression.
 - `agent-harness-construction` — Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. Use when defining or revising an agent's tool set, action space, or observation format.
@@ -976,6 +982,8 @@ Profiles and packs deliver metadata only. References are conditional reads; sele
 **Use for:** Operate containers, environments, networks, rollout monitoring and infrastructure.
 
 **Skills in this pack:**
+
+- `artifact-retention-and-cleanup` — scoped artifact/capacity inventory, preservation, exact revalidation and measured reclamation; no automatic machine purge.
 
 - `canary-watch` — Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console errors, and performance regressions after deploys, merges, or dependency upgrades. Smoke / canary / post-deploy verification.
 - `cisco-ios-patterns` — Cisco IOS and IOS-XE review patterns for show commands, config hierarchy, wildcard masks, ACL placement, interface hygiene, and safe change-window verification. Use when reading, writing, or reviewing Cisco IOS / IOS-XE configuration or planning a change window.

@@ -59,7 +59,12 @@ def _project_root(project_root: Path) -> Path:
 
 
 def _local_git(root: Path, *args: str) -> subprocess.CompletedProcess:
-    env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    # Keep the caller's configuration/ignore policy while preventing inherited
+    # repository and index locations from redirecting these project checks.
+    env = dict(os.environ)
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+                 "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX"):
+        env.pop(name, None)
     env["GIT_TERMINAL_PROMPT"] = "0"
     try:
         return subprocess.run(
@@ -139,7 +144,9 @@ def ensure_private_continuity(project_root: Path, *, establish: bool = False) ->
             stream.write(addition)
             stream.flush()
             if not ignored():
-                stream.truncate(len(previous))
+                # Worktrees/projects share this file. A rollback could remove
+                # another initializer's exclusion appended after ours. Keep
+                # this harmless rule even when higher-priority rules override it.
                 raise ContinuityError("Project Git ignore rules override the local exclusion; private continuity was not changed")
     except OSError as exc:
         raise ContinuityError("Cannot establish local Git exclusion; private continuity was not changed") from exc

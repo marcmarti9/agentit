@@ -305,7 +305,7 @@ def provenance_markdown(lock: dict) -> bytes:
         link = f"https://github.com/{item['repo']}/tree/{item['snapshot']}/{item['path']}"
         status = " (retired upstream; retained last canonical package)" if item.get("retired_upstream") else ""
         lines.append(f"| `{item['skill']}` | `{package_destination(item)}` | [{item['repo']}@{item['snapshot'][:12]}]({link}){status} |")
-    lines += ["", "`skills/using-agent-skills` is an Agentit-owned adapter; its raw upstream source is retained separately under `vendor/agent-skills`. Other packages absent from this registry are Agentit-owned or source-informed composites described in `THIRD_PARTY_NOTICES.md`.", "", "Verify offline with `python3 scripts/sync_upstream_skills.py`. Plan a refresh with `--refresh`; use `--refresh --apply` only after reviewing the source changes. No upstream scripts or dependency installers are executed.", ""]
+    lines += ["", "`skills/using-agent-skills`, `skills/git-workflow-and-versioning` and `skills/documentation-and-adrs` are Agentit-owned adapters; their raw upstream sources are retained separately under `vendor/agent-skills`. Refreshes update the archived originals, not the owned procedures. Other packages absent from this registry are Agentit-owned or source-informed composites described in `THIRD_PARTY_NOTICES.md`.", "", "Verify offline with `python3 scripts/sync_upstream_skills.py`. Plan a refresh with `--refresh`; use `--refresh --apply` only after reviewing the source changes. No upstream scripts or dependency installers are executed.", ""]
     return "\n".join(lines).encode()
 
 

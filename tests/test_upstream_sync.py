@@ -58,6 +58,20 @@ class UpstreamSyncTests(unittest.TestCase):
         self.assertEqual(sync.check_integrity(self.root, updated)["packages"], 1)
         self.assertEqual(sync.apply_candidate(self.root, updated, updated, desired)["changed_files"], 0)
 
+    def test_refresh_updates_archived_source_without_replacing_owned_adapter(self):
+        archive = self.root / "vendor/agent-skills/example"
+        archive.parent.mkdir(parents=True)
+        self.package.rename(archive)
+        self.package.mkdir()
+        (self.package / "SKILL.md").write_bytes(b"owned safe procedure\n")
+        self.lock["mappings"][0]["destination"] = "vendor/agent-skills/example"
+        old, updated, desired = self.candidate()
+        sync.apply_candidate(self.root, old, updated, desired)
+        self.assertEqual((archive / "SKILL.md").read_bytes(), b"new body\n")
+        self.assertEqual((self.package / "SKILL.md").read_bytes(), b"owned safe procedure\n")
+        self.assertEqual(updated["mappings"][0]["destination"], "vendor/agent-skills/example")
+        self.assertEqual(sync.check_integrity(self.root, updated)["packages"], 1)
+
     def test_reviewed_retirement_preserves_old_package_while_active_sibling_refreshes(self):
         retired = self.root / "skills/retired"
         retired.mkdir()

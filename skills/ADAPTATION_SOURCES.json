@@ -956,6 +956,47 @@
         ],
         "note": "Exact inspected source files and license/NOTICE are unchanged from the previous reviewed revision or original source pin; repository-only changes do not require rewriting the owned adaptation."
       }
+    },
+    {
+      "repo": "addyosmani/agent-skills",
+      "revision": "aeac41d4d005999432bb7312f7ff06383a91d59d",
+      "inspected_on": "2026-10-22",
+      "relationship": "source-informed-adaptation",
+      "source_license": "MIT",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/licenses/addyosmani--agent-skills/LICENSE",
+      "license_sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/git-workflow-and-versioning/SKILL.md",
+        "skills/documentation-and-adrs/SKILL.md"
+      ],
+      "targets": [
+        "skills/git-workflow-and-versioning/SKILL.md",
+        "skills/documentation-and-adrs/SKILL.md"
+      ],
+      "adaptation_license": "Apache-2.0",
+      "review": {
+        "revision": "aeac41d4d005999432bb7312f7ff06383a91d59d",
+        "reviewed_on": "2026-10-22",
+        "disposition": "adaptation-updated",
+        "comparison_revision": "aeac41d4d005999432bb7312f7ff06383a91d59d",
+        "files": [
+          {
+            "path": "skills/git-workflow-and-versioning/SKILL.md",
+            "blob": "0e03a2323ed3f0131626660c3142f69c4a6f8830"
+          },
+          {
+            "path": "skills/documentation-and-adrs/SKILL.md",
+            "blob": "ecc28cef82b65be804329b242f6399bce46987fd"
+          },
+          {
+            "path": "LICENSE",
+            "blob": "d67778ada6b9cda6227e9130da182c13e73c8b2e"
+          }
+        ],
+        "note": "Compared complete source files and original MIT license against the pinned current HEAD. Exact original packages remain in vendor/agent-skills with unchanged lock hashes. Agentit owns the public adapters: Git preserves task-scoped authorization and repository merge policy; documentation applies the project documentation contract and proportionate drift checks. Upstream blanket commit cadence, anti-squash advice and generic README checklists do not supersede Agentit policy. Agentit additions are Apache-2.0; retained MIT attribution and license continue to cover upstream-derived material."
+      }
     }
   ]
 }

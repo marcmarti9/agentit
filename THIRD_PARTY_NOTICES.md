@@ -12,10 +12,10 @@ License: MIT. Copyright (c) 2025 Addy Osmani.
 
 Agentit vendors the canonical upstream packages for matching engineering skill IDs without compressing or rewriting their skill bodies. Addy's repo-level shared `references/` files are vendored at Agentit's root `references/` so upstream relative links from those `skills/<id>` packages continue to resolve.
 
-The raw upstream `using-agent-skills` meta-workflow is retained separately under `vendor/agent-skills/using-agent-skills`. The globally discoverable `skills/using-agent-skills` is an Agentit-owned adapter informed by that source; it is not represented as a verbatim upstream package. Agentit owns selective loading and authority policy outside the canonical packages.
+The raw upstream `using-agent-skills`, `git-workflow-and-versioning` and `documentation-and-adrs` packages are retained separately under `vendor/agent-skills/<id>`, with their exact source bytes and original lock hashes. Their globally discoverable `skills/<id>` bodies are Agentit-owned adapters informed by those sources; they are not represented as verbatim upstream packages. Agentit additions are Apache-2.0; original MIT attribution and the retained license at `vendor/licenses/addyosmani--agent-skills/LICENSE` continue to cover upstream-derived material. The Git and documentation adaptations, source paths and scoped review are recorded in `skills/ADAPTATION_SOURCES.json`. Agentit owns selective loading, repository merge policy and the documentation contract outside the canonical packages.
 
-That relocated raw meta-workflow is a provenance archive, not a separately
-activated or self-contained workflow package. Its unchanged `../../references/`
+Those relocated raw packages are provenance archives, not separately
+activated or self-contained workflow packages. Their unchanged `../../references/`
 links describe the upstream layout; when inspecting the archive, consult the
 matching shared files in Agentit's root `references/` or the pinned source.
 
@@ -26,6 +26,14 @@ Source: https://github.com/Leonxlnx/taste-skill
 License: MIT. Copyright (c) 2026 Leonxlnx.
 
 Agentit vendors the canonical upstream `skills/taste-skill` package as `skills/design-taste-frontend` without compressing or rewriting its skill body.
+
+### Leonxlnx / imagegen-skills
+
+Source: [Leonxlnx/imagegen-skills](https://github.com/Leonxlnx/imagegen-skills), reviewed at [`beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e`](https://github.com/Leonxlnx/imagegen-skills/tree/beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e).
+
+License: MIT. Copyright (c) 2026 Leonxlnx. The exact original license is retained at `vendor/licenses/Leonxlnx--imagegen-skills/LICENSE` and hash-locked separately from TasteSkill's license.
+
+The author's README confirms that the image-generation packages moved from TasteSkill in October 2026. Agentit now tracks canonical `skills/image-to-code` from this repository at the same public ID. Its 36,442 bytes and SHA-256 `4c060a8064a8b13380bc2ef3d6e6a1d0b1e316aa093cd9807d0ce9e4eeb037fa` are identical to the previously retained TasteSkill snapshot. The package is active at its new origin; the earlier retirement classification is superseded. No source code, installer or image-generation tool was executed during reconciliation.
 
 ### Emil Kowalski / skills
 
@@ -448,12 +456,13 @@ installed by these source-informed changes.
 The current canonical pins and original license/NOTICE records are authoritative
 in `skills/UPSTREAM_LOCK.json` and `skills/UPSTREAM_SOURCES.md`; dated snapshots
 above remain historical. The active TasteSkill package now uses
-`6010f91a9935f1c167dfc500fb1a475681892e6b`; `image-to-code` retains
-`f624f37a8c650b9cc550253104925efe4c8de246` because upstream removed its source
-package. Playwright CLI now uses `ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3`,
+`6010f91a9935f1c167dfc500fb1a475681892e6b`; `image-to-code` now follows
+`Leonxlnx/imagegen-skills@beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e`,
+where the author moved the package without changing its bytes. Playwright CLI
+now uses `ca7ca36145b84183cf423c2a099bd7e9cd8b1cb3`,
 including its original root NOTICE attributing Apache-2.0 Puppeteer-derived code.
 
-All 25 adaptation records retain their original source revisions and carry exact
+All 26 adaptation records retain their source revisions and carry exact
 current-HEAD review evidence in `skills/ADAPTATION_SOURCES.json`. Expo feedback
 submission and provider-specific executive mail/tool behavior were excluded;
 marketing learning and paid-account evidence guidance was updated. Seven older

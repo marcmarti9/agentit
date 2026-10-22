@@ -26,6 +26,11 @@ delete it or rewrite published history. Deliberate `git add -f` can bypass Git
 ignore rules, so staged changes still need inspection. Non-Git projects retain
 private filesystem state without requiring Git.
 
+Local exclusions are appended without rolling back unrelated concurrent rules.
+A rejected initialization can leave its own harmless exclusion entry; it still
+creates no private state. This preserves another project's successful protection
+when both share the repository's exclusion file.
+
 If a project already has an intentional, tracked canonical state/status document, Agentit may reuse it. Do not create or commit a public task-state file merely because Agentit is active.
 
 Operational state and durable project documentation are different:
@@ -90,6 +95,23 @@ Update operational state when it would be expensive to reconstruct later, especi
 6. before final completion when recovery information would still matter.
 
 Do not create continuity ceremony for trivial work.
+
+Save code and related durable documentation as coherent reviewable milestones
+using the authorized project workflow. Keep private operational state separate.
+Record material rationale, checks/limits, unsynced status and the next action;
+verify the remote ref/SHA before claiming publication. A failed check calls for
+preserving evidence and diagnosis, not resetting the whole working tree.
+
+## Artifact lifetime and capacity
+
+Checkpoints, received handoffs, runtime backups and test evidence can grow even
+when status displays only recent entries. A listing limit is not retention or
+pruning. Select `artifact-retention-and-cleanup` for material growth, a capacity
+problem or a requested retention policy. Inventory exact owned candidates,
+capacity and live recovery/review references; preserve unresolved failure
+evidence, unsynced work and required rollback generations. Revalidate candidates
+immediately before authorized removal and measure actual capacity afterward.
+No automatic purge, blanket disk cleanup or retention daemon is installed.
 
 ## Persist
 

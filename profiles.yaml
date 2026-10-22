@@ -266,6 +266,7 @@ profiles:
     extends:
     - core
     skills:
+    - artifact-retention-and-cleanup
     - ci-cd-and-automation
     - deprecation-and-migration
     - shipping-and-launch
@@ -654,6 +655,7 @@ profiles:
     extends:
     - core
     skills:
+    - artifact-retention-and-cleanup
     - ai-first-engineering
     - ai-regression-testing
     - api-connector-builder
@@ -719,6 +721,7 @@ profiles:
     extends:
     - core
     skills:
+    - artifact-retention-and-cleanup
     - agent-architecture-audit
     - agent-eval
     - agent-harness-construction
@@ -797,6 +800,7 @@ profiles:
     extends:
     - core
     skills:
+    - artifact-retention-and-cleanup
     - canary-watch
     - cisco-ios-patterns
     - docker-patterns

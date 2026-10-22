@@ -85,6 +85,19 @@ class HandoffCliTests(unittest.TestCase):
             self.assertTrue(blocked["blockers"])
             self.assertFalse((receiver / ".agentit/STATE.md").exists())
 
+    def test_cli_initial_state_stays_private_when_project_has_no_gitignore(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary).resolve() / "unconfigured-project"
+            project.mkdir()
+            self.git("init", "--initial-branch=work", project)
+            (project / "README.md").write_text("Synthetic project\n")
+            self.call("init", "--project", project)
+            self.assertTrue((project / ".agentit/STATE.md").is_file())
+            self.assertFalse((project / ".gitignore").exists())
+            self.git("add", ".", cwd=project)
+            tracked = self.git("ls-files", cwd=project).stdout.splitlines()
+            self.assertEqual(["README.md"], tracked)
+
 
 if __name__ == "__main__":
     unittest.main()

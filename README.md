@@ -13,6 +13,16 @@ open the selected skill files and apply them to the task. This works through an
 authorized file/repository reader in an ordinary chat, as well as coding agents.
 Installation is optional; it does not by itself mean Agentit was used.
 
+The core also requires readable, idiomatic code with the smallest sufficient
+design; documented material decisions; coherent saved milestones with verified
+authorized publication; and responsibility for created artifacts' storage and
+recovery lifetime. Detailed coding, Git, ADR and retention procedures stay JIT.
+Save useful progress while working, including honest failure checkpoints; do not
+accumulate a giant unexplained final diff or discard work after a failed check.
+See the [documentation contract](docs/DOCUMENTATION_CONTRACT.md),
+[continuity contract](docs/PROJECT_CONTINUITY.md) and
+[artifact retention procedure](skills/artifact-retention-and-cleanup/SKILL.md).
+
 ```text
 You + capable coding agent
           │

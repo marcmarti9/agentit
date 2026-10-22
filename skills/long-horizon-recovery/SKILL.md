@@ -85,6 +85,19 @@ When a private remote is linked, `status`/`init` reconcile it on entry and `chec
 
 ## When to checkpoint
 
+Save after meaningful milestones and material decisions that would be expensive
+to reconstruct, not only at the final handoff. Code and durable technical docs
+belong in coherent authorized Git/workspace increments; private operational state
+records unfinished work, failed checks, unsynced status and the executable next
+step. Verify remote ref/SHA before claiming publication. Preserve a failing
+working tree and diagnosis evidence rather than resetting it automatically.
+
+Check state/checkpoint exclusion from Git before private writes; local permissions
+alone do not prevent staging. For growing checkpoints, backups and received
+handoffs, select `artifact-retention-and-cleanup` when retention/reclamation is
+needed. Preserve active recovery references and unresolved failure evidence;
+listing only recent checkpoints does not prune older files.
+
 Use continuity when reconstruction would be meaningfully expensive. Typical moments:
 
 1. after the material task decision and required review;

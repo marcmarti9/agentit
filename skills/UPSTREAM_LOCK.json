@@ -1514,7 +1514,8 @@
           "sha256": "b60d503925bbaacee7fd63935db70b9ced5b2514ff5a56a672130e01b9690bc5",
           "mode": 420
         }
-      }
+      },
+      "destination": "vendor/agent-skills/documentation-and-adrs"
     },
     {
       "skill": "doubt-driven-development",
@@ -1579,7 +1580,8 @@
           "sha256": "b7465d187935c52546d39fdc7bd6ac36d94eda25a9500ef8c18b767d2eb116ea",
           "mode": 420
         }
-      }
+      },
+      "destination": "vendor/agent-skills/git-workflow-and-versioning"
     },
     {
       "skill": "gsap-performance",
@@ -2122,21 +2124,15 @@
     },
     {
       "skill": "image-to-code",
-      "repo": "Leonxlnx/taste-skill",
-      "path": "skills/image-to-code-skill",
-      "snapshot": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "repo": "Leonxlnx/imagegen-skills",
+      "path": "skills/image-to-code",
+      "snapshot": "beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e",
       "kind": "canonical-vendored",
       "files": {
         "SKILL.md": {
           "sha256": "4c060a8064a8b13380bc2ef3d6e6a1d0b1e316aa093cd9807d0ce9e4eeb037fa",
           "mode": 420
         }
-      },
-      "retired_upstream": {
-        "reviewed_head": "6010f91a9935f1c167dfc500fb1a475681892e6b",
-        "reviewed_on": "2026-10-22",
-        "reason": "Upstream removed skills/image-to-code-skill. Retain the last canonical package for existing users; the active design-taste-frontend package updates independently.",
-        "observed_head": "6010f91a9935f1c167dfc500fb1a475681892e6b"
       }
     },
     {
@@ -3145,6 +3141,14 @@
       "source": "LICENSE",
       "destination": "vendor/licenses/Appllama--appllama-skills/LICENSE",
       "sha256": "14cffee850f5c761273dfc49798cddc96786b4520c23f3ed1da727c334f07476",
+      "mode": 420
+    },
+    {
+      "repo": "Leonxlnx/imagegen-skills",
+      "snapshot": "beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e",
+      "source": "LICENSE",
+      "destination": "vendor/licenses/Leonxlnx--imagegen-skills/LICENSE",
+      "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
       "mode": 420
     },
     {

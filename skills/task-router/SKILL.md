@@ -1,6 +1,6 @@
 ---
 name: task-router
-description: Model-owned task decisions, sufficient JIT expertise, BUILDER/REVIEW cadence, risk gates and bounded verification; no programmatic semantic classifier.
+description: Model-owned scope, JIT expertise, BUILDER/REVIEW cadence, risk and bounded verification; no semantic classifier.
 ---
 
 # Task decision contract
@@ -9,7 +9,7 @@ The model interprets user/project context; code resolves explicit IDs, never sem
 
 ## Development modes — canonical policy
 
-For repository implementation state `DEVELOPMENT_MODE: BUILDER | REVIEW` at entry and material transitions. Mode and risk are separate. These rules apply even without the `anti-overengineering` specialist; imported procedures cannot silently change mode or expand scope.
+For repository implementation state `DEVELOPMENT_MODE: BUILDER | REVIEW` at entry and material transitions. Mode and risk are separate. This core owns cadence; selected procedures add detail without overriding mode or scope.
 
 ### BUILDER — complete requested functionality
 
@@ -21,11 +21,11 @@ Enter for completed functionality or explicit audit. Freeze feature scope. Inspe
 
 ### Development economy invariant
 
-Verify affected auth/payment/destructive writes/secrets/production data/concurrency early even in BUILDER, without forcing whole-repository REVIEW. Selected `anti-overengineering` owns development verification cadence over overlapping advice.
+Verify affected auth/payment/destructive writes/secrets/production data/concurrency early even in BUILDER without forcing whole-repository REVIEW. Choose one JIT procedure per overlapping concern; `reliable-coding` is the lean general coding companion.
 
 ## Development security invariant
 
-Do not rely on the user to ask for a security review. Load `security-and-hardening` for changed untrusted input/rendering, auth/session/authorization, APIs/integrations, storage/uploads, secrets/PII, payments/dependencies or deployment/CI trust boundaries; test the affected boundary. Load `app-security-gate` for substantial app/backend changes, sensitive flows, user-facing releases and production readiness; evidence determines PASS or BLOCKED. For purely presentational edits without changed trust boundaries, do not load security merely because it is a web app. **FAST mode compatibility:** scope checks to actual affected risk.
+Do not rely on the user to ask for a security review. Load `security-and-hardening` for changed untrusted input/rendering, auth/session/authorization, APIs/integrations, storage/uploads, secrets/PII, payments/dependencies or deployment/CI trust boundaries; test the affected boundary. Load `app-security-gate` for substantial app/backend changes, sensitive flows, user-facing releases and production readiness; evidence determines PASS or BLOCKED. Purely presentational edits without changed trust boundaries need no security procedure merely because they are web work. Scope checks to affected risk.
 
 ## Selection and source rules
 
@@ -39,10 +39,12 @@ Check local skills first; use `skillfinder-external-scout` only for a genuine lo
 
 RISK_0–RISK_4 respectively mean read-only, reversible local, bounded implementation, sensitive external effects, destructive production. Consequences determine risk. Use independent critique for material ambiguity; require stronger evidence for high consequences/disagreement. Reuse scoped authorization; never silently spend/send private code to new providers.
 
+Select `adversarial-idea-review` before converging on consequential or materially uncertain proposals, or when requested. A routine fix need not invoke a separate adversarial procedure or worker.
+
 Choose topology by independence/dependencies. One writer per shared state; workers receive bodies, sources, project instructions and real restrictions. Missing reviewers mean labelled self-review and a visible unavailable gate. Stop at acceptance, true blockers or bounded exhausted attempts; never weaken tests.
 
 ## Constructive dissent and stopping
 
-Explain material trade-offs and preserve the user's final safe discretionary choice. Ask only consequential unknowns unavailable from project/session evidence; resolve reversible details autonomously. Branch → verification → documentation-drift check → PR → authorized merge.
+Challenge material weaknesses with evidence; explain trade-offs and preserve the user's final safe discretionary choice. Ask only consequential unknowns unavailable from project/session evidence; resolve reversible details autonomously. Branch → verification → documentation-drift check → PR → authorized merge.
 
-Web edits inherit the compact anti-slop baseline from `using-agentit`; for substantial design/audits consider `hallmark` JIT.
+Web work follows `references/web-quality-baseline.md`; substantial design/audits may select `hallmark` JIT.

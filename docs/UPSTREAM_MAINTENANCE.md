@@ -2,13 +2,17 @@
 
 ## Current maintenance snapshot — October 22, 2026
 
-Live `git ls-remote ... HEAD` resolved all 16 canonical and 25 adaptation source
-repositories. The canonical lock now contains **43 packages / 698 managed files**.
-Forty-two packages match their reviewed current source HEAD; `image-to-code`
-retains its last canonical snapshot because TasteSkill removed that upstream
-package. The active `design-taste-frontend` package advances to the current
-TasteSkill source independently. No public skill IDs were removed or added by
-this refresh. The older counts below are historical reports, not live inventory.
+Live source HEAD checks resolved the canonical sources and adaptation origins.
+After the image-to-code origin correction, the canonical lock contains
+**43 packages / 699 managed files / 17 source repositories**. All canonical
+packages match their reviewed source HEAD. `image-to-code` follows the author
+to `Leonxlnx/imagegen-skills@beb16b0d0f4dae9a6f5cb04ea41e97b93a54ab8e`,
+path `skills/image-to-code`; the 36,442-byte body and original SHA-256 are
+unchanged. The new repository adds one separately locked original MIT license,
+even though its bytes match TasteSkill's retained license. The earlier
+retired-package classification was incorrect and has been removed. The active
+`design-taste-frontend` package follows TasteSkill independently. No public
+skill IDs were removed or added by this refresh. The older counts below are historical reports, not live inventory.
 
 Eight canonical source revisions advanced. TasteSkill adds app-screen guidance,
 scene assets and browser-profile cleanup; diagram-design updates imports and
@@ -19,7 +23,7 @@ bytes at their newer repository revisions. Existing licenses remain unchanged;
 the distribution now also retains Playwright's root Apache-2.0/Puppeteer NOTICE.
 No upstream scripts, launchers, native installers, browsers or binaries were run.
 
-All 25 adaptation records carry a dated current-HEAD review in
+All 26 adaptation records carry a dated current-HEAD review in
 [`ADAPTATION_SOURCES.json`](../skills/ADAPTATION_SOURCES.json); original
 `revision` fields remain provenance. Twenty-two preserve unchanged scoped input
 files or an unchanged original repository HEAD. Expo's new automatic feedback
@@ -30,6 +34,10 @@ and explicit facts/hypotheses/missing-data reporting. This is reviewed adaptatio
 not a claim that owned compositions are canonical copies of upstream HEAD.
 Three older records lack historical source-input paths; their unchanged HEAD
 and retained license were verified without inventing retroactive provenance.
+The additional Addy Osmani record describes the Git and documentation policy
+adapters, preserves MIT attribution for upstream-derived material and records
+Apache-2.0 for Agentit additions. Their source packages are preserved exactly;
+this adaptation review does not relabel the public bodies as canonical copies.
 
 ### Removed upstream packages
 
@@ -118,14 +126,20 @@ machine-readable boundary is `skills/UPSTREAM_LOCK.json`:
 - `shared` tracks upstream references used by relative links;
 - `licenses` binds original LICENSE/NOTICE files to the same pinned snapshots.
 
-Canonical task packages remain under their stable `skills/<id>` paths. The raw
-`using-agent-skills` meta-workflow is retained under
-`vendor/agent-skills/using-agent-skills`. Its globally installed namesake is an
-Agentit-owned navigation adapter. Source-informed composites and attribution
-are documented in `THIRD_PARTY_NOTICES.md`.
+Canonical task packages normally remain under their stable `skills/<id>` paths.
+The raw `using-agent-skills`, `git-workflow-and-versioning` and
+`documentation-and-adrs` packages are retained under
+`vendor/agent-skills/<id>`. Their public namesakes are Agentit-owned adapters:
+navigation and authority, repository-specific Git/merge policy, and the project
+documentation contract respectively. Each lock mapping declares the archive
+`destination`; refresh must preserve it and must not overwrite the owned body.
+The Git and documentation archives were copied from Git HEAD and compared with
+the exact upstream blobs before adapting the public bodies. The complete vendor
+tree remains part of the distributed runtime. Source-informed composites,
+license obligations and attribution are documented in `THIRD_PARTY_NOTICES.md`.
 
-The relocated raw meta-workflow is archived for provenance rather than loaded
-as an executable workflow. Its unchanged relative reference paths describe the
+The relocated raw packages are archived for provenance rather than loaded
+as executable workflows. Their unchanged relative reference paths describe the
 original source layout; inspect the matching root `references/` files or the
 pinned upstream repository when following them. Regular task packages retain
 their original relationship to Agentit's shared reference directory.

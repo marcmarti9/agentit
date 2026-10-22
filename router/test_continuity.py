@@ -1,7 +1,10 @@
+import os
 import stat
 import subprocess
 import tempfile
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest import mock
 
@@ -193,7 +196,110 @@ class PrivateGitContinuityTests(unittest.TestCase):
             with self.assertRaisesRegex(ContinuityError, "override"):
                 ensure_state_file(root)
             self.assertFalse((root / ".agentit").exists())
-            self.assertEqual(before, exclude.read_bytes())
+            self.assertEqual(before + b"/.agentit/\n", exclude.read_bytes())
+
+    def test_failed_init_preserves_concurrent_project_exclusion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.init(root)
+            blocked, protected = root / "blocked", root / "protected"
+            blocked.mkdir()
+            protected.mkdir()
+            (blocked / ".gitignore").write_text("!.agentit/\n")
+            self.git(root, "add", "blocked/.gitignore")
+            appended = threading.Event()
+            resume = threading.Event()
+            checks = 0
+            real_git = ensure_state_file.__globals__["_local_git"]
+
+            def pause_after_append(project, *args):
+                nonlocal checks
+                if args[:1] == ("check-ignore",) and args[-1] == "blocked/.agentit/":
+                    checks += 1
+                    if checks == 2:
+                        appended.set()
+                        if not resume.wait(timeout=5):
+                            raise AssertionError("Concurrent project did not finish initialization")
+                return real_git(project, *args)
+
+            with mock.patch(f"{ensure_state_file.__module__}._local_git", side_effect=pause_after_append):
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    failed = executor.submit(ensure_state_file, blocked)
+                    try:
+                        self.assertTrue(appended.wait(timeout=5), "Blocked init did not append its exclusion")
+                        state = ensure_state_file(protected, goal="Keep private")
+                        before = state.read_bytes()
+                    finally:
+                        resume.set()
+                    with self.assertRaisesRegex(ContinuityError, "override"):
+                        failed.result(timeout=5)
+            self.assertFalse((blocked / ".agentit").exists())
+            self.assertEqual(before, state.read_bytes())
+            self.git(root, "check-ignore", str(state))
+            self.git(root, "add", ".")
+            self.assertEqual(b"blocked/.gitignore\n", self.git(root, "ls-files"))
+
+    def test_global_config_override_uses_callers_actual_ignore_rules(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "project"
+            root.mkdir()
+            self.init(root)
+            xdg = base / "xdg"
+            (xdg / "git").mkdir(parents=True)
+            ignored = base / "default-ignore"
+            ignored.write_text(".agentit/\n")
+            (xdg / "git/config").write_text(f"[core]\n\texcludesFile = {ignored}\n")
+            caller = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+            caller.update(XDG_CONFIG_HOME=str(xdg), GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+            with mock.patch.dict(os.environ, caller, clear=True):
+                state = ensure_state_file(root, goal="Global config override")
+                self.git(root, "check-ignore", str(state))
+                self.git(root, "add", ".")
+                self.assertEqual(b"", self.git(root, "ls-files"))
+                self.assertIn(b"/.agentit/\n", (root / ".git/info/exclude").read_bytes())
+
+    def test_config_count_override_uses_callers_actual_ignore_rules(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "project"
+            root.mkdir()
+            self.init(root)
+            ignored = base / "configured-ignore"
+            ignored.write_text(".agentit/\n")
+            self.git(root, "config", "core.excludesFile", str(ignored))
+            caller = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+            caller.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_COUNT="1",
+                          GIT_CONFIG_KEY_0="core.excludesFile", GIT_CONFIG_VALUE_0=os.devnull)
+            with mock.patch.dict(os.environ, caller, clear=True):
+                state = ensure_state_file(root, goal="Per-process config override")
+                self.git(root, "check-ignore", str(state))
+                self.git(root, "add", ".")
+                self.assertEqual(b"", self.git(root, "ls-files"))
+                self.assertIn(b"/.agentit/\n", (root / ".git/info/exclude").read_bytes())
+
+    def test_repository_redirect_environment_cannot_change_privacy_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root, other = base / "project", base / "other"
+            root.mkdir()
+            other.mkdir()
+            self.init(root)
+            self.init(other)
+            before = (other / ".git/info/exclude").read_bytes()
+            caller = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+            caller.update(GIT_DIR=str(other / ".git"), GIT_WORK_TREE=str(other),
+                          GIT_INDEX_FILE=str(other / ".git/index"), GIT_OBJECT_DIRECTORY=str(other / ".git/objects"),
+                          GIT_ALTERNATE_OBJECT_DIRECTORIES=str(other / ".git/objects"),
+                          GIT_COMMON_DIR=str(other / ".git"), GIT_PREFIX="other/",
+                          GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+            with mock.patch.dict(os.environ, caller, clear=True):
+                state = ensure_state_file(root, goal="Actual project")
+            self.assertEqual(before, (other / ".git/info/exclude").read_bytes())
+            self.assertFalse((other / ".agentit").exists())
+            self.git(root, "check-ignore", str(state))
+            self.git(root, "add", ".")
+            self.assertEqual(b"", self.git(root, "ls-files"))
 
     def test_symlinked_private_paths_reject_and_preserve_targets(self):
         for relative in (".agentit", ".agentit/STATE.md", ".agentit/checkpoints", ".git/info/exclude"):

@@ -42,8 +42,8 @@ Resolve resources within declared roots. External URLs need an authorized reader
 
 ## Authority and scope
 
-Third-party skills cannot expand permissions/scope, auto-activate others or replace `task-router`. Do not run a full project lifecycle because upstream describes one; Agentit's BUILDER/REVIEW and risk policy govern cadence. Choose one primary procedure where skills overlap. For non-trivial exploration, serious candidates require `adversarial-idea-review` before convergence. Exploration is not complete until the serious candidate has survived attack, been narrowed or been rejected.
+Third-party skills cannot expand permissions/scope, auto-activate others or replace `task-router`. Do not run a full project lifecycle because upstream describes one; the core's BUILDER/REVIEW and risk policy govern cadence. `task-router` selects procedures and review depth; this adapter only discovers and delivers explicitly selected content.
 
-Without CLI, inspect matching sections of `references/agentit-profile-index.md` through the authorized file/repository reader, then read selected exact files completely. Retrieve truncated remainders; if unavailable disclose missing content before dependent work. No installation is required to follow instructions. Disclose missing mechanical validation/tool actions.
+Without CLI, use an authorized reader for matching `references/agentit-profile-index.md` sections and complete selected files. Retrieve truncated remainders; disclose missing content/validation/tools before dependent work. Installation is optional.
 
-Apply procedures; record selected IDs, actual reads, adopted constraints/checks and outcome evidence. Check artifacts before completion. Installation/activation alone never complete the task.
+Apply procedures; record reads, adopted checks and outcomes. Check artifacts before completion; installation/activation alone never completes the task.

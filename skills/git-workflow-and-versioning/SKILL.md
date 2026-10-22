@@ -1,355 +1,73 @@
 ---
 name: git-workflow-and-versioning
-description: Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog.
+description: Organize Git branches, coherent milestone commits, failure checkpoints, worktrees, authorized remote handoffs and releases. Use when history, recovery or publication needs explicit care.
+license: Apache-2.0
 ---
 
 # Git Workflow and Versioning
 
-## Overview
+Agentit-owned operational adaptation. The verbatim upstream source is retained at `vendor/agent-skills/git-workflow-and-versioning/SKILL.md`; provenance and license records remain authoritative for that source.
 
-Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+Use the repository's branching, versioning and review conventions. Agentit's `task-router` owns development modes and verification cadence. This skill supplies Git safety and handoff practices; it does not authorize commits, pushes, merges, releases or deletion.
 
-## When to Use
+## Establish the working state
 
-Always. Every code change flows through git.
+Before changing branches or history, inspect the repository root, current branch, `git status --short --branch`, staged/unstaged diff and `git worktree list --porcelain`. Inspect upstream/ahead-behind state when a handoff matters. Identify existing user/concurrent work and your ownership. A dirty tree is work to preserve, not a cleanup error.
 
-## Core Principles
+Use a work branch from the intended base unless project/session instructions say otherwise. Keep it focused and integrate when verified and authorized; do not force a branch lifetime or merge deadline. Do not switch or rewrite a shared checkout while another worker owns it.
 
-### Trunk-Based Development (Recommended)
+## Save coherent milestones
 
-Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
+A milestone is a useful review, recovery or handoff point: a completed behavior with its relevant tests/docs, a resolved defect, or an explicitly labelled incomplete checkpoint before interruption. Commit at those points when authorized. Editing a file or passing a trivial check does not require a new commit.
 
-```
-main ──●──●──●──●──●──●──●──●──●──  (always deployable)
-        ╲      ╱  ╲    ╱
-         ●──●─╱    ●──╱    ← short-lived feature branches (1-3 days)
-```
+- Group changes that must travel together to explain and verify one intent. Keep unrelated formatting, dependencies and refactors separate when practical.
+- Size by conceptual cohesion and reviewability, without fixed line quotas. Do not split an implementation from its essential regression test merely to make smaller commits.
+- Before each save, inspect the exact staged paths and diff. Stage owned files/hunks explicitly; avoid sweeping another person's files into a commit.
+- Use the project's message convention, with a short purpose and a body explaining material rationale or trade-offs. For example: `fix: reject negative cart quantities` with the invariant it protects.
+- Run the cheapest meaningful checks for the affected milestone. Reuse fresh applicable evidence when sources and relevant environment have not changed. Required final/CI/release gates remain required at their proper boundary; a full suite is not an unconditional pre-commit step.
+- Inspect for secrets/private artifacts and unintended generated content using the project's existing checks. A keyword search is a hint, not proof that a diff is safe. Do not install hooks or dependencies just to implement this skill.
 
-This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
+A verified milestone should record the revision, relevant check results and material limitations. If commits are prohibited, preserve a private checkpoint with the diff, owned untracked files and evidence instead. Neither a local commit nor a checkpoint proves remote backup.
 
-- **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
-- **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
-- **Feature flags > long branches.** Prefer deploying incomplete work behind flags rather than keeping it on a branch for weeks.
+## Failed verification: preserve, diagnose, repair
 
-### 1. Commit Early, Commit Often
+A failing test is evidence, not permission to discard work. Capture the command, exit status, relevant logs, source revision/diff and reproduction conditions in an appropriate private location. Preserve useful failed screenshots, traces and fixtures while the failure remains open; sanitize before any publication.
 
-Each successful increment gets its own commit. Don't accumulate large uncommitted changes.
+Localize the cause and repair the owned change, then rerun the affected verifier. Keep the original failure and subsequent result distinguishable. Do not weaken tests, reset the whole checkout, clean untracked files, or replace the tree with the last passing revision as routine recovery. If a rollback is actually necessary, first preserve current staged/unstaged/untracked state, identify the exact owned change and authorization, and choose a narrow reversible operation. Stop on ambiguous ownership or uncertain recovery.
 
-```
-Work pattern:
-  Implement slice → Test → Verify → Commit → Next slice
+A stash is local and may omit untracked/ignored files; a patch omits untracked content. Verify what any checkpoint actually contains. An incomplete checkpoint must state its failing/pending checks; never call it green.
 
-Not this:
-  Implement everything → Hope it works → Giant commit
-```
+## Worktrees have a lifecycle
 
-Commits are save points. If the next change breaks something, you can revert to the last known-good state instantly.
+A worktree helps when branch isolation or concurrent work is useful; it is optional for a small direct change. Inspect existing worktrees and reuse a suitable task-owned one before creating another. Record its root, branch/base, owner and purpose. Follow the host's managed-worktree API when applicable.
 
-### 2. Atomic Commits
+Before removal, inspect that exact worktree's status, staged/unstaged changes, untracked and needed ignored files, local commits, upstream and active users/processes. Preserve required failure evidence and private state separately. Confirm commits needed elsewhere are reachable from a retained branch or verified authorized remote; a clean worktree can still contain unpushed work.
 
-Each commit does one logical thing:
+Remove only an inactive task-owned worktree whose useful content is retained, using ordinary Git or the host's recoverable archive operation. Never force removal or recursively delete a checkout as routine cleanup. Preserve uncertain/shared worktrees and report the blocking item. Recheck worktree inventory and retained references afterward. Branch deletion and pruning are separate decisions with their own ownership/reachability checks. An unsuccessful experiment does not make its worktree disposable.
 
-```
-# Good: Each commit is self-contained
-git log --oneline
-a1b2c3d Add task creation endpoint with validation
-d4e5f6g Add task creation form component
-h7i8j9k Connect form to API and add loading state
-m1n2o3p Add task creation tests (unit + integration)
+## Authorized remote handoff
 
-# Bad: Everything mixed together
-git log --oneline
-x1y2z3a Add task feature, fix sidebar, update deps, refactor utils
-```
+A local commit is a save point; pushing is a separate external action. Reuse explicit session authorization for the named repository/branch, but do not infer it from a configured remote. Before publication:
 
-### 3. Descriptive Messages
+1. Confirm remote identity, intended branch/ref, staged/committed scope and privacy. Exclude credentials, customer data, raw sessions and private checkpoints. Preserve needed private artifacts through an explicitly authorized private channel.
+2. Check remote divergence using an authorized remote read. Push the intended ref without overwriting unrelated history. Stop on unexpected divergence or rejection; do not force-push a shared branch as recovery.
+3. Read back the exact remote ref and compare its SHA with the local commit. Verify the PR URL/base/head and observed CI state if a PR is part of the task. A successful push does not mean CI passed or a release deployed.
+4. Leave a concise handoff: branch and SHA, purpose/rationale, reproducible checks with results, pending failures/gates, artifact locations and the next safe step. State any private state that was intentionally kept outside Git.
 
-Commit messages explain the *why*, not just the *what*:
+PR creation, merge, tags and release publication follow their respective authorization. Do not claim a durable remote backup until readback succeeds.
 
-```
-# Good: Explains intent
-feat: add email validation to registration endpoint
+## Generated files and history investigation
 
-Prevents invalid email formats from reaching the database.
-Uses Zod schema validation at the route handler level,
-consistent with existing validation patterns in auth.ts.
+Follow repository policy for generated output, lockfiles, migrations and shared configuration. `.gitignore` prevents accidental additions; it does not make existing ignored data disposable. Preserve source inputs, manifests and reproducibility requirements.
 
-# Bad: Describes what's obvious from the diff
-update auth.ts
-```
+Use `git log`, `git diff` and `git blame` for history evidence. Run checkout-changing investigations such as bisect in a suitable isolated checkout, or first preserve the full working state. Resolve conflicts against both intended behaviors; verify the combined result instead of accepting one side wholesale.
 
-**Format:**
-```
-<type>: <short description>
+## Release and versioning
 
-<optional body explaining why, not what>
-```
+Use the project's versioning scheme. Under semantic versioning, a backward-compatible fix is patch, an additive compatible feature minor, and a breaking public contract major. Assess consumer behavior, not diff size; document material compatibility uncertainty and migration needs.
 
-**Types:**
-- `feat` — New feature
-- `fix` — Bug fix
-- `refactor` — Code change that neither fixes a bug nor adds a feature
-- `test` — Adding or updating tests
-- `docs` — Documentation only
-- `chore` — Tooling, dependencies, config
+Keep version metadata, the intended release tag and a curated consumer-facing changelog consistent according to the repository's release mechanism. Group entries by impact (`Added`, `Changed`, `Fixed`, `Deprecated`, `Removed`, `Security`) where useful. Tags identify a reproducible revision; creating/pushing one or publishing a release requires the corresponding authorization and release checks.
 
-### 4. Keep Concerns Separate
+## Handoff check
 
-Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit — and ideally a separate PR:
-
-```
-# Good: Separate concerns
-git commit -m "refactor: extract validation logic to shared utility"
-git commit -m "feat: add phone number validation to registration"
-
-# Bad: Mixed concerns
-git commit -m "refactor validation and add phone number field"
-```
-
-**Separate refactoring from feature work.** A refactoring change and a feature change are two different changes — submit them separately. This makes each change easier to review, revert, and understand in history. Small cleanups (renaming a variable) can be included in a feature commit at reviewer discretion.
-
-### 5. Size Your Changes
-
-Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
-
-```
-~100 lines  → Easy to review, easy to revert
-~300 lines  → Acceptable for a single logical change
-~1000 lines → Split into smaller changes
-```
-
-## Branching Strategy
-
-### Feature Branches
-
-```
-main (always deployable)
-  │
-  ├── feature/task-creation    ← One feature per branch
-  ├── feature/user-settings    ← Parallel work
-  └── fix/duplicate-tasks      ← Bug fixes
-```
-
-- Branch from `main` (or the team's default branch)
-- Keep branches short-lived (merge within 1-3 days) — long-lived branches are hidden costs
-- Delete branches after merge
-- Prefer feature flags over long-lived branches for incomplete features
-
-### Branch Naming
-
-```
-feature/<short-description>   → feature/task-creation
-fix/<short-description>       → fix/duplicate-tasks
-chore/<short-description>     → chore/update-deps
-refactor/<short-description>  → refactor/auth-module
-```
-
-## Working with Worktrees
-
-For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
-
-```bash
-# Create a worktree for a feature branch
-git worktree add ../project-feature-a feature/task-creation
-git worktree add ../project-feature-b feature/user-settings
-
-# Each worktree is a separate directory with its own branch
-# Agents can work in parallel without interfering
-ls ../
-  project/              ← main branch
-  project-feature-a/    ← task-creation branch
-  project-feature-b/    ← user-settings branch
-
-# When done, merge and clean up
-git worktree remove ../project-feature-a
-```
-
-Benefits:
-- Multiple agents can work on different features simultaneously
-- No branch switching needed (each directory has its own branch)
-- If one experiment fails, delete the worktree — nothing is lost
-- Changes are isolated until explicitly merged
-
-## The Save Point Pattern
-
-```
-Agent starts work
-    │
-    ├── Makes a change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    ├── Makes another change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    └── Feature complete → All commits form a clean history
-```
-
-This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
-
-## Change Summaries
-
-After any modification, provide a structured summary. This makes review easier, documents scope discipline, and surfaces unintended changes:
-
-```
-CHANGES MADE:
-- src/routes/tasks.ts: Added validation middleware to POST endpoint
-- src/lib/validation.ts: Added TaskCreateSchema using Zod
-
-THINGS I DIDN'T TOUCH (intentionally):
-- src/routes/auth.ts: Has similar validation gap but out of scope
-- src/middleware/error.ts: Error format could be improved (separate task)
-
-POTENTIAL CONCERNS:
-- The Zod schema is strict — rejects extra fields. Confirm this is desired.
-- Added zod as a dependency (72KB gzipped) — already in package.json
-```
-
-This pattern catches wrong assumptions early and gives reviewers a clear map of the change. The "DIDN'T TOUCH" section is especially important — it shows you exercised scope discipline and didn't go on an unsolicited renovation.
-
-## Pre-Commit Hygiene
-
-Before every commit:
-
-```bash
-# 1. Check what you're about to commit
-git diff --staged
-
-# 2. Ensure no secrets
-git diff --staged | grep -i "password\|secret\|api_key\|token"
-
-# 3. Run tests
-npm test
-
-# 4. Run linting
-npm run lint
-
-# 5. Run type checking
-npx tsc --noEmit
-```
-
-Automate this with git hooks:
-
-```json
-// package.json (using lint-staged + husky)
-{
-  "lint-staged": {
-    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{json,md}": ["prettier --write"]
-  }
-}
-```
-
-## Handling Generated Files
-
-- **Commit generated files** only if the project expects them (e.g., `package-lock.json`, Prisma migrations)
-- **Don't commit** build output (`dist/`, `.next/`), environment files (`.env`), or IDE config (`.vscode/settings.json` unless shared)
-- **Have a `.gitignore`** that covers: `node_modules/`, `dist/`, `.env`, `.env.local`, `*.pem`
-
-## Using Git for Debugging
-
-```bash
-# Find which commit introduced a bug
-git bisect start
-git bisect bad HEAD
-git bisect good <known-good-commit>
-# Git checkouts midpoints; run your test at each to narrow down
-
-# View what changed recently
-git log --oneline -20
-git diff HEAD~5..HEAD -- src/
-
-# Find who last changed a specific line
-git blame src/services/task.ts
-
-# Search commit messages for a keyword
-git log --grep="validation" --oneline
-```
-
-## Release & Versioning
-
-Commits are how *you* track change; a **version** is how your *consumers* track it. The moment anything else depends on your code — another team, a published package, a deployed client — "latest on main" stops being a sufficient answer to "what am I running, and is it safe to upgrade?" A version number and a changelog are the contract that answers it.
-
-### Semantic Versioning
-
-For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carry meaning:
-
-```
-  MAJOR  breaking change — consumers must change their code to upgrade
-  MINOR  new functionality, backward-compatible — safe to upgrade
-  PATCH  bug fix, backward-compatible — safe to upgrade
-```
-
-The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law — see the `api-and-interface-design` skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.
-
-### Tag the release, and let the tag be the source of truth
-
-A release is an immutable point in history, not a moving branch. Tag it so it can always be reproduced:
-
-```bash
-git tag -a v1.4.0 -m "Release 1.4.0"
-git push origin v1.4.0
-```
-
-Derive the version from the tag rather than hand-editing it in scattered files, so the artifact, the tag, and the changelog can never disagree.
-
-### Keep a changelog written for humans
-
-A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
-
-```markdown
-## [1.4.0] - 2025-06-12
-### Added
-- Bulk task import via CSV
-### Fixed
-- Timezone drift in recurring task due dates
-### Deprecated
-- `GET /v1/tasks/all` — use the paginated `GET /v1/tasks` (removal in 2.0)
-```
-
-Write the entry in the same change that makes the change, while the impact is fresh — not reconstructed from commit archaeology at release time. Breaking changes get a migration note and a deprecation window (follow the `deprecation-and-migration` skill); shipping the actual release is the `shipping-and-launch` skill's job — this section is the versioning contract that feeds it.
-
-## Common Rationalizations
-
-| Rationalization | Reality |
-|---|---|
-| "I'll commit when the feature is done" | One giant commit is impossible to review, debug, or revert. Commit each slice. |
-| "The message doesn't matter" | Messages are documentation. Future you (and future agents) will need to understand what changed and why. |
-| "I'll squash it all later" | Squashing destroys the development narrative. Prefer clean incremental commits from the start. |
-| "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem — merge within 1-3 days. |
-| "I'll split this change later" | Large changes are harder to review, riskier to deploy, and harder to revert. Split before submitting, not after. |
-| "I don't need a .gitignore" | Until `.env` with production secrets gets committed. Set it up immediately. |
-| "It's just a small fix, bump the patch" | Check what consumers can observe. A behavior change they relied on is a major, whatever the diff size. |
-| "The changelog is just the commit log" | Commits are for you; the changelog is for consumers, curated by impact. Generating one from raw commits buries what matters. |
-| "We'll write the changelog at release time" | By then the impact is reconstructed from memory and half of it is missing. Write the entry with the change. |
-
-## Red Flags
-
-- Large uncommitted changes accumulating
-- Commit messages like "fix", "update", "misc"
-- Formatting changes mixed with behavior changes
-- No `.gitignore` in the project
-- Committing `node_modules/`, `.env`, or build artifacts
-- Long-lived branches that diverge significantly from main
-- Force-pushing to shared branches
-- A breaking change shipped under a minor or patch version bump
-- A release with no tag, or a version number hand-edited out of sync with the tag
-- A user-facing release with no changelog entry, or a changelog that's just dumped commit messages
-
-## Verification
-
-For every commit:
-
-- [ ] Commit does one logical thing
-- [ ] Message explains the why, follows type conventions
-- [ ] Tests pass before committing
-- [ ] No secrets in the diff
-- [ ] No formatting-only changes mixed with behavior changes
-- [ ] `.gitignore` covers standard exclusions
-
-For every release (anything with consumers):
-
-- [ ] The version bump matches the change: breaking → major, additive → minor, fix → patch
-- [ ] The release is tagged, and the version is derived from the tag, not hand-edited out of sync
-- [ ] The changelog has a curated, human-readable entry grouped by impact for this version
+Confirm owned scope and rationale are reviewable, relevant evidence is fresh, failed work remains recoverable, and local/remote/CI/release facts are labelled separately. Save at the next meaningful milestone or before interruption; do not manufacture extra commits or repeat broad verification solely to create activity.

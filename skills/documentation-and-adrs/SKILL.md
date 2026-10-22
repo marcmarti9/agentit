@@ -1,13 +1,42 @@
 ---
 name: documentation-and-adrs
 description: Records decisions and documentation. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, or when you need to record context that future engineers and agents will need to understand the codebase.
+license: Apache-2.0
 ---
 
 # Documentation and ADRs
 
+Agentit-owned adaptation. The exact MIT-licensed source and attribution remain
+in `vendor/agent-skills/documentation-and-adrs/SKILL.md` and
+`vendor/licenses/addyosmani--agent-skills/LICENSE`. The core's scope and
+BUILDER/REVIEW cadence govern this procedure.
+
 ## Overview
 
 Document decisions, not just code. The most valuable documentation captures the *why* — the context, constraints, and trade-offs that led to a decision. Code shows *what* was built; documentation explains *why it was built this way* and *what alternatives were considered*. This context is essential for future humans and agents working in the codebase.
+
+## Document meaningful increments
+
+At a useful milestone or once a material decision stabilizes, update the
+existing canonical documentation while the context is fresh. Record the problem,
+observable change, chosen approach and reason, relevant alternatives/trade-offs,
+verification/limits and next action when unfinished. A short paragraph or PR
+description is often enough; reserve a full ADR for consequential durable choices.
+
+Keep code and its affected contracts in the same reviewable increment. Use links
+between the PR, relevant decision and component documentation so another person
+can navigate without reading every changed line or the original chat. Keep the
+PR description current as scope evolves. Large generated/vendor imports need a
+separate provenance/manifest summary and review map; line counts alone do not
+measure reviewability.
+
+Durable project docs explain how the system currently works. Public PR/commit
+summaries describe the change. Private `.agentit/STATE.md` records temporary
+progress, failed checks, blockers and the executable next step. Do not publish
+private operational notes, raw reasoning, transcripts or secrets. Reuse existing
+documents rather than creating one file per edit or copying the same history
+into several locations. Follow `git-workflow-and-versioning` for authorized
+save/push/readback and `long-horizon-recovery` for continuity.
 
 ## When to Use
 

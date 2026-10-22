@@ -44,19 +44,17 @@ class ArchitecturePolicyTests(unittest.TestCase):
     def test_agentit_is_agent_operated_not_human_cli_driven(self):
         harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        self.assertIn("The user should not need to know or type Agentit CLI commands", harness)
-        self.assertIn("Mechanical commands are agent-facing implementation details", harness)
+        self.assertIn("CLI commands are agent-facing helpers", harness)
+        self.assertIn("users need not type them", harness)
         self.assertIn("DISPATCH_DECISION: bare | agentit", agents)
         self.assertIn("If genuinely uncertain, choose Agentit", agents)
 
     def test_constructive_dissent_preserves_user_agency(self):
         # Constructive dissent is Agentit-owned policy. Do not inject it into a
         # canonical upstream planning skill just to make the policy test pass.
-        harness = (ROOT / "skills" / "using-agentit" / "SKILL.md").read_text(encoding="utf-8")
         task_router = (ROOT / "skills" / "task-router" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("Constructive dissent", harness)
-        self.assertIn("Preserve the user's final safe discretionary choice", harness)
         self.assertIn("Constructive dissent", task_router)
+        self.assertIn("Challenge material weaknesses with evidence", task_router)
         self.assertIn("preserve the user's final safe discretionary choice", task_router)
 
     def test_runtime_packs_are_flat_and_skill_count_is_model_owned(self):

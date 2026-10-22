@@ -43,6 +43,8 @@ Select `adversarial-idea-review` before converging on consequential or materiall
 
 Choose topology by independence/dependencies. One writer per shared state; workers receive bodies, sources, project instructions and real restrictions. Missing reviewers mean labelled self-review and a visible unavailable gate. Stop at acceptance, true blockers or bounded exhausted attempts; never weaken tests.
 
+Respect model/authority limits: execution-only workers follow decided steps and escalate decisions. See `architect-orchestrator` JIT.
+
 ## Constructive dissent and stopping
 
 Challenge material weaknesses with evidence; explain trade-offs and preserve the user's final safe discretionary choice. Ask only consequential unknowns unavailable from project/session evidence; resolve reversible details autonomously. Branch → verification → documentation-drift check → PR → authorized merge.

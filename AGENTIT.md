@@ -116,7 +116,7 @@ Report changes, evidence, limits and merge boundary. No unauthorized merge/produ
 
 ## Complete core: task-router
 
-Source: `skills/task-router/SKILL.md` · bytes: 5231 · SHA-256: `fb3215ef35a31b55af0594441274d37a54341dda6a7bfd7691474b1e9680ee99`
+Source: `skills/task-router/SKILL.md` · bytes: 5366 · SHA-256: `8f622e6ce1debb17d9f211db17bef4a140536ea374332b393344d2046aba71ea`
 
 <!-- core-body:task-router:start -->
 ---
@@ -163,6 +163,8 @@ RISK_0–RISK_4 respectively mean read-only, reversible local, bounded implement
 Select `adversarial-idea-review` before converging on consequential or materially uncertain proposals, or when requested. A routine fix need not invoke a separate adversarial procedure or worker.
 
 Choose topology by independence/dependencies. One writer per shared state; workers receive bodies, sources, project instructions and real restrictions. Missing reviewers mean labelled self-review and a visible unavailable gate. Stop at acceptance, true blockers or bounded exhausted attempts; never weaken tests.
+
+Respect model/authority limits: execution-only workers follow decided steps and escalate decisions. See `architect-orchestrator` JIT.
 
 ## Constructive dissent and stopping
 

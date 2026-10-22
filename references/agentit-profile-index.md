@@ -10,32 +10,32 @@ Body cost includes inherited skills once per profile. Estimated tokens = UTF-8 b
 
 | Profile | Use for | Skills incl. inherited | Body bytes | Estimated tokens |
 | --- | --- | ---: | ---: | ---: |
-| [core](#core) | Enter Agentit, make the task decision, discover and activate selected skills. | 3 | 15833 | ~3959 |
-| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 42 | 504281 | ~126085 |
-| [backend](#backend) | Design APIs and services, database boundaries, observability and application security. | 24 | 238992 | ~59755 |
-| [supabase](#supabase) | Work with Supabase, PostgreSQL and database migrations. | 25 | 242223 | ~60563 |
-| [product](#product) | Refine product ideas, gather requirements, compare alternatives and define outcomes. | 20 | 157235 | ~39317 |
-| [executive](#executive) | Use strategy, finance, people, legal, operations, board or chief-of-staff judgment. | 30 | 214281 | ~53582 |
-| [writing](#writing) | Write and edit documentation, articles, voice and reusable content. | 13 | 99721 | ~24934 |
-| [design](#design) | Create visual direction, design systems, interaction, typography and brand experiences. | 58 | 625631 | ~156430 |
-| [mobile](#mobile) | Build native mobile experiences across React Native, Flutter, SwiftUI and Android. | 22 | 280866 | ~70223 |
-| [release](#release) | Prepare CI, migrations, security gates, launch and operational readiness. | 18 | 169078 | ~42275 |
-| [research](#research) | Investigate current sources, competitors and scientific literature; check evidence quality. | 28 | 243280 | ~60832 |
-| [growth](#growth) | Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach. | 30 | 221761 | ~55452 |
-| [agency](#agency) | Deliver client product/growth work with implementation and Git handoffs. | 37 | 273573 | ~68408 |
-| [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258053 | ~64524 |
-| [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250621 | ~62662 |
-| [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 128246 | ~32067 |
-| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 404 | 3896553 | ~974289 |
-| [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121023 | ~30261 |
-| [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155164 | ~38796 |
-| [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809206 | ~202323 |
-| [engineering](#engineering) | Implement, debug, refactor and verify repository work with proportional checks. | 63 | 562653 | ~140684 |
-| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 74 | 465168 | ~116320 |
-| [infrastructure](#infrastructure) | Operate containers, environments, networks, rollout monitoring and infrastructure. | 22 | 203711 | ~50934 |
-| [operations](#operations) | Handle business workflows, logistics, billing, procurement and workspace integrations. | 25 | 303850 | ~75973 |
-| [healthcare](#healthcare) | Work on clinical systems, sensitive health data and healthcare compliance. | 8 | 49273 | ~12322 |
-| [financial-protocols](#financial-protocols) | Work on blockchain, payment protocols, trading agents and prediction-market risk. | 10 | 64506 | ~16129 |
+| [core](#core) | Enter Agentit, make the task decision, discover and activate selected skills. | 3 | 15968 | ~3993 |
+| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 42 | 504416 | ~126119 |
+| [backend](#backend) | Design APIs and services, database boundaries, observability and application security. | 24 | 239127 | ~59789 |
+| [supabase](#supabase) | Work with Supabase, PostgreSQL and database migrations. | 25 | 242358 | ~60597 |
+| [product](#product) | Refine product ideas, gather requirements, compare alternatives and define outcomes. | 20 | 157370 | ~39351 |
+| [executive](#executive) | Use strategy, finance, people, legal, operations, board or chief-of-staff judgment. | 30 | 214416 | ~53616 |
+| [writing](#writing) | Write and edit documentation, articles, voice and reusable content. | 13 | 99856 | ~24968 |
+| [design](#design) | Create visual direction, design systems, interaction, typography and brand experiences. | 58 | 625766 | ~156464 |
+| [mobile](#mobile) | Build native mobile experiences across React Native, Flutter, SwiftUI and Android. | 22 | 281001 | ~70257 |
+| [release](#release) | Prepare CI, migrations, security gates, launch and operational readiness. | 18 | 169213 | ~42309 |
+| [research](#research) | Investigate current sources, competitors and scientific literature; check evidence quality. | 28 | 243415 | ~60866 |
+| [growth](#growth) | Plan marketing, SEO, campaigns, publishing, lead intelligence and commercial outreach. | 30 | 221896 | ~55486 |
+| [agency](#agency) | Deliver client product/growth work with implementation and Git handoffs. | 37 | 273708 | ~68442 |
+| [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258188 | ~64558 |
+| [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250756 | ~62696 |
+| [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 128381 | ~32101 |
+| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 404 | 3898090 | ~974674 |
+| [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121158 | ~30295 |
+| [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155299 | ~38830 |
+| [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809341 | ~202357 |
+| [engineering](#engineering) | Implement, debug, refactor and verify repository work with proportional checks. | 63 | 564190 | ~141069 |
+| [agent-systems](#agent-systems) | Build agents, tools, orchestration, memory, evals and explicit host integrations. | 74 | 466705 | ~116705 |
+| [infrastructure](#infrastructure) | Operate containers, environments, networks, rollout monitoring and infrastructure. | 22 | 203846 | ~50968 |
+| [operations](#operations) | Handle business workflows, logistics, billing, procurement and workspace integrations. | 25 | 303985 | ~76007 |
+| [healthcare](#healthcare) | Work on clinical systems, sensitive health data and healthcare compliance. | 8 | 49408 | ~12356 |
+| [financial-protocols](#financial-protocols) | Work on blockchain, payment protocols, trading agents and prediction-market risk. | 10 | 64641 | ~16163 |
 
 ## Profile contents
 

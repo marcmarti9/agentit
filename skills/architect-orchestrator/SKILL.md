@@ -75,6 +75,14 @@ Use `router/worker_context.py` for mechanical projection/validation. One writer 
 
 Provider adapters may implement spawning differently. The semantic worker contract remains provider-neutral.
 
+## Model capability and decision authority
+
+Choose a model for the authority the task requires, respecting explicit user model constraints. Do not select a cheaper execution tier merely because a task involves many files, a large context or much writing. Open-ended implementation, research, diagnosis, architectural/product/security judgment and independent review need a model entrusted with those decisions.
+
+An execution-only worker follows a solution already decided by the supervising model. Give it concrete steps, bounded paths, expected outputs, acceptance commands and escalation conditions. It may report observed facts and execute those steps; it must return ambiguity, unexpected failures and consequential choices to the supervisor. It cannot invent requirements, redesign a solution, weaken verification, approve work or supervise other agents. The supervisor inspects the actual diff/output and fresh evidence before acceptance.
+
+Provider-specific model IDs and bindings belong in adapters. For the Codex Luna executor, use the Sol-supervised contract in `repo:docs/CODEX_SETUP.md`; do not bypass it with an explicit model override or a differently named generic role. Role instructions and model declarations express requested behavior; they are not a host permission boundary or proof of model compliance. A provider's hidden/internal model cannot be inferred from its public label.
+
 # Runtime Loop Engineering
 
 A Loop Contract is useful when an executable unit has an observable outcome and retries need deterministic bounds. It declares goal, verifier, stop condition, attempt budget and escalation boundary before action.

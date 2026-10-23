@@ -63,6 +63,11 @@ jobs:
       - name: Verify opt-in catalog and adaptation provenance
         run: python3 scripts/check_skill_curation.py
 
+      - name: Verify unified profile coverage and portable core entry
+        run: |
+          python3 scripts/build_profile_index.py --check
+          python3 scripts/build_chat_entry.py --check
+
       - name: Verify complete pinned ECC source
         if: steps.scope.outputs.run_full == 'true'
         run: python3 scripts/ecc_integrate.py
@@ -186,6 +191,11 @@ jobs:
           assert body['content'].encode('utf-8') == expected
           assert body['sha256'] == hashlib.sha256(expected).hexdigest()
           PY
+
+      - name: Exercise verified handoff through the installed runtime
+        env:
+          AGENTIT_TEST_CLI: ${{ runner.temp }}/agentit-home/.local/bin/agentit
+        run: python3 -m unittest router.test_handoff_cli -v
 
       - name: Verify explicit signal path through installed runtime
         run: |

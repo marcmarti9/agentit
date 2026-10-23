@@ -3,12 +3,12 @@
 ## Scope and ownership
 
 Agentit retains the complete `affaan-m/ECC` 2.2.3 source at commit
-`b92f181b3b748d1abbc2afd94af6aa7d8c8fca29` in `vendor/ecc`: all 4,615
+`90606c8315ee09cafc303515c5f33024db6b9882` in `vendor/ecc`: all 4,627
 source files, including 311 skills, 71 agent definitions, 97 legacy command
 shims, rules, hooks, memory, continuous learning, native CLIs, host adapters,
 tests, assets and original licenses. Nothing is fetched at skill-activation time.
 
-The unified catalog exposes **398 canonical skills: 98 existing Agentit skills
+The unified catalog exposes **403 canonical skills: 103 native Agentit skills
 and 300 ECC skills**. Eleven overlapping/deprecated ECC skill names resolve to one
 canonical procedure. Source retention is not duplicate activation: the original
 eleven remain inside the pinned tree so upstream commands, links, tests and
@@ -27,7 +27,7 @@ is changed by importing or discovering it.
 | Responsibility | Single owner / integration |
 | --- | --- |
 | Global entry, routing, execution mode | Agentit's existing three core skills and model-owned task decision. |
-| Skills, profiles and metadata packs | Existing Agentit discovery and exact-byte JIT delivery; nine additional ECC domain packs. |
+| Skills, profiles and metadata packs | Existing Agentit discovery and exact-byte JIT delivery; source-neutral domain profiles and packs. |
 | Worker context, tool grants and evidence | Existing schema-3 workers, capability checks and command-bound Loop/Graph runtime. ECC role files are explicit resources, not a second automatic dispatcher. |
 | TDD, review cadence and completion | Agentit BUILDER/REVIEW and risk overrides; upstream blanket TDD, 80% coverage or per-stage commits do not override them. |
 | Remotion | `remotion-video-engineering`, retaining Agentit's expanded current official resources rather than an overlapping older checklist. |
@@ -46,16 +46,18 @@ framework-specific tests or distinct visual-design directions are retained.
 
 The commands below are agent-facing mechanics. The user does not need to select
 profiles or run them manually. Profiles provide availability, never activation.
-Existing domain profiles gain explicit relevant specialists; `ecc` makes all
-canonical ECC skills available and `all` includes the whole unified inventory.
+Domain profiles combine native and imported specialists according to their work.
+`all` includes the whole unified inventory. Old `ecc-*` profile IDs remain hidden
+compatibility aliases to those domains; they are not a parallel library. The
+source pack fields in the import policy/lock record provenance only.
 
 ```sh
 python3 agentit ecc status
 python3 agentit skills packs --format json
-python3 agentit skills candidates ecc-web --format json
+python3 agentit skills candidates frontend --format json
 python3 agentit skills activate api-design --project /absolute/project --format json
-python3 agentit enable ecc-web --project /absolute/project       # plan only
-python3 agentit enable ecc-web --project /absolute/project --apply
+python3 agentit enable frontend --project /absolute/project       # plan only
+python3 agentit enable frontend --project /absolute/project --apply
 python3 agentit ecc resolve tdd-workflow
 python3 agentit ecc list --kind agents
 python3 agentit skills resource repo:vendor/ecc/agents/architect.md --project /absolute/project
@@ -120,7 +122,10 @@ feature parity across Codex, Claude, Cursor or other hosts.
 ## Provenance, updates and rollback
 
 `vendor/ecc.lock.json` records the approved revision, file SHA-256, byte lengths,
-executable bits, resource inventory and canonical skill metadata. Hashes detect
+executable bits, resource inventory and canonical skill metadata. `profiles.yaml` and the unified
+domain map own profile membership and discovery; the importer never rewrites
+them or appends a source-specific catalog. New upstream skill IDs must be
+explicitly associated with the appropriate domain as part of a reviewed update. Hashes detect
 changes relative to this reviewed manifest; they are not signatures and do not
 protect against an attacker rewriting the manifest and policy together.
 The root Apache-2.0 license is unchanged. ECC's MIT license and its original
@@ -143,8 +148,8 @@ Mismatched pins, unreviewed skill collisions, stale/tampered sources, unsafe
 paths and symlinks fail closed. Existing vendor content is not silently replaced.
 
 An upstream update requires a work branch, comparison of upstream changes,
-explicit reconciliation of policy/aliases and the pinned tree, regenerated
-catalogs and fresh tests. Keep a clean checkpoint before replacing an old
+explicit reconciliation of policy/aliases and the pinned tree, updated domain
+assignments for any new skills, a regenerated integrity manifest and fresh tests. Keep a clean checkpoint before replacing an old
 snapshot; the importer deliberately refuses an automatic version overwrite.
 Rollback is reverting the integration commit(s), then running Agentit's normal
 managed bootstrap/update. Existing cache sources that no longer exist are
@@ -181,3 +186,21 @@ Python skill activation; install only when native execution is actually needed.
 Native tool tests and real host installation are separate evidence from these
 Python/inventory checks. CI logs and PR results report the tests actually run;
 this document does not assert an independent model review or blanket security.
+
+## Upstream refresh verified 2026-10-22
+
+The retained snapshot was refreshed from `b92f181` to upstream main
+[`90606c8`](https://github.com/affaan-m/ECC/commit/90606c8315ee09cafc303515c5f33024db6b9882).
+The reviewed delta contains 61 changed/new files and no removals: native
+hook/install-library refactors, native test/CI improvements, command-template
+fixes and troubleshooting documentation. All 311 skill bodies are unchanged;
+the 11 alias decisions still produce 300 canonical imported skills. Package
+manifests, lockfiles and licenses are unchanged. The complete retained source
+verifies as 4,627 files and 61,903,407 bytes.
+
+The refresh copied source and regenerated its hash manifest without executing
+upstream hooks, native installers, daemons or dependency setup. Native runtime
+behavior and its host-specific security properties require separate scoped
+verification before enabling a native capability. The pin is the observed
+upstream HEAD at refresh time, not a promise that future upstream changes are
+automatically trusted or installed.

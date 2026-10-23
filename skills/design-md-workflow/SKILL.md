@@ -9,7 +9,7 @@ source: https://github.com/google-labs-code/design.md
 
 Use this skill when a project needs a durable, agent-readable visual identity that survives across sessions, agents and implementation passes.
 
-Google Labs' `DESIGN.md` project defines an alpha format that combines machine-readable design tokens in YAML front matter with human-readable design rationale in Markdown. Agentit treats that format as an **optional current external contract**, not a global dependency and not a replacement for the project's real source-of-truth design system.
+Google Labs' `DESIGN.md` project defines an alpha format that combines machine-readable design tokens in YAML front matter or section-level fenced YAML blocks with human-readable design rationale in Markdown. A top-level token key may appear once across the combined blocks. Agentit treats that format as an **optional current external contract**, not a global dependency and not a replacement for the project's real source-of-truth design system.
 
 ## When to load
 

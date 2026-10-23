@@ -21,10 +21,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from router.ecc import ECCError, LOCK, SOURCE, policy, safe_file, verify
 
-BEGIN = '<!-- ECC-GENERATED BEGIN -->'
-END = '<!-- ECC-GENERATED END -->'
-
-
 def metadata(path: Path) -> dict:
     text = path.read_bytes().decode('utf-8')
     if not text.startswith('---\n'):
@@ -114,35 +110,7 @@ def generate(repo: Path, source: Path, reported_revision: str | None = None) -> 
             'version': json.loads((target/'package.json').read_text())['version'],
             'files': files, 'skills': skills, 'aliases': aliases, 'resources': resources}
     (repo/LOCK).write_text(json.dumps(lock, indent=2, ensure_ascii=False)+'\n')
-    catalogs(repo, p, lock)
     return verify(repo)
-
-
-def catalogs(repo: Path, p: dict, lock: dict) -> None:
-    path = repo/'profiles.yaml'
-    data = yaml.safe_load(path.read_text())
-    for name, additions in p['profile_additions'].items():
-        profile = data['profiles'][name]
-        profile['skills'] = list(dict.fromkeys([*profile.get('skills',[]), *additions]))
-    for name, pack in p['packs'].items():
-        data['profiles'][name] = {'description': pack['description']+' Availability only, never auto-activation.',
-                                  'extends':['core'], 'skills':pack['skills']}
-    data['profiles']['ecc'] = {'description':'Complete canonical ECC library, JIT only. Native host integration remains opt-in.',
-                                'extends':['core', *p['packs']], 'skills':[]}
-    data['profiles']['all']['extends'] = list(dict.fromkeys([*data['profiles']['all'].get('extends',[]), 'ecc']))
-    path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True, width=96))
-    path=repo/'references/agentit-skill-packs.md'
-    text=path.read_text()
-    if BEGIN in text:
-        text=text.split(BEGIN)[0].rstrip()+'\n'
-    lines=[BEGIN, '', 'The full ECC source lives once in `vendor/ecc`. See `docs/ECC_INTEGRATION.md` for canonical owners, native tool setup and the explicit alias decisions.', '']
-    for name, pack in p['packs'].items():
-        lines += [f'## {name}', '', f'**Use for:** {pack["description"]}', '', '**Skills in this pack:**', '']
-        for sid in pack['skills']:
-            lines.append(f'- `{sid}` — {lock["skills"][sid]["description"]}')
-        lines += ['', '---', '']
-    lines.append(END)
-    path.write_text(text.rstrip()+'\n\n'+'\n'.join(lines)+'\n')
 
 
 def main() -> int:

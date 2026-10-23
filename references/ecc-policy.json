@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "repository": "affaan-m/ECC",
-  "revision": "b92f181b3b748d1abbc2afd94af6aa7d8c8fca29",
-  "integration": "Complete unchanged ECC source tree; one Agentit delivery, selection and lifecycle authority.",
+  "revision": "90606c8315ee09cafc303515c5f33024db6b9882",
+  "integration": "Complete unchanged ECC source tree; canonical profiles and packs live in the unified Agentit catalog. Source packs below record provenance only.",
   "aliases": {
     "tdd-workflow": {
       "canonical": "test-driven-development",
@@ -395,116 +395,6 @@
         "security-scan"
       ]
     }
-  },
-  "profile_additions": {
-    "frontend": [
-      "react-patterns",
-      "react-performance",
-      "react-testing",
-      "frontend-a11y",
-      "browser-qa",
-      "vue-patterns",
-      "vite-patterns",
-      "nextjs-turbopack"
-    ],
-    "backend": [
-      "api-design",
-      "api-connector-builder",
-      "backend-patterns",
-      "error-handling",
-      "database-migrations",
-      "postgres-patterns",
-      "redis-patterns",
-      "mcp-server-patterns"
-    ],
-    "supabase": [
-      "postgres-patterns",
-      "database-migrations"
-    ],
-    "product": [
-      "market-research",
-      "product-lens",
-      "competitive-platform-analysis",
-      "investor-materials"
-    ],
-    "executive": [
-      "investor-materials",
-      "investor-outreach",
-      "finance-billing-ops",
-      "competitive-report-structure"
-    ],
-    "writing": [
-      "article-writing",
-      "brand-voice",
-      "content-engine"
-    ],
-    "design": [
-      "frontend-design-direction",
-      "design-system",
-      "accessibility",
-      "make-interfaces-feel-better"
-    ],
-    "mobile": [
-      "react-native-patterns",
-      "dart-flutter-patterns",
-      "swiftui-patterns",
-      "android-clean-architecture",
-      "compose-multiplatform-patterns"
-    ],
-    "release": [
-      "deployment-patterns",
-      "delivery-gate",
-      "canary-watch",
-      "production-audit",
-      "github-ops"
-    ],
-    "research": [
-      "deep-research",
-      "market-research",
-      "research-ops",
-      "scientific-thinking-literature-review"
-    ],
-    "growth": [
-      "seo",
-      "marketing-campaign",
-      "lead-intelligence",
-      "content-engine",
-      "crosspost"
-    ],
-    "agency": [
-      "brand-discovery",
-      "marketing-campaign",
-      "browser-qa"
-    ],
-    "data": [
-      "dashboard-builder",
-      "postgres-patterns",
-      "clickhouse-io",
-      "data-throughput-accelerator",
-      "pytorch-patterns"
-    ],
-    "security": [
-      "security-scan",
-      "safety-guard",
-      "agent-architecture-audit"
-    ],
-    "artifacts": [
-      "frontend-slides",
-      "nutrient-document-processing",
-      "dashboard-builder"
-    ],
-    "design-review": [
-      "frontend-a11y",
-      "browser-qa",
-      "click-path-audit"
-    ],
-    "video": [
-      "video-editing",
-      "ui-demo",
-      "manim-video",
-      "blender-motion-state-inspection",
-      "tasteforge-video"
-    ]
   },
   "authority": {
     "selection": "Agentit task-router and using-agent-skills; source discovery never activates a body.",

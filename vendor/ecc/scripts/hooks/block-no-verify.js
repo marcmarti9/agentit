@@ -216,7 +216,23 @@ function gitEnvironmentOverride(environment, budget) {
   return false;
 }
 
-function checkGitWords(words, budget, start = 0, environmentOverride = false) {
+// True when a git global option at words[index] redirects hooks via config.
+// The separate-operand forms always charge the operand so budget accounting
+// does not depend on whether an earlier option already matched.
+function gitGlobalOptionRedirectsHooks(words, index, value, budget) {
+  if (value === '-c' || value === '--config-env') {
+    const setting = words[index + 1]?.value || '';
+    budget.spend(setting.length + 1);
+    return isHookRedirectSetting(setting);
+  }
+  if (value.startsWith('-c')) return isHookRedirectSetting(value.slice(2));
+  if (value.startsWith('--config-env=')) return isHookRedirectSetting(value.slice('--config-env='.length));
+  return false;
+}
+
+// Walk git's global options after the executable. Returns the index of the
+// subcommand word and whether any option redirected the hooks path.
+function scanGitGlobalOptions(words, budget, start, environmentOverride) {
   let index = start + 1;
   let override = environmentOverride;
   for (; index < words.length; index++) {
@@ -224,20 +240,16 @@ function checkGitWords(words, budget, start = 0, environmentOverride = false) {
     budget.spend(value.length + 1);
     if (!value.startsWith('-')) break;
     if (value === '--') { index++; break; }
-    if (value === '-c' || value === '--config-env') {
-      const setting = words[index + 1]?.value || '';
-      budget.spend(setting.length + 1);
-      override ||= isHookRedirectSetting(setting);
-    } else if (value.startsWith('-c')) override ||= isHookRedirectSetting(value.slice(2));
-    else if (value.startsWith('--config-env=')) override ||= isHookRedirectSetting(value.slice('--config-env='.length));
+    if (gitGlobalOptionRedirectsHooks(words, index, value, budget)) override = true;
     if (GIT_GLOBAL_VALUES.has(value)) index++;
   }
-  const command = words[index]?.value;
-  budget.spend((command?.length || 0) + 1);
-  if (!PROTECTED_GIT_COMMANDS.has(command)) return null;
-  if (override) return `BLOCKED: Overriding core.hooksPath is not allowed with git ${command}. Git hooks must not be bypassed.`;
+  return { index, override };
+}
+
+// Scan a protected subcommand's own arguments for a hook-bypass flag.
+function findGitBypassFlag(words, budget, start, command) {
   let skipNext = false;
-  for (index++; index < words.length; index++) {
+  for (let index = start; index < words.length; index++) {
     const value = words[index].value;
     budget.spend(value.length + 1);
     if (skipNext) { skipNext = false; continue; }
@@ -246,9 +258,19 @@ function checkGitWords(words, budget, start = 0, environmentOverride = false) {
       if (commitOptionConsumesNextValue(value)) { skipNext = true; continue; }
       if (commitOptionContainsInlineValue(value)) continue;
     }
-    if (isNoVerifyLongFlag(value) || (command === 'commit' && isCommitNoVerifyShortFlag(value))) {
-      return `BLOCKED: --no-verify flag is not allowed with git ${command}. Git hooks must not be bypassed.`;
-    }
+    if (isNoVerifyLongFlag(value) || (command === 'commit' && isCommitNoVerifyShortFlag(value))) return true;
+  }
+  return false;
+}
+
+function checkGitWords(words, budget, start = 0, environmentOverride = false) {
+  const { index, override } = scanGitGlobalOptions(words, budget, start, environmentOverride);
+  const command = words[index]?.value;
+  budget.spend((command?.length || 0) + 1);
+  if (!PROTECTED_GIT_COMMANDS.has(command)) return null;
+  if (override) return `BLOCKED: Overriding core.hooksPath is not allowed with git ${command}. Git hooks must not be bypassed.`;
+  if (findGitBypassFlag(words, budget, index + 1, command)) {
+    return `BLOCKED: --no-verify flag is not allowed with git ${command}. Git hooks must not be bypassed.`;
   }
   return null;
 }
@@ -284,15 +306,45 @@ function validateEnvSplitEscapes(payload, budget) {
   }
 }
 
+const ENV_VALUE_OPTIONS = new Set(['-u', '--unset', '-C', '--chdir']);
+const ENV_FLAG_OPTIONS = new Set(['-i', '--ignore-environment', '-0', '--null']);
+const SUDO_VALUE_OPTIONS = new Set(['-u', '--user', '-g', '--group', '-h', '--host', '-p', '--prompt', '-C', '-T', '-R', '-D']);
+const SUDO_FLAG_OPTIONS = new Set(['-n', '-E', '-H', '-S', '-k', '-K', '-b']);
+const SHELL_ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*\+?=/;
+const GIT_ENV_NAME = /^GIT_CONFIG_(?:COUNT|PARAMETERS|(?:KEY|VALUE)_[0-9]+)$/;
+
+function isEnvSplitFlag(flag) {
+  return flag === '-S' || flag === '--split-string'
+    || flag.startsWith('--split-string=') || flag.startsWith('-S');
+}
+
+// A value-taking wrapper option with its operand attached (`-uNAME`, `--unset=NAME`).
+function hasAttachedOperand(flag, values) {
+  return [...values].some(value => value.startsWith('--')
+    ? flag.startsWith(`${value}=`)
+    : flag.startsWith(value) && flag.length > value.length);
+}
+
+// Only literal word splitting is understood for env -S. Keep complex env
+// syntax opaque rather than pretending to execute it as a shell.
+function isLiteralWordList(scan) {
+  const command = scan.commands[0];
+  return scan.commands.length === 1 && !command.nested.length
+    && !command.redirects.length && !command.words.some(word => word.dynamic);
+}
+
 // Only explicit option grammars remove wrapper operands. Unknown launchers are
 // opaque/conservative, never guessed from a name found among data arguments.
 function executableWords(words, budget, inherited = new Map(), callerValues = inherited) {
   budget.spend(inherited.size + 1);
   const environments = [new Map(inherited)];
   const prefixAssignments = new Map();
+  const dynamicAssignments = new Set();
   let local = true;
   let assignmentOnly = true;
-  const dynamicAssignments = new Set();
+  let i = 0;
+  let assignments = true;
+  let environmentAssignments = false;
   function result(values) { return { words: values, environments, prefixAssignments, local, assignmentOnly, dynamicAssignments }; }
   function suffix(start) {
     budget.spend(words.length - start);
@@ -304,7 +356,7 @@ function executableWords(words, budget, inherited = new Map(), callerValues = in
     const equals = value.indexOf('=');
     const append = !environmentAssignments && value[equals - 1] === '+';
     const key = value.slice(0, append ? equals - 1 : equals);
-    if (/^GIT_CONFIG_(?:COUNT|PARAMETERS|(?:KEY|VALUE)_[0-9]+)$/.test(key)) {
+    if (GIT_ENV_NAME.test(key)) {
       const operand = value.slice(equals + 1);
       const count = environments.length;
       budget.spend(count + 1);
@@ -336,85 +388,137 @@ function executableWords(words, budget, inherited = new Map(), callerValues = in
       else environment.delete(name);
     }
   }
-  let i = 0;
-  let assignments = true;
-  let environmentAssignments = false;
+  // Wrapper handlers below return a final result to stop scanning, or
+  // undefined once the wrapper's own options are consumed and the scan
+  // should continue with the wrapped command.
+  function commandBuiltin(token) {
+    assignmentOnly = false;
+    local &&= token.value === 'command';
+    i++;
+    while (words[i]?.value.startsWith('-')) {
+      const flag = words[i++].value;
+      budget.spend(flag.length + 1);
+      if (flag === '--') break;
+      if (/^-[pvV]+$/.test(flag) && /[vV]/.test(flag)) return result([]);
+      if (!/^-p+$/.test(flag)) return suffix(i - 1);
+    }
+    assignments = false;
+    return undefined;
+  }
+  function execBuiltin() {
+    assignmentOnly = false;
+    local = false;
+    i++;
+    while (words[i]?.value.startsWith('-')) {
+      const flag = words[i++].value;
+      budget.spend(flag.length + 1);
+      if (flag === '--') break;
+      if (/^-[cl]*a$/.test(flag)) i++;
+      else if (!/^-([cl]*a.+|[cl]+)$/.test(flag)) return suffix(i - 1);
+      if (flag.slice(1).split('a', 1)[0].includes('c')) resetEnvironment();
+    }
+    assignments = false;
+    return undefined;
+  }
+  // env -S splits a literal payload into argv words in place; words[i] is
+  // then re-examined as the first expanded word.
+  function envSplitString(flag) {
+    const separated = flag === '-S' || flag === '--split-string';
+    const payload = separated ? words[i + 1]?.value || ''
+      : flag.slice(flag.startsWith('--split-string=') ? '--split-string='.length : 2);
+    budget.spend(payload.length + 1);
+    validateEnvSplitEscapes(payload, budget);
+    const scan = scanShell(payload, budget);
+    if (!isLiteralWordList(scan)) return suffix(i - 1);
+    // Pay for both slices and the expanded array before allocating them.
+    budget.spend(2 * words.length + scan.commands[0].words.length);
+    words = [...words.slice(0, i), ...scan.commands[0].words, ...words.slice(i + (separated ? 2 : 1))];
+    return undefined;
+  }
+  function envResetFlag(flag) {
+    if (flag === '-i' || flag === '--ignore-environment') resetEnvironment();
+    if (flag === '-u' || flag === '--unset') resetEnvironment(words[i + 1]?.value || '');
+    else if (flag.startsWith('--unset=')) resetEnvironment(flag.slice('--unset='.length));
+    else if (flag.startsWith('-u')) resetEnvironment(flag.slice(2));
+  }
+  function envWrapper(name) {
+    assignmentOnly = false;
+    local = false;
+    const env = name === 'env';
+    const values = env ? ENV_VALUE_OPTIONS : SUDO_VALUE_OPTIONS;
+    const flags = env ? ENV_FLAG_OPTIONS : SUDO_FLAG_OPTIONS;
+    i++;
+    while (words[i]?.value.startsWith('-')) {
+      const flag = words[i].value;
+      budget.spend(flag.length + 1);
+      if (flag === '--') { i++; break; }
+      if (env && isEnvSplitFlag(flag)) {
+        const stop = envSplitString(flag);
+        if (stop) return stop;
+        continue;
+      }
+      if (env) envResetFlag(flag);
+      if (values.has(flag)) i += 2;
+      else if (flags.has(flag) || hasAttachedOperand(flag, values)) i++;
+      else return suffix(i - 1); // Includes opaque env -S / sudo shell modes.
+    }
+    assignments = true;
+    environmentAssignments = true;
+    return undefined;
+  }
   while (i < words.length) {
     const token = words[i];
     budget.spend(token.value.length + token.raw.length + 1);
-    if (assignments && /^[A-Za-z_][A-Za-z0-9_]*\+?=/.test(environmentAssignments ? token.value : token.raw)) { assignment(token); i++; continue; }
+    if (assignments && SHELL_ASSIGNMENT.test(environmentAssignments ? token.value : token.raw)) { assignment(token); i++; continue; }
     if (!token.quoted && CONTROL_WORDS.has(token.value)) { i++; continue; }
     const name = basename(token.value);
-    if (name === 'command') {
-      assignmentOnly = false;
-      local &&= token.value === 'command';
-      i++;
-      while (words[i]?.value.startsWith('-')) {
-        const flag = words[i++].value;
-        budget.spend(flag.length + 1);
-        if (flag === '--') break;
-        if (/^-[pvV]+$/.test(flag) && /[vV]/.test(flag)) return result([]);
-        if (!/^-p+$/.test(flag)) return suffix(i - 1);
-      }
-      assignments = false; continue;
-    }
-    if (name === 'exec') {
-      assignmentOnly = false;
-      local = false;
-      i++;
-      while (words[i]?.value.startsWith('-')) {
-        const flag = words[i++].value;
-        budget.spend(flag.length + 1);
-        if (flag === '--') break;
-        if (/^-[cl]*a$/.test(flag)) i++;
-        else if (!/^-([cl]*a.+|[cl]+)$/.test(flag)) return suffix(i - 1);
-        if (flag.slice(1).split('a', 1)[0].includes('c')) resetEnvironment();
-      }
-      assignments = false; continue;
-    }
-    if (name === 'env' || name === 'sudo' || name === 'doas') {
-      assignmentOnly = false;
-      local = false;
-      const env = name === 'env';
-      const values = env
-        ? new Set(['-u', '--unset', '-C', '--chdir'])
-        : new Set(['-u', '--user', '-g', '--group', '-h', '--host', '-p', '--prompt', '-C', '-T', '-R', '-D']);
-      const flags = env ? new Set(['-i', '--ignore-environment', '-0', '--null']) : new Set(['-n', '-E', '-H', '-S', '-k', '-K', '-b']);
-      i++;
-      while (words[i]?.value.startsWith('-')) {
-        const flag = words[i].value;
-        budget.spend(flag.length + 1);
-        if (flag === '--') { i++; break; }
-        if (env && (flag === '-S' || flag === '--split-string'
-          || flag.startsWith('--split-string=') || flag.startsWith('-S'))) {
-          const separated = flag === '-S' || flag === '--split-string';
-          const payload = separated ? words[i + 1]?.value || ''
-            : flag.slice(flag.startsWith('--split-string=') ? '--split-string='.length : 2);
-          budget.spend(payload.length + 1);
-          validateEnvSplitEscapes(payload, budget);
-          const scan = scanShell(payload, budget);
-          // Only literal word splitting is understood here. Keep complex env
-          // syntax opaque rather than pretending to execute it as a shell.
-          if (scan.commands.length !== 1 || scan.commands[0].nested.length
-            || scan.commands[0].redirects.length || scan.commands[0].words.some(word => word.dynamic)) return suffix(i - 1);
-          // Pay for both slices and the expanded array before allocating them.
-          budget.spend(2 * words.length + scan.commands[0].words.length);
-          words = [...words.slice(0, i), ...scan.commands[0].words, ...words.slice(i + (separated ? 2 : 1))];
-          continue;
-        }
-        if (env && (flag === '-i' || flag === '--ignore-environment')) resetEnvironment();
-        if (env && (flag === '-u' || flag === '--unset')) resetEnvironment(words[i + 1]?.value || '');
-        else if (env && flag.startsWith('--unset=')) resetEnvironment(flag.slice('--unset='.length));
-        else if (env && flag.startsWith('-u')) resetEnvironment(flag.slice(2));
-        if (values.has(flag)) i += 2;
-        else if (flags.has(flag) || [...values].some(value => value.startsWith('--') ? flag.startsWith(`${value}=`) : flag.startsWith(value) && flag.length > value.length)) i++;
-        else return suffix(i - 1); // Includes opaque env -S / sudo shell modes.
-      }
-      assignments = true; environmentAssignments = true; continue;
-    }
-    return suffix(i);
+    let stop;
+    if (name === 'command') stop = commandBuiltin(token);
+    else if (name === 'exec') stop = execBuiltin();
+    else if (name === 'env' || name === 'sudo' || name === 'doas') stop = envWrapper(name);
+    else return suffix(i);
+    if (stop) return stop;
   }
   return result([]);
+}
+
+const SHELL_LONG_FLAGS = ['--noprofile', '--norc', '--posix', '--restricted', '--verbose', '--login'];
+const OPAQUE_SHELL = { kind: 'opaque', stdin: true };
+
+// Classify one short shell flag inside an option cluster.
+function classifyShellFlag(flag, shell) {
+  // Named-option arity is unproved for sh/dash/ksh: keep the invocation
+  // opaque instead of consuming a code flag as a guessed option operand.
+  if ((flag === 'o' || flag === 'O') && shell !== 'bash' && shell !== 'zsh') return 'opaque';
+  if (flag === 'c') return 'code';
+  if (flag === 's') return 'stdin';
+  // zsh consumes the rest of this argv word as the option name, or one
+  // separate word if no suffix exists, then ends this option cluster.
+  if (shell === 'zsh' && flag === 'o') return 'zshOption';
+  // These are not Bash's operand grammar; unmodeled zsh modes stay opaque.
+  if (shell === 'zsh' && (flag === 'O' || flag === 'b')) return 'opaque';
+  if (flag === 'o' || flag === 'O') return 'operand';
+  return 'abefhiklmnprtuvxBCEHPTD'.includes(flag) ? 'plain' : 'opaque';
+}
+
+// Bash accepts either sign and consumes a separate operand for each o/O
+// even inside a cluster. The command string follows ALL option processing,
+// not necessarily the argv word immediately after the first c flag.
+// Returns null when the cluster makes the invocation opaque.
+function scanShellOptionCluster(option, words, start, shell, budget) {
+  const cluster = { next: start + 1, code: false, stdin: false };
+  for (let j = 1; j < option.length; j++) {
+    budget.spend();
+    const kind = classifyShellFlag(option[j], shell);
+    if (kind === 'opaque') return null;
+    if (kind === 'code') cluster.code = true;
+    else if (kind === 'stdin') cluster.stdin = true;
+    else if (kind === 'zshOption') {
+      if (j + 1 === option.length && cluster.next < words.length) cluster.next++;
+      return cluster;
+    } else if (kind === 'operand' && cluster.next < words.length) cluster.next++;
+  }
+  return cluster;
 }
 
 function shellRole(words, budget, shell) {
@@ -428,33 +532,14 @@ function shellRole(words, budget, shell) {
     if (!/^[+-]/.test(option)) break;
     if (option === '--rcfile' || option === '--init-file') { i += 2; continue; }
     if (option.startsWith('--')) {
-      if (!['--noprofile', '--norc', '--posix', '--restricted', '--verbose', '--login'].includes(option)) return { kind: 'opaque', stdin: true };
+      if (!SHELL_LONG_FLAGS.includes(option)) return { ...OPAQUE_SHELL };
       i++; continue;
     }
-    // Bash accepts either sign and consumes a separate operand for each o/O
-    // even inside a cluster. The command string follows ALL option processing,
-    // not necessarily the argv word immediately after the first c flag.
-    let next = i + 1;
-    for (let j = 1; j < option.length; j++) {
-      budget.spend();
-      const flag = option[j];
-      // Named-option arity is unproved for sh/dash/ksh: keep the invocation
-      // opaque instead of consuming a code flag as a guessed option operand.
-      if ((flag === 'o' || flag === 'O') && shell !== 'bash' && shell !== 'zsh') return { kind: 'opaque', stdin: true };
-      if (flag === 'c') code = true;
-      else if (flag === 's') stdin = true;
-      else if (shell === 'zsh' && flag === 'o') {
-        // zsh consumes the rest of this argv word as the option name, or one
-        // separate word if no suffix exists, then ends this option cluster.
-        if (j + 1 === option.length && next < words.length) next++;
-        break;
-      } else if (shell === 'zsh' && (flag === 'O' || flag === 'b')) {
-        // These are not Bash's operand grammar; unmodeled zsh modes stay opaque.
-        return { kind: 'opaque', stdin: true };
-      } else if (flag === 'o' || flag === 'O') { if (next < words.length) next++; }
-      else if (!'abefhiklmnprtuvxBCEHPTD'.includes(flag)) return { kind: 'opaque', stdin: true };
-    }
-    i = next;
+    const cluster = scanShellOptionCluster(option, words, i, shell, budget);
+    if (!cluster) return { ...OPAQUE_SHELL };
+    code ||= cluster.code;
+    stdin ||= cluster.stdin;
+    i = cluster.next;
   }
   if (code) return { kind: 'shell', code: words[i]?.value, stdin: false };
   // A script filename and its positional arguments are not shell source text.
@@ -761,7 +846,6 @@ function pipelineSources(command, budget) {
   return sources;
 }
 
-const GIT_ENV_NAME = /^GIT_CONFIG_(?:COUNT|PARAMETERS|(?:KEY|VALUE)_[0-9]+)$/;
 const DECLARATIONS = new Set(['export', 'declare', 'typeset', 'readonly', 'unset']);
 
 function shellState(environment, budget) {
@@ -825,31 +909,11 @@ function updateShellState(state, normalized, budget) {
   // Exact builtin names only: /some/path/export is an external executable.
   const name = words[0]?.value;
   if (!DECLARATIONS.has(name)) return result(false, false);
-  let exported = name === 'export' ? true : null;
-  let readonly = name === 'readonly';
-  let passive = false;
-  let uncertain = dynamicAssignments.size > 0;
-  let i = 1;
-  for (; i < words.length; i++) {
-    const flag = words[i].value;
-    budget.spend(flag.length + 1);
-    if (flag === '--') { i++; break; }
-    if (!/^[+-]/.test(flag)) break;
-    if (name === 'export' && /^-[npf]+$/.test(flag)) {
-      if (flag.includes('n')) exported = false;
-      passive ||= flag.includes('f');
-    } else if ((name === 'declare' || name === 'typeset') && /^[+-][xrgpf]+$/.test(flag)) {
-      if (flag.includes('x')) exported = flag[0] === '-';
-      if (flag[0] === '-' && flag.includes('r')) readonly = true;
-      passive ||= /[pf]/.test(flag);
-    } else if (name === 'readonly' && /^-[pf]+$/.test(flag)) passive ||= flag.includes('f');
-    else if (name === 'unset' && /^-[vf]+$/.test(flag)) passive ||= flag.includes('f');
-    else uncertain = true;
-  }
-  if (passive && !uncertain) return result(true, false);
+  const declaration = parseDeclarationFlags(name, words, budget, dynamicAssignments.size > 0);
+  if (declaration.passive && !declaration.uncertain) return result(true, false);
   let changed = prefixAssignments.size > 0;
   assignPrefixes();
-  for (; i < words.length; i++) {
+  for (let i = declaration.index; i < words.length; i++) {
     const value = words[i].value;
     budget.spend(2 * value.length + 1);
     const equals = value.indexOf('=');
@@ -859,21 +923,65 @@ function updateShellState(state, normalized, budget) {
     changed = true;
     if (name !== 'unset' && equals >= 0) assign(key, value.slice(equals + 1), words[i].dynamic, append);
     budget.spend(states.length + 1);
-    for (const current of states) {
-      if (name === 'unset') {
-        if (equals < 0 && !current.readonly.has(key)) {
-          current.variables.delete(key); current.exported.delete(key);
-        }
-      } else {
-        if (exported === true || uncertain) current.exported.add(key);
-        else if (exported === false) current.exported.delete(key);
-        if (readonly || uncertain) current.readonly.add(key);
-      }
-    }
+    for (const current of states) applyDeclaration(current, key, equals, declaration);
   }
   // Unsupported attributes may transform values or reject the declaration.
   // Retain old and conservative literal states; never use them to prove reset.
-  return result(true, changed, uncertain);
+  return result(true, changed, declaration.uncertain);
+}
+
+// Fold one declaration builtin flag into the parsed attribute set.
+function applyDeclarationFlag(declaration, flag) {
+  const { name } = declaration;
+  if (name === 'export' && /^-[npf]+$/.test(flag)) {
+    if (flag.includes('n')) declaration.exported = false;
+    declaration.passive ||= flag.includes('f');
+    return;
+  }
+  if ((name === 'declare' || name === 'typeset') && /^[+-][xrgpf]+$/.test(flag)) {
+    if (flag.includes('x')) declaration.exported = flag[0] === '-';
+    if (flag[0] === '-' && flag.includes('r')) declaration.readonly = true;
+    declaration.passive ||= /[pf]/.test(flag);
+    return;
+  }
+  if (name === 'readonly' && /^-[pf]+$/.test(flag)) { declaration.passive ||= flag.includes('f'); return; }
+  if (name === 'unset' && /^-[vf]+$/.test(flag)) { declaration.passive ||= flag.includes('f'); return; }
+  declaration.uncertain = true;
+}
+
+// Parse the option words of export/declare/typeset/readonly/unset. Returns the
+// attributes they set and the index of the first operand.
+function parseDeclarationFlags(name, words, budget, uncertain) {
+  const declaration = {
+    name,
+    exported: name === 'export' ? true : null,
+    readonly: name === 'readonly',
+    passive: false,
+    uncertain,
+    index: 1
+  };
+  for (; declaration.index < words.length; declaration.index++) {
+    const flag = words[declaration.index].value;
+    budget.spend(flag.length + 1);
+    if (flag === '--') { declaration.index++; break; }
+    if (!/^[+-]/.test(flag)) break;
+    applyDeclarationFlag(declaration, flag);
+  }
+  return declaration;
+}
+
+// Apply a parsed declaration of `key` to one literal shell state.
+function applyDeclaration(current, key, equals, declaration) {
+  const { name, exported, readonly, uncertain } = declaration;
+  if (name === 'unset') {
+    if (equals < 0 && !current.readonly.has(key)) {
+      current.variables.delete(key); current.exported.delete(key);
+    }
+    return;
+  }
+  if (exported === true || uncertain) current.exported.add(key);
+  else if (exported === false) current.exported.delete(key);
+  if (readonly || uncertain) current.readonly.add(key);
 }
 
 function checkCommand(input) {
@@ -896,6 +1004,148 @@ function checkCommand(input) {
     }
     return null;
   }
+  // Split a text task into one pending task per scanned command.
+  function expandText(task) {
+    const scan = scanShell(task.text, budget);
+    const contexts = new Map([[scan.rootScope, task.context]]);
+    budget.spend(scan.commands.length + 1);
+    for (let i = scan.commands.length - 1; i >= 0; i--) pending.push({ ...task, command: scan.commands[i], contexts });
+  }
+  // A closing scope folds its states back into the enclosing context when the
+  // scope ended a pipeline.
+  function exitScope(command, contexts) {
+    const closing = command.scopeExit;
+    const exited = contexts.get(closing);
+    const enclosing = contexts.get(closing.parent);
+    if (closing.pipelineLast && exited && enclosing) {
+      budget.spend(exited.states.length + 1);
+      enclosing.states.push(...exited.states);
+    }
+  }
+  // Materialize contexts for any scopes between the command and the nearest
+  // known ancestor, then return the command's own scope context.
+  function resolveScope(command, contexts) {
+    const missing = [];
+    for (let scope = command.scope; !contexts.has(scope); scope = scope.parent) { budget.spend(); missing.push(scope); }
+    while (missing.length) {
+      const scope = missing.pop();
+      const parent = contexts.get(scope.parent);
+      contexts.set(scope, scope.isolated ? copyShellContext(parent, budget) : parent);
+    }
+    return contexts.get(command.scope);
+  }
+  function isConditional(scope) {
+    let conditional = false;
+    for (let current = scope; current; current = current.parent) { budget.spend(); conditional ||= current.conditional; }
+    return conditional;
+  }
+  // Stdin fed to a shell-like receiver (here-strings, heredocs, literal pipe
+  // producers) is scanned as source. Opaque receivers keep their text opaque.
+  function collectStdinSources(frame, role, environment) {
+    const opaque = role.kind === 'opaque';
+    for (const redirect of frame.command.redirects) {
+      if (redirect.operator === '<<<') frame.childEnvironments.push({ code: redirect.word.value, opaque, environment });
+      else if (redirect.operator === '<<' || redirect.operator === '<<-') frame.childEnvironments.push({ code: redirect.body, opaque, environment });
+    }
+    if (frame.command.pipeFrom) {
+      for (const source of pipelineSources(frame.command.pipeFrom, budget)) frame.childEnvironments.push({ code: source.text, opaque: source.opaque || opaque, environment });
+    }
+  }
+  // Inspect one command under one literal environment. Returns a block reason
+  // or null, and records any child source text the command would execute.
+  function inspectEnvironment(frame, role, normalized, environment) {
+    const { task, command } = frame;
+    const { words } = normalized;
+    const reason = task.opaque || role.kind === 'opaque'
+      ? inspectOpaque(command.words, task.text, environment)
+      : role.kind === 'git' ? checkGitWords(words, budget, 0, gitEnvironmentOverride(environment, budget)) : null;
+    if (reason) return reason;
+    if (role.code) {
+      if (normalized.local && words[0]?.value === 'eval') frame.sameShellCode = role.code;
+      else frame.childEnvironments.push({ code: role.code, opaque: false, environment });
+    }
+    if (role.kind === 'sedExec') {
+      // Fragments sed will hand to the shell are scanned as real shell
+      // source, not as opaque text — this closes the GNU sed `e` gap.
+      for (const part of role.parts) {
+        budget.spend(part.length + 1);
+        frame.childEnvironments.push({ code: part, opaque: false, environment });
+      }
+    }
+    if (role.stdin) collectStdinSources(frame, role, environment);
+    return null;
+  }
+  // Advance one literal shell state through the command: apply declarations
+  // and prefix assignments, then inspect the executable under each resulting
+  // environment.
+  function inspectState(frame, state) {
+    const { command, conditional } = frame;
+    const normalized = executableWords(command.words, budget, exportedEnvironment(state, budget), state.variables);
+    const { words, environments } = normalized;
+    const next = copyShellState(state, budget);
+    const evalPrefix = normalized.local && words[0]?.value === 'eval' && normalized.prefixAssignments.size > 0;
+    const mutation = updateShellState(next, evalPrefix ? { ...normalized, assignmentOnly: true } : normalized, budget);
+    if (evalPrefix) {
+      frame.alternatives.push(state);
+      budget.spend(mutation.states.length * (normalized.prefixAssignments.size + 1));
+      for (const variant of mutation.states) for (const name of normalized.prefixAssignments.keys()) variant.exported.add(name);
+    }
+    budget.spend(mutation.states.length + 1);
+    frame.alternatives.push(...mutation.states);
+    if (mutation.changed && (conditional || mutation.uncertain)) frame.alternatives.push(state);
+    frame.changed ||= mutation.changed;
+    if (mutation.handled && !evalPrefix) return null;
+    const role = commandRole(words, budget);
+    budget.spend(environments.length + 1);
+    for (const environment of environments) {
+      const reason = inspectEnvironment(frame, role, normalized, environment);
+      if (reason) return reason;
+    }
+    return null;
+  }
+  // Commit the command's resulting states and queue whatever it would run.
+  function finishCommand(frame) {
+    const { command, context, parent, conditional, sameShellCode, changed } = frame;
+    context.states = frame.alternatives;
+    // Bash lastpipe and zsh can execute a final pipeline builtin in the
+    // parent shell. Preserve that possible state as well as isolation; this
+    // is deliberately conservative when the host shell/options are unknown.
+    if (command.pipeFrom && !command.pipeTo && !command.background && (changed || sameShellCode)) pending.push({ mergeInto: parent, context });
+    for (const child of frame.childEnvironments) enqueue(child.code, child.opaque, { states: [shellState(child.environment, budget)] });
+    if (sameShellCode) {
+      // A conditional eval may not run. Its nested scans have fresh lexical
+      // roots, so preserve the skipped branch across all delayed updates.
+      const evaluated = conditional ? copyShellContext(context, budget) : context;
+      if (conditional) pending.push({ mergeInto: context, context: evaluated });
+      enqueue(sameShellCode, false, evaluated);
+    }
+  }
+  // Process one scanned command task. Returns a block reason or null.
+  function processCommand(task) {
+    const { command, contexts } = task;
+    if (command.scopeExit) { exitScope(command, contexts); return null; }
+    const parent = resolveScope(command, contexts);
+    const isolated = command.pipeFrom || command.pipeTo || command.background;
+    const context = task.commandContext || (isolated ? copyShellContext(parent, budget) : parent);
+    if (!task.nestedDone && command.nested.length) {
+      pending.push({ ...task, nestedDone: true, commandContext: context });
+      budget.spend(command.nested.length + 1);
+      for (let i = command.nested.length - 1; i >= 0; i--) enqueue(command.nested[i], false, copyShellContext(context, budget));
+      return null;
+    }
+    const frame = {
+      task, command, context, parent,
+      conditional: isConditional(command.scope),
+      alternatives: [], childEnvironments: [], sameShellCode: null, changed: false
+    };
+    budget.spend(context.states.length + 1);
+    for (const state of context.states) {
+      const reason = inspectState(frame, state);
+      if (reason) return reason;
+    }
+    finishCommand(frame);
+    return null;
+  }
   try {
     while (pending.length) {
       const task = pending.pop();
@@ -904,108 +1154,9 @@ function checkCommand(input) {
         task.mergeInto.states.push(...task.context.states);
         continue;
       }
-      if (!task.command) {
-        const scan = scanShell(task.text, budget);
-        const contexts = new Map([[scan.rootScope, task.context]]);
-        budget.spend(scan.commands.length + 1);
-        for (let i = scan.commands.length - 1; i >= 0; i--) pending.push({ ...task, command: scan.commands[i], contexts });
-        continue;
-      }
-      const { command, contexts } = task;
-      if (command.scopeExit) {
-        const closing = command.scopeExit;
-        const exited = contexts.get(closing);
-        const enclosing = contexts.get(closing.parent);
-        if (closing.pipelineLast && exited && enclosing) {
-          budget.spend(exited.states.length + 1);
-          enclosing.states.push(...exited.states);
-        }
-        continue;
-      }
-      const missing = [];
-      for (let scope = command.scope; !contexts.has(scope); scope = scope.parent) { budget.spend(); missing.push(scope); }
-      while (missing.length) {
-        const scope = missing.pop();
-        const parent = contexts.get(scope.parent);
-        contexts.set(scope, scope.isolated ? copyShellContext(parent, budget) : parent);
-      }
-      const parent = contexts.get(command.scope);
-      const isolated = command.pipeFrom || command.pipeTo || command.background;
-      const context = task.commandContext || (isolated ? copyShellContext(parent, budget) : parent);
-      if (!task.nestedDone && command.nested.length) {
-        pending.push({ ...task, nestedDone: true, commandContext: context });
-        budget.spend(command.nested.length + 1);
-        for (let i = command.nested.length - 1; i >= 0; i--) enqueue(command.nested[i], false, copyShellContext(context, budget));
-        continue;
-      }
-      let conditional = false;
-      for (let scope = command.scope; scope; scope = scope.parent) { budget.spend(); conditional ||= scope.conditional; }
-      const alternatives = [];
-      const childEnvironments = [];
-      let sameShellCode = null;
-      let changed = false;
-      budget.spend(context.states.length + 1);
-      for (const state of context.states) {
-        const normalized = executableWords(command.words, budget, exportedEnvironment(state, budget), state.variables);
-        const { words, environments } = normalized;
-        const next = copyShellState(state, budget);
-        const evalPrefix = normalized.local && words[0]?.value === 'eval' && normalized.prefixAssignments.size > 0;
-        const mutation = updateShellState(next, evalPrefix ? { ...normalized, assignmentOnly: true } : normalized, budget);
-        if (evalPrefix) {
-          alternatives.push(state);
-          budget.spend(mutation.states.length * (normalized.prefixAssignments.size + 1));
-          for (const variant of mutation.states) for (const name of normalized.prefixAssignments.keys()) variant.exported.add(name);
-        }
-        budget.spend(mutation.states.length + 1);
-        alternatives.push(...mutation.states);
-        if (mutation.changed && (conditional || mutation.uncertain)) alternatives.push(state);
-        changed ||= mutation.changed;
-        if (mutation.handled && !evalPrefix) continue;
-        const role = commandRole(words, budget);
-        budget.spend(environments.length + 1);
-        for (const environment of environments) {
-          const reason = task.opaque || role.kind === 'opaque'
-            ? inspectOpaque(command.words, task.text, environment)
-            : role.kind === 'git' ? checkGitWords(words, budget, 0, gitEnvironmentOverride(environment, budget)) : null;
-          if (reason) return { blocked: true, reason };
-          if (role.code) {
-            if (normalized.local && words[0]?.value === 'eval') {
-              sameShellCode = role.code;
-            }
-            else childEnvironments.push({ code: role.code, opaque: false, environment });
-          }
-          if (role.kind === 'sedExec') {
-            // Fragments sed will hand to the shell are scanned as real shell
-            // source, not as opaque text — this closes the GNU sed `e` gap.
-            for (const part of role.parts) {
-              budget.spend(part.length + 1);
-              childEnvironments.push({ code: part, opaque: false, environment });
-            }
-          }
-          if (role.stdin) {
-            for (const redirect of command.redirects) {
-              if (redirect.operator === '<<<') childEnvironments.push({ code: redirect.word.value, opaque: role.kind === 'opaque', environment });
-              else if (redirect.operator === '<<' || redirect.operator === '<<-') childEnvironments.push({ code: redirect.body, opaque: role.kind === 'opaque', environment });
-            }
-            if (command.pipeFrom) {
-              for (const source of pipelineSources(command.pipeFrom, budget)) childEnvironments.push({ code: source.text, opaque: source.opaque || role.kind === 'opaque', environment });
-            }
-          }
-        }
-      }
-      context.states = alternatives;
-      // Bash lastpipe and zsh can execute a final pipeline builtin in the
-      // parent shell. Preserve that possible state as well as isolation; this
-      // is deliberately conservative when the host shell/options are unknown.
-      if (command.pipeFrom && !command.pipeTo && !command.background && (changed || sameShellCode)) pending.push({ mergeInto: parent, context });
-      for (const child of childEnvironments) enqueue(child.code, child.opaque, { states: [shellState(child.environment, budget)] });
-      if (sameShellCode) {
-        // A conditional eval may not run. Its nested scans have fresh lexical
-        // roots, so preserve the skipped branch across all delayed updates.
-        const evaluated = conditional ? copyShellContext(context, budget) : context;
-        if (conditional) pending.push({ mergeInto: context, context: evaluated });
-        enqueue(sameShellCode, false, evaluated);
-      }
+      if (!task.command) { expandText(task); continue; }
+      const reason = processCommand(task);
+      if (reason) return { blocked: true, reason };
     }
   } catch (error) {
     if (error instanceof UnsupportedEnvSplitEscape) {

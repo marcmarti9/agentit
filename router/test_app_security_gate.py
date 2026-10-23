@@ -39,9 +39,10 @@ class AppSecurityGateProfileTests(unittest.TestCase):
 
         self.assertIn("## Development security invariant", body)
         self.assertIn("Do not rely on the user to ask for a security review", body)
-        self.assertIn("For purely presentational edits", body)
+        self.assertIn("Purely presentational edits without changed trust boundaries", body)
         self.assertIn("Load `app-security-gate`", body)
-        self.assertIn("FAST mode compatibility", body)
+        self.assertIn("Scope checks to affected risk", body)
+        self.assertNotIn("FAST mode compatibility", body)
 
     def test_security_gate_package_contains_required_contract(self) -> None:
         body = SKILL.read_text(encoding="utf-8")

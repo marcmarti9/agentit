@@ -17,6 +17,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         from router.cleanup import main as cleanup_main
         return cleanup_main(args[1:])
 
+    if len(args) >= 2 and args[0] == "continuity" and args[1] in {"handoff", "resume", "inspect", "--help", "-h"}:
+        from router.handoff_cli import main as handoff_main
+        return handoff_main(args[1:])
+
     if args and args[0] == "ecc":
         from router.ecc import main as ecc_main
         return ecc_main(args[1:])

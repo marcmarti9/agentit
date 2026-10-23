@@ -14,7 +14,34 @@ Never commit private task plans, launch plans, raw chats, credentials, or chain-
 ## What durable documentation should cover
 
 > [!NOTE]
-> **BUILDER discipline:** while functionality is still being built, do not interrupt each slice for documentation ceremony. Update documentation immediately only when an existing contract would otherwise become misleading. In REVIEW, perform the documentation-drift check for the completed implementation and update materially affected durable docs.
+> **BUILDER discipline:** record useful increments and stable material decisions
+> while their context is fresh. Update affected contracts immediately if they
+> become misleading. This is milestone work, not a document/ADR for every edit.
+> In REVIEW, check drift across the completed implementation and its durable docs.
+
+## Incremental history that people can follow
+
+Do not accumulate substantial implementation and its explanation into one final
+undocumented change. Save coherent, reviewable increments. With each meaningful
+milestone, record the problem, observable change, chosen approach and rationale,
+relevant trade-offs, verification and limitations; include an executable next
+action when unfinished. Keep the current PR description and canonical component
+docs aligned with the final scope. A future reader should be able to navigate
+from the PR/commit summary to the affected contract and important decisions.
+
+Choose the existing project/workspace destination. Commit code and related
+durable docs together; publish using the authorized workflow and verify the
+remote destination/ref/SHA before calling it saved remotely. If offline or
+publication is unavailable, keep an honest local checkpoint and record the
+unsynced state. Do not create external accounts or publish private notes to
+satisfy a save requirement. A local commit, remote branch and deployment are
+different observed outcomes.
+
+Large generated or vendored imports may be legitimate. Keep them distinct from
+authored behavior changes and provide source revisions, licenses/manifests,
+scope and a review map. Split by responsibility and independent verification,
+not an arbitrary line quota. Preserve meaningful history without turning every
+small edit into commit/review ceremony.
 
 When materially affected, document:
 

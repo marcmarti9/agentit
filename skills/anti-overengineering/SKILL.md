@@ -233,7 +233,9 @@ The override should be **targeted to the risk**. It does not automatically turn 
 
 # Interaction with other Agentit skills
 
-When this skill is selected, it owns **development verification cadence**.
+The core `task-router` owns **development verification cadence**. When selected,
+this specialist adds detail under that policy; do not stack it with
+`reliable-coding` merely to repeat the general baseline.
 
 - `incremental-implementation`: slices remain useful for implementation/rollback, but "test each slice" means the minimum relevant check in BUILDER, not the full suite.
 - `test-driven-development`: strict red/green is appropriate for bugs, non-trivial logic, contracts and high-risk behavior; do not apply ceremonial TDD to trivial glue/static/presentational work.

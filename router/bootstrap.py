@@ -38,6 +38,22 @@ from router.host_skill_hygiene import (
 SOURCE_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_NAME = "bootstrap-manifest.json"
 
+# Reviewed public preimages: anti-ai-slop-design at 8b472f8^; the other eight
+# at 63df536^. All were regular Git files (100644), later retired/replaced.
+# Older installers copied them without inventory/receipts. A matching name
+# alone never establishes ownership; custom bytes/modes remain unmanaged.
+RETIRED_UNOWNED_RUNTIME_FILES = {
+    "skills/anti-ai-slop-design/SKILL.md": "7dd9908a1ed0ee5cbe44dc33ec86d9a9f1884b1796cfc4e61031affcc839ae4c",
+    "skills/design-taste-frontend/references/ai-tells.md": "85a80c905f52cabbc535830f628d1eb9838ef99494b46b186e09e6e3f4f6f955",
+    "skills/design-taste-frontend/references/dials-and-systems.md": "bf6a0d3e7047a82b9001cda8961bb89b3ae8a986f3d3791255380f762d38ccca",
+    "skills/design-taste-frontend/references/inspiration-sources.md": "e0c4183a1bb3320a13a636d23fc92e8519c1a0b7342c2e8e4160ed8564a7e2e2",
+    "skills/design-taste-frontend/references/layout-hard-rules.md": "d8dba2aa0f7180a16a5826ab3e0423d023311ebb57b646c660eedfa666a4e1f7",
+    "skills/design-taste-frontend/references/motion-and-a11y.md": "af8844ec517f8595b830fdef44467fc594294bff12467ab0cf13097372377605",
+    "skills/design-taste-frontend/references/redesign-audit.md": "eaad8cbc2a9c8ba743a0211c2b94c83b296fad36731114fb706a44d17c42ad0a",
+    "skills/impeccable-design/SKILL.md": "703f8a9117decc2d889f6dde7d31d72b4d55178a10e69d678117f8f32834a15b",
+    "skills/ui-ux-pro-max-intelligence/SKILL.md": "7f5b5d8c6d23a63b5093bd468136b4159a3922e1e875e0a1ba68eef633ab6608",
+}
+
 
 class BootstrapError(RuntimeError):
     """Raised when bootstrap cannot proceed without violating safety invariants."""
@@ -253,8 +269,8 @@ def _unique_inventory_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def _runtime_inventory_specs(home: Path, specs: list[CopySpec]) -> tuple[list[CopySpec], list[str], list[str]]:
-    """Retire only obsolete private-runtime files with exact recorded ownership."""
+def _runtime_inventory_specs(home: Path, specs: list[CopySpec], *, source_root: Path) -> tuple[list[CopySpec], list[str], list[str]]:
+    """Retire exact owned files or explicitly reviewed public historical bytes."""
     runtime = _destination(home, ".agentit/runtime")
     inventory = _destination(home, ".agentit/runtime-inventory.json")
     desired = {
@@ -318,6 +334,18 @@ def _runtime_inventory_specs(home: Path, specs: list[CopySpec]) -> tuple[list[Co
             retained.append(relative)
             continue
         additions.append(CopySpec(destination=target, category="runtime-obsolete", remove=True))
+    historical_retirements = set()
+    for relative, digest in RETIRED_UNOWNED_RUNTIME_FILES.items():
+        if relative in desired or relative in previous:
+            continue
+        source = source_root / relative
+        _assert_no_symlink_components(source, stop=source_root)
+        if source.exists():
+            continue
+        target = _destination(home, Path(".agentit/runtime") / relative)
+        if _file_state(target, home=home) == (digest, 0o644):
+            additions.append(CopySpec(destination=target, category="runtime-obsolete", remove=True))
+            historical_retirements.add(relative)
     payload = {"schema_version": 1, "kind": "agentit.runtime.inventory", "files": desired}
     additions.append(CopySpec(
         destination=inventory,
@@ -330,7 +358,7 @@ def _runtime_inventory_specs(home: Path, specs: list[CopySpec]) -> tuple[list[Co
             directories[:] = [name for name in directories if name != "__pycache__"]
             for name in filenames:
                 relative = (Path(base) / name).relative_to(runtime).as_posix()
-                if relative not in desired and relative not in previous:
+                if relative not in desired and relative not in previous and relative not in historical_retirements:
                     unknown.append(relative)
             for name in directories:
                 path = Path(base) / name
@@ -471,7 +499,7 @@ def build_install_plan(
         )
     )
     specs.append(_cli_spec(home))
-    inventory_specs, retained_runtime_files, unmanaged_runtime_files = _runtime_inventory_specs(home, specs)
+    inventory_specs, retained_runtime_files, unmanaged_runtime_files = _runtime_inventory_specs(home, specs, source_root=source_root)
     specs.extend(inventory_specs)
     specs = _dedupe_specs(specs)
 

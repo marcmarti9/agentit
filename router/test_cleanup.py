@@ -167,6 +167,33 @@ class CleanupTests(unittest.TestCase):
         (scope / "forgotten-copy").mkdir()
         self.assertIn("unlisted_local_resource", self.review()["blocking_reasons"])
 
+    def test_classified_private_tree_survives_its_own_receipt_write(self):
+        retained = {"ownership": "task", "disposition": "retained", "retention": "required",
+                    "reason": "Private tool state for this publication"}
+        cases = (".agentit", ".agentit/cleanup")
+        for relative in cases:
+            with self.subTest(relative=relative):
+                scope = self.project / relative
+                scope.mkdir(parents=True, exist_ok=True)
+                if scope.name != "cleanup":
+                    (scope / "cleanup").mkdir(exist_ok=True)
+                else:
+                    (scope / "kept.bin").write_bytes(b"keep")
+                self.ledger["local_scopes"] = [{"path": str(scope), "resources": []}]
+                self.ledger_path.write_text(json.dumps(self.ledger))
+                receipt = (self.project / cleanup.RECEIPT).resolve()
+                resources = [{"name": child.name, **retained} for child in sorted(scope.iterdir())
+                             if child.resolve() != receipt]
+                self.ledger["local_scopes"] = [{"path": str(scope), "resources": resources}]
+                result = self.review()
+                self.assertTrue(result["allowed"], result)
+                checked = cleanup.check(self.project)
+                self.assertTrue(checked["allowed"], checked)
+                extra = scope / ("cleanup/extra.bin" if scope.name != "cleanup" else "extra.bin")
+                extra.write_bytes(b"extra")
+                self.assertIn("local_inventory_changed", cleanup.check(self.project)["blocking_reasons"])
+                extra.unlink()
+
     def test_local_inventory_drift_and_ledger_edits_invalidate_review(self):
         scope = self.add_local_resource()
         self.review()

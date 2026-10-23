@@ -167,6 +167,14 @@ def ledger_template(task_id: str) -> dict[str, Any]:
                           "reserve_bytes": GIB, "shared_production": False}]}
 
 
+def _stat_entry(path: Path) -> dict[str, Any]:
+    if path.is_symlink():
+        raise CleanupError("local inventory symlink rejected")
+    info = path.stat()
+    return {"device": info.st_dev, "inode": info.st_ino, "mode": info.st_mode,
+            "size": info.st_size, "mtime_ns": info.st_mtime_ns}
+
+
 def _local_snapshot(project: Path, scope: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(scope.get("path"), str) or not scope["path"].strip():
         raise CleanupError("local scope requires a path")
@@ -177,14 +185,27 @@ def _local_snapshot(project: Path, scope: dict[str, Any]) -> dict[str, Any]:
     # Bounded scope: one directory level. Operators classify retained subtrees as
     # units, or declare narrower scopes to inspect their children. Never follow
     # symlinks, walk sibling trees or calculate expensive recursive du totals.
+    # The review receipt cannot be part of the snapshot it stores: writing it
+    # changes its own metadata and its parent directory mtime.
+    receipt = (project / RECEIPT).resolve()
     entries = {}
     for path in sorted(root.iterdir()):
         if path.is_symlink():
             raise CleanupError("local inventory symlink rejected")
-        info = path.stat()
-        entries[path.name] = {"device": info.st_dev, "inode": info.st_ino,
-                              "mode": info.st_mode, "size": info.st_size,
-                              "mtime_ns": info.st_mtime_ns}
+        if path.resolve() == receipt:
+            continue
+        record = _stat_entry(path)
+        if path.resolve() == receipt.parent and path.is_dir():
+            record["mtime_ns"] = None
+            nested = {}
+            for child in sorted(path.iterdir()):
+                if child.is_symlink():
+                    raise CleanupError("local inventory symlink rejected")
+                if child.resolve() == receipt:
+                    continue
+                nested[child.name] = _stat_entry(child)
+            record["children_excluding_receipt"] = nested
+        entries[path.name] = record
     return {"path": str(root), "entries": entries}
 
 

@@ -155,6 +155,9 @@ ledger, source commit/tree, inventory observations, capacities and blockers. A
 replacement review invalidates an old pass before reading the new ledger. Check
 requires the same commit/tree, accounted-for uncommitted source, unchanged ledger, unchanged shallow local
 inventory, unchanged fresh remote evidence and a review younger than 24 hours.
+The cleanup receipt is not an inventoried resource: its own bytes and the
+parent-directory mtime they update are omitted, while every other child of
+`.agentit` or `.agentit/cleanup` still has to stay unchanged.
 It rechecks local available capacity each time. Commit/source changes require a
 new review; resource or ledger changes require a new review. It does not repeatedly
 walk entire disks or recalculate recursive directory sizes.

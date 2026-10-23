@@ -8,6 +8,7 @@
 - Agent files under `agents/` are optional role adapters. Select only a role that fits the reviewed task plan.
 - Before delegating, build a bounded Worker Context Contract: objective, scope, selected skill bodies, selected references, tools/permissions, ownership, expected handoff, verifier, and stop condition.
 - One writer owns each shared file or mutable resource unless isolation is explicit.
+- Apply the canonical cleanup/capacity gate in `AGENTS.md` before every GitHub publication; keep the detailed ledger private.
 - High-risk work follows Agentit's review, rollback, and post-check rules.
 - Machine-local models, plugins, MCP servers, endpoints, permissions, and credentials belong in local Claude configuration, not in this repository.
 

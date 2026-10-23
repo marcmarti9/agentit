@@ -2,6 +2,11 @@
 
 The primary model chooses the goal, permissions, verifier and topology. `router/loop_runtime.py`, `router/graph_runtime.py` and the persistent `agentit runtime` CLI enforce that explicit contract. They do not select skills or interpret natural-language intent.
 
+GitHub publication also requires the separate source-bound artifact cleanup and
+capacity gate, implemented by `router/cleanup.py` and the `publication` verification
+signal. It inspects only declared scopes, keeps detailed receipts private and does
+not execute remote commands or deletion. See [artifact lifecycle](ARTIFACT_LIFECYCLE.md).
+
 ## Evidence classes
 
 **`reported`** means a caller supplied a result and evidence text. It remains useful for a human review, a visual observation or compatibility with an older integration, but is not proof this runtime executed a command. Legacy receipts without the new provenance field are treated as reported.

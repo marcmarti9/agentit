@@ -349,8 +349,14 @@ Agentit's core requires a documentation-drift check before substantial repositor
 Repository changes default to:
 
 ```text
-work branch → implementation → fresh verification → documentation drift check → pull request → human merge
+work branch → implementation → fresh verification → documentation drift check → commit → cleanup review/check → pull request → human merge
 ```
+
+Every GitHub push, PR create/update or release requires a current source-bound
+cleanup review and enough available capacity for the declared task artifacts.
+`agentit cleanup` reviews bounded local inventories and explicitly declared remote
+evidence, preserves retained resources with reasons, and never deletes or installs
+hooks. See [artifact lifecycle and publication](docs/ARTIFACT_LIFECYCLE.md).
 
 ## Example flow
 

@@ -2,6 +2,14 @@
 # Agents must not invent skip reasons. Plan with agentit verify; run with --apply.
 schema_version: 1
 probes:
+  - id: publication-cleanup
+    name: "Current source-bound cleanup review"
+    severity: blocking
+    signals_any: [publication]
+    kind: cleanup_review
+    description: "Before each GitHub push, PR create/update or release, require a fresh cleanup review and sufficient capacity for declared task scopes."
+    evidence: "private .agentit/cleanup/review.json; sanitized summary and current local capacity"
+
   - id: no-secrets-in-diff
     name: "No secrets in unstaged/staged diff"
     severity: blocking

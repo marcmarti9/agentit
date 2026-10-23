@@ -13,6 +13,10 @@ from typing import Sequence
 def main(argv: Sequence[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
 
+    if args and args[0] == "cleanup":
+        from router.cleanup import main as cleanup_main
+        return cleanup_main(args[1:])
+
     if len(args) >= 2 and args[0] == "continuity" and args[1] in {"handoff", "resume", "inspect", "--help", "-h"}:
         from router.handoff_cli import main as handoff_main
         return handoff_main(args[1:])

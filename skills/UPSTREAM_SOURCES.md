@@ -45,6 +45,7 @@ Canonical packages are copied byte-for-byte from pinned upstream commits. File h
 | `supabase-postgres-best-practices` | `skills/supabase-postgres-best-practices` | [supabase/agent-skills@c9be0e931b79](https://github.com/supabase/agent-skills/tree/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices) |
 | `test-driven-development` | `skills/test-driven-development` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/test-driven-development) |
 | `ui-ux-pro-max` | `skills/ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill@623a9a9037d0](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/623a9a9037d006ea727f8213f084d02a6b6f11b5/.claude/skills/ui-ux-pro-max) |
+| `unslop` | `skills/unslop` | [heydamir/unslop@4652254daff5](https://github.com/heydamir/unslop/tree/4652254daff586ff4739849395a127b56f7f8cc7/skills/unslop) |
 | `using-agent-skills` | `vendor/agent-skills/using-agent-skills` | [addyosmani/agent-skills@aeac41d4d005](https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312f7ff06383a91d59d/skills/using-agent-skills) |
 | `verification-before-completion` | `skills/verification-before-completion` | [obra/superpowers@2ce8aa15d05b](https://github.com/obra/superpowers/tree/2ce8aa15d05bd57213e6f746f953aafb7ded7a8b/skills/verification-before-completion) |
 

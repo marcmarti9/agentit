@@ -470,10 +470,12 @@ source/reference origins are reconciled with exact HEADs and scoped dispositions
 in `docs/UPSTREAM_MAINTENANCE.md`. These reviews preserve original Agentit-owned
 guidance rather than relabeling it as canonical third-party package content.
 
-### Damir Sokolovsky / Unslop (visual redline adaptation)
+### Damir Sokolovsky / Unslop
 
-Source: https://github.com/heydamir/unslop at commit `4652254daff586ff4739849395a127b56f7f8cc7` (inspected 2026-10-31).
+Source: https://github.com/heydamir/unslop at pinned commit `4652254daff586ff4739849395a127b56f7f8cc7` (inspected 2026-10-31).
 
-License: CC BY 4.0. Attribution: Damir Sokolovsky (@heydamir), https://heydamir.design/unslop. The unchanged upstream license text is retained at `vendor/adaptation-licenses/heydamir--unslop/LICENSE`.
+License: CC BY 4.0. Author and attribution: Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), https://heydamir.design/unslop. Original license preserved at `vendor/licenses/heydamir--unslop/LICENSE`.
 
-Agentit adapts the source skill's located anti-slop audit, product-derived five-part direction, heavy/light/none triage and ordered nine-pass repair workflow into `skills/unslop/SKILL.md`. This is **modified material**, not the author's original skill; the adapted skill retains CC BY 4.0. Upstream snapshot utilities, video-production scripts, sample images and automatic external image-provider setup were **not** imported. Agentit host authorization, primary-owner selection, existing brand and evidence gates take precedence. This adaptation is not certified command-compatible with Claude Code's `/unslop` runtime.
+Agentit vendors the **complete unmodified original** `skills/unslop` package: `SKILL.md`, all five written references, all five reference images and both optional scripts. Per-file SHA-256 hashes and pinned source revision are recorded in `skills/UPSTREAM_LOCK.json`.
+
+The upstream snapshot and story scripts may fetch live pages, write local files, serve a local HTTP endpoint or invoke separately installed Chrome/Playwright/ffmpeg; they are included for completeness but are **not automatically executed or installed** by Agentit. Agentit core owns user authorization, JIT selection, evidence and development modes. Upstream instructions do not authorize paid imagery, video production or expanded network access.

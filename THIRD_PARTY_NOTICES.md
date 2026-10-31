@@ -469,3 +469,13 @@ marketing learning and paid-account evidence guidance was updated. Seven older
 source/reference origins are reconciled with exact HEADs and scoped dispositions
 in `docs/UPSTREAM_MAINTENANCE.md`. These reviews preserve original Agentit-owned
 guidance rather than relabeling it as canonical third-party package content.
+
+### Damir Sokolovsky / Unslop
+
+Source: https://github.com/heydamir/unslop at pinned commit `4652254daff586ff4739849395a127b56f7f8cc7` (inspected 2026-10-31).
+
+License: CC BY 4.0. Author and attribution: Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), https://heydamir.design/unslop. Original license preserved at `vendor/licenses/heydamir--unslop/LICENSE`.
+
+Agentit vendors the **complete unmodified original** `skills/unslop` package: `SKILL.md`, all five written references, all five reference images and both optional scripts. Per-file SHA-256 hashes and pinned source revision are recorded in `skills/UPSTREAM_LOCK.json`.
+
+The upstream snapshot and story scripts may fetch live pages, write local files, serve a local HTTP endpoint or invoke separately installed Chrome/Playwright/ffmpeg; they are included for completeness but are **not automatically executed or installed** by Agentit. Agentit core owns user authorization, JIT selection, evidence and development modes. Upstream instructions do not authorize paid imagery, video production or expanded network access.

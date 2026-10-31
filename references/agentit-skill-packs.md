@@ -18,6 +18,8 @@ A new execution session starts semantically cold: installed profiles and skill f
 
 For an actionable visual/copy second opinion choose `design-critique` or the Impeccable critique procedure as the primary method. Their overlapping generic judgment is an explicit alternative, not a reason to load both. Task-flow, accessibility and motion critics have distinct evidence scopes; choose only the lenses that change this review. Creation, system engineering, chart encoding and editorial composition have separate deliverables.
 
+For an existing AI-generic screen requiring implementation changes, choose `unslop` as the primary visual-remediation workflow instead of stacking other broad taste workflows. New UI needs a greenfield design owner; native iOS/Android needs platform-aware design; prose uses `humanizer` or `stop-slop`. Mobile, tablet and desktop are viewport/platform branches within the chosen procedure, not cloned skill IDs. Unslop's canonical optional scripts do not authorize browsing, installation, external image services, video rendering or other actions on their own. Agentit's core BUILDER/REVIEW and host permissions govern.
+
 Choose one primary taste approach (`hallmark`, `design-taste-frontend`, or `impeccable`) for a design decision; their different taste constraints should not be concatenated indiscriminately. Data lookup (`ui-ux-pro-max`), research, 3D/motion implementation and performance may complement it. Use `humanizer` or `stop-slop` as alternative editorial passes, preserving evidence and uncertainty. Spec Kit is opt-in; executive roles are individual capabilities, not an always-on committee. Candidate wording is discovery guidance, never an automatic trigger.
 
 ## Worker projection contract
@@ -375,6 +377,7 @@ Executive skills decide at the business-function level. Pair them with engineeri
 - `image-to-code` — image-first visual direction and faithful implementation of visual section references when authorized and useful.
 - `diagram-design` — route branded/general diagrams, code-grounded architecture maps, or simpler project-native diagrams without defaulting to AI-slop boxes.
 - `impeccable` — structured visual critique and polish passes.
+- `unslop` — complete pinned upstream visual-redline workflow for cleaning an existing AI-generic UI; primary remediation owner, not for prose rewriting or greenfield/native-platform design from scratch.
 - `ui-ux-pro-max` — broader UI/UX pattern intelligence when the task benefits from it.
 - `emil-design-eng` — interaction craft and design-engineering judgment.
 - `design-trend-researcher` — investigate current visual/interaction patterns when freshness matters.

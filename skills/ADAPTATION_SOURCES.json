@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Source-informed additions and branch references from the October 3\u20137, 2026 audits/integrations; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
+  "scope": "Source-informed additions and branch references from the October 3–7, 2026 audits/integrations; earlier adaptations remain documented in THIRD_PARTY_NOTICES.md. This is provenance, not a routing or activation catalog.",
   "sources": [
     {
       "repo": "expo/skills",
@@ -997,6 +997,24 @@
         ],
         "note": "Compared complete source files and original MIT license against the pinned current HEAD. Exact original packages remain in vendor/agent-skills with unchanged lock hashes. Agentit owns the public adapters: Git preserves task-scoped authorization and repository merge policy; documentation applies the project documentation contract and proportionate drift checks. Upstream blanket commit cadence, anti-squash advice and generic README checklists do not supersede Agentit policy. Agentit additions are Apache-2.0; retained MIT attribution and license continue to cover upstream-derived material."
       }
+    },
+    {
+      "repo": "heydamir/unslop",
+      "revision": "4652254daff586ff4739849395a127b56f7f8cc7",
+      "inspected_on": "2026-10-31",
+      "relationship": "source-informed-adaptation",
+      "source_license": "CC-BY-4.0",
+      "license_source_path": "LICENSE",
+      "license_path": "vendor/adaptation-licenses/heydamir--unslop/LICENSE",
+      "license_sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "source_paths_required": true,
+      "source_paths": [
+        "skills/unslop/SKILL.md"
+      ],
+      "targets": [
+        "skills/unslop/SKILL.md"
+      ],
+      "adaptation_license": "CC-BY-4.0"
     }
   ]
 }

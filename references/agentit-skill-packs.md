@@ -375,6 +375,7 @@ Executive skills decide at the business-function level. Pair them with engineeri
 - `image-to-code` — image-first visual direction and faithful implementation of visual section references when authorized and useful.
 - `diagram-design` — route branded/general diagrams, code-grounded architecture maps, or simpler project-native diagrams without defaulting to AI-slop boxes.
 - `impeccable` — structured visual critique and polish passes.
+- `unslop` — fix a specifically AI-generic existing UI with located diagnosis, product direction, nine visual passes and same-state before/after evidence; not greenfield work or prose editing.
 - `ui-ux-pro-max` — broader UI/UX pattern intelligence when the task benefits from it.
 - `emil-design-eng` — interaction craft and design-engineering judgment.
 - `design-trend-researcher` — investigate current visual/interaction patterns when freshness matters.

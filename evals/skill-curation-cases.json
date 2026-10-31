@@ -376,6 +376,56 @@
         "Differentiate public discovery/primary research",
         "Testable hypothesis, metric, guardrail and inconclusive outcome"
       ]
+    },
+    {
+      "id": "unslop-existing-ui",
+      "prompt": "Unslop this existing dashboard: remove the generic AI aesthetic, keep all real features and brand content, and show before/after.",
+      "required": [
+        "unslop"
+      ],
+      "forbidden": [
+        "stop-slop"
+      ],
+      "quality_assertions": [
+        "Locate baseline visual defects and propose product-specific direction",
+        "Preserve functional controls and real factual content",
+        "Verify same-state before/after without inventing UX gains"
+      ]
+    },
+    {
+      "id": "unslop-prose-near-miss",
+      "prompt": "Make this AI-written email sound less formulaic without changing the message.",
+      "required": [],
+      "forbidden": [
+        "unslop"
+      ],
+      "quality_assertions": [
+        "Treat as prose, not user interface remediation"
+      ]
+    },
+    {
+      "id": "unslop-greenfield-near-miss",
+      "prompt": "Design a brand new landing page for our startup without a pre-existing screen.",
+      "required": [],
+      "forbidden": [
+        "unslop"
+      ],
+      "quality_assertions": [
+        "Choose a greenfield design owner; do not require an anti-slop baseline"
+      ]
+    },
+    {
+      "id": "unslop-readonly-near-miss",
+      "prompt": "Critique this existing UI screenshot, list issues but do not edit any design files.",
+      "required": [
+        "design-critique"
+      ],
+      "forbidden": [
+        "unslop"
+      ],
+      "quality_assertions": [
+        "Deliver located evidence-limited observations without remediation"
+      ]
     }
   ]
 }

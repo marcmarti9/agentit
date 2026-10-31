@@ -469,3 +469,11 @@ marketing learning and paid-account evidence guidance was updated. Seven older
 source/reference origins are reconciled with exact HEADs and scoped dispositions
 in `docs/UPSTREAM_MAINTENANCE.md`. These reviews preserve original Agentit-owned
 guidance rather than relabeling it as canonical third-party package content.
+
+### Damir Sokolovsky / Unslop (visual redline adaptation)
+
+Source: https://github.com/heydamir/unslop at commit `4652254daff586ff4739849395a127b56f7f8cc7` (inspected 2026-10-31).
+
+License: CC BY 4.0. Attribution: Damir Sokolovsky (@heydamir), https://heydamir.design/unslop. The unchanged upstream license text is retained at `vendor/adaptation-licenses/heydamir--unslop/LICENSE`.
+
+Agentit adapts the source skill's located anti-slop audit, product-derived five-part direction, heavy/light/none triage and ordered nine-pass repair workflow into `skills/unslop/SKILL.md`. This is **modified material**, not the author's original skill; the adapted skill retains CC BY 4.0. Upstream snapshot utilities, video-production scripts, sample images and automatic external image-provider setup were **not** imported. Agentit host authorization, primary-owner selection, existing brand and evidence gates take precedence. This adaptation is not certified command-compatible with Claude Code's `/unslop` runtime.

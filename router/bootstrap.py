@@ -90,6 +90,17 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _normalize_mode(mode: int | None) -> int | None:
+    """Windows only has a read-only bit, so stat() cannot round-trip POSIX modes.
+
+    Writable modes collapse to 0o666 and read-only modes to 0o444. Other
+    platforms keep the mode unchanged.
+    """
+    if mode is None or os.name != "nt":
+        return mode
+    return 0o666 if (mode & 0o200) else 0o444
+
+
 def _file_state(path: Path, *, home: Path) -> tuple[str | None, int | None]:
     """Read the content and permission state without following symlink paths."""
     _assert_no_symlink_components(path, stop=home)
@@ -97,7 +108,7 @@ def _file_state(path: Path, *, home: Path) -> tuple[str | None, int | None]:
         return None, None
     if not path.is_file():
         raise BootstrapError(f"destination is not a regular file: {path}")
-    return _sha256_file(path), stat.S_IMODE(path.stat().st_mode)
+    return _sha256_file(path), _normalize_mode(stat.S_IMODE(path.stat().st_mode))
 
 
 def _load_manifest(source_root: Path = SOURCE_ROOT) -> dict[str, Any]:
@@ -330,7 +341,7 @@ def _runtime_inventory_specs(home: Path, specs: list[CopySpec], *, source_root: 
         current = _file_state(target, home=home)
         if current == (None, None):
             continue
-        if current != (record["sha256"], record["mode"]):
+        if current != (record["sha256"], _normalize_mode(record["mode"])):
             retained.append(relative)
             continue
         additions.append(CopySpec(destination=target, category="runtime-obsolete", remove=True))
@@ -343,7 +354,7 @@ def _runtime_inventory_specs(home: Path, specs: list[CopySpec], *, source_root: 
         if source.exists():
             continue
         target = _destination(home, Path(".agentit/runtime") / relative)
-        if _file_state(target, home=home) == (digest, 0o644):
+        if _file_state(target, home=home) == (digest, _normalize_mode(0o644)):
             additions.append(CopySpec(destination=target, category="runtime-obsolete", remove=True))
             historical_retirements.add(relative)
     payload = {"schema_version": 1, "kind": "agentit.runtime.inventory", "files": desired}
@@ -433,6 +444,14 @@ def _optional_spec(home: Path, source_root: Path, item: dict[str, Any], category
 
 
 def _venv_python(home: Path) -> Path:
+    if os.name == "nt":
+        scripts_python = _destination(home, Path(".agentit") / "venv" / "Scripts" / "python.exe")
+        bin_python = _destination(home, Path(".agentit") / "venv" / "bin" / "python")
+        if scripts_python.is_file():
+            return scripts_python
+        if bin_python.is_file():
+            return bin_python
+        return scripts_python
     return _destination(home, Path(".agentit") / "venv" / "bin" / "python")
 
 
@@ -518,7 +537,7 @@ def build_install_plan(
         if spec.remove:
             action = "remove-obsolete-runtime-file"
         elif before_hash is not None:
-            desired_mode = spec.mode if spec.mode is not None else 0o644
+            desired_mode = _normalize_mode(spec.mode if spec.mode is not None else 0o644)
             action = "keep" if (before_hash, before_mode) == (desired_hash, desired_mode) else "replace-with-backup"
         else:
             action = "install"
@@ -631,7 +650,8 @@ def apply_install_plan(
         ):
             raise BootstrapError(f"destination changed after planning: {spec.destination}")
         if (operation["before_sha256"], operation["before_mode"]) != (
-            operation["sha256"], None if spec.remove else spec.mode if spec.mode is not None else 0o644
+            operation["sha256"],
+            _normalize_mode(None if spec.remove else spec.mode if spec.mode is not None else 0o644),
         ):
             prepared.append((spec, desired, operation))
 
@@ -732,7 +752,7 @@ def apply_install_plan(
             spec.destination.unlink()
         else:
             _atomic_write(spec.destination, desired, mode=mode, home=home)
-        if _file_state(spec.destination, home=home) != (operation["sha256"], mode):
+        if _file_state(spec.destination, home=home) != (operation["sha256"], _normalize_mode(mode)):
             raise BootstrapError(f"post-copy state mismatch: {spec.destination}")
 
     for record in records:
@@ -784,7 +804,7 @@ def _rollback_file_operation(
     ):
         return None
     if current_hash != record.get("installed_sha256") or (
-        record.get("installed_mode") is not None and current_mode != record["installed_mode"]
+        record.get("installed_mode") is not None and current_mode != _normalize_mode(record["installed_mode"])
     ):
         raise BootstrapError(f"refusing rollback because destination changed after install: {destination}")
     if record.get("before_state") == "present":

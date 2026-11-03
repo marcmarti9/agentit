@@ -65,7 +65,7 @@ class BootstrapTransactionTests(unittest.TestCase):
         self.assertTrue(self.manifest.is_file(), "partial writes must always have a receipt")
         bootstrap.apply_rollback(self.manifest)
         self.assertEqual(first.read_bytes(), b"original\n")
-        self.assertEqual(stat.S_IMODE(first.stat().st_mode), 0o640)
+        self.assertEqual(stat.S_IMODE(first.stat().st_mode), bootstrap._normalize_mode(0o640))
         self.assertFalse(second.exists())
 
     def test_failure_after_atomic_replace_is_recoverable(self):
@@ -110,17 +110,26 @@ class BootstrapTransactionTests(unittest.TestCase):
         destination.write_bytes(b"new\n")
         destination.chmod(0o644)
         self.apply(self.plan(count=1))
-        self.assertEqual(stat.S_IMODE(destination.stat().st_mode), 0o755)
+        self.assertEqual(
+            stat.S_IMODE(destination.stat().st_mode),
+            bootstrap._normalize_mode(0o755),
+        )
         bootstrap.apply_rollback(self.manifest)
-        self.assertEqual(stat.S_IMODE(destination.stat().st_mode), 0o644)
+        self.assertEqual(
+            stat.S_IMODE(destination.stat().st_mode),
+            bootstrap._normalize_mode(0o644),
+        )
 
     def test_rollback_preserves_post_install_permission_changes(self):
         destination = self.home / "file-0"
         self.apply(self.plan(count=1))
-        destination.chmod(0o600)
+        destination.chmod(0o444)
         with self.assertRaisesRegex(bootstrap.BootstrapError, "changed after install"):
             bootstrap.rollback_plan(self.manifest)
-        self.assertEqual(stat.S_IMODE(destination.stat().st_mode), 0o600)
+        self.assertEqual(
+            stat.S_IMODE(destination.stat().st_mode),
+            bootstrap._normalize_mode(0o444),
+        )
 
     def test_interrupted_rollback_can_be_retried(self):
         first, second = self.home / "file-0", self.home / "file-1"

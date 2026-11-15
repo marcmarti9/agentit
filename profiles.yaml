@@ -25,6 +25,7 @@ profiles:
     - browser-testing-with-devtools
     - playwright-cli
     - web-design-guidelines
+    - modern-web-guidance
     - performance-optimization
     - code-simplification
     - reliable-coding

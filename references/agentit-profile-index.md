@@ -11,7 +11,7 @@ Body cost includes inherited skills once per profile. Estimated tokens = UTF-8 b
 | Profile | Use for | Skills incl. inherited | Body bytes | Estimated tokens |
 | --- | --- | ---: | ---: | ---: |
 | [core](#core) | Enter Agentit, make the task decision, discover and activate selected skills. | 3 | 15968 | ~3993 |
-| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 42 | 504416 | ~126119 |
+| [frontend](#frontend) | Build accessible web UI, use framework patterns, check browser behavior and performance. | 43 | 507956 | ~127004 |
 | [backend](#backend) | Design APIs and services, database boundaries, observability and application security. | 24 | 239127 | ~59789 |
 | [supabase](#supabase) | Work with Supabase, PostgreSQL and database migrations. | 25 | 242358 | ~60597 |
 | [product](#product) | Refine product ideas, gather requirements, compare alternatives and define outcomes. | 20 | 157370 | ~39351 |
@@ -26,7 +26,7 @@ Body cost includes inherited skills once per profile. Estimated tokens = UTF-8 b
 | [data](#data) | Analyze data, build pipelines, work with databases and machine learning. | 30 | 258188 | ~64558 |
 | [security](#security) | Investigate vulnerabilities, threat models, dependency risks and hardening. | 21 | 250756 | ~62696 |
 | [artifacts](#artifacts) | Produce editable documents, spreadsheets, slide decks, reports and translations. | 18 | 128381 | ~32101 |
-| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 405 | 3929313 | ~982480 |
+| [all](#all) | Inspect the complete canonical inventory only when explicitly needed; never auto-activate. | 406 | 3932853 | ~983365 |
 | [design-review](#design-review) | Review visual quality, task flows, accessibility and motion using relevant evidence. | 16 | 121158 | ~30295 |
 | [video](#video) | Produce motion graphics, video ads, Remotion, Blender and media workflows. | 20 | 155299 | ~38830 |
 | [languages](#languages) | Use language/framework-specific architecture, coding, tests and verification. | 62 | 809341 | ~202357 |
@@ -64,6 +64,7 @@ Inspect metadata: `agentit skills candidates --profile frontend`. Use `--direct`
 - [browser-testing-with-devtools](../skills/browser-testing-with-devtools/SKILL.md) — Tests in real browsers via Chrome DevTools MCP. Use when building or debugging anything that runs in a browser. Use when you need to inspect the DOM, capture console errors, analyze network requests, profile performance, or verify visual output with real runtime data. Requires the chrome-devtools MCP server to be configured.
 - [playwright-cli](../skills/playwright-cli/SKILL.md) — Automate browser interactions, test web pages and work with Playwright tests.
 - [web-design-guidelines](../skills/web-design-guidelines/SKILL.md) — Audit web UI against the latest Vercel Web Interface Guidelines, with concrete file-and-line findings. Use for frontend accessibility, usability and interface review.
+- [modern-web-guidance](../skills/modern-web-guidance/SKILL.md) — Retrieve GoogleChrome Modern Web Guidance for concrete HTML, CSS and client-side JavaScript implementation, browser support and legacy-web modernization. Use for native web-platform choices; not for generic visual audits, backend-only work or routine tooling.
 - [performance-optimization](../skills/performance-optimization/SKILL.md) — Optimizes application performance across frontend, backend, queries, and databases. Use when performance requirements exist, when you suspect performance regressions, when Core Web Vitals or load times need improvement, when N+1 query patterns need fixing, or when profiling reveals bottlenecks.
 - [code-simplification](../skills/code-simplification/SKILL.md) — Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
 - [reliable-coding](../skills/reliable-coding/SKILL.md) — Practical coding discipline for material implementation, bug fixes, refactors and reviews. One JIT owner for simplicity, surgical changes, bounded adversarial thinking and fresh verification evidence. Prefer it to stacking anti-overengineering, doubt-driven-development, verification-before-completion and code-simplification for ordinary coding tasks.

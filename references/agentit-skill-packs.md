@@ -153,6 +153,7 @@ If no pack covers the domain well:
 - `browser-testing-with-devtools` — verify rendered/runtime behavior in a real browser.
 - `playwright-cli` — run official Playwright CLI browser sessions and explicit interaction tests when CLI automation is suitable.
 - `web-design-guidelines` — review implemented UI against freshly retrieved Vercel Web Interface Guidelines; return file-and-line findings.
+- `modern-web-guidance` — retrieve current GoogleChrome guidance for concrete HTML, CSS, browser JavaScript, compatibility and native web-platform modernization; not generic visual audits or routine tooling.
 - `performance-optimization` — measure and improve frontend performance when evidence shows a bottleneck.
 - `code-simplification` — keep component/state architecture lean.
 - `hallmark` — substantial visual alternative/guard against generic visual clichés and fabricated content.

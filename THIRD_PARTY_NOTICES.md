@@ -479,3 +479,9 @@ License: CC BY 4.0. Author and attribution: Damir Sokolovsky ([@heydamir](https:
 Agentit vendors the **complete unmodified original** `skills/unslop` package: `SKILL.md`, all five written references, all five reference images and both optional scripts. Per-file SHA-256 hashes and pinned source revision are recorded in `skills/UPSTREAM_LOCK.json`.
 
 The upstream snapshot and story scripts may fetch live pages, write local files, serve a local HTTP endpoint or invoke separately installed Chrome/Playwright/ffmpeg; they are included for completeness but are **not automatically executed or installed** by Agentit. Agentit core owns user authorization, JIT selection, evidence and development modes. Upstream instructions do not authorize paid imagery, video production or expanded network access.
+
+### GoogleChrome / Modern Web Guidance (reference-only adapter)
+
+Source: https://github.com/GoogleChrome/modern-web-guidance
+
+License: Apache-2.0 (upstream). Agentit includes an original `modern-web-guidance` adapter referring to the official upstream CLI on an opt-in, permission-checked basis. No upstream skill body, npm package, scripts or guide database are vendored. The external package's own license and distribution notices apply when installed separately. The adapter's command examples opt out of optional CLI telemetry; loading the skill does not execute code or grant network access.

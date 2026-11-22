@@ -94,7 +94,10 @@ class RuntimeInventoryTests(unittest.TestCase):
         self.assertTrue(all(op["action"] == "keep" for op in self.plan()["operations"]))
         bootstrap.apply_rollback(Path(result["backup_manifest"]))
         self.assertEqual(self.installed_old.read_bytes(), b"original old file\n")
-        self.assertEqual(self.installed_old.stat().st_mode & 0o777, 0o640)
+        self.assertEqual(
+            self.installed_old.stat().st_mode & 0o777,
+            bootstrap._normalize_mode(0o640),
+        )
         self.assertEqual(self.inventory.read_bytes(), original_inventory)
 
     def test_modified_obsolete_and_unowned_files_survive_update(self):
@@ -111,11 +114,15 @@ class RuntimeInventoryTests(unittest.TestCase):
 
     def test_permission_only_drift_preserves_obsolete_file(self):
         self.retire_source_file()
-        self.installed_old.chmod(0o600)
+        # Read-only is the permission Windows can tell apart from a writable mode.
+        self.installed_old.chmod(0o444)
         plan = self.plan()
         self.assertEqual(plan["retained_modified_runtime_files"], ["payload/old.txt"])
         self.apply(plan)
-        self.assertEqual(self.installed_old.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(
+            self.installed_old.stat().st_mode & 0o777,
+            bootstrap._normalize_mode(0o444),
+        )
 
     def test_legacy_successful_receipt_can_establish_exact_ownership(self):
         self.inventory.unlink()
@@ -167,11 +174,11 @@ class RuntimeInventoryTests(unittest.TestCase):
             self.assertEqual(content, (self.home / ".agentit/runtime" / relative).read_bytes())
         bootstrap.apply_rollback(Path(result["backup_manifest"]))
         self.assertEqual(RETIRED_SKILL_BYTES, historical.read_bytes())
-        self.assertEqual(0o644, historical.stat().st_mode & 0o777)
+        self.assertEqual(bootstrap._normalize_mode(0o644), historical.stat().st_mode & 0o777)
 
     def test_reviewed_path_with_custom_bytes_or_mode_is_preserved(self):
         historical = self.historical_file()
-        for content, mode in ((b"customized content\n", 0o644), (RETIRED_SKILL_BYTES, 0o600)):
+        for content, mode in ((b"customized content\n", 0o644), (RETIRED_SKILL_BYTES, 0o444)):
             with self.subTest(mode=mode):
                 historical.write_bytes(content)
                 historical.chmod(mode)
@@ -179,7 +186,10 @@ class RuntimeInventoryTests(unittest.TestCase):
                 self.assertIn("skills/anti-ai-slop-design/SKILL.md", plan["retained_unmanaged_runtime_files"])
                 self.apply(plan)
                 self.assertEqual(content, historical.read_bytes())
-                self.assertEqual(mode, historical.stat().st_mode & 0o777)
+                self.assertEqual(
+                    bootstrap._normalize_mode(mode),
+                    historical.stat().st_mode & 0o777,
+                )
 
     def test_reviewed_retirement_still_rejects_changes_after_plan(self):
         historical = self.historical_file()
@@ -236,7 +246,14 @@ class RuntimeInventoryTests(unittest.TestCase):
     def test_inventory_symlink_is_rejected(self):
         target = self.base / "unrelated.json"
         self.inventory.rename(target)
-        self.inventory.symlink_to(target)
+        try:
+            self.inventory.symlink_to(target)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest(
+                    "creating a symlink needs a Windows privilege this process does not have"
+                )
+            raise
         with self.assertRaisesRegex(bootstrap.BootstrapError, "symlink"):
             self.plan()
 

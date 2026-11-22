@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
+import sys
 import tempfile
 import tomllib
 import unittest
@@ -103,8 +105,13 @@ class PortableBootstrapTests(unittest.TestCase):
             self.assertTrue((home / ".codex" / "agents" / "luna-worker.toml").is_file())
 
             cli = home / ".local" / "bin" / "agentit"
+            # The launcher is a shebang script. Windows will not execute that
+            # file directly; starting it with the interpreter runs the same bytes.
+            command = [str(cli), "skills", "packs"]
+            if os.name == "nt":
+                command = [sys.executable, *command]
             completed = subprocess.run(
-                [str(cli), "skills", "packs"],
+                command,
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
